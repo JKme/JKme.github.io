@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>Crontab反弹shell</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/crontab-shell.html" rel="bookmark"
+           title="Permalink to Crontab反弹shell">Crontab反弹shell</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-03-22T00:00:00+01:00">
+                <a href='#'>03/22/2017 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>第一个先看看系统内crontab是否在运行:</p>
+<p><code>ps -ef |grep cron</code></p>
+<p>如果没有运行，以ubuntu为例子需要：</p>
+<p><code>service cron start</code> 开启cron服务</p>
+<p>用systemctl也行</p>
+<div class="highlight"><pre><span></span><span class="n">systemctl</span> <span class="k">start</span> <span class="n">cron</span>  <span class="err">开启</span><span class="n">cron</span>
+<span class="n">systemctl</span> <span class="n">enable</span> <span class="n">cron</span> <span class="err">开机运行</span>
+<span class="n">systemctl</span> <span class="n">status</span> <span class="n">cron</span>  <span class="err">查看状态</span>
+</pre></div>
+
+
+<p>不知道为什么python的反弹脚本反弹之后，当前shell的环境变量是<code>/usr/bin:/bin</code>，先设置下环境变量</p>
+<p><code>export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin</code></p>
+<p>另外这两篇文章讲了redis里面设置crontab的坑：</p>
+<ul>
+<li>
+<p>http://joychou.org/index.php/web/linux-crontab-rebound-shell-hole.html</p>
+</li>
+<li>
+<p>http://joychou.org/index.php/web/hackredis-enhanced-edition-script.html </p>
+</li>
+</ul>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

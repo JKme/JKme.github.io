@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>naxsi的规则</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/naxsi-rule.html" rel="bookmark"
+           title="Permalink to naxsi的规则">naxsi的规则</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-11-02T00:00:00+01:00">
+                <a href='#'>11/02/2017 </a>
+                <a href="/category/learning.html">Learning</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <ul>
+<li>MainRule: 定义检测的规则和分数</li>
+<li>BasicRule: 定义MainRule的白名单</li>
+<li>CheckRule: 定义当分值达到阈值采取的动作</li>
+</ul>
+<h3>Checkrules</h3>
+<p>Checkrules指令有四种动作：</p>
+<div class="highlight"><pre><span></span><span class="n">LOG</span><span class="p">,</span> <span class="n">BLOCK</span><span class="p">,</span> <span class="k">DROP</span><span class="p">,</span> <span class="n">ALLOW</span>
+</pre></div>
+
+
+<p>何时执行这四种动作？根据制定的得分(score)</p>
+<h4>Basic Usage</h4>
+<div class="highlight"><pre><span></span><span class="n">CheckRule</span> <span class="ss">&quot;$SQL &gt;= 8&quot;</span> <span class="n">BLOCK</span><span class="p">;</span>
+</pre></div>
+
+
+<p>如果<code>$SQL</code>大于等于8，则<code>BLOCK</code>掉这个请求。（前提是打开防火墙的过滤模式，而不是learning模式）</p>
+<h4>Other Usages</h4>
+<p>看看另外的一种用法，白名单和黑名单一起用的时候，比如有这样的规则:</p>
+<div class="highlight"><pre><span></span><span class="n">CheckRule</span> <span class="ss">&quot;$UWA &gt;= 4&quot;</span> <span class="k">DROP</span><span class="p">;</span>
+<span class="n">CheckRule</span> <span class="ss">&quot;$XSS &gt;= 8&quot;</span> <span class="n">BLOCK</span><span class="p">;</span>
+</pre></div>
+
+
+<p>意思是任何请求只要匹配了<code>$UWA</code>规则，得分大于等于4，就block掉这个请求。
+下面这个<code>$XSS</code>规则，只有开启了过滤（不是learning mode)，得分大于等于8就block</p>
+<h2>Rules BNF</h2>
+<h3>RUles</h3>
+<p>规则是用来匹配请求中的攻击。比如DROP掉任何包含字符串<code>zz</code>的GET或者POST请求:</p>
+<div class="highlight"><pre><span></span><span class="nt">MainRule</span> <span class="nt">id</span><span class="p">:</span><span class="nd">424242</span> <span class="s2">&quot;str:zz&quot;</span> <span class="s2">&quot;mz:ARGS|BODY&quot;</span> <span class="s2">&quot;s:DROP&quot;</span><span class="o">;</span>
+</pre></div>
+
+
+<p>Rules can be present at location level(BasicRule) or http level (MainRule)</p>
+<ul>
+<li>规则在写的时候，每个部分都必须要用双引号包含起来，除了id的那部分。</li>
+</ul>
+<h4>id(id:...)</h4>
+<p><code>id:num</code> 在规则里面必须是独一无二的，最终会出现在NAXSI_FMT日志里面</p>
+<p>id小于1000时是naxsi里面的保留规则id值。</p>
+<h3>Match Pattern</h3>
+<p>匹配的规则可以是正则，字符串或者调用一个库</p>
+<ul>
+<li><code>rx:foo|bar</code>: 匹配<code>foo</code>或者<code>bar</code>   (rx应该是regex，正则匹配的意思)</li>
+<li><code>str:foo|bar</code>: 匹配<code>foo|bar</code></li>
+<li><code>d:libinj_xss</code>: 如果libinjection返回结果是XSS，则匹配(&gt;=0.55r2版本)</li>
+<li><code>d:libinj_sql</code>: 如果libinjection返回结果SQLI,则匹配 (&gt;=0.55r2版本)</li>
+</ul>
+<p>官方建议: 在可以使用字符串匹配的时候，尽量使用字符串，这样会快点。所有的字符串要小写
+naxsi的匹配值大小写不敏感的。</p>
+<h3>Score(s:..)</h3>
+<p>你可以创建一个计分的规则:<code>s:$FOOBAR:4</code>，符合这个规则的时候，<code>$FOOBAR</code>的值就增加4积分。
+一条规则可以有多个计分规则:<code>s:$FOO:4,$BAR:8</code>，同理<code>$FOO</code>会增加4积分，<code>$BAR</code>增加8积分
+<code>s:</code>后面可以直接制定匹配的动作<code>DROP</code>或者<code>BLOCK</code></p>
+<h3>MatchZone(mz:...)</h3>
+<p>mz是匹配区域，决定了规则匹配哪一部分:</p>
+<div class="highlight"><pre><span></span><span class="nt">MainRule</span> <span class="nt">id</span><span class="p">:</span><span class="nd">4242</span> <span class="nt">str</span><span class="p">:</span><span class="nd">z</span> <span class="s2">&quot;mz:$ARGS_VAR:X|BODY&quot;</span><span class="o">;</span>
+</pre></div>
+
+
+<p>在GET请求的参数X里面或者BODY里面的参数，搜索字符串z</p>
+<div class="highlight"><pre><span></span><span class="nt">MainRule</span> <span class="nt">id</span><span class="p">:</span><span class="nd">4342</span> <span class="nt">str</span><span class="p">:</span><span class="nd">z</span> <span class="s2">&quot;mz:$ARGS_VAR:X|BODY|$URL_X:^/foo&quot;</span><span class="o">;</span>
+</pre></div>
+
+
+<p>在GET请求的X参数里面或者BODY里面或者URL里以/foo开头的路径搜索是否有z字符串
+从0.55rc0版本里面，对于不知道的content-type,可以使用RAW_BODY来匹配:</p>
+<div class="highlight"><pre><span></span><span class="nt">MainRule</span> <span class="nt">id</span><span class="p">:</span><span class="nd">4241</span> <span class="nt">s</span><span class="p">:</span><span class="nd">DROP</span> <span class="nt">str</span><span class="p">:</span><span class="nd">z</span> <span class="nt">mz</span><span class="p">:</span><span class="nd">RAQ_BODY</span><span class="o">;</span>
+</pre></div>
+
+
+<p>只有在以下情况才会匹配RAW_BODy:</p>
+<ul>
+<li>Content-type是未知的，表示naxsi不知道如何处理</li>
+<li><code>id 11</code>（内置的一个规则，对于所有未知类型，都是白名单处理）</li>
+</ul>
+<h2>Match Zones</h2>
+<h3>Global Zones</h3>
+<p><a href="https://github.com/nbs-system/naxsi/wiki/matchzones-bnf">https://github.com/nbs-system/naxsi/wiki/matchzones-bnf</a>
+有4个主要的匹配区域: URL, ARGS, HEADERS, BODY</p>
+<ul>
+<li><code>ARGS</code>: GET参数</li>
+<li><code>HEADERS</code>: HTTP头</li>
+<li><code>BODY</code>: POST参数(and RAW_BODY)</li>
+<li><code>URL</code>: URL（before '?')</li>
+</ul>
+<p>或者具体点:</p>
+<ul>
+<li><code>$ARGS_VAR:string</code>:具体的GET参数</li>
+<li><code>HEADERS_VAR:string</code>:具体的HTTP头</li>
+<li><code>$BODY_VAR:string</code>:具体的POST参数</li>
+</ul>
+<p>或者用正则来表示:</p>
+<ul>
+<li><code>$HEADERS_VAR_X:regex</code>: 正则匹配具体的HTTP头(&gt;=0.52)</li>
+<li><code>$ARGS_VAR_X:regex</code>: 正则匹配具体的GET参数</li>
+<li><code>$BODY_VAR_X:regex</code>: 正则匹配具体的POST参数</li>
+</ul>
+<p>具体点:
+* <code>FILE_EXT</code>: 文件名</p>
+<p>nasxi在业务防火墙中的应用：</p>
+<p>两个问题：</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>简单的python HTTP服务器</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/python-http.html" rel="bookmark"
+           title="Permalink to 简单的python HTTP服务器">简单的python HTTP服务器</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-05-19T00:00:00+02:00">
+                <a href='#'>05/19/2017 </a>
+                <a href="/category/python.html">Python</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <div class="highlight"><pre><span></span><span class="c1"># coding: utf-8</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+
+<span class="n">host</span> <span class="o">=</span> <span class="s1">&#39;0.0.0.0&#39;</span>    <span class="c1"># 本机地址</span>
+<span class="n">port</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>          <span class="c1"># 监听端口</span>
+<span class="n">data_payload</span> <span class="o">=</span> <span class="mi">65535</span>     <span class="c1"># 一次接受数据大小上限</span>
+<span class="n">backlog</span> <span class="o">=</span> <span class="mi">15</span>             <span class="c1"># 限制最大连接数量</span>
+
+<span class="k">def</span> <span class="nf">echo_server</span><span class="p">(</span><span class="n">port</span><span class="p">):</span>
+    <span class="c1"># 创建socket</span>
+    <span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+    <span class="c1"># 开启端口重用</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># 绑定socket到端口</span>
+    <span class="n">server_address</span> <span class="o">=</span> <span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="n">port</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s2">&quot;Starting up echo server on </span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">server_address</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">server_address</span><span class="p">)</span>
+    <span class="c1"># 限制最大连接数量</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">backlog</span><span class="p">)</span>
+    <span class="c1"># 监听循环</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s2">&quot;[</span><span class="si">%s</span><span class="s2">]: </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span> <span class="s2">&quot;Waiting==============&quot;</span><span class="p">)</span>
+        <span class="n">client</span><span class="p">,</span> <span class="n">address</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="n">data_payload</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s2">&quot;Received data: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">data</span>
+            <span class="c1"># 回显</span>
+            <span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="c1">#print &quot;Data have sent back!&quot;</span>
+        <span class="c1"># 关闭链接</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1"># 启动服务器</span>
+    <span class="n">echo_server</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+</pre></div>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

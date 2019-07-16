@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>ubuntu安装msf的坑</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/msf-ubuntu.html" rel="bookmark"
+           title="Permalink to ubuntu安装msf的坑">ubuntu安装msf的坑</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-06-14T00:00:00+02:00">
+                <a href='#'>06/14/2017 </a>
+                <a href="/category/fun.html">Fun</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <ul>
+<li>安装ruby的时候建议使用rbenv</li>
+</ul>
+<h2>postgresql</h2>
+<div class="highlight"><pre><span></span>    <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="k">get</span> <span class="k">update</span> <span class="o">&amp;&amp;</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="k">get</span> <span class="n">upgrade</span>
+    <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="k">get</span> <span class="n">purge</span> <span class="n">postgresql</span><span class="o">*</span>
+    <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="k">get</span> <span class="o">-</span><span class="n">f</span> <span class="n">install</span>
+    <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="k">get</span> <span class="n">install</span> <span class="n">postgresql</span>
+</pre></div>
+
+
+<p>然后切换到postgresql</p>
+<div class="highlight"><pre><span></span><span class="nv">sudo</span> <span class="o">-</span><span class="nv">s</span>
+<span class="nv">su</span> <span class="nv">postgres</span>
+
+<span class="nv">createuser</span> <span class="nv">msf</span> <span class="o">-</span><span class="nv">P</span> <span class="o">-</span><span class="nv">S</span> <span class="o">-</span><span class="nv">R</span> <span class="o">-</span><span class="nv">D</span> 
+<span class="nv">createdb</span> <span class="o">-</span><span class="nv">O</span> <span class="nv">msf</span> <span class="nv">msf</span>
+<span class="k">exit</span>
+<span class="k">exit</span>
+</pre></div>
+
+
+<p>修改config/database.yml</p>
+<div class="highlight"><pre><span></span><span class="n">production</span><span class="o">:</span>
+    <span class="n">adapter</span><span class="o">:</span> <span class="n">postgresql</span>
+    <span class="n">database</span><span class="o">:</span> <span class="n">msf</span>
+    <span class="n">username</span><span class="o">:</span> <span class="n">msf</span>
+    <span class="n">password</span><span class="o">:</span> <span class="n">msf</span>
+    <span class="n">host</span><span class="o">:</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span>
+    <span class="n">port</span><span class="o">:</span> <span class="mi">5432</span>
+    <span class="n">pool</span><span class="o">:</span> <span class="mi">75</span>
+    <span class="n">timeout</span><span class="o">:</span> <span class="mi">5</span>
+</pre></div>
+
+
+<p>根据对应位置把以下内容丢进去</p>
+<div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">sh</span> <span class="o">-</span><span class="k">c</span> <span class="ss">&quot;echo export MSF_DATABASE_CONFIG=/opt/metasploit-framework/config/database.yml &gt;&gt; /etc/profile&quot;</span>
+
+<span class="k">source</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">profile</span>
+</pre></div>
+
+
+<p><code>for MSF in $(ls msf*); do ln -s /pentest/framework3/$MSF /usr/local/bin/$MSF;done</code></p>
+<h2>postgresql基本使用</h2>
+<p>postgres初次安装后，默认生成一个名为postgres的数据库和一个名为postgres的数据库用户，需要注意的是，同时还生成一个postgres的Linux系统用户。
+添加新用户有两种方法:</p>
+<p>第一种:</p>
+<div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">adduser</span> <span class="n">dbuser</span>
+<span class="n">sudo</span> <span class="n">su</span> <span class="o">-</span> <span class="n">postgres</span>
+<span class="n">psql</span>
+<span class="err">\</span><span class="n">password</span> <span class="n">postgres</span>
+<span class="k">create</span> <span class="k">user</span> <span class="n">dbuser</span> <span class="k">with</span> <span class="n">password</span> <span class="s1">&#39;password&#39;</span><span class="p">;</span>
+<span class="k">create</span> <span class="k">database</span> <span class="n">exampledb</span> <span class="k">owner</span> <span class="n">dbuser</span><span class="p">;</span>
+<span class="k">grant</span> <span class="k">all</span> <span class="k">privileges</span> <span class="k">on</span> <span class="k">database</span> <span class="n">exampledb</span> <span class="k">to</span> <span class="n">dbuser</span><span class="p">;</span>
+<span class="err">\</span><span class="n">q</span>
+</pre></div>
+
+
+<p>第二种:</p>
+<div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">postgres</span> <span class="k">createuser</span> <span class="c1">--superuser dbuser</span>
+<span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">postgres</span> <span class="n">psql</span>
+<span class="err">\</span><span class="n">password</span> <span class="n">dbuser</span>
+<span class="err">\</span><span class="n">q</span> 
+<span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">postgres</span> <span class="k">createdb</span> <span class="o">-</span><span class="n">O</span> <span class="n">dbuser</span> <span class="n">exampledb</span>
+</pre></div>
+
+
+<p>登录数据库:</p>
+<div class="highlight"><pre><span></span><span class="n">psql</span> <span class="o">-</span><span class="n">U</span> <span class="n">msf</span> <span class="o">-</span><span class="n">d</span> <span class="n">msf</span>  <span class="o">-</span><span class="n">h127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span> <span class="o">-</span><span class="n">p</span> <span class="mi">5432</span>
+<span class="k">drop</span> <span class="k">database</span> <span class="n">msf</span><span class="p">;</span>  <span class="err">删除</span><span class="n">msf数据库</span>
+<span class="k">drop</span> <span class="k">user</span> <span class="n">msf</span><span class="p">;</span>     <span class="err">删除</span><span class="n">msf用户</span>
+</pre></div>
+
+
+<p>控制台命令:</p>
+<p>使用psql进入控制台之后可以使用如下命令:</p>
+<div class="highlight"><pre><span></span><span class="err">\</span><span class="n">du</span>  <span class="err">列用户</span>
+<span class="err">\</span><span class="n">l</span>   <span class="err">列数据看</span>
+<span class="err">\</span><span class="k">c</span>    <span class="err">链接到其他数据看</span>
+</pre></div>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

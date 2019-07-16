@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>协程</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/python-concurrent.html" rel="bookmark"
+           title="Permalink to 协程">协程</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-12-20T00:00:00+01:00">
+                <a href='#'>12/20/2017 </a>
+                <a href="/category/python.html">Python</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>Python里面，当线程比较多的时候，线程的切换是一件十分耗时的工作，但是python里面提供了一个比较好玩的东西，协程来解决这个问题。
+适合IO密集型的任务，协程运行在单个线程中，避免多线程模型的上下文切换，减少了很大开销，所以适合线程数比较大的程序。</p>
+<p>svn的扫描是同步程序，所以最好的方式是实用异步socket＋协程。这样处理速度应该是最快的</p>
+<p>await 和 async def区分生成器和协程</p>
+<p>协程经历大概三个阶段：</p>
+<ol>
+<li>最初生成器变形yield/send</li>
+<li>引入@asyncio.coroutime和yield from</li>
+<li>在3.5版本引入async和await关键字</li>
+</ol>
+<p><a href="http://www.cnblogs.com/linhaifeng/articles/7429894.html">http://www.cnblogs.com/linhaifeng/articles/7429894.html</a>
+里面程序实现可以得出结果:</p>
+<div class="highlight"><pre><span></span><span class="n">yield</span> <span class="err">单纯的切换会降低运行效率</span>
+<span class="n">yield</span> <span class="err">不能实现遇到</span><span class="n">IO就切换程序</span>
+</pre></div>
+
+
+<p>所以会有后来的<code>get_event_loop()</code>来获取当前的IOevent么？使用event_loop卡住主线程？</p>
+<p>完美状态就是在yield的时候，继续下一个任务的运行，等上一个任务完成之后，在yield之后继续运行。</p>
+<div class="highlight"><pre><span></span><span class="mi">1</span><span class="p">.</span> <span class="err">可以控制在多个任务之间切换，切换之前的状态保存下来，在重新运行的时候，基于暂停的位置继续执行</span>
+<span class="mi">2</span><span class="p">.</span> <span class="err">作为</span><span class="mi">1</span><span class="err">的补充，可以检测</span><span class="n">IO操作</span><span class="err">，在遇到</span><span class="n">io操作的情况下才发生切换</span><span class="err">。</span>
+</pre></div>
+
+
+<p>yield from 是什么鬼：<a href="http://blog.theerrorlog.com/yield-from-in-python-3.html">http://blog.theerrorlog.com/yield-from-in-python-3.html</a></p>
+<p>所以如果threads比较多，在python3里面可以使用asyncio来降低上下文切换带来的性能损失。
+asyncio的缺陷，如果使用它，那么所有的io api都要使用异步的版本。</p>
+<p>当一个函数内部出现了yield语句时，它就不再是一个单纯的函数，而是一个生成器函数，调用它并不会执行它的代码，而是返回一个生成器。
+调用这个生成器的send方法时，才回执行内部代码，当执行到yield时，这个send方法就返回了，调用者可以得到其返回值。send方法在第一次调用时，参数必须为None，python2可以使用它的next方法，python3里面改成了<code>__nexe__</code>方法，还可以使用内置的next函数调用。</p>
+<p>send可以多次调用，参数作为yield的返回值，回到生成器上一次执行的地方，并继续执行下去。当生成器的代码执行完时，会抛出一个<code>StopIteration</code>的异常。python3.3开始可以在生成器使用return，返回值可以从<code>StopIteration</code>异常的value属性获取。</p>
+<p><code>for...in...</code>循环会自动捕获<code>StopIteration</code>异常，并作为循环停止的条件。</p>
+<p>由此可见，yield是可以用作跳转的。而我们要做的就是在遇到IO请求时，用yield返回IO Loop；当事件发生时，找到对应的生成器，用send方法继续执行即可。</p>
+<p><a href="https://www.secpulse.com/archives/61398.html">https://www.secpulse.com/archives/61398.html</a>
+<a href="https://ayonel.me/index.php/2017/05/17/coroutine_spider/">https://ayonel.me/index.php/2017/05/17/coroutine_spider/</a> 完整的代码实现
+<a href="http://kissg.me/2016/06/01/a-web-crawler-with-asyncio-coroutines">http://kissg.me/2016/06/01/a-web-crawler-with-asyncio-coroutines</a> 翻译的
+<a href="https://www.zybuluo.com/chyoo1991/note/179220">https://www.zybuluo.com/chyoo1991/note/179220</a> yield和send的代码实现
+<a href="http://lucumr.pocoo.org/2016/10/30/i-dont-understand-asyncio/">http://lucumr.pocoo.org/2016/10/30/i-dont-understand-asyncio/</a> 
+<a href="http://www.cnblogs.com/linhaifeng/articles/7429894.html">http://www.cnblogs.com/linhaifeng/articles/7429894.html</a>
+<a href="https://www.keakon.net/2017/06/28/%E7%94%A8Python3%E7%9A%84async/await%E5%81%9A%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B">https://www.keakon.net/2017/06/28/%E7%94%A8Python3%E7%9A%84async/await%E5%81%9A%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B</a></p>
+<p>https://lightless.me/archives/python-coroutine-from-boom-to-dead-to-rebirth.html</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

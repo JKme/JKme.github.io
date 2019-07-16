@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>SSH honeypot</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/ssh-honeypot.html" rel="bookmark"
+           title="Permalink to SSH honeypot">SSH honeypot</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-11-28T00:00:00+01:00">
+                <a href='#'>11/28/2017 </a>
+                <a href="/category/fun.html">Fun</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p><a href="https://github.com/ohmyadd/wetland">https://github.com/ohmyadd/wetland</a> </p>
+<p>使用上面的源代码搭建一个ssh蜜罐，然后配置bearychat，可以在手机上面实时接收蜜罐里面的命令等信息。</p>
+<p>安装步骤很简单，使用python2.7，按照github上面的说明一步步安装就可以了。</p>
+<p>配置bearychat：</p>
+<ol>
+<li>先<a href="http://bearychat.com">http://bearychat.com</a>这里注册用户，然后添加一个机器人，incoming 类型的。新建立之后会获取一个类似token的链接，然后在wetland里面的配置文件替换掉自己的机器人请求。</li>
+<li>然后跑蜜罐<code>python main.py</code>就可以了。</li>
+</ol>
+<p>注意事项：</p>
+<p>因为蜜罐监听的是服务器的22端口，所以宿主机本身需要修改下ssh的默认监听端口，重启ssh服务器之后蜜罐就可以正常运行了，蜜罐的密码是<code>root</code> ，自己尝试登陆之后，在手机端就会收到机器人的提醒通知。</p>
+<p>重要的不是ssh这个蜜罐，而是这个机器人通知。可以设想在某些特定的情况下，服务器使用这个机器人来向手机发送提醒，比如运维监控、TCP反弹监听、敏感日志监测</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

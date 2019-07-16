@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>SSH端口转发</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/SSH-Port-forward.html" rel="bookmark"
+           title="Permalink to SSH端口转发">SSH端口转发</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-02-16T00:00:00+01:00">
+                <a href='#'>02/16/2017 </a>
+                <a href="/category/learning.html">Learning</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>以下几个原则：</p>
+<ul>
+<li>SSH简单来说就是2台机器之间安全的数据通道，它包括ssh的client和ssh的server2个角色，这样的一条通道就是(ssh tunneling)</li>
+<li>SSH端口转发需要ssh连接，同时SSH连接有方向，从SSH Client到SSH Server</li>
+<li>同理应用请求也是有方向的，一般是客户端向服务端发出请求</li>
+<li>一旦这两个方向相同，称为SSH的本地转发(-L)，反之称为远端转发(-R）</li>
+</ul>
+<h3>本地转发</h3>
+<p><code>ssh -L &lt;local port&gt;:&lt;host&gt;:&lt;hostport&gt; &lt;sshserver&gt;</code></p>
+<p>通过sshserver建立与host的连接，并将host的hostport绑定到本地的localport端口</p>
+<p>应用场景：比如有一台应用服务器appserver（appserver.com），要访问其80端口，但是本地却不能直接访问，于是可以借助一台可以访问appserver的sshserver（sshserver.com）来访问它。
+<code>ssh -L 8000:appserver.com:80  user@sshserver.com</code></p>
+<p>ssh链接建立之后，发送到本地8000的包会通过sshserver转发给appserver的80端口</p>
+<h3>远程转发</h3>
+<p><code>ssh -R &lt;remoteport&gt;:&lt;host&gt;:&lt;hostport&gt; &lt;remoteserver&gt;</code>
+远程转发可以通过本地主机，将remoteserver与host连接，host的hostport
+将会映射到remoteserver的remoteport端口</p>
+<p>应用场景: 一台应用服务器appserver(appserver.com），只有本地才能访问80端口，假如remoteserver想访问appserver的80端口，需要通过本地主机做隧道来完成。</p>
+<p><code>ssh -R 8000:appserver.com:80 user@remoteserver.com</code>
+之后要求输入user用户在remoteserver上的密码。</p>
+<p>remoteserver会监听自己的8000端口，其后发往remoteserver的8000端口的包，会通过本地服务器发到remoteserver的80端口。</p>
+<blockquote>
+<p>如果访问http://remoteserver:remoteport，注意修改remoteserver的ssh配置,<code>sshd_config添加GatewayPorts yes</code></p>
+</blockquote>
+<p><code>https://ricterz.me/posts/Mount%20NFS%20via%20Proxy?_=1487726774098</code></p>
+<p>这篇文章里面是这样用的：</p>
+<p><code>ssh ricterz.me -lroot -R[remoteport]:localhost:[localport] －CNfg</code></p>
+<h3>动态转发</h3>
+<p><code>ssh -D &lt;localport&gt; &lt;sshserver&gt;</code></p>
+<p>监听本地localport端口，创建一个通过sshserver连接的socks服务，之后发往localport的代理请求将会通过sshserver转到相应地址。</p>
+<p><code>ssh -D 8000 user@sshserver.com</code></p>
+<p>输入user的密码之后，你就可以将浏览器的socks5代理设为自己的8000端口，之后会有数据以加密的方式传给sshserver，sshserver获取www.blockedwebsite.com之后返回本地。</p>
+<div class="highlight"><pre><span></span><span class="o">-</span><span class="n">f</span> <span class="n">ssh在后台运行</span><span class="err">，即认证之后，</span><span class="n">ssh退居后台</span>
+<span class="o">-</span><span class="n">T</span> <span class="err">不要分配</span><span class="n">tty终端</span>
+<span class="o">-</span><span class="n">N</span> <span class="err">不要在服务器执行命令</span>
+<span class="o">-</span><span class="k">C</span>  <span class="err">压缩数据包</span>
+<span class="o">-</span><span class="n">i</span>  <span class="err">指定认证密钥</span>
+<span class="o">-</span><span class="n">n</span>  <span class="err">将</span><span class="n">studio重定向到</span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="k">null</span> <span class="err">与</span><span class="o">-</span><span class="n">f配合使用</span>
+<span class="o">-</span><span class="n">q</span>  <span class="err">安静模式</span>
+<span class="o">-</span><span class="n">l</span>  <span class="err">指定连接远程服务器的用户名</span>
+<span class="o">-</span><span class="k">g</span>  <span class="err">允许远程主机连接主机的转发端口</span>
+</pre></div>
+
+
+<p>另外：
+<code>ssh -f -L 1234:localhost:6667 server.example.com sleep 10</code>
+后台运行转发，但是再ssh运行后10秒钟都没有连接1234端口的话，ssh自动退出。</p>
+<ul>
+<li>http://wlwang41.github.io/content/ops/ssh%E9%9A%A7%E9%81%93%E4%BB%A3%E7%90%86.html</li>
+<li>http://lcwangchao.github.io/linux/unix/2012/08/03/sshport/</li>
+</ul>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

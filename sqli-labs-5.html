@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>Error based</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/sqli-labs-5.html" rel="bookmark"
+           title="Permalink to Error based">Error based</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2016-05-05T00:00:00+02:00">
+                <a href='#'>05/05/2016 </a>
+                <a href="/category/sql.html">SQL</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <h2>注入的方法</h2>
+<p><code>sqli-labs</code>的1，2，3，4课都可以使用以下四种来进行注入数据:</p>
+<ul>
+<li>Union select</li>
+<li>Error based</li>
+<li>Blind based</li>
+<li>Time blind based</li>
+</ul>
+<p>对应的可以使用<code>sqlmap.py --technique</code>上面首字母大写来指定相应的注入类型。</p>
+<h3>Less-5</h3>
+<p>第五课首先排除union注入，因为页面无法显示数据，最后我还是看了网页源代码才注入的。</p>
+<blockquote>
+<p>我发现sqlmap在每次注入的时候都会先尝试确定当前变量是被那种包含，然后在payload里面闭合，这样可以确保整个语句的完整性。 要么确定当前语句完全闭合，要么注释掉后面的语句，确保闭合。</p>
+</blockquote>
+<h3>Less-7</h3>
+<p>报错和union查询都出不了数据，只能进行盲注。bool blind和time blind。前面闭合可以使用<code>'</code>或者<code>')</code>。</p>
+<h3>Less-8</h3>
+<p>根据页面返回，只能盲注。那么先判断变量是被什么包含的。当输入<code>'</code>的时候页面会改变，在后面加上<code>-- -</code>页面又正常，暂且判断变量是被单引号包含的。然后再这样<code>id=1' and 1=1 -- -1</code>，页面正常，当<code>and</code>后面为<code>1=0</code>的时候页面不正常，所以这里可以变成布尔盲注或者时间盲注。关键点在分析变量是被神码包含。</p>
+<h3>Less-9</h3>
+<p>不小心看到了源代码，只能使用时间盲注，这种不管输入什么页面都是这样，可以尝试时间盲注<code>id=1' and if(mid(version(),1,1)=5,sleep(4),0) -- -</code> 。使用<code>sqlmap.py</code>测试结果可以发现可以使用布尔盲注和时间盲注，看了源代码才发现的确可以使用布尔盲注，但是凭肉眼看不到页面的变化。</p>
+<blockquote>
+<p>那么这里是不是就告诉我们，有时候看到的不一定正确还是要采用统计的方法来比较页面的异同。</p>
+</blockquote>
+<p>这里有个Paper，是使用哪一种算法来检测布尔盲注，sqlmap采用了在去除动态内容之后计算比率的方法,回头需要看下这里的实现方法。</p>
+<ul>
+<li>https://www.blackhat.com/presentations/bh-usa-04/bh-us-04-hotchkies/bh-us-04-hotchkies.pdf</li>
+<li>http://zone.wooyun.org/content/26504</li>
+</ul>
+<h3>Less-10</h3>
+<p>在经过less-9被坑了下之后有点慌。到现在基本的测试规则就是先测试被哪种符号闭合，一半来说是这么几个<code>'</code>,<code>"</code>,<code>')</code>,<code>")</code>，之后加上测试语句<code>1=1</code>,<code>1=0</code>。看当前页面是否有变化，如果都没有那么就测试时间盲注。</p>
+<p>Less-10存在时间盲注，使用<code>"</code>闭合，在使用sqlmap之后还存在布尔盲注，果然和less-9一样坑。</p>
+<h3>Less-11</h3>
+<p>网页提示报错注入，在用户名和密码那里可以使用burp截获Post数据。变量是被单引号包含，可以使用union,error,time-based这三种注入。其中time-based的时候有以下个问题:</p>
+<div class="highlight"><pre><span></span> <span class="nv">mysql</span><span class="o">&gt;</span> <span class="nv">select</span> <span class="mi">1</span><span class="o">=</span><span class="mi">0</span> <span class="nv">and</span> <span class="k">if</span><span class="ss">(</span><span class="nv">mid</span><span class="ss">(</span><span class="nv">version</span><span class="ss">()</span>,<span class="mi">1</span>,<span class="mi">1</span><span class="ss">)</span><span class="o">=</span><span class="mi">5</span>,<span class="nv">sleep</span><span class="ss">(</span><span class="mi">5</span><span class="ss">)</span>,<span class="mi">0</span><span class="ss">)</span><span class="c1">;</span>
+<span class="o">+---------------------------------------------+</span>
+<span class="o">|</span> <span class="mi">1</span><span class="o">=</span><span class="mi">0</span> <span class="nv">and</span> <span class="k">if</span><span class="ss">(</span><span class="nv">mid</span><span class="ss">(</span><span class="nv">version</span><span class="ss">()</span>,<span class="mi">1</span>,<span class="mi">1</span><span class="ss">)</span><span class="o">=</span><span class="mi">5</span>,<span class="nv">sleep</span><span class="ss">(</span><span class="mi">5</span><span class="ss">)</span>,<span class="mi">0</span><span class="ss">)</span> <span class="o">|</span>
+<span class="o">+---------------------------------------------+</span>
+<span class="o">|</span>                                           <span class="mi">0</span> <span class="o">|</span>
+<span class="o">+---------------------------------------------+</span>
+<span class="mi">1</span> <span class="nv">row</span> <span class="nv">in</span> <span class="nv">set</span> <span class="ss">(</span><span class="mi">0</span>.<span class="mi">00</span> <span class="nv">sec</span><span class="ss">)</span>
+
+<span class="nv">mysql</span><span class="o">&gt;</span> <span class="nv">select</span> <span class="mi">1</span><span class="o">=</span><span class="mi">0</span> <span class="nv">and</span> <span class="ss">(</span><span class="nv">select</span><span class="o">*</span><span class="nv">from</span><span class="ss">(</span><span class="nv">select</span> <span class="nv">sleep</span><span class="ss">(</span><span class="mi">5</span><span class="ss">))</span><span class="nv">x</span><span class="ss">)</span><span class="c1">;</span>
+<span class="o">+-----------------------------------------+</span>
+<span class="o">|</span> <span class="mi">1</span><span class="o">=</span><span class="mi">0</span> <span class="nv">and</span> <span class="ss">(</span><span class="nv">select</span><span class="o">*</span><span class="nv">from</span><span class="ss">(</span><span class="nv">select</span> <span class="nv">sleep</span><span class="ss">(</span><span class="mi">5</span><span class="ss">))</span><span class="nv">x</span><span class="ss">)</span> <span class="o">|</span>
+<span class="o">+-----------------------------------------+</span>
+<span class="o">|</span>                                       <span class="mi">0</span> <span class="o">|</span>
+<span class="o">+-----------------------------------------+</span>
+<span class="mi">1</span> <span class="nv">row</span> <span class="nv">in</span> <span class="nv">set</span> <span class="ss">(</span><span class="mi">5</span>.<span class="mi">00</span> <span class="nv">sec</span><span class="ss">)</span>
+
+<span class="nv">mysql</span><span class="o">&gt;</span> <span class="nv">select</span> <span class="nv">mid</span><span class="ss">(</span><span class="nv">version</span><span class="ss">()</span>,<span class="mi">1</span>,<span class="mi">1</span><span class="ss">)</span><span class="c1">;</span>
+<span class="o">+--------------------+</span>
+<span class="o">|</span> <span class="nv">mid</span><span class="ss">(</span><span class="nv">version</span><span class="ss">()</span>,<span class="mi">1</span>,<span class="mi">1</span><span class="ss">)</span> <span class="o">|</span>
+<span class="o">+--------------------+</span>
+<span class="o">|</span> <span class="mi">5</span>                  <span class="o">|</span>
+<span class="o">+--------------------+</span>
+<span class="mi">1</span> <span class="nv">row</span> <span class="nv">in</span> <span class="nv">set</span> <span class="ss">(</span><span class="mi">0</span>.<span class="mi">00</span> <span class="nv">sec</span><span class="ss">)</span>
+</pre></div>
+
+
+<p>当前面条件为假的时候，如果直接使用<code>and if(mid(version(),1,1)=5,sleep(5),0)</code>是不会睡5s。当<code>and</code>替换为<code>xor</code>或者<code>sleep(5)替换为benchmark(1000000,sha1(1))</code>就会发生时间延迟，再或者使用sqlmap的payload：<code>AND (SELECT * FROM (SELECT(SLEEP([SLEEPTIME]-(IF([INFERENCE],0,[SLEEPTIME])))))[RANDSTR])</code></p>
+<h3>Less-12</h3>
+<p>先判断变量闭合，不管采用<code>' -- -</code>,<code>" -- -</code>,<code>') -- -</code>,<code>") -- -</code>，页面都是正常的，后面再加上报错的语句，<code>")</code>的时候会爆出数据，所以变量是被<code>")</code>包含的。另外可以使用union,error,time-based这三种。</p>
+<h3>Less-13</h3>
+<p>同上，使用<code>')</code>包含</p>
+<h3>Less-14</h3>
+<p>同上，使用<code>"</code>包含</p>
+<h3>Less-15</h3>
+<p>只测试了passwd，存在时间盲注，单引号闭合。</p>
+<h3>Less-16</h3>
+<p>同上，使用<code>")</code>包含</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

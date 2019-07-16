@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>aria2c下载说明书</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/aria2c-download.html" rel="bookmark"
+           title="Permalink to aria2c下载说明书">aria2c下载说明书</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-11-09T00:00:00+01:00">
+                <a href='#'>11/09/2017 </a>
+                <a href="/category/fun.html">Fun</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <h3>Install</h3>
+<div class="highlight"><pre><span></span><span class="n">brew</span> <span class="n">install</span> <span class="n">aria2</span><span class="p">(</span><span class="n">OSX</span><span class="p">)</span>
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="k">get</span> <span class="n">install</span> <span class="n">aria2</span><span class="p">(</span><span class="n">Linux</span><span class="p">)</span>
+</pre></div>
+
+
+<h3>Conf</h3>
+<div class="highlight"><pre><span></span><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="p">.</span><span class="n">githubusercontent</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">acgotaku</span><span class="o">/</span><span class="n">BaiduExporter</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">aria2c</span><span class="o">/</span><span class="n">aria2</span><span class="p">.</span><span class="n">conf</span>
+</pre></div>
+
+
+<h3>百度网盘转aria2c</h3>
+<div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">acgotaku</span><span class="o">/</span><span class="n">BaiduExporter</span><span class="p">.</span><span class="n">git</span>
+</pre></div>
+
+
+<p>然后打开chrome的扩展程序，开发者模式，安装。</p>
+<h3>supervisorctl</h3>
+<div class="highlight"><pre><span></span><span class="k">[program:aria2c]</span>
+<span class="na">command</span> <span class="o">=</span> <span class="s">aria2c --conf /soft/yaaw/aria2.conf</span>
+<span class="na">user</span> <span class="o">=</span> <span class="s">root</span>
+<span class="na">autostart</span> <span class="o">=</span> <span class="s">true</span>
+</pre></div>
+
+
+<p>配置插件的设置RPC的地方，修改对应的地址</p>
+<h2>可选:</h2>
+<h3>yaaw</h3>
+<div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">binux</span><span class="o">/</span><span class="n">yaaw</span><span class="p">.</span><span class="n">git</span>
+
+<span class="err">复制到</span><span class="n">nginx的目录下</span><span class="err">，打开</span><span class="n">nginx即可</span><span class="err">，下载的时候就可以看到下载进程</span>
+</pre></div>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

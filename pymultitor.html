@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>pymultitor切换IP</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/pymultitor.html" rel="bookmark"
+           title="Permalink to pymultitor切换IP">pymultitor切换IP</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2018-06-14T00:00:00+02:00">
+                <a href='#'>06/14/2018 </a>
+                <a href="/category/fun.html">Fun</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p><a href="https://github.com/realgam3/pymultitor">https://github.com/realgam3/pymultitor</a></p>
+<p>安装方法看github就可以了，mac下需要安装tor和mitmproxy</p>
+<div class="highlight"><pre><span></span><span class="n">brew</span> <span class="n">install</span> <span class="n">mitmproxy</span>
+<span class="n">brew</span> <span class="n">install</span> <span class="n">tor</span>
+</pre></div>
+
+
+<p>设置下proxifier的规则，tor使用代理，然后:</p>
+<div class="highlight"><pre><span></span><span class="n">pymultitor</span> <span class="o">-</span><span class="n">lp</span> <span class="mi">8081</span> <span class="o">-</span><span class="n">lh</span> <span class="mi">127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span> <span class="c1">--on-count  2 -d</span>
+</pre></div>
+
+
+<p>在本机的8081端口开了一个http代理，这个代理可以转成socks，未测试。</p>
+<p>可以在目标是用waf的情况下测试使用，比如sql注入等容易触发防火墙的情况下，burp设置一个代理，就可以随便跳代理了,实际效果未测试。</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

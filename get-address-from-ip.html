@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>根据IP获取地址</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/get-address-from-ip.html" rel="bookmark"
+           title="Permalink to 根据IP获取地址">根据IP获取地址</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2016-08-19T00:00:00+02:00">
+                <a href='#'>08/19/2016 </a>
+                <a href="/category/fun.html">Fun</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nb">error_reporting</span><span class="p">(</span><span class="k">E_ALL</span> <span class="o">^</span> <span class="nx">E_NOTICE</span><span class="p">);</span>
+    <span class="nb">header</span><span class="p">(</span><span class="s1">&#39;Content-Type:text/html;charset=utf-8&#39;</span><span class="p">);</span>
+    <span class="k">function</span> <span class="nf">get_addr</span><span class="p">(</span><span class="nv">$_ip</span><span class="p">)</span> <span class="p">{</span> 
+        <span class="nv">$_ip</span><span class="o">=</span><span class="k">array</span><span class="p">(</span><span class="s2">&quot;X-Forwarded-For:</span><span class="si">{</span><span class="nv">$_ip</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">);</span>
+            <span class="c1">//初始化curl模块 </span>
+        <span class="nv">$curl</span> <span class="o">=</span> <span class="nb">curl_init</span><span class="p">();</span>
+        <span class="c1">//需要获取的URL地址，也可以在 curl_init() 函数中设置。</span>
+        <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$curl</span><span class="p">,</span> <span class="nx">CURLOPT_URL</span><span class="p">,</span> <span class="s1">&#39;http://ip.zishuo.net/&#39;</span><span class="p">);</span>
+        <span class="c1">//在启用 CURLOPT_RETURNTRANSFER 的时候，返回原生的（Raw）输出。</span>
+        <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$curl</span><span class="p">,</span> <span class="nx">CURLOPT_RETURNTRANSFER</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="c1">//设置&quot;User-Agent: &quot;头</span>
+        <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$curl</span><span class="p">,</span> <span class="nx">CURLOPT_USERAGENT</span>  <span class="p">,</span> <span class="s1">&#39;Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36&#39;</span><span class="p">);</span>
+        <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$curl</span><span class="p">,</span> <span class="nx">CURLOPT_HTTPHEADER</span><span class="p">,</span> <span class="nv">$_ip</span><span class="p">);</span>
+        <span class="c1">//执行cURL</span>
+        <span class="nb">curl_exec</span><span class="p">(</span><span class="nv">$curl</span><span class="p">);</span> 
+        <span class="c1">//关闭cURL资源，并且释放系统资源 </span>
+        <span class="nv">$retn</span><span class="o">=</span><span class="nb">curl_exec</span><span class="p">(</span><span class="nv">$curl</span><span class="p">);</span> 
+        <span class="nb">curl_close</span><span class="p">(</span><span class="nv">$curl</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nb">json_decode</span><span class="p">(</span><span class="nv">$retn</span><span class="p">);</span>
+    <span class="p">}</span> 
+    <span class="nv">$_addr</span><span class="o">=</span><span class="nx">get_addr</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;ip&#39;</span><span class="p">]);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$_addr</span><span class="o">-&gt;</span><span class="na">code</span><span class="o">==</span><span class="s1">&#39;200&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">echo</span> <span class="nv">$_addr</span><span class="o">-&gt;</span><span class="na">desc</span><span class="o">.</span><span class="s1">&#39;-&gt;&#39;</span><span class="o">.</span><span class="nv">$_addr</span><span class="o">-&gt;</span><span class="na">position</span><span class="p">;</span>
+    <span class="p">}</span><span class="k">elseif</span><span class="p">(</span><span class="nv">$_addr</span><span class="o">-&gt;</span><span class="na">code</span><span class="o">==</span><span class="s1">&#39;404&#39;</span><span class="p">){</span>
+        <span class="k">echo</span> <span class="nv">$_addr</span><span class="o">-&gt;</span><span class="na">message</span><span class="p">;</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+        <span class="k">echo</span> <span class="s1">&#39;异常!&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>上面保存为test.php,然后是<code>1.php</code>：</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nb">header</span><span class="p">(</span><span class="s1">&#39;Content-Type:text/html;charset=utf-8&#39;</span><span class="p">);</span> 
+<span class="nv">$_ip</span><span class="o">=</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">&#39;REMOTE_ADDR&#39;</span><span class="p">];</span> 
+<span class="nv">$_ip_addr</span><span class="o">=</span><span class="nb">file_get_contents</span><span class="p">(</span><span class="s1">&#39;http://127.0.0.1/test.php?ip=&#39;</span><span class="o">.</span><span class="nv">$_ip</span><span class="p">);</span> 
+<span class="nv">$fh</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="s1">&#39;ip.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">);</span> 
+<span class="nb">fwrite</span><span class="p">(</span><span class="nv">$fh</span><span class="p">,</span> <span class="s1">&#39;IP:&#39;</span><span class="o">.</span><span class="nv">$_ip</span><span class="o">.</span><span class="s1">&#39; Time:&#39;</span><span class="o">.</span><span class="nb">date</span><span class="p">(</span><span class="s2">&quot;Y-m-d H:i&quot;</span><span class="p">,</span><span class="nb">time</span><span class="p">()</span><span class="o">+</span><span class="mi">28800</span><span class="p">)</span><span class="o">.</span><span class="s1">&#39; Address:&#39;</span><span class="o">.</span><span class="nv">$_ip_addr</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">);</span> <span class="nb">fclose</span><span class="p">(</span><span class="nv">$fh</span><span class="p">);</span> 
+<span class="nv">$im</span> <span class="o">=</span> <span class="nb">imagecreatefromjpeg</span><span class="p">(</span><span class="s2">&quot;n00b.png&quot;</span><span class="p">);</span> 
+<span class="nb">header</span><span class="p">(</span><span class="s1">&#39;Content-Type: image/jpeg&#39;</span><span class="p">);</span> 
+<span class="nb">imagejpeg</span><span class="p">(</span><span class="nv">$im</span><span class="p">);</span> 
+<span class="nb">imagedestroy</span><span class="p">(</span><span class="nv">$im</span><span class="p">);</span> 
+<span class="cp">?&gt;</span><span class="x"></span>
+</pre></div>
+
+
+<p>找个<code>2.jpg</code>的图片，在windows下执行：<code>copy 2.jpg+1.php ip.jpg</code>。</p>
+<p>最后在vps上面配置nginx解析jpg图片，这里需要设置下：</p>
+<p>对于<strong>5.3.9</strong>以上版本的php，需要设置<code>php-fpm.ini</code>，加上这个字段:
+<code>security.limit_extensions = .php .jpg</code>或者直接修改为<code>true</code>，然后在nginx配置的<code>location</code>位置加上这样的语句：</p>
+<div class="highlight"><pre><span></span><span class="nv">location</span> <span class="o">~</span> \.<span class="nv">jpg</span>$ {
+            <span class="nv">fastcgi_pass</span> <span class="nv">unix</span>:<span class="o">/</span><span class="nv">tmp</span><span class="o">/</span><span class="nv">php</span><span class="o">-</span><span class="nv">cgi</span>.<span class="nv">sock</span><span class="c1">;</span>
+            <span class="k">include</span> <span class="o">/</span><span class="nv">usr</span><span class="o">/</span><span class="nv">local</span><span class="o">/</span><span class="nv">nginx</span><span class="o">/</span><span class="nv">conf</span><span class="o">/</span><span class="nv">fastcgi</span>.<span class="nv">conf</span><span class="c1">;</span>
+}
+</pre></div>
+
+
+<p>不管怎么配置，大概意思就是让jpg结尾的图片，丢到<code>php-fpm</code>去处理，然后解析执行。</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

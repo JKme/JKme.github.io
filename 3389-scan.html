@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>3389指纹扫描</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/3389-scan.html" rel="bookmark"
+           title="Permalink to 3389指纹扫描">3389指纹扫描</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-02-28T00:00:00+01:00">
+                <a href='#'>02/28/2017 </a>
+                <a href="/category/python.html">Python</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>nmap的扫描原理没怎么探索，只知道使用nmap扫描的时候，目标服务器扫不出来东西。特地分析了下3389远程链接的过程。简单来说是这样的：</p>
+<ul>
+<li>TCP三次握手</li>
+<li>客户端发送COTP协议</li>
+<li>服务端发送TPKT</li>
+</ul>
+<p>原来是用socket编程这么简单，只需要抓wireshark，把TCP的数据封装为16进制发送出去就行了。</p>
+<p>最后的python脚本是这样的：</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+<span class="c1"># coding: utf-8</span>
+
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">binascii</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">from</span> <span class="nn">Queue</span> <span class="kn">import</span> <span class="n">Queue</span>
+
+
+<span class="k">def</span> <span class="nf">verify</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+    <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">buff</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">2048</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">buff</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">buff</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s2">&quot;[+] </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">binascii</span><span class="o">.</span><span class="n">hexlify</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="n">detect_os</span><span class="p">(</span><span class="n">binascii</span><span class="o">.</span><span class="n">hexlify</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="n">port</span><span class="p">)</span>
+        <span class="c1"># if len(binascii.hexlify(b)) == 38:</span>
+        <span class="c1">#   print &quot;[+] RDP Port is %s&quot; % port</span>
+        <span class="c1">#   sys.exit(0)</span>
+
+
+<span class="k">def</span> <span class="nf">detect_os</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;2000&quot;</span><span class="p">:</span> <span class="s2">&quot;0300000b06d00000123400&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;2003&quot;</span><span class="p">:</span> <span class="s2">&quot;030000130ed000001234000300080002000000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;2008&quot;</span><span class="p">:</span> <span class="s2">&quot;030000130ed000001234000200080002000000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;win7OR2008R2&quot;</span><span class="p">:</span> <span class="s2">&quot;030000130ed000001234000209080002000000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;2008R2DC&quot;</span><span class="p">:</span> <span class="s2">&quot;030000130ed000001234000201080002000000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;2012R2OR8&quot;</span><span class="p">:</span> <span class="s2">&quot;030000130ed00000123400020f080002000000&quot;</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="n">res</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s2">&quot;[+] Os May be: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">key</span>
+            <span class="k">print</span> <span class="s2">&quot;[+] RDP Port is </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">port</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">send_payload</span><span class="p">(</span><span class="n">sock</span><span class="p">):</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x03\x00\x00\x13\x0e\xe0\x00\x00\x00\x00\x00\x01\x00\x08\x00\x03\x00\x00\x00</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">worker</span><span class="p">():</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">q</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+        <span class="n">port</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">scan</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">q</span><span class="o">.</span><span class="n">task_done</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">scan</span><span class="p">(</span><span class="n">port</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;[+] Check Port </span><span class="si">%s</span><span class="s1"> </span><span class="se">\r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">port</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">connect_ex</span><span class="p">((</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s2">&quot;[+] Connect Success </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">port</span>
+            <span class="n">send_payload</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="n">verify</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># raise e</span>
+        <span class="k">pass</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s2">&quot;Usage: </span><span class="si">%s</span><span class="s2"> IP&quot;</span> <span class="o">%</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ip</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+    <span class="nb">map</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">,</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">3300</span><span class="p">,</span> <span class="mi">65535</span><span class="p">))</span>
+    <span class="n">threads</span> <span class="o">=</span> <span class="p">[</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">worker</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">50</span><span class="p">)]</span>
+    <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">start</span><span class="p">(),</span> <span class="n">threads</span><span class="p">)</span>
+    <span class="n">q</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre></div>
+</td></tr></table>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

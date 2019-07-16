@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>生产者消费者模型</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/producter-consumer.html" rel="bookmark"
+           title="Permalink to 生产者消费者模型">生产者消费者模型</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-12-11T00:00:00+01:00">
+                <a href='#'>12/11/2017 </a>
+                <a href="/category/learning.html">Learning</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>代码捉急,先看例子:</p>
+<div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">jianshu</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">p</span><span class="o">/</span><span class="n">d85a4329d0c2</span><span class="o">&gt;</span>
+<span class="c1">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">Queue</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="k">class</span> <span class="nc">Producter</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;生产者线程&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_name</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
+        <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">t_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+            <span class="n">randomnum</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">randomnum</span><span class="p">)</span>
+            <span class="k">print</span> <span class="s1">&#39;put num in Queue </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>  <span class="n">randomnum</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">print</span> <span class="s1">&#39;put queue done&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">ConsumeEven</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;奇数消费线程&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_name</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
+        <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">t_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">queue_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">print</span> <span class="n">e</span>
+                <span class="k">break</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="n">queue_val</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s1">&#39;Get Even Num </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="n">queue_val</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">queue_val</span><span class="p">)</span>
+
+
+<span class="n">q</span> <span class="o">=</span> <span class="n">Queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+<span class="n">pt</span> <span class="o">=</span> <span class="n">Producter</span><span class="p">(</span><span class="s1">&#39;producter&#39;</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+<span class="n">ce</span> <span class="o">=</span> <span class="n">ConsumeEven</span><span class="p">(</span><span class="s1">&#39;consumeeven&#39;</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+<span class="n">ce</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">pt</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">pt</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+<span class="n">ce</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre></div>
+
+
+<p>照着写:</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># coding: utf-8</span>
+
+<span class="kn">from</span> <span class="nn">elasticsearch</span> <span class="kn">import</span> <span class="n">Elasticsearch</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">Queue</span> <span class="kn">import</span> <span class="n">Queue</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="n">es</span> <span class="o">=</span> <span class="n">Elasticsearch</span><span class="p">(</span><span class="s1">&#39;xxxxxx:9200&#39;</span><span class="p">,</span> <span class="n">http_auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">Producter</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+        <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initime</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y.%m.</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">initsearch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">dsl_query</span> <span class="o">=</span> <span class="p">{</span>
+          <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;match&quot;</span><span class="p">:</span> <span class="p">{</span>
+              <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="s2">&quot;GET&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;phrase&quot;</span>
+              <span class="p">}</span>
+            <span class="p">}</span>
+          <span class="p">},</span>
+            <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="s2">&quot;sort&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;@timestamp&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;order&quot;</span><span class="p">:</span> <span class="s2">&quot;desc&quot;</span><span class="p">}}]</span>
+        <span class="p">}</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s2">&quot;packetbeat-&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">initime</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">dsl_query</span><span class="p">)</span>
+        <span class="n">latest_time</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;hits&#39;</span><span class="p">][</span><span class="s1">&#39;hits&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;_source&#39;</span><span class="p">][</span><span class="s1">&#39;@timestamp&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">latest_time</span>
+
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">latest_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initsearch</span><span class="p">()</span>
+        <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">lastindex</span> <span class="o">=</span> <span class="n">latest_time</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>  <span class="c1"># 获取最新的index</span>
+            <span class="n">dsl_query2</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;bool&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;must&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s2">&quot;match&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;GET&quot;</span>
+                            <span class="p">}</span>
+                        <span class="p">},</span>
+                        <span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s2">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="s2">&quot;@timestamp&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="s2">&quot;gte&quot;</span><span class="p">:</span> <span class="n">latest_time</span>
+                                <span class="p">}</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;sort&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;@timestamp&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;order&quot;</span><span class="p">:</span> <span class="s2">&quot;desc&quot;</span><span class="p">}}],</span>
+                <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">1000</span>
+            <span class="p">}</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+            <span class="n">res2</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s2">&quot;packetbeat-&quot;</span> <span class="o">+</span> <span class="n">lastindex</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">dsl_query2</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">res2</span><span class="p">[</span><span class="s1">&#39;hits&#39;</span><span class="p">][</span><span class="s1">&#39;hits&#39;</span><span class="p">]:</span>
+                <span class="c1"># print hit[&#39;_source&#39;][&#39;@timestamp&#39;], hit[&#39;_id&#39;], hit[&#39;_source&#39;][&#39;path&#39;]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">([</span><span class="n">hit</span><span class="p">[</span><span class="s1">&#39;_source&#39;</span><span class="p">][</span><span class="s1">&#39;path&#39;</span><span class="p">],</span> <span class="n">hit</span><span class="p">[</span><span class="s1">&#39;_source&#39;</span><span class="p">][</span><span class="s1">&#39;http&#39;</span><span class="p">][</span><span class="s1">&#39;request&#39;</span><span class="p">][</span><span class="s1">&#39;params&#39;</span><span class="p">],</span> <span class="n">hit</span><span class="p">[</span><span class="s1">&#39;_source&#39;</span><span class="p">][</span><span class="s1">&#39;method&#39;</span><span class="p">]])</span>
+                <span class="k">print</span> <span class="s2">&quot;Put </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">hit</span><span class="p">[</span><span class="s1">&#39;_id&#39;</span><span class="p">]</span>
+                <span class="k">print</span> <span class="n">hit</span><span class="p">[</span><span class="s1">&#39;_source&#39;</span><span class="p">][</span><span class="s1">&#39;@timestamp&#39;</span><span class="p">]</span>
+            <span class="n">latest_time</span> <span class="o">=</span> <span class="n">res2</span><span class="p">[</span><span class="s1">&#39;hits&#39;</span><span class="p">][</span><span class="s1">&#39;hits&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;_source&#39;</span><span class="p">][</span><span class="s1">&#39;@timestamp&#39;</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">Consumer</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+        <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># def http_curl(self):</span>
+    <span class="c1">#   # http_client = AsyncHTTPClient()</span>
+    <span class="c1">#   path = self.request[0]</span>
+    <span class="c1">#   param = self.request[1]</span>
+    <span class="c1">#   method = self.request[2]</span>
+    <span class="c1">#   if method == &quot;GET&quot;:</span>
+    <span class="c1">#       ##判断get的param是否是空</span>
+    <span class="c1">#       if not param:</span>
+    <span class="c1">#           pass</span>
+    <span class="c1">#       else:</span>
+    <span class="c1">#           rep = requests.get(&quot;http://xxxxxx:9999&quot; + path + &#39;?&#39; + param + &quot;union select&quot;)</span>
+    <span class="c1">#           print &quot;Curl %s&quot; % self.request</span>
+    <span class="c1">#           print rep.status_code</span>
+    <span class="c1">#   else:</span>
+    <span class="c1">#       #留着写POST请求判断</span>
+    <span class="c1">#       pass</span>
+
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">request</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">request</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">param</span> <span class="o">=</span> <span class="n">request</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">method</span> <span class="o">=</span> <span class="n">request</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;GET&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">param</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">rep</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://xxxxx:9999&quot;</span> <span class="o">+</span> <span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;?&#39;</span> <span class="o">+</span> <span class="n">param</span> <span class="o">+</span> <span class="s2">&quot;union select&quot;</span><span class="p">)</span>
+                <span class="c1">#else  写POST</span>
+                <span class="k">print</span> <span class="s2">&quot;Get </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">request</span>
+                <span class="k">print</span> <span class="n">rep</span><span class="o">.</span><span class="n">status_code</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">e</span>
+
+<span class="n">q</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+<span class="n">pt</span> <span class="o">=</span> <span class="n">Producter</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="n">ce</span> <span class="o">=</span> <span class="n">Consumer</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="n">ce</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">pt</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">pt</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+<span class="n">ce</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre></div>
+</td></tr></table>
+
+<p>代码应该还有点问题，先记录下大概的流程：</p>
+<p>使用: <code>packetbeat</code>在A服务器抓包，格式化之后把数据发送到B服务器，存储在elk里面，然后B服务器画图对这些请求进行分析，比如某个接口报警之类的。</p>
+<p>这个时候在B服务器设置一个naxsi防火墙代理，然后把es里面的输出取出来，再发送一遍给B。经过测试，虽然这样子请求大部分都是404，但是如果请求中存在恶意payload，防火墙会记录日志。（所以这里的规则要设置的特别严格，严格到每个请求都不放过）</p>
+<p>上面的脚本就是在B防火墙的转发脚本demo，测试为GET请求，因为POST请求的body没有存储到es里面，脚本的大概思路是这样的：</p>
+<div class="highlight"><pre><span></span><span class="nl">因为es里面存储的数据包是这样的格式</span><span class="p">:</span><span class="w"> </span><span class="n">packet</span><span class="o">-[</span><span class="n">year</span><span class="o">]-[</span><span class="n">days</span><span class="o">]</span><span class="w"></span>
+<span class="n">所以先得到今天的日期</span><span class="err">，</span><span class="n">随便选100条</span><span class="err">，</span><span class="n">记录最新的时间戳</span><span class="err">，</span><span class="n">此时初始化完成</span><span class="err">。</span><span class="w"></span>
+
+<span class="n">下面的请求都是基于这个时间戳来的</span><span class="err">，</span><span class="n">每隔10s</span><span class="err">，</span><span class="n">在这个时间戳的基础上</span><span class="err">，</span><span class="n">轮询请求一次es</span><span class="err">，</span><span class="n">然后组装起来发送到B服务器</span><span class="err">。</span><span class="w"></span>
+<span class="n">记录下每次请求的最新日期</span><span class="err">，</span><span class="n">然后请求这个index</span><span class="err">，</span><span class="nl">因为packet的格式</span><span class="p">:</span><span class="w"> </span><span class="n">packet</span><span class="o">-[</span><span class="n">year</span><span class="o">]-[</span><span class="n">days</span><span class="o">]</span><span class="p">,</span><span class="n">所以记录下每次请求的最新时间</span><span class="err">，</span><span class="nl">格式化抓取最新的时间</span><span class="p">:</span><span class="w"></span>
+
+<span class="n">latest_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">res2</span><span class="o">[</span><span class="n">&#39;hits&#39;</span><span class="o">][</span><span class="n">&#39;hits&#39;</span><span class="o">][</span><span class="n">0</span><span class="o">][</span><span class="n">&#39;_source&#39;</span><span class="o">][</span><span class="n">&#39;@timestamp&#39;</span><span class="o">]</span><span class="w"></span>
+
+<span class="n">当es的存储数据按照大于某个时间点去筛选的时候</span><span class="err">，</span><span class="n">只会出现匹配的时间条数</span><span class="err">，</span><span class="n">所以可以把请求的size设置得大一点</span><span class="w"></span>
+</pre></div>
+
+
+<p>暂时的问题：</p>
+<ul>
+<li>requests是同步请求库，追求效率可以使用异步请求</li>
+<li>防火墙的正则匹配如果要得到准确的请求，需要进一步修改</li>
+</ul>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

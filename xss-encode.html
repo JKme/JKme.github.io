@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>XSS编码(2)</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/xss-encode.html" rel="bookmark"
+           title="Permalink to XSS编码(2)">XSS编码(2)</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-04-12T00:00:00+02:00">
+                <a href='#'>04/12/2017 </a>
+                <a href="/category/learning.html">Learning</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <ul>
+<li><a href="http://jkme.github.io/xss-encode-decode.html">http://jkme.github.io/xss-encode-decode.html</a></li>
+<li><a href="http://joychou.org/index.php/web/domxss-cause-by-html-auto-decode.html">http://joychou.org/index.php/web/domxss-cause-by-html-auto-decode.html</a></li>
+</ul>
+<p>在前面文章里面xss的编码提到过这个东西: </p>
+<div class="highlight"><pre><span></span><span class="n">Fun</span> <span class="n">fact</span> <span class="n">Decoding</span> <span class="k">Order</span><span class="p">:</span>
+<span class="mi">1</span><span class="p">.</span> <span class="n">HTML</span> <span class="n">Decoding</span>
+<span class="mi">2</span><span class="p">.</span> <span class="n">URL</span> <span class="n">Decoding</span>
+<span class="mi">3</span><span class="p">.</span> <span class="n">Javascript</span> <span class="n">Decoding</span>
+
+<span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">slides</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">mscasharjaved</span><span class="o">/</span><span class="n">deck</span><span class="o">-</span><span class="mi">13</span><span class="o">#/</span><span class="mi">169</span>
+</pre></div>
+
+
+<p>在<strong>HTML标签里面</strong>，js之行之前，html形式的编码会自动decode。</p>
+<p>解释：</p>
+<p><code>&lt;button type="submit" onclick="x='&lt;img src=@ onerror=alert(123) /&gt;';document.write(HtmlEncode(x))"&gt;xsstest&lt;/button&gt;</code></p>
+<p>丢到test.html里面，使用浏览器打开还是原样。</p>
+<p>所以xss存在的步骤来说是这样的：
+<code>代码--&gt; 浏览器执行 --&gt; xss</code></p>
+<p>浏览器解释了其中的代码展现给人看。</p>
+<p>HTML的自动解码是在执行js代码之前，并且on*事件内可以执行js脚本，即 <strong>html解码之后才可以执行js</strong>。</p>
+<p>如下的代码先htmldecode，然后执行js，最终造成DOM Xss：</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span> <span class="na">onclick=</span><span class="s">&quot;x=&#39;&amp;lt;img src=@ onerror=alert(123) /&amp;gt;&#39;;document.write(x)&quot;</span><span class="nt">&gt;</span>xsstest2<span class="nt">&lt;/button&gt;</span>
+</pre></div>
+
+
+<p>自动解码之后的代码如下：
+<code>&lt;button type="submit" onclick="x='&lt;img src=@ onerror=alert(123) /&gt;';document.write(x)"&gt;xsstest2&lt;/button&gt;</code></p>
+<p>OK到了上面的地方，如果这里想要试用URL编码，看这里
+<a href="https://www.leavesongs.com/PENETRATION/use-location-xss-bypass.html">https://www.leavesongs.com/PENETRATION/use-location-xss-bypass.html</a>利用location变形xss代码。</p>
+<p>加个例子（快把原文的摘抄完了）:</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span> 
+<span class="nv">$para</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;category&#39;</span><span class="p">];</span>
+<span class="nv">$para</span> <span class="o">=</span> <span class="nb">htmlspecialchars</span><span class="p">(</span><span class="nv">$para</span><span class="p">,</span> <span class="nx">ENT_QUOTES</span><span class="p">);</span> <span class="c1">// 将单引号进行HTML编码</span>
+<span class="c1">//$para = urlencode($para);</span>
+<span class="nv">$url_herf</span> <span class="o">=</span> <span class="s2">&quot;http://joychou.org/?category=&quot;</span> <span class="o">.</span> <span class="nv">$para</span> <span class="p">;</span>
+<span class="cp">?&gt;</span>
+
+<span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span> <span class="na">onclick=</span><span class="s">&quot;window.location.href=&#39;</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nv">$url_herf</span><span class="p">;</span> <span class="cp">?&gt;</span><span class="s">&#39;&quot;</span><span class="nt">&gt;</span>click<span class="nt">&lt;/button&gt;</span>
+</pre></div>
+
+
+<p>POC:
+<code>http://localhost/pentest/xss/domxss/onclick.php?category=web'-alert(1)-'</code></p>
+<p>上面代码进去之后，结果会是这样的:</p>
+<p><code>&lt;button type="submit" onclick="window.location.href='http://joychou.org/?category=web&amp;#039;-alert(1)-&amp;#039;'"&gt;click&lt;/button&gt;</code></p>
+<p>减号是一个操作符，在js里面，减号两边的表达式都会执行，最后产生一个domxss。</p>
+<p>一般来说xss的防御就是在前端或者后端统一对输出进行html编码，但是不管前端还是后端统一做HTML编码，都会存在这样一个问题：如果编码之后的变量赋值在可执行的javascript的html tag中，会导致domxss。</p>
+<p>作者给出了两种修复方式：</p>
+<ul>
+<li>进行URL编码（不影响显示的情况)</li>
+<li>针对变量值的范围做具体的限制（比如value的白名单，value长度，value类型)</li>
+</ul>
+<p><a href="http://joychou.org/index.php/web/domxss-cause-by-html-auto-decode.html">http://joychou.org/index.php/web/domxss-cause-by-html-auto-decode.html</a></p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

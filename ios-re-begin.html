@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>IOS逆向入门</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/ios-re-begin.html" rel="bookmark"
+           title="Permalink to IOS逆向入门">IOS逆向入门</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-02-02T00:00:00+01:00">
+                <a href='#'>02/02/2017 </a>
+                <a href="/category/pwn.html">PWN</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>最后找到了加密的秘钥，找到之后发现整个流程好简单。之前找不到首先不熟悉Object-C的语法，其次就是arm指令，记录如下：</p>
+<h2>0x01 工具</h2>
+<p>首先是要用到的工具，中间主要用了ida，hopper和lldb</p>
+<ul>
+<li>dumpdecrypted: 将苹果加密过的app砸壳</li>
+<li>class-dump: 导出MachO文件里ObjC类及方法定义</li>
+<li>CydiaSubstrate: 将第三方动态库注入进程</li>
+<li>Cycript: 用js语法写ObjC方法</li>
+<li>Theos: 越狱插件开发工具</li>
+<li>IDA: 反汇编、反编译工具</li>
+<li>Hopper: OSX反汇编、反编译工具</li>
+<li>Debugserver + LLDB: 动态调试器</li>
+</ul>
+<h2>0x02 ARM指令</h2>
+<div class="highlight"><pre><span></span><span class="nv">arm</span>是<span class="nv">RISC</span>结构，数据从内存到<span class="nv">CPU</span>之间移动只能通过<span class="nv">L</span><span class="o">/</span><span class="nv">S</span>指令来完成，就是<span class="nv">ldr</span><span class="o">/</span><span class="nv">str</span>指令
+<span class="nv">ldr</span> 把数据从内存移到<span class="nv">cpu</span>
+<span class="nv">str</span> 把<span class="nv">cpu</span>的数据数据转移到内存
+<span class="nv">lldb</span>读取内存的数据，<span class="nv">memory</span> <span class="nv">read</span> <span class="o">&lt;</span><span class="nv">start</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="k">end</span><span class="o">&gt;</span>
+<span class="nv">ldr</span> <span class="nv">r0</span>, <span class="mi">0</span><span class="nv">x12345678</span>   <span class="o">//</span>把<span class="mi">0</span><span class="nv">x12345678</span>这个地址中的值存放到<span class="nv">r0</span>中
+<span class="nv">ldr</span> <span class="nv">r0</span>, <span class="o">=</span><span class="mi">0</span><span class="nv">x12345678</span>  <span class="o">//</span>把<span class="mi">0</span><span class="nv">x12345678</span>这个地址写到<span class="nv">r0</span>中
+例子：
+<span class="nv">COUNT</span> <span class="nv">EQU</span> <span class="mi">0</span><span class="nv">x40003100</span> <span class="o">//</span>定义一个<span class="nv">COUNT</span>变量，地址是<span class="mi">0</span><span class="nv">x40003100</span>
+...
+<span class="nv">LDR</span> <span class="nv">R1</span>,<span class="o">=</span><span class="nv">COUNT</span>       <span class="o">//</span>将<span class="nv">COUNT</span>这个变量的地址，也就是<span class="mi">0</span><span class="nv">x40003100</span>放到<span class="nv">R1</span>中
+<span class="nv">MOV</span> <span class="nv">R0</span>,<span class="sc">#0</span>           <span class="o">//</span>将立即数<span class="mi">0</span>放到<span class="nv">R0</span>中
+<span class="nv">STR</span> <span class="nv">R0</span>,[<span class="nv">R1</span>]         <span class="o">//</span>将<span class="nv">R0</span>中的值放到以<span class="nv">R1</span>中的值为地址的存储单元去
+
+
+
+
+<span class="nv">B</span> 跳转指令
+<span class="nv">BL</span> 带返回的跳转指令
+<span class="nv">BLX</span> 带返回和状态切换的跳转指令
+<span class="nv">BX</span>  带状态切换的跳转指令
+
+<span class="nv">BLX</span>指令从<span class="nv">ARM</span>指令集跳转到指令中所指定的目标地址，并将处理器的工作状态从<span class="nv">ARM</span>切换到<span class="nv">Thumb</span>状态，该指令同时将<span class="nv">PC</span>的当前内容保存到寄存器<span class="nv">R14</span>，因此，当子程序使用<span class="nv">Thumb</span>指令集，而调用者者使用<span class="nv">ARM</span>指令集，可以通过<span class="nv">BLX</span>指令实现子程序的调用和处理器工作状态切换，同时，子程序的返回可以通过将寄存器<span class="nv">R14</span>的值复制到<span class="nv">PC</span>中来完成。
+　<span class="nv">R0</span><span class="o">-</span><span class="nv">R3</span>:　　　　　　　　用于函数参数及返回值的传递，超过<span class="mi">4</span>个参数，其它参数存在栈中，在<span class="nv">ARM</span>中栈是向下生长的，<span class="nv">R0</span>还可以作为返回值。
+　　<span class="nv">R4</span><span class="o">-</span><span class="nv">R6</span>, <span class="nv">R8</span>, <span class="nv">R10</span><span class="o">-</span><span class="nv">R11</span>:　没有特殊规定，就是普通的通用寄存器
+　　<span class="nv">R7</span>:　　　　　　　　　　栈帧指针，指向母函数与被调用子函数在栈中的交界。
+　　<span class="nv">R9</span>:　　　　　　　　　　在<span class="nv">iOS3</span>.<span class="mi">0</span>被操作系统保留
+　　<span class="nv">R12</span>:　　　　　　　　　 内部过程调用寄存器，动态链接时会用到，不必深究
+　　<span class="nv">R13</span>:　　　　　　　　　 <span class="nv">SP</span><span class="ss">(</span><span class="nv">stack</span> <span class="nv">pointer</span><span class="ss">)</span>，是栈顶指针
+　　<span class="nv">R14</span>:　　　　　　　　　 <span class="nv">LR</span><span class="ss">(</span><span class="nv">link</span> <span class="nv">register</span><span class="ss">)</span>，存放函数的返回地址。
+　　<span class="nv">R15</span>:　　　　　　　　　 <span class="nv">PC</span><span class="ss">(</span><span class="nv">program</span> <span class="nv">counter</span><span class="ss">)</span>，指向当前指令地址。
+<span class="nv">ADC</span> 　　 带进位的加法
+　　<span class="nv">ADD</span> 　　 加法
+　　<span class="nv">AND</span> 　　 逻辑与
+　　<span class="nv">B</span> 　　　  分支跳转，很少单独使用
+　　<span class="nv">BL</span>          分支跳转，跳转后返回地址存入<span class="nv">r14</span>
+　　<span class="nv">BX</span>          分支跳转，并切换指令模式（<span class="nv">Thumb</span><span class="o">/</span><span class="nv">ARM</span>）
+　　<span class="nv">CMP</span>        比较值，结果存在程序状态寄存器，一般用于分支判断
+　　<span class="nv">BEQ</span>        结果为<span class="mi">0</span>则跳转
+　　<span class="nv">BNE</span>        结果不为<span class="mi">0</span>跳转
+　　<span class="nv">LDR</span>        加载寄存器，从内存加载到寄存器
+　　<span class="nv">LDRB</span>      装载字节到寄存器
+　　<span class="nv">LDRH</span>      装载半字到寄存器（一个字是<span class="mi">32</span>位）
+　　<span class="nv">LSL</span>         逻辑左移 这是一个选项，不是指令
+　　<span class="nv">LSR</span>         逻辑右移 这是一个选项，不是指令
+　　<span class="nv">MOV</span>        传送值<span class="o">/</span>寄存器到一个寄存器 
+　　<span class="nv">STR</span>         存储一个寄存器，寄存器值存到内存
+　　<span class="nv">STRB</span>       存储一个字节
+　　<span class="nv">STRH</span>       存储一个半字
+　　<span class="nv">SUB</span>         减法
+　　<span class="nv">PUSH</span> <span class="nv">POP</span> 堆栈操作
+
+有时候需要
+
+<span class="nv">db</span>  ；定义字节类型变量，一个字节数据占一个字节单元，读完一个偏移量加<span class="mi">1</span>
+<span class="nv">dw</span>  ；定义字类型变量，一个字数据占<span class="mi">2</span>个字节单元，读完一个，偏移量加<span class="mi">2</span>
+<span class="nv">dd</span>  ；定义双字类型变量，一个双字数据占<span class="mi">4</span>个字节单元，读完一个，偏移量加<span class="mi">4</span>
+
+<span class="nv">IDA</span>给某个位置命名的时，它会使用该位置的虚拟地址和表示一个该地址的类型的前缀进行命名：
+<span class="nv">sub_xxx</span>  ；地址<span class="nv">xxx</span>处的子例程
+<span class="nv">loc_xxx</span>  ；地址<span class="nv">xxx</span>处的一个指令
+<span class="nv">byte_xxx</span> ；位置<span class="nv">xxx</span>处的<span class="mi">8</span>位数据
+<span class="nv">word_xxx</span> <span class="c1">;位置xxx处的16位数据</span>
+<span class="nv">dword_xxx</span> <span class="c1">;位置xxx处的32位数据</span>
+<span class="nv">unk_xxx</span>   <span class="c1">;位置xxx处大小未知的数据</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="err">关于</span><span class="n">sp</span><span class="err">，</span><span class="n">bp等栈寄存器的解释</span><span class="err">：</span>
+<span class="n">SP</span> <span class="k">is</span> <span class="n">stack</span> <span class="n">pointer</span><span class="p">.</span> <span class="n">The</span> <span class="n">stack</span> <span class="k">is</span> <span class="n">generally</span> <span class="n">used</span> <span class="k">to</span> <span class="k">hold</span> <span class="ss">&quot;automatic&quot;</span> <span class="n">variables</span> <span class="k">and</span> <span class="n">context</span><span class="o">/</span><span class="k">parameters</span> <span class="n">across</span> <span class="k">function</span> <span class="n">calls</span><span class="p">.</span> <span class="n">Conceptually</span> <span class="n">you</span> <span class="n">can</span> <span class="n">think</span> <span class="k">of</span> <span class="n">the</span> <span class="ss">&quot;stack&quot;</span> <span class="k">as</span> <span class="n">a</span> <span class="n">place</span> <span class="k">where</span> <span class="n">you</span> <span class="ss">&quot;pile&quot;</span> <span class="n">your</span> <span class="k">data</span><span class="p">.</span> <span class="n">You</span> <span class="n">keep</span> <span class="ss">&quot;stacking&quot;</span> <span class="n">one</span> <span class="n">piece</span> <span class="k">of</span> <span class="k">data</span> <span class="n">over</span> <span class="n">the</span> <span class="n">other</span> <span class="k">and</span> <span class="n">the</span> <span class="n">stack</span> <span class="n">pointer</span> <span class="n">tells</span> <span class="n">you</span> <span class="n">how</span> <span class="ss">&quot;high&quot;</span> <span class="n">your</span> <span class="ss">&quot;stack&quot;</span> <span class="k">of</span> <span class="k">data</span> <span class="k">is</span><span class="p">.</span> <span class="n">You</span> <span class="n">can</span> <span class="n">remove</span> <span class="k">data</span> <span class="k">from</span> <span class="n">the</span> <span class="ss">&quot;top&quot;</span> <span class="k">of</span> <span class="n">the</span> <span class="ss">&quot;stack&quot;</span> <span class="k">and</span> <span class="n">make</span> <span class="n">it</span> <span class="n">shorter</span><span class="p">.</span>
+
+
+<span class="o">&lt;</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="p">.</span><span class="n">zybuluo</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">oro</span><span class="o">-</span><span class="n">oro</span><span class="o">/</span><span class="n">note</span><span class="o">/</span><span class="mi">137244</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">cryptroix</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="mi">2016</span><span class="o">/</span><span class="mi">10</span><span class="o">/</span><span class="mi">16</span><span class="o">/</span><span class="n">journey</span><span class="o">-</span><span class="k">to</span><span class="o">-</span><span class="n">the</span><span class="o">-</span><span class="n">stack</span><span class="o">/&gt;</span>
+<span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">en</span><span class="p">.</span><span class="n">citizendium</span><span class="p">.</span><span class="n">org</span><span class="o">/</span><span class="n">wiki</span><span class="o">/</span><span class="n">Stack_frame</span><span class="o">&gt;</span>
+<span class="err">虽然是英文，但是看起来要比中文易懂</span>
+</pre></div>
+
+
+<p>ida里面有三种颜色的箭头:
+1. 蓝色，顺序执行
+2. 绿色，条件为(YES)
+3. 红色，条件为（NO）</p>
+<h2>0x03 lldb使用方法</h2>
+<div class="highlight"><pre><span></span><span class="nv">lldb</span>操作相关指令
+<span class="nv">image</span> <span class="nv">list</span> <span class="o">-</span><span class="nv">o</span> <span class="o">-</span><span class="nv">f</span> 查看进程在虚拟内存中相对模块基地址
+<span class="nv">br</span> <span class="nv">s</span> <span class="o">-</span><span class="nv">a</span> [<span class="nv">addr</span>]  打断点
+<span class="nv">breakpoint</span> <span class="nv">delete</span> <span class="o">&lt;</span><span class="nv">breakpoint</span><span class="o">&gt;</span> 删除断点
+<span class="nv">s</span><span class="o">/</span><span class="nv">n</span>  是针对源代码
+<span class="nv">br</span> <span class="nv">list</span> 列出所有断点
+<span class="nv">br</span> <span class="nv">dis</span> <span class="mi">1</span>  禁用序号为<span class="mi">1</span>的断点
+<span class="nv">jump</span> <span class="o">&lt;</span><span class="nv">address</span><span class="o">&gt;</span> 跳转到新地址
+
+<span class="nv">ni</span>   断点的单步之行, <span class="nv">netxi</span><span class="ss">(</span><span class="k">next</span> <span class="nv">instruction</span>简写:<span class="nv">ni</span><span class="ss">)</span>
+<span class="nv">si</span>   <span class="nv">stepi</span><span class="ss">(</span><span class="nv">step</span> <span class="nv">instruction</span> 简写:<span class="nv">si</span><span class="ss">)</span>
+<span class="nv">display</span> <span class="o">/</span><span class="mi">10</span><span class="nv">i</span> $<span class="nv">pc</span><span class="o">-</span><span class="mi">16</span>  显示当前<span class="nv">PC</span>附近的<span class="mi">10</span>条指令
+
+<span class="nv">si</span>会进入函数之行，<span class="nv">ni</span>执行完但是不会进入函数内，执行过程中可以利用<span class="nv">display</span> <span class="o">/</span><span class="nv">i</span> $<span class="nv">pc</span>来看下一个执行的<span class="nv">instruction</span>是什么
+
+<span class="nv">c</span>  放开执行该断点
+<span class="nv">p</span>  输出某个寄存器的值
+<span class="nv">p</span> $<span class="nv">r0</span>  输出寄存器的内容
+也可以将一个地址所存放的值进行打印
+<span class="nv">p</span><span class="o">/</span><span class="nv">x</span> $<span class="nv">sp</span> 就是输出$<span class="nv">sp</span>指针所指的地址处存放的值，以<span class="mi">16</span>进制表示
+<span class="nv">po</span> <span class="ss">(</span><span class="nv">char</span> <span class="o">*</span><span class="ss">)</span>$<span class="nv">r2</span>   <span class="nv">po</span>打印<span class="nv">Object</span><span class="o">-</span><span class="nv">C</span>对象
+<span class="nv">register</span> <span class="nv">read</span> <span class="o">--</span><span class="nv">all</span>  读取所有的寄存器内容
+<span class="nv">thread</span> <span class="nv">list</span> ／／打印所有线程
+<span class="nv">thread</span> <span class="nv">select</span>  ／／跳到某个线程
+<span class="nv">thread</span> <span class="nv">info</span> ／／输出当前线程信息
+<span class="nv">frame</span> <span class="nv">variable</span>  ／／打印当前栈所有变量
+<span class="nv">frame</span> <span class="nv">variable</span> <span class="s1">&#39;</span><span class="s">变量名</span><span class="s1">&#39;</span> ／／打印某个变量
+<span class="nv">frame</span> <span class="nv">info</span> 查看当前帧栈信息
+<span class="nv">frame</span> <span class="nv">select</span> 跳到指定帧栈
+</pre></div>
+
+
+<p><img alt="" src="https://images2015.cnblogs.com/blog/545446/201608/545446-20160803092245918-95608722.png">
+<img alt="" src="https://images2015.cnblogs.com/blog/545446/201608/545446-20160803092702793-231598231.png"></p>
+<p>frida的常见用法：
+* hook函数(IOS中theos具备的功能）
+* 记录函数执行日至(IOS中theos具备的功能）
+* 调用函数（IOS中cycript具备的功能）
+* 读写内存（类似调试器的功能）</p>
+<p>lldb:
+* lldb在object-c类对象所有函数设置断点: <code>breakpoint set -r '\[ClassName .*\]$'</code></p>
+<p>常用：</p>
+<div class="highlight"><pre><span></span><span class="n">breakpoint</span> <span class="n">set</span> <span class="o">--</span><span class="n">name</span> <span class="o">&lt;</span><span class="n">method</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+    <span class="s">&quot;set a breakpoint on a given function name, globally. eg.</span>
+     <span class="n">breakpoint</span> <span class="n">set</span> <span class="o">--</span><span class="n">name</span> <span class="n">viewDidLoad</span>
+     <span class="n">or</span>
+     <span class="n">breakpoint</span> <span class="n">set</span> <span class="o">--</span><span class="n">name</span> <span class="s">&quot;-[UIView setFrame:]&quot;</span>
+
+<span class="k">break</span> <span class="n">set</span> <span class="o">--</span><span class="n">selector</span> <span class="o">&lt;</span><span class="n">selector</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+    <span class="s">&quot;set a breakpoint on a selector, globally. e.g.,</span>
+    <span class="n">breakpoint</span> <span class="n">set</span> <span class="o">--</span><span class="n">selector</span> <span class="n">dealloc</span>
+<span class="n">bt</span>  <span class="c1">//查看堆栈</span>
+<span class="n">frame</span> <span class="n">select</span> <span class="o">&lt;</span><span class="n">framenum</span><span class="o">&gt;</span>
+<span class="kr">thread</span> <span class="n">list</span> 
+<span class="n">expression</span> <span class="err">$</span><span class="n">r6</span> <span class="c1">//查看r6寄存器的值</span>
+<span class="mf">1.</span> <span class="err">加参数可以更改显示方式，如</span><span class="o">/</span><span class="n">x十六进制打印</span>
+<span class="mf">2.</span> <span class="n">po一般用作查看对象信息</span>
+<span class="mf">3.</span> <span class="n">po的命令是</span><span class="err">“</span><span class="n">expression</span> <span class="o">-</span><span class="n">O</span> <span class="o">-</span><span class="s">&quot;命令的别名</span>
+
+<span class="err">第一次使用</span><span class="n">malloc_info需要在lld里面导入lldb</span><span class="p">.</span><span class="n">macosx</span><span class="p">.</span><span class="n">heap</span>
+<span class="n">malloc_info</span> <span class="o">-</span><span class="n">s</span> <span class="o">&lt;</span><span class="n">address</span><span class="o">&gt;</span>
+<span class="n">memory</span> <span class="n">read</span> <span class="o">&lt;</span><span class="n">start_address</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">end_address</span><span class="o">&gt;</span> <span class="err">读取内存的值</span>
+</pre></div>
+
+
+<h3>0x04 Hopper基本使用</h3>
+<p>hopper和LLDB所选择的ARM架构位数得一致，要么是32位，要么都是64位，计算公式：
+hopper里面显示的都是"模块偏移前基地址",而lldb要操作的都是"模块偏移后的基地址"，所以从hopper到lldb要做一个地址偏移量的转换。</p>
+<div class="highlight"><pre><span></span><span class="err">偏移后模块基地址</span> <span class="err">＝</span>  <span class="err">偏移前模块地址</span> <span class="o">+</span> <span class="n">ALSR</span>
+</pre></div>
+
+
+<p>偏移前地址从Hopper看:</p>
+<p><img alt="" src="https://upload-images.jianshu.io/upload_images/1584204-69b7b8c603bc3d25.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700"></p>
+<p>ALSR偏移地址从LLDB看:</p>
+<p><img alt="" src="https://upload-images.jianshu.io/upload_images/1584204-3140f0b7d73ad6b2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700"></p>
+<p>由上图可知ASLR偏移：30000
+偏移后基地址为：34000</p>
+<p>(从hopper的login搜索找到方法［WCAccountPhoneLoginControlLogic initWithData:]：
+查看偏移基地址：
+<img alt="" src="https://upload-images.jianshu.io/upload_images/1584204-b0503afcf07798ad.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700">
+则偏移后的地址： 14B6A66 + 30000 = 14E6A66
+设置断点动态调试，使用：</p>
+<div class="highlight"><pre><span></span><span class="n">br</span> <span class="n">s</span> <span class="o">-</span><span class="n">a</span> <span class="mi">0</span><span class="n">x</span> <span class="mi">14</span><span class="n">E6A66</span>
+</pre></div>
+
+
+<h3>0x05 Cycript</h3>
+<p>安装Cycript</p>
+<div class="highlight"><pre><span></span><span class="n">dpkg</span> <span class="o">-</span><span class="n">i</span> <span class="n">cycript_0</span><span class="p">.</span><span class="mi">9</span><span class="p">.</span><span class="mi">461</span><span class="n">_iphoneos</span><span class="o">-</span><span class="n">arm</span><span class="p">.</span><span class="n">deb</span>  
+<span class="n">dpkg</span> <span class="o">-</span><span class="n">i</span> <span class="n">libffi_1</span><span class="o">-</span><span class="mi">3</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">10</span><span class="o">-</span><span class="mi">5</span><span class="n">_iphoneos</span><span class="o">-</span><span class="n">arm</span><span class="p">.</span><span class="n">deb</span> 
+
+<span class="n">cycript</span> <span class="o">-</span><span class="n">p</span> <span class="o">&lt;</span><span class="n">pid</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>步骤：</p>
+<p>安装cydia之后的ssh，然后mac本机：</p>
+<div class="highlight"><pre><span></span><span class="n">brew</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="n">usbmuxd</span><span class="w"> </span>
+<span class="n">iproxy</span><span class="w"> </span><span class="mi">2222</span><span class="w"> </span><span class="mi">22</span><span class="w">   </span><span class="o">//</span><span class="n">iphone的22端口转发到本机的2222</span><span class="w"></span>
+<span class="n">ssh</span><span class="w"> </span><span class="n">root</span><span class="nv">@localhost</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="mi">2222</span><span class="w">  </span><span class="o">//</span><span class="n">默认密码</span><span class="w"> </span><span class="n">alpine</span><span class="w"></span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="nl">cycript</span><span class="p">:</span>
+<span class="p">[</span><span class="n">UIApp</span> <span class="n">description</span><span class="p">]</span>
+<span class="p">[[</span><span class="n">UIApp</span> <span class="n">keyWindow</span><span class="p">]</span> <span class="n">recursiveDescription</span><span class="p">].</span><span class="n">toString</span><span class="p">()</span> <span class="c1">//输出如下</span>
+<span class="o">&lt;</span><span class="nl">UIView</span><span class="p">:</span> <span class="mh">0x18b1bd60</span><span class="p">;</span> <span class="n">frame</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span> <span class="mi">0</span><span class="p">;</span> <span class="mi">20</span> <span class="mi">50</span><span class="p">);</span> <span class="n">layer</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nl">CALayer</span><span class="p">:</span> <span class="mh">0x18b1be20</span><span class="o">&gt;&gt;</span>
+   <span class="o">|</span>    <span class="o">|</span>    <span class="o">|</span>    <span class="o">|</span>    <span class="o">|</span>    <span class="o">|</span>    <span class="o">|</span>    <span class="o">|</span>    <span class="o">|</span> <span class="o">&lt;</span><span class="nl">UIImageView</span><span class="p">:</span> <span class="mh">0x18b1bf90</span><span class="p">;</span> <span class="n">frame</span> <span class="o">=</span> <span class="p">(</span><span class="mi">30</span> <span class="mf">13.5</span><span class="p">;</span> <span class="mi">10</span> <span class="mi">10</span><span class="p">);</span> <span class="n">opaque</span> <span class="o">=</span> <span class="nb">NO</span><span class="p">;</span> <span class="n">userInteractionEnabled</span> <span class="o">=</span> <span class="nb">NO</span><span class="p">;</span> <span class="n">layer</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nl">CALayer</span><span class="p">:</span> <span class="mh">0x18b1b5f0</span><span class="o">&gt;&gt;</span>
+   <span class="o">|</span>    <span class="o">|</span>    <span class="o">|</span>    <span class="o">|</span>    <span class="o">|</span>    <span class="o">|</span>    <span class="o">|</span>    <span class="o">|</span>    <span class="o">|</span> <span class="o">&lt;</span><span class="nl">UITableViewLabel</span><span class="p">:</span> <span class="mh">0x18b1c070</span><span class="p">;</span> <span class="n">frame</span> <span class="o">=</span> <span class="p">(</span><span class="mi">44</span> <span class="mi">10</span><span class="p">;</span> <span class="mi">218</span> <span class="mi">17</span><span class="p">);</span> <span class="n">text</span> <span class="o">=</span> <span class="err">&#39;</span><span class="bp">UIView</span><span class="err">&#39;</span><span class="p">;</span> <span class="n">userInteractionEnabled</span> <span class="o">=</span> <span class="nb">NO</span><span class="p">;</span> <span class="n">layer</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nl">_UILabelLayer</span><span class="p">:</span> <span class="mh">0x18b1c190</span><span class="o">&gt;&gt;</span>
+
+
+<span class="c1">//查看某个UI：</span>
+<span class="p">[</span><span class="err">#</span><span class="mh">0x18b1c070</span> <span class="n">_ivarDescription</span><span class="p">].</span><span class="n">toString</span><span class="p">()</span>
+<span class="p">[</span><span class="err">#</span><span class="mh">0x15baf520</span> <span class="n">nextResponder</span><span class="p">]</span> <span class="err">某个地址的调用方法</span>
+
+<span class="p">[[</span><span class="n">UIApp</span> <span class="n">keyWindow</span><span class="p">]</span> <span class="n">_autolayoutTrace</span><span class="p">].</span><span class="n">toString</span><span class="p">()</span>
+<span class="c1">//choose传递一个类，可以在内存中找出属于这个类的对象</span>
+<span class="err">／／输出对象的属性：</span>
+<span class="err">方法</span><span class="mi">1</span><span class="err">：</span> <span class="err">简单基本获取方法。</span>
+<span class="o">*</span><span class="n">controller</span><span class="err">（直接在对象前面加个</span><span class="o">*</span><span class="err">）</span>
+
+<span class="err">方法</span><span class="mi">2</span><span class="err">：方法一无法获取，就使用方法</span><span class="mi">2</span>
+<span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="k">in</span> <span class="o">*</span><span class="n">UIApp</span><span class="p">)]</span>
+
+<span class="err">方法</span><span class="mi">3</span><span class="err">：建议方法三，方法三能获取到更多</span>
+<span class="n">function</span> <span class="n">tryPrintIvars</span><span class="p">(</span><span class="n">a</span><span class="p">){</span> <span class="n">var</span> <span class="n">x</span><span class="o">=</span><span class="p">{};</span> <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="k">in</span> <span class="o">*</span><span class="n">a</span><span class="p">){</span> <span class="n">try</span><span class="p">{</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">)[</span><span class="n">i</span><span class="p">];</span> <span class="p">}</span> <span class="n">catch</span><span class="p">(</span><span class="n">e</span><span class="p">){}</span> <span class="p">}</span> <span class="k">return</span> <span class="n">x</span><span class="p">;</span> <span class="p">}</span>
+
+
+
+<span class="n">function</span> <span class="n">printMethods</span><span class="p">(</span><span class="n">className</span><span class="p">,</span> <span class="n">isa</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">var</span> <span class="n">count</span> <span class="o">=</span> <span class="n">new</span> <span class="n">new</span> <span class="n">Type</span><span class="p">(</span><span class="s">&quot;I&quot;</span><span class="p">);</span>
+  <span class="n">var</span> <span class="n">classObj</span> <span class="o">=</span> <span class="p">(</span><span class="n">isa</span> <span class="o">!=</span> <span class="n">undefined</span><span class="p">)</span> <span class="o">?</span> <span class="n">objc_getClass</span><span class="p">(</span><span class="n">className</span><span class="p">)</span><span class="o">-&gt;</span><span class="nl">isa</span> <span class="p">:</span> <span class="n">objc_getClass</span><span class="p">(</span><span class="n">className</span><span class="p">);</span>
+  <span class="n">var</span> <span class="n">methods</span> <span class="o">=</span> <span class="n">class_copyMethodList</span><span class="p">(</span><span class="n">classObj</span><span class="p">,</span> <span class="n">count</span><span class="p">);</span>
+  <span class="n">var</span> <span class="n">methodsArray</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="k">for</span><span class="p">(</span><span class="n">var</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="o">*</span><span class="n">count</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">var</span> <span class="n">method</span> <span class="o">=</span> <span class="n">methods</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="n">methodsArray</span><span class="p">.</span><span class="n">push</span><span class="p">({</span><span class="nl">selector</span><span class="p">:</span><span class="n">method_getName</span><span class="p">(</span><span class="n">method</span><span class="p">),</span> <span class="nl">implementation</span><span class="p">:</span><span class="n">method_getImplementation</span><span class="p">(</span><span class="n">method</span><span class="p">)});</span>
+  <span class="p">}</span>
+  <span class="n">free</span><span class="p">(</span><span class="n">methods</span><span class="p">);</span>
+  <span class="k">return</span> <span class="n">methodsArray</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="n">cycript</span> <span class="o">-</span><span class="n">p</span> <span class="n">Springboard</span> <span class="err">或</span> <span class="n">cycript</span> <span class="o">-</span><span class="n">p</span> <span class="n">pid</span>
+
+<span class="cp">#在内存中找一个MD5Signater类的实例对象</span>
+<span class="n">choose</span><span class="p">(</span><span class="n">MD5Signater</span><span class="p">)</span>
+
+<span class="cp">#调用0x166b4fb0处的对象的show函数</span>
+<span class="err">［#</span><span class="mh">0x166b4fb0</span> <span class="n">show</span><span class="p">]</span>
+
+<span class="cp">#对show函数传入参数3344</span>
+<span class="p">[</span><span class="err">#</span><span class="mh">0x166b4fb0</span> <span class="nl">show</span><span class="p">:</span><span class="mi">3344</span><span class="p">]</span>
+
+<span class="cp">#新建一个MD5Signater类的实例，并调用它的setSecret函数，传入参数1</span>
+<span class="n">obj</span> <span class="o">=</span> <span class="p">[</span><span class="n">MD5Signater</span> <span class="n">alloc</span><span class="p">]</span>
+<span class="p">[</span><span class="err">#</span><span class="mh">0x146f1a30</span> <span class="nl">setSecret</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="err">在</span><span class="n">Objective</span><span class="o">-</span><span class="n">C中</span><span class="err">，［</span><span class="n">someObject</span> <span class="n">somemethod</span><span class="p">]</span><span class="err">的底层实现，实际上是</span><span class="n">objc_msgSend</span><span class="err">（</span><span class="n">someObject</span><span class="p">,</span><span class="n">someMethod</span><span class="err">）</span><span class="p">,</span><span class="err">其中前一个是</span><span class="n">Objective</span><span class="o">-</span><span class="n">C对象</span><span class="err">，后者则可以强制转换成一个字符串。</span>
+</pre></div>
+
+
+<h3>0x06 调试流程</h3>
+<p>如果要使用lldb调试越狱设备上的进程，需要先将connect的端口映射到本地，以1234端口为例：</p>
+<div class="highlight"><pre><span></span><span class="nv">iproxy</span> <span class="mi">1234</span> <span class="mi">1234</span>
+然后打开<span class="nv">lldb</span>，输入以下命令：
+<span class="nv">process</span> <span class="k">connect</span> <span class="k">connect</span>:<span class="o">//</span><span class="nv">localhost</span>:<span class="mi">1234</span>
+连接越狱设备，输入：
+<span class="nv">debugserver</span> <span class="o">*</span>:<span class="mi">1234</span> <span class="o">-</span><span class="nv">a</span> <span class="o">&lt;</span><span class="nv">pid</span><span class="o">&gt;</span>
+只要越狱设备上的<span class="nv">debugserver</span>（重签名过的）正常运行，就可以通过<span class="nv">lldb</span>进行远程调试
+</pre></div>
+
+
+<p>越狱设备第一次连接xcode的时候会在/Developer/usr/bin目录下生成一个debugserver，这个debugserver在ios里面运行会失败需要使用ldid签名，需要两个东西：</p>
+<ul>
+<li>
+<p>ldid   <a href="http://7xibfi.com1.z0.glb.clouddn.com/uploads/default/668/c134605bb19a433f.xml">http://7xibfi.com1.z0.glb.clouddn.com/uploads/default/668/c134605bb19a433f.xml</a></p>
+</li>
+<li>
+<p>xml（文件） <a href="http://joedj.net/ldid">http://joedj.net/ldid</a></p>
+</li>
+</ul>
+<p>xml文件保存为<code>ent.xml</code>，然后签名：</p>
+<p><code>ldid -Sent.xml debugserver</code>
+ 然后回传到ios上面即可，使用wget或者scp（scp失败，这里是用的是wget）</p>
+<p><code>debugserver 0.0.0.0:1234 "SpringBoard"
+ (lldb)process connect connect://&lt;ios&gt;:&lt;port&gt;</code></p>
+<h3>Object-C 的一些基础知识</h3>
+<p>在Objective-C中的“方法调用”其实应该叫做消息传递。
+以objc_msgSend函数为例子，</p>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="n">person</span> <span class="n">sayHello</span><span class="p">]</span> 
+<span class="err">可以解释为调用</span><span class="n">person对象的sayHello方法</span><span class="err">，但是如果从</span><span class="n">Object</span><span class="o">-</span><span class="n">C的Runtime角度来说</span><span class="err">，这个代码世纪是在发送一个消息，这个代码，编译器时机会将它转换成这样一个函数调用：</span>
+<span class="n">objc_msgSend</span><span class="p">(</span><span class="n">person</span><span class="p">,</span><span class="k">@selector</span><span class="p">(</span><span class="n">sayHello</span><span class="p">))</span>
+</pre></div>
+
+
+<p>第一个参数是要发送消息的实例，也就是person对象。objc_msgSend会先查询它的methodList方法列表，使用第二个参数sayHello</p>
+<div class="highlight"><pre><span></span><span class="err">苹果文档这样写的</span>
+<span class="n">id</span> <span class="n">objc_msgSend</span><span class="p">(</span><span class="n">id</span> <span class="k">self</span><span class="p">,</span> <span class="n">SEL</span> <span class="n">_cmd</span><span class="p">,</span> <span class="p">...)</span>
+</pre></div>
+
+
+<p>将一个消息发送给一个对象，并且返回一个值。其中，self是消息的接受者，_cmd是selector，... 是可变参数列表。</p>
+<p>在现代操作系统中，一个线程会被分配一个stack，当一个函数被调用，一个stack frame（帧栈)就会被压到stack里，里面包含这个函数设计的参数，局部变量，返回地址等相关信息。当函数返回这个帧栈之后，这个帧栈就会被销毁。</p>
+<div class="highlight"><pre><span></span><span class="nt">-</span> <span class="o">(</span><span class="nt">double</span><span class="o">)</span><span class="nt">pi</span><span class="o">;</span>
+
+ <span class="nt">方法名就是pi</span>
+
+<span class="nt">-</span> <span class="o">(</span><span class="nt">int</span><span class="o">)</span><span class="nt">square</span><span class="o">:(</span><span class="nt">int</span><span class="o">)</span><span class="nt">num</span><span class="o">;</span>
+
+ <span class="nt">带参数的方法名有点特殊</span><span class="err">，</span><span class="nt">冒号后面一定是参数</span><span class="err">，</span><span class="nt">可以理解为</span><span class="err">，</span><span class="nt">有几个冒号就有几个参数</span><span class="err">，</span><span class="nt">把空格后面到参数前面的内容拼起来就是方法名</span><span class="err">。</span><span class="nt">所以这个方法名是square</span><span class="o">:</span><span class="err">（</span><span class="nt">注意冒号</span><span class="err">）</span>
+
+<span class="err">－</span> <span class="o">(</span><span class="nt">int</span><span class="o">)</span><span class="nt">addNum1</span><span class="o">:(</span><span class="nt">int</span><span class="o">)</span><span class="nt">num1</span> <span class="nt">addNum2</span><span class="o">:(</span><span class="nt">int</span><span class="o">)</span><span class="nt">num2</span><span class="o">;</span>
+
+ <span class="nt">根据上面的方法</span><span class="err">，</span><span class="nt">这个方法名是addNum1</span><span class="p">:</span><span class="nd">addNum2</span><span class="o">:</span>
+</pre></div>
+
+
+<p>所以根据上面方法名的问题，在cycript里面调用的时候，是这样：</p>
+<div class="highlight"><pre><span></span><span class="n">cy</span><span class="err">#</span> <span class="n">choose</span><span class="p">(</span><span class="n">PARSEPedometerInfo</span><span class="p">)</span>
+ <span class="p">[</span><span class="err">#</span><span class="s">&quot;PARSPedometerInfo&lt;0x12f22cd60&gt;: </span><span class="se">\n</span><span class="s"> integration=1541 </span><span class="se">\n</span><span class="s"> iPhone=1541 </span><span class="se">\n</span><span class="s"> watch=0 </span><span class="se">\n</span><span class="s"> heartRat=0</span><span class="se">\n</span><span class="s"> at:2017-12-26 16:00:00 +0000&quot;</span><span class="p">,</span><span class="err">#</span><span class="s">&quot;PARSPedometerInfo&lt;0x12f406c90&gt;: </span><span class="se">\n</span><span class="s"> integration=1541 </span><span class="se">\n</span><span class="s"> iPhone=1541 </span><span class="se">\n</span><span class="s"> watch=0 </span><span class="se">\n</span><span class="s"> heartRat=0</span><span class="se">\n</span><span class="s"> at:2017-12-26 16:00:00 +0000&quot;</span><span class="p">]</span>
+    <span class="err">也即找到两个</span><span class="n">PARSPedometerInfo类的对象</span><span class="p">,</span><span class="err">随便用其中一个即可</span>
+<span class="p">[</span><span class="err">#</span><span class="mh">0x12f22cd60</span> <span class="nl">setIntegratedSteps</span><span class="p">:</span><span class="mi">66666</span><span class="p">]</span>
+
+ <span class="n">setIntegratedSteps是减号开头的函数</span><span class="err">，如果是</span><span class="o">+</span><span class="err">号开头的函数用法则</span><span class="p">[</span><span class="n">className</span> <span class="nl">funcName</span><span class="p">:</span><span class="mi">6666</span><span class="p">]</span><span class="err">，如下面的函数是</span><span class="o">+</span><span class="err">号开头的函数，可以直接调用这个类中的函数，而不用创建这个类的实例：</span>
+<span class="n">cy</span><span class="err">#</span> <span class="p">[</span><span class="n">PARSCryptDataUtils</span> <span class="nl">encryptWithServerTimestamp</span><span class="p">:</span><span class="s">&quot;18013790233&quot;</span><span class="p">]</span>
+
+<span class="err">带减号的函数，要实例化之后才可以调用</span>
+<span class="err">带加号的函数，可以直接调用</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="nl">_text</span><span class="p">:</span><span class="mi">0001</span><span class="n">D76A</span><span class="w"> </span><span class="n">MOV</span><span class="w"> </span><span class="n">R0</span><span class="p">,</span><span class="w"> </span><span class="err">#</span><span class="p">(</span><span class="n">selRefHTTPMethod</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mh">0x1C776</span><span class="p">)</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="n">selRef_HTTPMethod</span><span class="w"></span>
+<span class="nl">_text</span><span class="p">:</span><span class="mi">0001</span><span class="n">D772</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="n">R0</span><span class="p">,</span><span class="w"> </span><span class="n">PC</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="n">selRefHTTPMethod</span><span class="w"></span>
+<span class="nl">__text</span><span class="p">:</span><span class="mi">0001</span><span class="n">D774</span><span class="w"> </span><span class="n">LDR</span><span class="w"> </span><span class="n">R1</span><span class="p">,</span><span class="w"> </span><span class="o">[</span><span class="n">R0</span><span class="o">]</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="ss">&quot;HTTPMethod&quot;</span><span class="w"></span>
+<span class="nl">__text</span><span class="p">:</span><span class="mi">0001</span><span class="n">D776</span><span class="w"> </span><span class="n">MOV</span><span class="w"> </span><span class="n">R0</span><span class="p">,</span><span class="w"> </span><span class="n">R10</span><span class="w"></span>
+<span class="nl">_text</span><span class="p">:</span><span class="mi">0001</span><span class="n">D778</span><span class="w"> </span><span class="nf">STR</span><span class="w"> </span><span class="n">R1</span><span class="p">,</span><span class="w"> </span><span class="o">[</span><span class="n">SP,#0xAC+varA0</span><span class="o">]</span><span class="w"></span>
+<span class="nl">_text</span><span class="p">:</span><span class="mi">0001</span><span class="n">D77A</span><span class="w"> </span><span class="n">BLX</span><span class="w"> </span><span class="n">_objcmsgSend</span><span class="w"></span>
+<span class="nl">__text</span><span class="p">:</span><span class="mi">0001</span><span class="n">D77E</span><span class="w"> </span><span class="n">MOV</span><span class="w"> </span><span class="n">R7</span><span class="p">,</span><span class="w"> </span><span class="n">R7</span><span class="w"></span>
+<span class="nl">_text</span><span class="p">:</span><span class="mi">0001</span><span class="n">D780</span><span class="w"> </span><span class="n">BLX</span><span class="w"> </span><span class="n">_objcretainAutoreleasedReturnValue</span><span class="w"></span>
+<span class="nl">__text</span><span class="p">:</span><span class="mi">0001</span><span class="n">D784</span><span class="w"> </span><span class="n">MOV</span><span class="w"> </span><span class="n">R4</span><span class="p">,</span><span class="w"> </span><span class="n">R0</span><span class="w"></span>
+<span class="nl">_text</span><span class="p">:</span><span class="mi">0001</span><span class="n">D786</span><span class="w"> </span><span class="n">MOV</span><span class="w"> </span><span class="n">R0</span><span class="p">,</span><span class="w"> </span><span class="err">#</span><span class="p">(</span><span class="n">selRefsetRequestMethod_</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mh">0x1C794</span><span class="p">)</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="n">selRef_setRequestMethod_</span><span class="w"></span>
+<span class="nl">__text</span><span class="p">:</span><span class="mi">0001</span><span class="n">D78E</span><span class="w"> </span><span class="n">MOV</span><span class="w"> </span><span class="n">R2</span><span class="p">,</span><span class="w"> </span><span class="n">R4</span><span class="w"></span>
+</pre></div>
+
+
+<p>0001D77A处的selector为HTTPMethod，在functions windows里可以搜到这个函数，函数在执行前把调用的对象存储在R0中。</p>
+<div class="highlight"><pre><span></span><span class="nl">__text</span><span class="p">:</span><span class="mi">0001</span><span class="n">D774</span><span class="w"> </span><span class="n">LDR</span><span class="w"> </span><span class="n">R1</span><span class="p">,</span><span class="w"> </span><span class="o">[</span><span class="n">R0</span><span class="o">]</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="ss">&quot;HTTPMethod&quot;</span><span class="w">   </span><span class="err">／／</span><span class="n">把方法名放到R1中</span><span class="w"></span>
+<span class="nl">__text</span><span class="p">:</span><span class="mi">0001</span><span class="n">D776</span><span class="w"> </span><span class="n">MOV</span><span class="w"> </span><span class="n">R0</span><span class="p">,</span><span class="w"> </span><span class="n">R10</span><span class="w">                    </span><span class="o">//</span><span class="n">R0赋值为R10所在的值</span><span class="err">，</span><span class="n">此处R10位HTTPMethod这个方法归属的类的指针之类</span><span class="err">。</span><span class="w"></span>
+<span class="n">上面两条指令确定了调用的函数</span><span class="err">，</span><span class="n">调用完方法</span><span class="err">，</span><span class="n">如果一个方法有返回值</span><span class="err">，</span><span class="n">会更新在R0</span><span class="err">，</span><span class="n">大于一个返回值</span><span class="err">，</span><span class="n">就会通过栈来返回值</span><span class="err">。（</span><span class="n">意思是如果函数不止一个返回值</span><span class="err">，</span><span class="n">就会通过栈来返回</span><span class="err">）</span><span class="w"></span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="bp">NSString</span> <span class="o">*</span><span class="n">string1</span> <span class="o">=</span> <span class="s">@&quot;test 1&quot;</span><span class="p">;</span>
+<span class="bp">NSString</span> <span class="o">*</span><span class="n">string2</span> <span class="o">=</span> <span class="s">@&quot;test 2&quot;</span><span class="p">;</span>
+<span class="p">(</span><span class="n">lldb</span><span class="p">)</span> <span class="n">po</span> <span class="n">string1</span>
+<span class="n">test</span> <span class="mi">1</span>
+<span class="p">(</span><span class="n">lldb</span><span class="p">)</span> <span class="n">p</span> <span class="n">string1</span>
+<span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span> <span class="err">$</span><span class="mi">2</span> <span class="o">=</span> <span class="mh">0x0000000100003af0</span> <span class="s">@&quot;test 1&quot;</span>
+<span class="p">(</span><span class="n">lldb</span><span class="p">)</span> <span class="n">p</span> <span class="n">string2</span>
+<span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span> <span class="err">$</span><span class="mi">3</span> <span class="o">=</span> <span class="mh">0x0000000100003b10</span> <span class="s">@&quot;test 2&quot;</span>
+</pre></div>
+
+
+<ul>
+<li><a href="https://objccn.io/issue-19-2/">https://objccn.io/issue-19-2/</a></li>
+<li><a href="https://www.zybuluo.com/qidiandasheng/note/349994">https://www.zybuluo.com/qidiandasheng/note/349994</a></li>
+<li><a href="https://www.jianshu.com/p/13e5774759a2">https://www.jianshu.com/p/13e5774759a2</a></li>
+<li><a href="http://bbs.iosre.com/t/ida--objc-msgsend/166">http://bbs.iosre.com/t/ida--objc-msgsend/166</a></li>
+<li><a href="http://cryptroix.com/2016/10/16/journey-to-the-stack/">http://cryptroix.com/2016/10/16/journey-to-the-stack/</a></li>
+<li><a href="http://en.citizendium.org/wiki/Stack_frame">http://en.citizendium.org/wiki/Stack_frame</a></li>
+</ul>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>
