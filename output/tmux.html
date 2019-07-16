@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>tmux使用</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/tmux.html" rel="bookmark"
+           title="Permalink to tmux使用">tmux使用</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2019-06-24T00:00:00+02:00">
+                <a href='#'>06/24/2019 </a>
+                <a href="/category/misc.html">misc</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>组合键:</p>
+<p>:new&lt;回车&gt;  启动新会话
+s           列出所有会话
+w           相当于s的时候展开列表，展开windows
+$           重命名当前会话</p>
+<p>tmux kill-session -t demo # 关闭demo会话</p>
+<p>他有一个session,windows,panes的概念</p>
+<p>一个session可以有N个windows，N个panes</p>
+<p>如果是最大化利用，那么需要找到一种可以跳来跳去的方法，不管是跳windows还是session。</p>
+<p>一般来说是跳windows，因为windows下有几个不同的panes</p>
+<p>所以，怎么跳最快?</p>
+<p>name不管是pane还是windows，是不是只要有name就可以跳过去，不对，应该是windows之间的跳，因为一组windows就是一组任务。</p>
+<p>一个session里面可以最下面的状态栏可以看到有几个windows，windows的名字如何</p>
+<h3>windows的操作:</h3>
+<div class="highlight"><pre><span></span><span class="n">p</span>  <span class="err">切换到上一个</span><span class="n">windows</span>
+<span class="n">n</span>  <span class="err">切换到下一个</span><span class="n">widnwos</span>
+<span class="p">,</span>  <span class="err">重命名窗口</span>
+<span class="p">.</span>  <span class="err">修改当前窗口编号</span>
+<span class="n">f</span>  <span class="err">根据关键词搜索</span><span class="n">windows</span>   <span class="err">这个实际测试可用，可以跳</span><span class="k">session</span>
+</pre></div>
+
+
+<h3>Pane的操作</h3>
+<div class="highlight"><pre><span></span><span class="err">{</span>  <span class="err">向前置换面板</span>
+<span class="err">}</span>  <span class="err">向后置换面板，这个有意思</span>
+<span class="n">z</span>  <span class="err">最大化当前的面板，再输入一次就变回去了</span>
+<span class="n">Esc</span><span class="o">+</span><span class="mi">1</span>  <span class="err">横着的面板变成竖立状态</span>
+</pre></div>
+
+
+<h3>Pane和windows之间的互换</h3>
+<p>比如你当前想把另外一个windows合并到现在的pane里面</p>
+<div class="highlight"><pre><span></span><span class="k">join</span><span class="o">-</span><span class="n">pane</span> <span class="o">-</span><span class="n">s</span> <span class="n">window01</span> <span class="o">#</span> <span class="err">合并名称为</span><span class="n">window01的窗口的默认</span><span class="err">（第一个）面板到当前窗口中</span>
+<span class="k">join</span><span class="o">-</span><span class="n">pane</span> <span class="o">-</span><span class="n">s</span> <span class="n">window01</span><span class="p">.</span><span class="mi">1</span> <span class="o">#</span> <span class="p">.</span><span class="mi">1</span><span class="err">显式指定了第一个面板，</span><span class="p">.</span><span class="mi">2</span><span class="err">就是第二个面板</span><span class="p">(</span><span class="err">我本地将面板编号起始值设置为</span><span class="mi">1</span><span class="err">，默认是</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+
+<p>有另外一种方式，通过karabiner，单独在iterm2里面绑定某个组合键盘，比如cap绑定一个Home键，这样tmux的prefix就是单独按一下cap就可以了。</p>
+<p>所以需要两个地方设置:</p>
+<div class="highlight"><pre><span></span><span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">prefix</span> <span class="nv">Home</span>
+<span class="nv">unbind</span> <span class="nv">C</span><span class="o">-</span><span class="nv">b</span>
+<span class="nv">bind</span><span class="o">-</span><span class="nv">key</span> <span class="nv">Home</span> <span class="k">send</span><span class="o">-</span><span class="nv">prefix</span>
+</pre></div>
+
+
+<p>第二个地方需要在karabiner里面针对iterm2单独设置一个规则: 即按下cap等于home键。
+这个是网上的一个例子，可以照着写</p>
+<div class="highlight"><pre><span></span>?<span class="nv">xml</span> <span class="nv">version</span><span class="o">=</span><span class="s2">&quot;</span><span class="s">1.0</span><span class="s2">&quot;</span>?<span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nv">root</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="nv">appdef</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nv">appname</span><span class="o">&gt;</span><span class="nv">PYCHARM</span><span class="o">&lt;/</span><span class="nv">appname</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nv">equal</span><span class="o">&gt;</span><span class="nv">com</span>.<span class="nv">jetbrains</span>.<span class="nv">pycharm</span><span class="o">&lt;/</span><span class="nv">equal</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="nv">appdef</span><span class="o">&gt;</span>
+   <span class="o">&lt;</span><span class="nv">item</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nv">name</span><span class="o">&gt;</span><span class="nv">custom</span> <span class="nv">settings</span><span class="o">&lt;/</span><span class="nv">name</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nv">item</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nv">name</span><span class="o">&gt;</span><span class="nv">Change</span> <span class="nv">Functional</span> <span class="nv">Keys</span> <span class="nv">to</span> <span class="nv">F3</span>...<span class="nv">F10</span> <span class="k">for</span> <span class="nv">PyCharm</span><span class="o">&lt;/</span><span class="nv">name</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nv">identifier</span><span class="o">&gt;</span><span class="nv">remap</span>.<span class="nv">app_pycharm_functional2function</span><span class="o">&lt;/</span><span class="nv">identifier</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nv">only</span><span class="o">&gt;</span><span class="nv">PYCHARM</span><span class="o">&lt;/</span><span class="nv">only</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nv">autogen</span><span class="o">&gt;</span><span class="nv">__KeyToKey__</span> <span class="nv">KeyCode</span>::<span class="nv">EXPOSE_ALL</span>, <span class="nv">KeyCode</span>::<span class="nv">F3</span><span class="o">&lt;/</span><span class="nv">autogen</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nv">autogen</span><span class="o">&gt;</span><span class="nv">__KeyToKey__</span> <span class="nv">KeyCode</span>::<span class="nv">DASHBOARD</span>, <span class="nv">KeyCode</span>::<span class="nv">F4</span><span class="o">&lt;/</span><span class="nv">autogen</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nv">autogen</span><span class="o">&gt;</span><span class="nv">__KeyToKey__</span> <span class="nv">KeyCode</span>::<span class="nv">LAUNCHPAD</span>, <span class="nv">KeyCode</span>::<span class="nv">F4</span><span class="o">&lt;/</span><span class="nv">autogen</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nv">autogen</span><span class="o">&gt;</span><span class="nv">__KeyToKey__</span> <span class="nv">ConsumerKeyCode</span>::<span class="nv">KEYBOARDLIGHT_LOW</span>, <span class="nv">KeyCode</span>::<span class="nv">F5</span><span class="o">&lt;/</span><span class="nv">autogen</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nv">autogen</span><span class="o">&gt;</span><span class="nv">__KeyToKey__</span> <span class="nv">ConsumerKeyCode</span>::<span class="nv">KEYBOARDLIGHT_HIGH</span>, <span class="nv">KeyCode</span>::<span class="nv">F6</span><span class="o">&lt;/</span><span class="nv">autogen</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nv">autogen</span><span class="o">&gt;</span><span class="nv">__KeyToKey__</span> <span class="nv">ConsumerKeyCode</span>::<span class="nv">MUSIC_PREV</span>, <span class="nv">KeyCode</span>::<span class="nv">F7</span><span class="o">&lt;/</span><span class="nv">autogen</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nv">autogen</span><span class="o">&gt;</span><span class="nv">__KeyToKey__</span> <span class="nv">ConsumerKeyCode</span>::<span class="nv">MUSIC_PLAY</span>, <span class="nv">KeyCode</span>::<span class="nv">F8</span><span class="o">&lt;/</span><span class="nv">autogen</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nv">autogen</span><span class="o">&gt;</span><span class="nv">__KeyToKey__</span> <span class="nv">ConsumerKeyCode</span>::<span class="nv">MUSIC_NEXT</span>, <span class="nv">KeyCode</span>::<span class="nv">F9</span><span class="o">&lt;/</span><span class="nv">autogen</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nv">autogen</span><span class="o">&gt;</span><span class="nv">__KeyToKey__</span> <span class="nv">ConsumerKeyCode</span>::<span class="nv">VOLUME_MUTE</span>, <span class="nv">KeyCode</span>::<span class="nv">F10</span><span class="o">&lt;/</span><span class="nv">autogen</span><span class="o">&gt;</span>
+    <span class="o">&lt;/</span><span class="nv">item</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="nv">item</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="nv">root</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>获取程序的<code>budnle identifiers</code>:</p>
+<div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">osascript</span> <span class="o">-</span><span class="n">e</span> <span class="s1">&#39;id of app &quot;WebStorm&quot;&#39;</span>
+  <span class="n">com</span><span class="p">.</span><span class="n">jetbrains</span><span class="p">.</span><span class="n">WebStorm</span>
+
+  <span class="o">&gt;</span> <span class="n">osascript</span> <span class="o">-</span><span class="n">e</span> <span class="s1">&#39;id of app &quot;Pycharm&quot;&#39;</span>
+  <span class="n">com</span><span class="p">.</span><span class="n">jetbrains</span><span class="p">.</span><span class="n">pycharm</span>
+</pre></div>
+
+
+<p>tmux的最大化利用是远程服务器的时候，在iterm2里面新开一个标签。可以选择每一个vps一个标签，然后在每一个标签里面利用tmux,w</p>
+<p>可以在iterm2里面修改切换tab是<code>cmd + [</code>，和<code>cmd + ]</code>。</p>
+<div class="highlight"><pre><span></span><span class="o">#</span><span class="p">(</span><span class="nb">date</span><span class="p">)</span> <span class="n">shell</span> <span class="n">command</span>
+<span class="o">#</span><span class="n">I</span>  <span class="n">window</span> <span class="k">index</span>
+<span class="o">#</span><span class="n">S</span>  <span class="k">session</span> <span class="n">name</span>
+<span class="o">#</span><span class="n">W</span>  <span class="n">window</span> <span class="n">name</span>
+<span class="o">#</span><span class="n">F</span>  <span class="n">window</span> <span class="n">flags</span>
+<span class="o">#</span><span class="n">H</span>  <span class="n">Hostname</span>
+<span class="o">#</span><span class="n">h</span>  <span class="n">Hostname</span><span class="p">,</span> <span class="n">short</span>
+<span class="o">#</span><span class="n">D</span>  <span class="n">pane</span> <span class="n">id</span>
+<span class="o">#</span><span class="n">P</span>  <span class="n">pane</span> <span class="k">index</span>
+<span class="o">#</span><span class="n">T</span>  <span class="n">pane</span> <span class="n">title</span>
+</pre></div>
+
+
+<p>最后，我的tmux配置是这个:</p>
+<div class="highlight"><pre><span></span><span class="nv">unbind</span> <span class="nv">C</span><span class="o">-</span><span class="nv">b</span>
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">prefix</span> <span class="nv">C</span><span class="o">-</span><span class="nv">d</span>
+
+<span class="nv">bind</span> <span class="nv">r</span> <span class="nv">source</span><span class="o">-</span><span class="nv">file</span> <span class="o">~/</span>.<span class="nv">tmux</span>.<span class="nv">conf</span> \<span class="c1">; display-message &quot;Config reloaded&quot;</span>
+
+
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">default</span><span class="o">-</span><span class="nv">terminal</span> <span class="s2">&quot;</span><span class="s">screen-256color</span><span class="s2">&quot;</span>
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">mode</span><span class="o">-</span><span class="nv">keys</span> <span class="nv">vi</span>
+<span class="nv">run</span><span class="o">-</span><span class="nv">shell</span> <span class="s2">&quot;</span><span class="s">tmux rename-window \</span><span class="s2">&quot;</span>#{<span class="nv">pane_current_command</span>}\<span class="s2">&quot;&quot;</span>
+
+
+<span class="nv">bind</span> \ <span class="nv">split</span><span class="o">-</span><span class="nv">window</span> <span class="o">-</span><span class="nv">h</span>
+<span class="nv">bind</span> <span class="o">-</span> <span class="nv">split</span><span class="o">-</span><span class="nv">window</span> <span class="o">-</span><span class="nv">v</span>
+
+<span class="nv">bind</span> <span class="nv">h</span> <span class="nv">select</span><span class="o">-</span><span class="nv">pane</span> <span class="o">-</span><span class="nv">L</span>
+<span class="nv">bind</span> <span class="nv">j</span> <span class="nv">select</span><span class="o">-</span><span class="nv">pane</span> <span class="o">-</span><span class="nv">D</span>
+<span class="nv">bind</span> <span class="nv">k</span> <span class="nv">select</span><span class="o">-</span><span class="nv">pane</span> <span class="o">-</span><span class="nv">U</span>
+<span class="nv">bind</span> <span class="nv">l</span> <span class="nv">select</span><span class="o">-</span><span class="nv">pane</span> <span class="o">-</span><span class="nv">R</span>
+<span class="nv">bind</span> <span class="nv">q</span> <span class="nv">killp</span>
+
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">base</span><span class="o">-</span><span class="nv">index</span> <span class="mi">1</span>
+<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">pane</span><span class="o">-</span><span class="nv">base</span><span class="o">-</span><span class="nv">index</span> <span class="mi">1</span>
+<span class="nv">set</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">interval</span> <span class="mi">1</span>
+
+
+#<span class="nv">set</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">automatic</span><span class="o">-</span><span class="nv">rename</span> <span class="nv">on</span>
+#<span class="nv">set</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">automatic</span><span class="o">-</span><span class="nv">rename</span><span class="o">-</span><span class="nv">format</span> <span class="s1">&#39;</span><span class="s">#{b:pane_current_path}</span><span class="s1">&#39;</span>
+
+<span class="nv">set</span><span class="o">-</span><span class="nv">window</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">current</span><span class="o">-</span><span class="nv">format</span> <span class="s1">&#39;</span><span class="s">#[fg=white,bold]** #{window_index} #[fg=green]#{pane_current_command} #[fg=blue]#(echo &quot;#{pane_current_path}&quot; | rev | cut -d</span><span class="s1">&#39;</span><span class="o">/</span><span class="s1">&#39;</span><span class="s"> -f-3 | rev) #[fg=white]**|</span><span class="s1">&#39;</span>
+<span class="nv">set</span><span class="o">-</span><span class="nv">window</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">format</span> <span class="s1">&#39;</span><span class="s">#[fg=white,bold]#{window_index} #[fg=green]#{pane_current_command} #[fg=blue]#(echo &quot;#{pane_current_path}&quot; | rev | cut -d</span><span class="s1">&#39;</span><span class="o">/</span><span class="s1">&#39;</span><span class="s"> -f-3 | rev) #[fg=white]|</span><span class="s1">&#39;</span>
+<span class="nv">bind</span><span class="o">-</span><span class="nv">key</span> <span class="o">-</span><span class="nv">r</span> <span class="nv">w</span> <span class="nv">choose</span><span class="o">-</span><span class="nv">window</span> <span class="o">-</span><span class="nv">F</span> <span class="s1">&#39;</span><span class="s">#{window_index} | #{pane_current_command} | #{pane_current_path}</span><span class="s1">&#39;</span>
+#<span class="nv">bind</span><span class="o">-</span><span class="nv">key</span> <span class="o">-</span><span class="nv">r</span> <span class="nv">w</span> <span class="nv">choose</span><span class="o">-</span><span class="nv">window</span> <span class="o">-</span><span class="nv">F</span> <span class="s1">&#39;</span><span class="s">#{window_index} | #{pane_current_command} | #{host} | #{pane_current_path}</span><span class="s1">&#39;</span>
+
+# <span class="nv">status</span> <span class="nv">bar</span> <span class="nv">updates</span> <span class="nv">every</span> <span class="mi">15</span><span class="nv">s</span> <span class="nv">by</span> <span class="nv">default</span><span class="o">**</span>, <span class="nv">change</span> <span class="nv">to</span> <span class="mi">1</span><span class="nv">s</span> <span class="nv">here</span>
+# <span class="ss">(</span><span class="nv">this</span> <span class="nv">step</span> <span class="nv">is</span> <span class="nv">optional</span> <span class="o">-</span> <span class="nv">a</span> <span class="nv">lower</span> <span class="nv">latency</span> <span class="nv">might</span> <span class="nv">have</span> <span class="nv">negative</span> <span class="nv">battery</span><span class="o">/</span><span class="nv">cpu</span> <span class="nv">usage</span> <span class="nv">impacts</span><span class="ss">)</span>
+<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">mouse</span> <span class="nv">on</span>
+#<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">mouse</span><span class="o">-</span><span class="nv">select</span><span class="o">-</span><span class="nv">pane</span> <span class="nv">on</span>
+#<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">mouse</span><span class="o">-</span><span class="nv">resize</span><span class="o">-</span><span class="nv">pane</span> <span class="nv">on</span>
+#<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">mouse</span><span class="o">-</span><span class="nv">select</span><span class="o">-</span><span class="nv">window</span> <span class="nv">on</span>
+
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">fg</span> <span class="nv">white</span>
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">bg</span> <span class="nv">black</span>
+<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">fg</span> <span class="nv">cyan</span>
+<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">bg</span> <span class="nv">default</span>
+<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">attr</span> <span class="nv">dim</span>
+
+<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">current</span><span class="o">-</span><span class="nv">fg</span> <span class="nv">white</span>
+<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">current</span><span class="o">-</span><span class="nv">bg</span> <span class="nv">red</span>
+<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">current</span><span class="o">-</span><span class="nv">attr</span> <span class="nv">bright</span>
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">pane</span><span class="o">-</span><span class="nv">border</span><span class="o">-</span><span class="nv">fg</span> <span class="nv">green</span>
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">pane</span><span class="o">-</span><span class="nv">border</span><span class="o">-</span><span class="nv">bg</span> <span class="nv">black</span>
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">pane</span><span class="o">-</span><span class="nv">active</span><span class="o">-</span><span class="nv">border</span><span class="o">-</span><span class="nv">fg</span> <span class="nv">red</span>
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">pane</span><span class="o">-</span><span class="nv">active</span><span class="o">-</span><span class="nv">border</span><span class="o">-</span><span class="nv">bg</span> <span class="nv">black</span>
+
+
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">left</span><span class="o">-</span><span class="nv">length</span> <span class="mi">40</span>
+#<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">left</span> <span class="s2">&quot;</span><span class="s">#[fg=green]Session[#S] #[fg=yellow]#I #[fg=cyan]#P</span><span class="s2">&quot;</span>
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">left</span> <span class="s2">&quot;</span><span class="s">#[fg=green][#S]</span><span class="s2">&quot;</span>
+<span class="nv">set</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">set</span><span class="o">-</span><span class="nv">titles</span> <span class="nv">on</span>
+<span class="nv">set</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">set</span><span class="o">-</span><span class="nv">titles</span><span class="o">-</span><span class="nv">string</span> <span class="s1">&#39;</span><span class="s">#H:#S.#I.#P #W #T</span><span class="s1">&#39;</span> # <span class="nv">window</span> <span class="nv">number</span>,<span class="nv">program</span> <span class="nv">name</span>, <span class="nv">active</span><span class="ss">(</span><span class="nv">or</span> <span class="nv">not</span><span class="ss">)</span>
+
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">history</span><span class="o">-</span><span class="nv">limit</span> <span class="mi">10000</span>
+
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">right</span> <span class="s2">&quot;</span><span class="s">#[fg=cyan] #(date &#39;+%%Y-%%B&#39;)</span><span class="s2">&quot;</span>
+#<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">right</span> <span class="s2">&quot;</span><span class="s">#[fg-cyan] %Y-%m</span><span class="s2">&quot;</span>
+#<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">right</span> <span class="s1">&#39;</span><span class="s">#[fg=green,bg=default,bright]#(uptime) #[fg=white,bg=default]%l:%M:%S %p#[default] #[fg=blue]%Y-%m-%d%a</span><span class="s1">&#39;</span>
+<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">monitor</span><span class="o">-</span><span class="nv">activity</span> <span class="nv">on</span>
+<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">bell</span><span class="o">-</span><span class="nv">action</span> <span class="nv">any</span>
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">visual</span><span class="o">-</span><span class="nv">activity</span> <span class="nv">on</span>
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">justify</span> <span class="nv">centre</span>
+<span class="nv">bind</span><span class="o">-</span><span class="nv">key</span> <span class="nv">j</span> <span class="nv">command</span><span class="o">-</span><span class="nv">prompt</span> <span class="o">-</span><span class="nv">p</span> <span class="s2">&quot;</span><span class="s">Create pane from window #:</span><span class="s2">&quot;</span> <span class="s2">&quot;</span><span class="s">join-pane -s &#39;:%%&#39;</span><span class="s2">&quot;</span>
+
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> @<span class="nv">plugin</span> <span class="s1">&#39;</span><span class="s">tmux-plugins/tpm</span><span class="s1">&#39;</span>
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> @<span class="nv">plugin</span> <span class="s1">&#39;</span><span class="s">tmux-plugins/tmux-sensible</span><span class="s1">&#39;</span>
+
+# <span class="nv">plugins</span>
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> @<span class="nv">plugin</span> <span class="s1">&#39;</span><span class="s">tmux-plugins/tmux-resurrect</span><span class="s1">&#39;</span>
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> @<span class="nv">plugin</span> <span class="s1">&#39;</span><span class="s">tmux-plugins/tmux-continuum</span><span class="s1">&#39;</span>
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> @<span class="nv">continuum</span><span class="o">-</span><span class="nv">save</span><span class="o">-</span><span class="nv">interval</span> <span class="s1">&#39;</span><span class="s">0</span><span class="s1">&#39;</span>
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> @<span class="nv">continuum</span><span class="o">-</span><span class="nv">restore</span> <span class="s1">&#39;</span><span class="s">on</span><span class="s1">&#39;</span>
+</pre></div>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

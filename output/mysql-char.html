@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>Mysql字符集</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/mysql-char.html" rel="bookmark"
+           title="Permalink to Mysql字符集">Mysql字符集</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-09-21T00:00:00+02:00">
+                <a href='#'>09/21/2017 </a>
+                <a href="/category/sql.html">SQL</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <div class="highlight"><pre><span></span><span class="n">Illegal</span> <span class="n">mix</span> <span class="k">of</span> <span class="n">collations</span> <span class="p">(</span><span class="n">gbk_chinese_ci</span><span class="p">,</span><span class="k">IMPLICIT</span><span class="p">)</span> <span class="k">and</span> <span class="p">(</span><span class="n">latin1_bin</span><span class="p">,</span><span class="k">IMPLICIT</span><span class="p">)</span>
+</pre></div>
+
+
+<p>然后看看两个表:</p>
+<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">table_schema</span><span class="p">,</span> <span class="k">table_name</span><span class="p">,</span> <span class="k">column_name</span><span class="p">,</span> <span class="k">character_set_name</span><span class="p">,</span> <span class="k">collation_name</span>  <span class="k">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">columns</span>  <span class="k">WHERE</span> <span class="k">collation_name</span> <span class="o">=</span> <span class="s1">&#39;gbk_chinese_ci&#39;</span>  <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">table_schema</span><span class="p">,</span> <span class="k">table_name</span><span class="p">,</span><span class="n">ordinal_position</span><span class="p">;</span>
+
+
+<span class="k">SELECT</span> <span class="n">table_schema</span><span class="p">,</span> <span class="k">table_name</span><span class="p">,</span> <span class="k">column_name</span><span class="p">,</span> <span class="k">character_set_name</span><span class="p">,</span> <span class="k">collation_name</span>  <span class="k">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">columns</span>  <span class="k">WHERE</span> <span class="k">collation_name</span> <span class="o">=</span> <span class="s1">&#39;latin1_bin&#39;</span>  <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">table_schema</span><span class="p">,</span> <span class="k">table_name</span><span class="p">,</span><span class="n">ordinal_position</span><span class="p">;</span>
+</pre></div>
+
+
+<p>修改方法:</p>
+<div class="highlight"><pre><span></span><span class="err">先切换到</span><span class="n">mysql表</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">user</span> <span class="k">CONVERT</span> <span class="k">TO</span> <span class="nb">CHARACTER</span> <span class="k">SET</span> <span class="n">gbk</span><span class="p">;</span>
+</pre></div>
+
+
+<p>后续:</p>
+<p>这里有个重大问题，P神博客里面写到过mysql字符集的问题。</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

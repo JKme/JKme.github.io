@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>MySQL Out-of-Band Hacking</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/mysql-out-of-band.html" rel="bookmark"
+           title="Permalink to MySQL Out-of-Band Hacking">MySQL Out-of-Band Hacking</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-03-31T00:00:00+02:00">
+                <a href='#'>03/31/2017 </a>
+                <a href="/category/sql.html">SQL</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p><a href="https://osandamalith.com/2017/02/03/mysql-out-of-band-hacking/">https://osandamalith.com/2017/02/03/mysql-out-of-band-hacking/</a></p>
+<blockquote>
+<p>In MySQL there exists a global system variable known as <code>secure_file_priv</code>, this variable limit the effiect of data import and export operations, such as those performed by the LOAD DATA and SELECT...INTO OUTFILE statements and the LOAD_FILE() function.</p>
+</blockquote>
+<ul>
+<li>If set to the name of a directory, the server limits import and export operations to work only with files in that directory. The directory must exitst, the server will not create it.</li>
+<li>If the variable is empty it has no effect, thus insecure configuration.</li>
+<li>If set to NULL, the server disables import and export operations. theis value is permitted as of MySQL 5.5.53</li>
+</ul>
+<p>Before MySQL 5.5.53 this variable is empty by default, hence allowing us to use these functions. But in the versions after 5.5.53 the value 'NULL' will disable these functions.</p>
+<p>To check the value of this variable you can use any of these methods. The <code>secure_file_priv</code> is a global variable and it's a read only variable, which means you cannot change this during runtime.</p>
+<p>有以下三种方法可以查看<code>secure_file_priv</code>字段:</p>
+<div class="highlight"><pre><span></span><span class="nv">select</span> @@<span class="nv">secure_file_priv</span><span class="c1">;</span>
+<span class="nv">select</span> @@<span class="nv">global</span>.<span class="nv">secure_file_priv</span><span class="c1">;</span>
+<span class="k">show</span> <span class="nv">variables</span> <span class="nv">like</span> <span class="s2">&quot;</span><span class="s">secure_file_priv</span><span class="s2">&quot;</span><span class="c1">;</span>
+</pre></div>
+
+
+<p>for example the default in MySQL 5.5.34 is empty, which means we can use these functions.</p>
+<p>5.5.34版本这个字断是空的，就是说我们可以使用上面说到的函数：</p>
+<p>没图。。。请看原链接</p>
+<p>在MySQL 5.6.34里面，这个值默认是NULL, 然后就没法用导入导出函数操作了。</p>
+<p>没图。。。请看原链接</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

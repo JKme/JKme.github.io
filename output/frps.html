@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>frps的socks5代理</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/frps.html" rel="bookmark"
+           title="Permalink to frps的socks5代理">frps的socks5代理</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2019-05-08T00:00:00+02:00">
+                <a href='#'>05/08/2019 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>在PHP的网站getshell之后，有一个比较大的B段内网，测试了一下几个代理都不太好用，最后试了frps，ngrok还没测试。</p>
+<p>首先是reGeorg,如果是Linux的话需要上传no-socket的文件，但是实际测试，网站打开特别慢。 pass</p>
+<p>其次是ew，之前在windows上面测试过ew，效果还不错，不过没有扫描比较大的局域网。这次测试了下，中间扫到一半出现了段错误。pass</p>
+<p>最后试frps，实际效果不错，至少可以解决问题了。配置文件这样的:</p>
+<div class="highlight"><pre><span></span><span class="n">frps</span><span class="p">.</span><span class="nl">ini</span><span class="p">:</span><span class="w"> </span>
+
+<span class="o">[</span><span class="n">common</span><span class="o">]</span><span class="w"></span>
+<span class="n">bind_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10086</span><span class="w"></span>
+<span class="n">privilege_token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="n">passwd</span><span class="o">]</span><span class="w"></span>
+<span class="n">max_pool_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">50</span><span class="w"></span>
+<span class="n">dashboard_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="n">port</span><span class="o">]</span><span class="w"></span>
+<span class="n">dashboard_user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="n">user</span><span class="o">]</span><span class="w"></span>
+<span class="n">dashboard_pwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="n">password</span><span class="o">]</span><span class="w"></span>
+<span class="n">use_encryption</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span><span class="w"></span>
+<span class="n">use_compression</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span><span class="w"></span>
+</pre></div>
+
+
+<p>上面试在vps上面启动，会在对应端口开一个web服务，看到已经启动的流量和节点存活</p>
+<div class="highlight"><pre><span></span><span class="n">frpc</span><span class="p">.</span><span class="n">ini</span>
+
+<span class="p">[</span><span class="n">common</span><span class="p">]</span>
+<span class="n">server_addr</span> <span class="o">=</span> <span class="p">[</span><span class="n">vps</span> <span class="n">ip</span><span class="p">]</span>
+<span class="n">server_port</span> <span class="o">=</span> <span class="mi">10086</span>
+<span class="n">privilege_token</span> <span class="o">=</span> <span class="p">[</span><span class="n">passwd</span><span class="p">]</span>
+<span class="n">max_pool_count</span> <span class="o">=</span> <span class="mi">50</span>
+
+
+<span class="p">[</span><span class="n">socks5</span><span class="p">]</span>
+<span class="n">type</span> <span class="o">=</span> <span class="n">tcp</span>
+<span class="n">remote_port</span> <span class="o">=</span> <span class="p">[</span><span class="n">port</span><span class="p">]</span>
+<span class="n">plugin</span> <span class="o">=</span> <span class="n">socks5</span>
+</pre></div>
+
+
+<p>这个在被控制主机上启动，运行完之后，vps的remote_port端口就会开一个socks5的代理，这样就进入到被控主机的网络里面。nmap扫描要带上<code>-sT -Pn</code>选项。</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

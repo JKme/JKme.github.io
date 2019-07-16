@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>WMI</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/WMI.html" rel="bookmark"
+           title="Permalink to WMI">WMI</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-07-12T00:00:00+02:00">
+                <a href='#'>07/12/2017 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <h3>windows下的定时任务</h3>
+<p>维持权限的话还是考虑WMI事件或者在服务上下手.  如劫持相关服务指向的程序. 未被双引号保护的路径等，添加计划任务一旦被报警.就是整个团队的灾难</p>
+<p>劫持dll：
+<a href="https://enigma0x3.net/2016/05/25/userland-persistence-with-scheduled-tasks-and-com-handler-hijacking/">https://enigma0x3.net/2016/05/25/userland-persistence-with-scheduled-tasks-and-com-handler-hijacking/</a></p>
+<p>用户层面的定时任务：</p>
+<p>在用户登录的时候触犯： 如何修改这个时间，让他每15分钟触发一次。
+schtasks.exe /change /RI $minute /tn "name"  //测试失败</p>
+<p>这个劫持感觉没毛用啊，
+不过把原来计划任务的内容又缝缝补补弄好了。</p>
+<h2>WMI后门</h2>
+<h3>C:\Windows\System32\wbem&gt;WMIC.exe</h3>
+<p>wmi的逻辑结构是这样的：
+首先是wmi使用者，比如脚本或者其他用到wmi接口的应用程序。由wmi使用者访问CIM对象管理器WinMgmt（即WMI服务），后者再访问CIM（公共信息模型Common Information Model）存储库。</p>
+<p>静态或动态的信息（对象的属性）就保存在CIM库中，同时保存对象的方法。比如启动一个服务，通过执行对象的方法实现，实际上是通过COM技术调用各种dll，最后由dll中封装的API完成请求。WMI是事件驱动的，操作系统、服务、应用程序、设备驱动程序等都可以作为事件源，通过COM接口生成事件通知，WinMgmt捕捉到事件，然后刷新CIM库中的动态信息。这也是为什么WMI服务依赖于EventLog的原因。就像注册表有根键一样，CIM库也有分类，用面向对象的术语描述来来说，叫做命名空间(Name Space）</p>
+<p><a href="http://huaidan.org/archives/1087.html">http://huaidan.org/archives/1087.html</a></p>
+<p>可以调用wmi的方式或者语言:</p>
+<div class="highlight"><pre><span></span><span class="o">*</span> <span class="n">wmic</span><span class="p">.</span><span class="n">exe</span>
+<span class="o">*</span> <span class="n">winrm</span><span class="p">.</span><span class="n">exe</span>
+<span class="o">*</span> <span class="n">winrs</span><span class="p">.</span><span class="n">exe</span>
+<span class="o">*</span> <span class="n">powershell</span>
+<span class="o">*</span> <span class="n">windows</span> <span class="n">scripting</span> <span class="k">host</span><span class="p">(</span><span class="n">WSH</span><span class="p">)</span>
+   <span class="o">*</span> <span class="n">VBScript</span>
+   <span class="o">*</span> <span class="n">JScript</span>
+<span class="o">*</span> <span class="n">mof</span>
+<span class="o">*</span> <span class="k">C</span><span class="o">/</span><span class="k">C</span><span class="o">++</span> <span class="n">via</span> <span class="n">IWbem</span><span class="o">*</span> <span class="n">COM</span> <span class="n">API</span>
+<span class="o">*</span> <span class="p">.</span><span class="n">NET</span> <span class="k">System</span><span class="p">.</span><span class="n">Management</span> <span class="n">classes</span>
+</pre></div>
+
+
+<p>单一点：
+一个定时功能后门的wmi，其中的事件过滤是用WQL查询来触发，wooyun上面油三种触发方式:</p>
+<h3>WSH</h3>
+<p>WSH常用的对象：</p>
+<h4>WScript</h4>
+<p>windows脚本宿主对象模型的根对象，它能提供多个子对象，比如Wscript.Arguments和Wscript.shell，前者提供对整个命令行参数集的访问，后者可以运行程序，操作注册表，创建快捷方式或访问系统文件夹。</p>
+<h4>Scripting.FileSystemObject</h4>
+<p>主要为IIS设计的对象，访问文件系统，几乎所有的windows脚本病毒通过它复制自己感染别人。</p>
+<h4>ADODB.Stream</h4>
+<p>ActiveX Data Objects数据库的字对象，提供流方式访问文件的功能。</p>
+<h4>microsoft.XMLHTP</h4>
+<p>为了支持XML而设计的对象，通过http协议访问网络，常用户跨站脚本执行漏洞和SQL Injection</p>
+<h4>ADSI(活动目录服务接口，主要用于windows域管理)</h4>
+<h4>WBEM对象，wmi服务提供该对象的接口</h4>
+<div class="highlight"><pre><span></span><span class="nv">strComputer</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">.</span><span class="s2">&quot;</span>
+<span class="nv">Set</span> <span class="nv">objWMIService</span> <span class="o">=</span> <span class="nv">GetObject</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">winmgmts:</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">strComputer</span> <span class="o">&amp;</span> <span class="s2">&quot;</span><span class="s">\root\default</span><span class="s2">&quot;</span><span class="ss">)</span>
+<span class="nv">Set</span> <span class="nv">colEvents</span> <span class="o">=</span> <span class="nv">objWMIService</span>.<span class="nv">ExecNotificationQuery</span> <span class="nv">_</span>
+    <span class="ss">(</span><span class="s2">&quot;</span><span class="s">SELECT * FROM RegistryKeyChangeEvent WHERE Hive=&#39;HKEY_LOCAL_MACHINE&#39; AND </span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">_</span>
+        <span class="s2">&quot;</span><span class="s">KeyPath=&#39;SOFTWARE</span><span class="se">\\</span><span class="s">Microsoft</span><span class="se">\\</span><span class="s">Windows</span><span class="se">\\</span><span class="s">CurrentVersion</span><span class="se">\\</span><span class="s">Run&#39;</span><span class="s2">&quot;</span><span class="ss">)</span> 
+<span class="k">Do</span>
+    <span class="nv">Set</span> <span class="nv">objLatestEvent</span> <span class="o">=</span> <span class="nv">colEvents</span>.<span class="nv">NextEvent</span>
+    <span class="nv">Wscript</span>.<span class="nv">Echo</span> <span class="nv">Now</span> <span class="o">&amp;</span> <span class="s2">&quot;</span><span class="s">: The registry has been modified.</span><span class="s2">&quot;</span>
+<span class="k">Loop</span>
+</pre></div>
+
+
+<p>如下例子：vbs脚本操作wmi对象的时候，有两种方法<code>winmgmts:\\</code>和<code>WbemScripting.SWBemlocator</code></p>
+<blockquote>
+<p>not only throuth an SWbemLocator object, but also through the moniker "winmgmts:". A moniker is a short name that locate a namespace、class or instance in WMI. The name "winmgmts:" is the WMI moniker that tell the Windows Script Host to use the WMI objects, connects to the default namespace, and obtains an SWbemServices object.</p>
+</blockquote>
+<p>不过这两者是有异同的，SWbemlocator可以做到WMI moniker不能做到的两个功能（SWbemlocator is designed to address two specific scripting scenarios that cannot be performed using GetObject and the WMI moniker， You must use SWbemLocator if you need to)：</p>
+<ol>
+<li>provide user and password credentials to connect to WMI on a remote computer. The WMI moniker used with the GetObject function does not include a mechanism for specifying credentials.</li>
+<li>Connect to WMI if you are runing a WMI script from within a Web page.</li>
+</ol>
+<p>创建对象并连接服务器：</p>
+<div class="highlight"><pre><span></span><span class="k">set</span> <span class="n">objlocator</span><span class="o">=</span><span class="n">createobject</span><span class="p">(</span><span class="ss">&quot;wbemscripting.swbemlocator&quot;</span><span class="p">)</span>
+<span class="k">set</span> <span class="n">objswbemservices</span><span class="o">=</span><span class="n">objlocator</span><span class="p">.</span><span class="n">connectserver</span><span class="p">(</span><span class="n">ipaddress</span><span class="p">,</span><span class="ss">&quot;root\default&quot;</span><span class="p">,</span><span class="n">username</span><span class="p">,</span><span class="n">password</span><span class="p">)</span>
+</pre></div>
+
+
+<p>访问WMI还有一个特权的额问题。</p>
+<div class="highlight"><pre><span></span><span class="n">objswbemservices</span><span class="p">.</span><span class="n">security_</span><span class="p">.</span><span class="k">privileges</span><span class="p">.</span><span class="k">add</span> <span class="mi">23</span><span class="p">,</span><span class="k">true</span>
+<span class="n">objswbemservices</span><span class="p">.</span><span class="n">security_</span><span class="p">.</span><span class="k">privileges</span><span class="p">.</span><span class="k">add</span> <span class="mi">18</span><span class="p">,</span><span class="k">true</span>
+</pre></div>
+
+
+<p>这是在向WMI服务申请权限，18和23都是权限代号，以下是重要的代号:
+5 在域中创建账号
+7 管理审计并查看、保存和清理安全日志
+9 加载和卸载设备驱动
+10 记录系统时间
+11 改变系统时间
+18 在本地关机
+22 绕过历遍检查
+23 允许远程关机</p>
+<p>运行如下脚本可以获得所有权限ID及对应说明</p>
+<div class="highlight"><pre><span></span><span class="nv">strComputer</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">.</span><span class="s2">&quot;</span>
+<span class="nv">set</span> <span class="nv">objWMIService</span> <span class="o">=</span> <span class="nv">GetObject</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">winmgmts:</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="nv">_</span>
+    <span class="o">&amp;</span> <span class="nv">strComputer</span> <span class="o">&amp;</span> <span class="s2">&quot;</span><span class="s">\root\cimv2</span><span class="s2">&quot;</span><span class="ss">)</span>
+<span class="nv">set</span> <span class="nv">colPrivileges</span> <span class="o">=</span> <span class="nv">objWMIService</span>.<span class="nv">Security_</span>.<span class="nv">Privileges</span>
+<span class="k">for</span> <span class="nv">I</span> <span class="o">=</span> <span class="mi">1</span> <span class="nv">to</span> <span class="mi">27</span>
+<span class="nv">colPrivileges</span>.<span class="nv">Add</span><span class="ss">(</span><span class="nv">I</span><span class="ss">)</span>
+<span class="k">Next</span>
+<span class="s1">&#39;</span><span class="s"> Display information about each privilege </span>
+<span class="k">For</span> <span class="nv">Each</span> <span class="nv">objItem</span> <span class="nv">In</span> <span class="nv">colPrivileges</span>
+<span class="nv">wscript</span>.<span class="nv">echo</span> <span class="nv">objItem</span>.<span class="nv">Identifier</span> <span class="o">&amp;</span> <span class="nv">vbtab</span> <span class="o">&amp;</span> <span class="nv">objItem</span>.<span class="nv">Name</span> <span class="nv">_</span>
+    <span class="o">&amp;</span> <span class="nv">vbtab</span> <span class="o">&amp;</span> <span class="nv">objItem</span>.<span class="nv">Displayname</span> <span class="nv">_</span>
+    <span class="o">&amp;</span> <span class="nv">vbtab</span> <span class="o">&amp;</span> <span class="s2">&quot;</span><span class="s">Enabled = </span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">objItem</span>.<span class="nv">IsEnabled</span>
+<span class="k">Next</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="nv">strComputer</span><span class="o">=</span><span class="s2">&quot;</span><span class="s">.</span><span class="s2">&quot;</span>
+<span class="nv">set</span> <span class="nv">objService</span> <span class="o">=</span> <span class="nv">GetObject</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">winmgmts:</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">strComputer</span> <span class="o">&amp;</span> <span class="s2">&quot;</span><span class="s">\root\cimv2</span><span class="s2">&quot;</span><span class="ss">)</span>
+<span class="s1">&#39;</span><span class="s">set objWmi = CreateObject(&quot;WbemScripting.SWBemLocator&quot;)</span>
+<span class="s1">&#39;</span><span class="s">set objService = objWmi.ConnectServer(strComputer, &quot;root\cimv2&quot;)</span>
+<span class="nv">set</span> <span class="nv">objSet</span> <span class="o">=</span> <span class="nv">objService</span>.<span class="nv">InstancesOf</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">Win32_Process</span><span class="s2">&quot;</span><span class="ss">)</span>
+<span class="k">for</span> <span class="nv">each</span> <span class="nv">obj</span> <span class="nv">in</span> <span class="nv">objSet</span>
+    <span class="nv">Wscript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Name: </span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">obj</span>.<span class="nv">Name</span>
+<span class="k">Next</span>
+</pre></div>
+
+
+<p>wmi是事件驱动，整个事件处理机制分4个部分:
+1、事件生产者（provider)，负责生产事件。WMI包含大量事件生产者。
+2、事件过滤器(fileter），系统每时每刻有大量的事件，通过自定义过滤器，脚本可以捕获感兴趣的事件进行处理。
+3、事件消费者（consumer)：负责处理事件，他是由可执行程序，动态链接库(dll，由wmi服务加载)或者脚本
+4、事件绑定(binding）：通过将过滤器和消费者绑定，明确什么事件由什么消费者负责处理</p>
+<p>事件消费者可以分为临时和永久两类，临时的事件消费者只在其运行期间关心特定事件并处理，永久消费者作为类的实例注册在WMI命名空间中，一直有效到它被注销。</p>
+<h3>EvenetFilter</h3>
+<p>1: Data queries</p>
+<p><code>select * from Win32_NTlogEvent where logfile = 'application'</code>
+辣么，上面这个语句是否可以修改下，类似远程控制iptables的方式，当检测到logfile里面存在特定字符，触发事件</p>
+<p>2: Evenet queries</p>
+<p><code>select * from __InstanceModificationEvent WITHIN 10 where TargetInstance ISA 'Win32_Service' AND TargetInstance._Class = 'win32_TerminalService'</code></p>
+<p>3: Schema queries</p>
+<p><code>select * from meta_class where __this ISA "Win32_BaseService"</code></p>
+<h3>consumer</h3>
+<p>可以理解为满足条件之后执行的操作，包括如下查询:</p>
+<div class="highlight"><pre><span></span><span class="err">（</span><span class="mi">1</span><span class="err">）</span> <span class="n">ActiveScriptEventConsumer</span>
+ <span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="n">LogFileEventConsumer</span>
+ <span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="n">NTEventLogEventConsumer</span>
+ <span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="n">SMTPEventConsumer</span>
+ <span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="n">CommandLineEventConsumer</span>
+</pre></div>
+
+
+<p>wmi需要两个可以执行，Eventfilter和consumer。</p>
+<p>EventFilter</p>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">__InstanceModificationEvent</span> <span class="k">where</span> <span class="n">TargetInstance</span> <span class="n">Isa</span> <span class="ss">&quot;Win32_localTime&quot;</span> <span class="k">And</span> <span class="n">TargetInstance</span><span class="p">.</span><span class="k">Second</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">__InstanceModificationEvent</span> <span class="n">WITHIN</span> <span class="mi">10</span> <span class="k">where</span> <span class="n">TargetInstance</span> <span class="n">ISA</span> <span class="s1">&#39;Win32_Service&#39;</span> <span class="k">AND</span> <span class="n">TargetInstance</span><span class="p">.</span><span class="n">_Class</span> <span class="o">=</span> <span class="s1">&#39;win32_TerminalService&#39;</span>
+
+<span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">_InstanceModificationEvent</span> <span class="n">within</span> <span class="mi">5</span> <span class="k">where</span> <span class="n">Targetinstance</span> <span class="n">ISA</span> <span class="s1">&#39;Win32_service&#39;</span> <span class="k">AND</span> 
+<span class="n">TargetInstance</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;spooler&#39;</span> <span class="k">and</span> <span class="n">Targetinstatnce</span><span class="p">.</span><span class="k">state</span><span class="o">=</span><span class="s1">&#39;stopped&#39;</span>
+</pre></div>
+
+
+<p>2003系统上，一个用户登陆的时候，日志记录ID是680，注销断开的时候ID是551，所以当一个用户登陆的时候，wmi监测登陆id，如果登陆成功，杀掉后们和挖矿进程。
+杀掉进程有这么几个条件，任何一个成立都杀掉：</p>
+<p>用户成功登陆
+打开任务管理器
+打开cmd</p>
+<p>所以，说了这么多，这个vbs脚本应该怎么写？
+1. vbs脚本运行其他程序，比如cmd
+2. 满足条件之后绑定消费事件</p>
+<p>WMI提供了两个计时器：__AbsoluteTimerInstruction和__IntervalTimerInstruction</p>
+<p>WMI提供了三个类别的WQL查询：</p>
+<ol>
+<li>实例查询  －－用于查询WMI类的实例</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">property</span> <span class="n">name</span><span class="o">&gt;</span> <span class="k">from</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">name</span><span class="o">&gt;</span> <span class="k">where</span> <span class="o">&lt;&gt;</span>
+</pre></div>
+
+
+<ol>
+<li>事件查询  －－用于一个WMI事件注册机制，如WMI对象的创建，修改或删除</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="err">交互式用户登录的事件查询：</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">__InstanceCreationEvent</span> <span class="n">WITHIN</span> <span class="mi">15</span> <span class="k">WHERE</span> <span class="n">TargetInstance</span> <span class="n">ISA</span> <span class="s1">&#39;Win32_LogonSession&#39;</span> <span class="k">AND</span> <span class="n">TargetInstance</span><span class="p">.</span><span class="n">LogonType</span> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+
+
+<ol>
+<li>元查询    －－用于查询WMI类架构</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Meta_classes</span> <span class="k">where</span> <span class="n">__class</span> <span class="k">like</span> <span class="ss">&quot;win32%&quot;</span>
+</pre></div>
+
+
+<p>例子:</p>
+<p>每10s查询一次事件修改，记录</p>
+<div class="highlight"><pre><span></span><span class="nv">strComputer</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">.</span><span class="s2">&quot;</span> 
+<span class="nv">Set</span> <span class="nv">objWMIService</span> <span class="o">=</span> <span class="nv">GetObject</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">winmgmts:</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">strComputer</span> <span class="o">&amp;</span> <span class="s2">&quot;</span><span class="s">\root\cimv2</span><span class="s2">&quot;</span><span class="ss">)</span> 
+<span class="nv">Set</span> <span class="nv">colMonitorProcess</span> <span class="o">=</span> <span class="nv">objWMIService</span>.<span class="nv">ExecNotificationQuery</span> <span class="nv">_</span> 
+ <span class="ss">(</span><span class="s2">&quot;</span><span class="s">SELECT * FROM __instancemodificationevent WITHIN 10</span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">_</span> 
+ <span class="s2">&quot;</span><span class="s">WHERE TargetInstance ISA &#39;Win32_Service&#39;</span><span class="s2">&quot;</span><span class="ss">)</span>  
+<span class="nv">WScript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Waiting for process change event ...</span><span class="s2">&quot;</span> 
+<span class="nv">Set</span> <span class="nv">objLatestEvent</span> <span class="o">=</span> <span class="nv">colMonitorProcess</span>.<span class="nv">NextEvent</span> 
+<span class="nv">WScript</span>.<span class="nv">Echo</span> <span class="nv">VbCrLf</span> <span class="o">&amp;</span> <span class="nv">objLatestEvent</span>.<span class="nv">Path_</span>.<span class="nv">Class</span> 
+<span class="nv">Wscript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Process Name: </span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">objLatestEvent</span>.<span class="nv">TargetInstance</span>.<span class="nv">Name</span> 
+<span class="nv">Wscript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Process ID: </span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">objLatestEvent</span>.<span class="nv">TargetInstance</span>.<span class="nv">ProcessId</span> 
+<span class="nv">Wscript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Process State:</span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">objLatestEvent</span>.<span class="nv">TargetInstance</span>.<span class="nv">state</span>
+<span class="nv">WScript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Time: </span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">Now</span> 
+</pre></div>
+
+
+<p>以下来自鬼哥的文章：<a href="http://huaidan.org/archives/1087.html">http://huaidan.org/archives/1087.html</a></p>
+<p>稍微修改了下，大概功能就是打开任务管理器的时候，5s之内会打开calc.exe，这个动作可以在process explorer里面监测到。
+脚本稍微不同的地方是:</p>
+<p><code>__EventFilter</code>的时候，要制定命名空间为<code>root\cimv2</code>,整个脚本是注册在<code>root\subscription</code>里面的。</p>
+<p>一句话:
+以<code>root\cimv2</code>空间的事件为驱动，使用<code>root\subscription</code>空间里面的<code>CommandLineEventConsumer</code>来运行程序。</p>
+<div class="highlight"><pre><span></span><span class="n">nslink</span><span class="o">=</span><span class="ss">&quot;winmgmts:\\.\root\cimv2:&quot;</span>         <span class="s1">&#39;只需要本地连接，所以用这种语法，不用swbemlocator对象&#39;</span>
+<span class="n">nslink2</span><span class="o">=</span><span class="ss">&quot;winmgmts:\\.\root\subscription:&quot;</span>
+<span class="k">set</span> <span class="n">asec</span><span class="o">=</span><span class="n">getobject</span><span class="p">(</span><span class="n">nslink2</span><span class="o">&amp;</span><span class="ss">&quot;CommandLineEventConsumer&quot;</span><span class="p">).</span><span class="n">spawninstance_</span>   <span class="s1">&#39;创建“活动脚本事件消费者”&#39;</span>
+<span class="n">asec</span><span class="p">.</span><span class="n">name</span><span class="o">=</span><span class="ss">&quot;stopped_spooler_restart_consumer&quot;</span>                  <span class="s1">&#39;定义消费者的名字&#39;</span>
+<span class="s1">&#39;asec.scriptingengine=&quot;vbscript&quot;                               &#39;</span><span class="err">定义脚本语言</span><span class="p">(</span><span class="err">只能是</span><span class="n">vbscript</span><span class="p">)</span><span class="s1">&#39;</span>
+<span class="s1">asec.CommandLineTemplate=&quot;C:\windows\system32\calc.exe&quot;  &#39;</span><span class="err">脚本代码</span><span class="s1">&#39;</span>
+<span class="s1">asec.ExecutablePath=&quot;C:\windows\system32\calc.exe&quot;</span>
+<span class="s1">set asecpath=asec.put_                                        &#39;</span><span class="err">注册消费者，返回其链接</span><span class="s1">&#39;</span>
+
+<span class="s1">set evtflt=getobject(nslink2&amp;&quot;__EventFilter&quot;).spawninstance_   &#39;</span><span class="err">创建事件过滤器</span><span class="s1">&#39;</span>
+<span class="s1">evtflt.name=&quot;stopped_spooler_filter&quot; </span>
+<span class="s1">evtflt.EventNameSpace=&quot;root\cimv2&quot;                         &#39;</span><span class="err">定义过滤器的名字</span><span class="s1">&#39;</span>
+<span class="s1">qstr=&quot;select * from __InstanceCreationEvent within 5 &quot;    &#39;</span><span class="err">每</span><span class="mi">5</span><span class="err">秒查询一次“实例修改事件”</span><span class="s1">&#39;</span>
+<span class="s1">qstr=qstr&amp;&quot;where targetinstance isa &#39;</span><span class="n">win32_process</span><span class="s1">&#39; and &quot;   &#39;</span><span class="err">目标实例的类是</span><span class="n">win32_process</span><span class="s1">&#39;</span>
+<span class="s1">qstr=qstr&amp;&quot;targetinstance.name=&#39;</span><span class="n">taskmgr</span><span class="p">.</span><span class="n">exe</span><span class="s1">&#39; &quot;                  &#39;</span><span class="err">实例名是</span><span class="n">taskmgr</span><span class="p">.</span><span class="n">exe</span><span class="s1">&#39;</span>
+<span class="s1">evtflt.query=qstr                                             &#39;</span><span class="err">定义查询语句</span><span class="s1">&#39;</span>
+<span class="s1">evtflt.querylanguage=&quot;wql&quot;                                    &#39;</span><span class="err">定义查询语言</span><span class="p">(</span><span class="err">只能是</span><span class="n">wql</span><span class="p">)</span><span class="s1">&#39;</span>
+<span class="s1">set fltpath=evtflt.put_                                       &#39;</span><span class="err">注册过滤器，返回其链接</span><span class="s1">&#39;</span>
+
+<span class="s1">set fcbnd=getobject(nslink2&amp;&quot;__FilterToConsumerBinding&quot;).spawninstance_  &#39;</span><span class="err">创建过滤器和消费者的绑定</span><span class="s1">&#39;</span>
+<span class="s1">fcbnd.consumer=asecpath.path                                            &#39;</span><span class="err">指定消费者</span><span class="s1">&#39;</span>
+<span class="s1">fcbnd.filter=fltpath.path                                               &#39;</span><span class="err">指定过滤器</span><span class="s1">&#39;</span>
+<span class="s1">fcbnd.put_                                                              &#39;</span><span class="err">执行绑定&#39;</span>
+
+<span class="n">wscript</span><span class="p">.</span><span class="n">echo</span> <span class="ss">&quot;success&quot;</span>
+</pre></div>
+
+
+<p>上面提到过有5种消费者，然后这次以LogFileEventConsumer来测试，打开任务管理器之后，在C盘根目录下生成1.php，内容是<code>&lt;?php phpinfo();?&gt;</code>:</p>
+<div class="highlight"><pre><span></span><span class="nx">nslink</span><span class="o">=</span><span class="s2">&quot;winmgmts:\\.\root\cimv2:&quot;</span>         <span class="s1">&#39;只需要本地连接，所以用这种语法，不用swbemlocator对象&#39;</span>
+<span class="nx">nslink2</span><span class="o">=</span><span class="s2">&quot;winmgmts:\\.\root\subscription:&quot;</span>
+<span class="nx">set</span> <span class="nx">asec</span><span class="o">=</span><span class="nx">getobject</span><span class="p">(</span><span class="nx">nslink2</span><span class="o">&amp;</span><span class="s2">&quot;LogFileEventConsumer&quot;</span><span class="p">).</span><span class="nx">spawninstance_</span>   <span class="s1">&#39;创建“活动脚本事件消费者”&#39;</span>
+<span class="nx">asec</span><span class="p">.</span><span class="nx">name</span><span class="o">=</span><span class="s2">&quot;stopped_spooler_restart_consumer&quot;</span>                  <span class="s1">&#39;定义消费者的名字&#39;</span>
+<span class="s1">&#39;asec.scriptingengine=&quot;vbscript&quot;                               &#39;</span><span class="nx">定义脚本语言</span><span class="p">(</span><span class="nx">只能是vbscript</span><span class="p">)</span><span class="s1">&#39;</span>
+<span class="s1">&#39;</span><span class="nx">asec</span><span class="p">.</span><span class="nx">CommandLineTemplate</span><span class="o">=</span><span class="s2">&quot;C:\windows\system32\calc.exe&quot;</span>  <span class="s1">&#39;脚本代码&#39;</span>
+<span class="s1">&#39;asec.ExecutablePath=&quot;C:\windows\system32\calc.exe&quot;</span>
+<span class="s1">asec.Filename=&quot;C:\1.php&quot;</span>
+<span class="s1">asec.Text=&quot;</span><span class="cp">&lt;?php</span> <span class="nb">phpinfo</span><span class="p">();</span><span class="cp">?&gt;</span><span class="s1">&quot;</span>
+<span class="s1">set asecpath=asec.put_                                        &#39;</span><span class="nx">注册消费者</span><span class="err">，</span><span class="nx">返回其链接</span><span class="s1">&#39;</span>
+
+<span class="s1">set evtflt=getobject(nslink2&amp;&quot;__EventFilter&quot;).spawninstance_   &#39;</span><span class="nx">创建事件过滤器</span><span class="s1">&#39;</span>
+<span class="s1">evtflt.name=&quot;stopped_spooler_filter&quot; </span>
+<span class="s1">evtflt.EventNameSpace=&quot;root\cimv2&quot;                         &#39;</span><span class="nx">定义过滤器的名字</span><span class="s1">&#39;</span>
+<span class="s1">qstr=&quot;select * from __InstanceCreationEvent within 5 &quot;    &#39;</span><span class="nx">每5秒查询一次</span><span class="err">“</span><span class="nx">实例修改事件</span><span class="err">”</span><span class="s1">&#39;</span>
+<span class="s1">qstr=qstr&amp;&quot;where targetinstance isa &#39;</span><span class="nx">win32_process</span><span class="s1">&#39; and &quot;   &#39;</span><span class="nx">目标实例的类是win32_service</span><span class="s1">&#39;</span>
+<span class="s1">qstr=qstr&amp;&quot;targetinstance.name=&#39;</span><span class="nx">taskmgr</span><span class="p">.</span><span class="nx">exe</span><span class="s1">&#39; &quot;                  &#39;</span><span class="nx">实例名是spooler</span><span class="s1">&#39;</span>
+<span class="s1">evtflt.query=qstr                                             &#39;</span><span class="nx">定义查询语句</span><span class="s1">&#39;</span>
+<span class="s1">evtflt.querylanguage=&quot;wql&quot;                                    &#39;</span><span class="nx">定义查询语言</span><span class="p">(</span><span class="nx">只能是wql</span><span class="p">)</span><span class="s1">&#39;</span>
+<span class="s1">set fltpath=evtflt.put_                                       &#39;</span><span class="nx">注册过滤器</span><span class="err">，</span><span class="nx">返回其链接</span><span class="s1">&#39;</span>
+
+<span class="s1">set fcbnd=getobject(nslink2&amp;&quot;__FilterToConsumerBinding&quot;).spawninstance_  &#39;</span><span class="nx">创建过滤器和消费者的绑定</span><span class="s1">&#39;</span>
+<span class="s1">fcbnd.consumer=asecpath.path                                            &#39;</span><span class="nx">指定消费者</span><span class="s1">&#39;</span>
+<span class="s1">fcbnd.filter=fltpath.path                                               &#39;</span><span class="nx">指定过滤器</span><span class="s1">&#39;</span>
+<span class="s1">fcbnd.put_                                                              &#39;</span><span class="nx">执行绑定</span><span class="err">&#39;</span>
+
+<span class="nx">wscript</span><span class="p">.</span><span class="nx">echo</span> <span class="s2">&quot;success&quot;</span>
+</pre></div>
+
+
+<p>wmi监听用户登录和注销事件：</p>
+<p>2003系统上，一个用户登陆的时候，日志记录ID是680，注销断开的时候ID是551，所以当一个用户登陆的时候，wmi监测登陆id，如果登陆成功，打开calc.exe：</p>
+<div class="highlight"><pre><span></span><span class="n">nslink</span><span class="o">=</span><span class="ss">&quot;winmgmts:\\.\root\cimv2:&quot;</span>         <span class="s1">&#39;只需要本地连接，所以用这种语法，不用swbemlocator对象&#39;</span>
+<span class="n">nslink2</span><span class="o">=</span><span class="ss">&quot;winmgmts:\\.\root\subscription:&quot;</span>
+<span class="k">set</span> <span class="n">asec</span><span class="o">=</span><span class="n">getobject</span><span class="p">(</span><span class="n">nslink2</span><span class="o">&amp;</span><span class="ss">&quot;CommandLineEventConsumer&quot;</span><span class="p">).</span><span class="n">spawninstance_</span>   <span class="s1">&#39;创建“活动脚本事件消费者”&#39;</span>
+<span class="n">asec</span><span class="p">.</span><span class="n">name</span><span class="o">=</span><span class="ss">&quot;stopped_spooler_restart_consumer&quot;</span>                  <span class="s1">&#39;定义消费者的名字&#39;</span>
+<span class="s1">&#39;asec.scriptingengine=&quot;vbscript&quot;                               &#39;</span><span class="err">定义脚本语言</span><span class="p">(</span><span class="err">只能是</span><span class="n">vbscript</span><span class="p">)</span><span class="s1">&#39;</span>
+<span class="s1">asec.CommandLineTemplate=&quot;C:\windows\system32\calc.exe&quot;  &#39;</span><span class="err">脚本代码</span><span class="s1">&#39;</span>
+<span class="s1">set asecpath=asec.put_                                        &#39;</span><span class="err">注册消费者，返回其链接</span><span class="s1">&#39;</span>
+
+<span class="s1">set evtflt=getobject(nslink2&amp;&quot;__EventFilter&quot;).spawninstance_   &#39;</span><span class="err">创建事件过滤器</span><span class="s1">&#39;</span>
+<span class="s1">evtflt.name=&quot;stopped_spooler_filter&quot; </span>
+<span class="s1">evtflt.EventNameSpace=&quot;root\cimv2&quot;                         &#39;</span><span class="err">定义过滤器的名字</span><span class="s1">&#39;</span>
+<span class="s1">qstr=&quot;select * from __InstanceCreationEvent within 5 &quot;    &#39;</span><span class="err">每</span><span class="mi">5</span><span class="err">秒查询一次“实例修改事件”</span><span class="s1">&#39;</span>
+<span class="s1">qstr=qstr&amp;&quot;where targetinstance isa &#39;</span><span class="n">win32_NTLogEvent</span><span class="s1">&#39; and &quot;   qstr=qstr&amp;&quot;targetinstance.EventCode=&#39;</span><span class="mi">680</span><span class="s1">&#39; &quot;                  &#39;</span><span class="err">实例名是</span><span class="n">win32_NTLogEvent</span><span class="s1">&#39;</span>
+<span class="s1">evtflt.query=qstr                                             &#39;</span><span class="err">定义查询语句</span><span class="s1">&#39;</span>
+<span class="s1">evtflt.querylanguage=&quot;wql&quot;                                    &#39;</span><span class="err">定义查询语言</span><span class="p">(</span><span class="err">只能是</span><span class="n">wql</span><span class="p">)</span><span class="s1">&#39;</span>
+<span class="s1">set fltpath=evtflt.put_                                       &#39;</span><span class="err">注册过滤器，返回其链接</span><span class="s1">&#39;</span>
+
+<span class="s1">set fcbnd=getobject(nslink2&amp;&quot;__FilterToConsumerBinding&quot;).spawninstance_  &#39;</span><span class="err">创建过滤器和消费者的绑定</span><span class="s1">&#39;</span>
+<span class="s1">fcbnd.consumer=asecpath.path                                            &#39;</span><span class="err">指定消费者</span><span class="s1">&#39;</span>
+<span class="s1">fcbnd.filter=fltpath.path                                               &#39;</span><span class="err">指定过滤器</span><span class="s1">&#39;</span>
+<span class="s1">fcbnd.put_                                                              &#39;</span><span class="err">执行绑定&#39;</span>
+
+<span class="n">wscript</span><span class="p">.</span><span class="n">echo</span> <span class="ss">&quot;success&quot;</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="err">在每分钟的第</span><span class="mi">5</span><span class="n">s之行一次</span>
+<span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">__instanceModificationEvent</span> <span class="k">where</span> <span class="n">targetinstance</span> <span class="n">ISA</span> <span class="s1">&#39;win32_localtime&#39;</span> <span class="k">and</span> <span class="n">targetinstance</span><span class="p">.</span><span class="k">Second</span><span class="o">=</span><span class="mi">5</span>
+</pre></div>
+
+
+<p>wmi对象在硬盘中是存储在<code>C:\Windows\System32\wbem\Repository\fs\objects.data</code></p>
+<h2>遗留问题:</h2>
+<p>微软的官网有这么一段话:</p>
+<blockquote>
+<p>A single event filter can be associated with multiple logical event consumer. Furthermore, multiple event filters can be associated with a single logical event consumer.</p>
+</blockquote>
+<p>多个消费者可以对应一个filter，多个filter也可以对应一个消费者。但是实际测试并没有成功，在多个filter存在的情况下，消费未达到期望，测试代码:</p>
+<p>测试期望是5s之内打开cmd和taskmgr的时候会打开calc.exe，实际测试未成功。</p>
+<div class="highlight"><pre><span></span><span class="n">nslink</span><span class="o">=</span><span class="ss">&quot;winmgmts:\\.\root\cimv2:&quot;</span>         
+<span class="n">nslink2</span><span class="o">=</span><span class="ss">&quot;winmgmts:\\.\root\subscription:&quot;</span>
+<span class="k">set</span> <span class="n">asec</span><span class="o">=</span><span class="n">getobject</span><span class="p">(</span><span class="n">nslink2</span><span class="o">&amp;</span><span class="ss">&quot;CommandLineEventConsumer&quot;</span><span class="p">).</span><span class="n">spawninstance_</span>   
+<span class="n">asec</span><span class="p">.</span><span class="n">name</span><span class="o">=</span><span class="ss">&quot;taskmgr_consumer&quot;</span>                                                
+<span class="n">asec</span><span class="p">.</span><span class="n">CommandLineTemplate</span><span class="o">=</span><span class="ss">&quot;cmd /C calc.exe&quot;</span>  
+<span class="k">set</span> <span class="n">asecpath</span><span class="o">=</span><span class="n">asec</span><span class="p">.</span><span class="n">put_</span>                                        
+
+<span class="k">set</span> <span class="n">evtflt</span><span class="o">=</span><span class="n">getobject</span><span class="p">(</span><span class="n">nslink2</span><span class="o">&amp;</span><span class="ss">&quot;__EventFilter&quot;</span><span class="p">).</span><span class="n">spawninstance_</span>   
+<span class="n">evtflt</span><span class="p">.</span><span class="n">name</span><span class="o">=</span><span class="ss">&quot;taskmgr&quot;</span> 
+<span class="n">evtflt</span><span class="p">.</span><span class="n">EventNameSpace</span><span class="o">=</span><span class="ss">&quot;root\cimv2&quot;</span>                         
+<span class="n">qstr</span><span class="o">=</span><span class="ss">&quot;select * from __InstanceCreationEvent within 5 &quot;</span>    
+<span class="n">qstr</span><span class="o">=</span><span class="n">qstr</span><span class="o">&amp;</span><span class="ss">&quot;where targetinstance isa &#39;win32_process&#39; and &quot;</span>   
+<span class="n">qstr</span><span class="o">=</span><span class="n">qstr</span><span class="o">&amp;</span><span class="ss">&quot;targetinstance.name=&#39;taskmgr.exe&#39;&quot;</span>                
+<span class="n">evtflt</span><span class="p">.</span><span class="n">query</span><span class="o">=</span><span class="n">qstr</span>                                             
+<span class="n">evtflt</span><span class="p">.</span><span class="n">querylanguage</span><span class="o">=</span><span class="ss">&quot;wql&quot;</span>                                    
+<span class="k">set</span> <span class="n">fltpath</span><span class="o">=</span><span class="n">evtflt</span><span class="p">.</span><span class="n">put_</span>                                       
+
+
+<span class="s1">&#39;set evtflt2=getobject(nslink2&amp;&quot;__EventFilter&quot;).spawninstance_   </span>
+<span class="s1">&#39;</span><span class="n">evtflt2</span><span class="p">.</span><span class="n">name</span><span class="o">=</span><span class="ss">&quot;taskmgr2&quot;</span> 
+<span class="s1">&#39;evtflt2.EventNameSpace=&quot;root\cimv2&quot;                         </span>
+<span class="s1">&#39;</span><span class="n">qstr2</span><span class="o">=</span><span class="ss">&quot;select * from __InstanceCreationEvent within 5 &quot;</span>    
+<span class="s1">&#39;qstr2=qstr2&amp;&quot;where targetinstance isa &#39;</span><span class="n">win32_process</span><span class="s1">&#39; and &quot;   </span>
+<span class="s1">&#39;</span><span class="n">qstr2</span><span class="o">=</span><span class="n">qstr2</span><span class="o">&amp;</span><span class="ss">&quot;targetinstance.name=&#39;cmd.exe&#39; &quot;</span>                
+<span class="s1">&#39;evtflt2.query=qstr2                                             </span>
+<span class="s1">&#39;</span><span class="n">evtflt2</span><span class="p">.</span><span class="n">querylanguage</span><span class="o">=</span><span class="ss">&quot;wql&quot;</span>                                    
+<span class="s1">&#39;set fltpath2=evtflt2.put_  </span>
+
+<span class="s1">set fcbnd=getobject(nslink2&amp;&quot;__FilterToConsumerBinding&quot;).spawninstance_  </span>
+<span class="s1">fcbnd.consumer=asecpath.path                                            </span>
+<span class="s1">fcbnd.filter=fltpath.path                                               </span>
+<span class="s1">fcbnd.put_                </span>
+<span class="s1">&#39;</span><span class="n">fcbnd</span><span class="p">.</span><span class="n">filter</span><span class="o">=</span><span class="n">fltpath2</span><span class="p">.</span><span class="n">path</span>
+<span class="s1">&#39;fcbnd.put_                                              </span>
+<span class="s1">wscript.echo &quot;success&quot;</span>
+
+<span class="s1">&#39;</span><span class="k">set</span> <span class="n">fcbnd</span><span class="o">=</span><span class="n">getobject</span><span class="p">(</span><span class="n">nslink2</span><span class="o">&amp;</span><span class="ss">&quot;__FilterToConsumerBinding&quot;</span><span class="p">).</span><span class="n">spawninstance_</span>  
+<span class="s1">&#39;fcbnd.consumer=asecpath.path                                            </span>
+<span class="s1">&#39;</span><span class="n">fcbnd</span><span class="p">.</span><span class="n">filter</span><span class="o">=</span><span class="n">fltpath2</span><span class="p">.</span><span class="n">path</span>                                               
+<span class="s1">&#39;fcbnd.put_                                                              </span>
+<span class="s1">&#39;</span><span class="n">wscript</span><span class="p">.</span><span class="n">echo</span> <span class="ss">&quot;success2&quot;</span>
+</pre></div>
+
+
+<p>下面这个脚本是用来监控事件变化的，可以根据需要自己修改。</p>
+<div class="highlight"><pre><span></span><span class="nv">strComputer</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">.</span><span class="s2">&quot;</span> 
+<span class="nv">Set</span> <span class="nv">objWMIService</span> <span class="o">=</span> <span class="nv">GetObject</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">winmgmts:</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">strComputer</span> <span class="o">&amp;</span> <span class="s2">&quot;</span><span class="s">\root\cimv2</span><span class="s2">&quot;</span><span class="ss">)</span> 
+<span class="nv">Set</span> <span class="nv">colMonitorProcess</span> <span class="o">=</span> <span class="nv">objWMIService</span>.<span class="nv">ExecNotificationQuery</span> <span class="nv">_</span> 
+ <span class="ss">(</span><span class="s2">&quot;</span><span class="s">SELECT * FROM __instanceCreationEvent WITHIN 5</span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">_</span> 
+ <span class="s2">&quot;</span><span class="s">WHERE TargetInstance ISA &#39;win32_NTLogEvent&#39;</span><span class="s2">&quot;</span><span class="ss">)</span>  
+<span class="nv">WScript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Waiting for process change event ...</span><span class="s2">&quot;</span> 
+<span class="k">while</span> <span class="mi">1</span><span class="o">&gt;</span><span class="mi">0</span>
+<span class="nv">Set</span> <span class="nv">objLatestEvent</span> <span class="o">=</span> <span class="nv">colMonitorProcess</span>.<span class="nv">NextEvent</span> 
+<span class="nv">WScript</span>.<span class="nv">Echo</span> <span class="nv">VbCrLf</span> <span class="o">&amp;</span> <span class="nv">objLatestEvent</span>.<span class="nv">Path_</span>.<span class="nv">Class</span> 
+<span class="nv">Wscript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Process Name: </span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">objLatestEvent</span>.<span class="nv">TargetInstance</span>.<span class="nv">EventCode</span> 
+<span class="nv">Wscript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Process ID: </span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">objLatestEvent</span>.<span class="nv">TargetInstance</span>.<span class="nv">Categorystring</span> 
+<span class="nv">WScript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Time: </span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">Now</span> 
+<span class="nv">wend</span>
+<span class="s1">&#39;</span><span class="s">__instanceDeletionEvent</span>
+<span class="s1">&#39;</span><span class="s">__instanceModificationEvent</span>
+</pre></div>
+
+
+<ul>
+<li><a href="https://msdn.microsoft.com/en-us/library/mt703459(v=vs.85).aspx">https://msdn.microsoft.com/en-us/library/mt703459(v=vs.85).aspx</a></li>
+<li><a href="https://msdn.microsoft.com/en-us/library/aa393719(v=vs.85).aspx">https://msdn.microsoft.com/en-us/library/aa393719(v=vs.85).aspx</a></li>
+<li><a href="http://wooyun.jozxing.cc/static/drops/tips-8189.html">http://wooyun.jozxing.cc/static/drops/tips-8189.html</a></li>
+<li><a href="http://wooyun.jozxing.cc/static/drops/tips-12354.html">http://wooyun.jozxing.cc/static/drops/tips-12354.html</a></li>
+<li><a href="https://www.sans.org/summit-archives/file/summit-archive-1492184420.pdf">https://www.sans.org/summit-archives/file/summit-archive-1492184420.pdf</a></li>
+</ul>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

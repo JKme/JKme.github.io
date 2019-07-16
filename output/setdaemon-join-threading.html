@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>setDaemon、join和threading</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/setdaemon-join-threading.html" rel="bookmark"
+           title="Permalink to setDaemon、join和threading">setDaemon、join和threading</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-12-14T00:00:00+01:00">
+                <a href='#'>12/14/2017 </a>
+                <a href="/category/python.html">Python</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p><a href="http://www.cnblogs.com/nwf5d/archive/2011/11/20/2256376.html">http://www.cnblogs.com/nwf5d/archive/2011/11/20/2256376.html</a></p>
+<p>Python中的thread一些机制和C/C++不同，在C/C++中，主线程结束后，其子线程会默认被主线程kill掉。而在python中，主线程结束后，会默认等待子线程结束后，主线程才退出。</p>
+<p>python对于thread的管理中有两个函数: join和setDaemon</p>
+<blockquote>
+<p>join
+如果一个线程B中调用thread.join()，则thread结束后，线程B才会接着thread.join()往后运行</p>
+</blockquote>
+<p>所以这样一个例子:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="k">class</span> <span class="nc">my</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">global</span> <span class="n">n</span><span class="p">,</span> <span class="n">lock</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">():</span>
+            <span class="k">print</span> <span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="s2">&quot;__main__&quot;</span> <span class="o">==</span> <span class="vm">__name__</span><span class="p">:</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">Threadlist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">):</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">my</span><span class="p">()</span>
+        <span class="n">Threadlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">Threadlist</span><span class="p">:</span>
+        <span class="c1"># t.daemon = True</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">Threadlist</span><span class="p">:</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre></div>
+
+
+<p>上面的脚本会一瞬间完成，如果把:</p>
+<div class="highlight"><pre><span></span><span class="k">for</span> <span class="nv">t</span> <span class="nv">in</span> <span class="nv">Threadlist</span>:
+    <span class="nv">t</span>.<span class="nv">join</span>
+
+
+这个<span class="nv">for</span>注释掉，变成:
+
+<span class="k">for</span> <span class="nv">t</span> <span class="nv">in</span> <span class="nv">Threadlist</span>:
+    <span class="nv">t</span>.<span class="nv">start</span><span class="ss">()</span>
+    <span class="nv">t</span>.<span class="nv">join</span><span class="ss">()</span>
+</pre></div>
+
+
+<p>这样运行结果就是跟单线程一样，因为<code>t.join()</code>会导致下一个线程阻塞，只有当前join的线程完成之后，才会下一个运行。</p>
+<blockquote>
+<p>Wait until the thread terminates. This blocks the calling thread until the thread whose join() method is called terminates – either normally or through an unhandled exception – or until the optional timeout occurs.</p>
+</blockquote>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

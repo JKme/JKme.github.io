@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>OSCP经验</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/oscp-experience.html" rel="bookmark"
+           title="Permalink to OSCP经验">OSCP经验</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2019-04-02T00:00:00+02:00">
+                <a href='#'>04/02/2019 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <h2>0x01: 网络问题</h2>
+<div class="highlight"><pre><span></span><span class="n">socks</span><span class="o">-</span><span class="n">proxy</span> <span class="mi">127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span> <span class="mi">6876</span>
+<span class="n">uth</span><span class="o">-</span><span class="k">user</span><span class="o">-</span><span class="n">pass</span> <span class="n">auth</span><span class="p">.</span><span class="n">txt</span>
+</pre></div>
+
+
+<p>在openvpn的配置文件里面，我加了上面两行。
+第一行因为国内网络不稳定，我加了ss的代理，后来换成了v2ray.
+第二行是理由同上，因为网络不稳定，每次连接VPN都要输入用户密码，这样方便点.</p>
+<p>具体网络不稳定有两个表现:</p>
+<ol>
+<li>nmap扫描全部的端口长时间没有反应.</li>
+<li>dirbuster扫描的时候会卡死进行不下去了.</li>
+</ol>
+<p>上面两个问题有两个解决方法:</p>
+<ol>
+<li>nmap换成https://github.com/AnthraX1/InsightScan, 先用单文件扫描全部的开放端口，然后用nmap扫描开放端口服务: <code>nmap -sS -sV -sC &lt;IP&gt; -p &lt;PORT&gt;</code></li>
+<li>dirbuster换成gobuster，词典不变，线程控制在25个左右.</li>
+</ol>
+<h2>0x02: 报告问题</h2>
+<p>我的报告格式和下面这个人的差不多。如果可以尽量使用官方的模版就用官方的模版，不然容易凉，我写了50多页的报告，做了4道半题目。
+https://www.cnblogs.com/xiaoxiaoleo/p/9040339.html</p>
+<h2>0x03: 监考问题</h2>
+<p>监考放松，当监考老师不存在。想吃啥吃啥，想喝就喝，放松心态。</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

