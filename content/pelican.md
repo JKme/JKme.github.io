@@ -3,13 +3,14 @@ Date: 2016-3-29
 Category: Python
 slug: gitpages-pelican
 
-参考:<http://ntanjerome.org/blog/how-to-setup-github-user-page-with-pelican/>
+参考:<https://pages.github.com/>
 ##0x00
 在Github创建一个`username.github.io`的代码仓库，以我的为例子，先创建`JKme.github.io`
 ##0x01
 克隆到本机，使用virtualenv来做一个隔离的环境：
 
 `git clone https://github.com/JKme/JKme.github.io.git`
+
 
 本机安装virtualenv：
 
