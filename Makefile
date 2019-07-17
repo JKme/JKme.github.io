@@ -71,5 +71,9 @@ endif
 publish:
 	$(PELICAN) $(INPUTDIR) -o $(OUTPUTDIR) -s $(PUBLISHCONF) $(PELICANOPTS)
 
+github:
+	$(PELICAN) $(INPUTDIR) -o $(OUTPUTDIR) -s $(CONFFILE) $(PELICANOPTS) && git add . && git commit -m $DATE && ghp-import output
+	git checkout master && git merge gh-pages --no-commit && git commit -m $DATE && git push --all
+
 
 .PHONY: html help clean regenerate serve serve-global devserver publish 

