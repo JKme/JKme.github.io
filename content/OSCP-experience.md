@@ -10,6 +10,7 @@ Slug: oscp-experience
 ```
 socks-proxy 127.0.0.1 6876
 uth-user-pass auth.txt
+
 ```
 在openvpn的配置文件里面，我加了上面两行。
 第一行因为国内网络不稳定，我加了ss的代理，后来换成了v2ray.
