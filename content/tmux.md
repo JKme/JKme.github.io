@@ -1,6 +1,7 @@
 Title:tmux使用
 Date: 2019-06-24
 Slug: tmux
+Category: Learning
 
 组合键:
 
@@ -151,8 +152,8 @@ set-option -g status-interval 1
 #set-option -g automatic-rename on
 #set-option -g automatic-rename-format '#{b:pane_current_path}'
 
-set-window-option -g window-status-current-format '#[fg=white,bold]** #{window_index} #[fg=green]#{pane_current_command} #[fg=blue]#(echo "#{pane_current_path}" | rev | cut -d'/' -f-3 | rev) #[fg=white]**|'
-set-window-option -g window-status-format '#[fg=white,bold]#{window_index} #[fg=green]#{pane_current_command} #[fg=blue]#(echo "#{pane_current_path}" | rev | cut -d'/' -f-3 | rev) #[fg=white]|'
+set-window-option -g window-status-current-format '#[fg=white,bold]** #{window_index} #[fg=green]#W #[fg=blue]#(echo "#{pane_current_path}" | rev | cut -d'/' -f-3 | rev) #[fg=white]**|'
+set-window-option -g window-status-format '#[fg=white,bold]#{window_index} #[fg=green]#W #[fg=blue]#(echo "#{pane_current_path}" | rev | cut -d'/' -f-3 | rev) #[fg=white]|'
 bind-key -r w choose-window -F '#{window_index} | #{pane_current_command} | #{pane_current_path}'
 #bind-key -r w choose-window -F '#{window_index} | #{pane_current_command} | #{host} | #{pane_current_path}'
 
@@ -176,13 +177,13 @@ set -g pane-border-fg green
 set -g pane-border-bg black
 set -g pane-active-border-fg red
 set -g pane-active-border-bg black
-
+bind-key -t vi-copy Enter copy-pipe "nc localhost 8377"
 
 set -g status-left-length 40
 #set -g status-left "#[fg=green]Session[#S] #[fg=yellow]#I #[fg=cyan]#P"
 set -g status-left "#[fg=green][#S]"
 set-option -g set-titles on
-set-option -g set-titles-string '#H:#S.#I.#P #W #T' # window number,program name, active(or not)
+set-option -g set-titles-string '#h:#S.#I.#P #W #T' # window number,program name, active(or not)
 
 set -g history-limit 10000
 
@@ -193,7 +194,9 @@ setw -g monitor-activity on
 setw -g bell-action any
 set -g visual-activity on
 set -g status-justify centre
-bind-key j command-prompt -p "Create pane from window #:" "join-pane -s ':%%'"
+bind-key J command-prompt -p "Create pane from window #:" "join-pane -s ':%%'"
+set-option -s set-clipboard off
+
 
 set -g @plugin 'tmux-plugins/tpm'
 set -g @plugin 'tmux-plugins/tmux-sensible'
@@ -203,5 +206,69 @@ set -g @plugin 'tmux-plugins/tmux-resurrect'
 set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @continuum-save-interval '0'
 set -g @continuum-restore 'on'
+set -g @plugin 'tmux-plugins/tmux-yank'
+run-shell ~/.tmux/plugins/tmux-resurrect/resurrect.tmux
+r
+
+run '~/.tmux/plugins/tpm/tpm'
 
 ```
+
+再安装一个tpm插件:
+
+```
+mkdir -p ~/.tmux/plugins/
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+Press prefix + I (capital i, as in Install) to fetch the plugin.
+```
+
+
+`I`安装插件，
+
+saved a session (prefix + ctrl-s) 
+
+最后的最后，如果是本机macosx，远程是vps，当复制远程vps内容的时候，复制的内容是到了远程主机的buffer，这个时候需要clipper来把远程主机复制到本地，我用的tmux版本是2.1。在mac上的ssh配置文件加上端口转发:
+
+```
+RemoteForward 8377 localhost:8377
+```
+
+配置开机启动:
+
+```
+sudo cp clipper /usr/local/bin
+cp contrib/darwin/tcp-port/com.wincent.clipper.plist ~/Library/LaunchAgents/
+launchctl load -w -S Aqua ~/Library/LaunchAgents/com.wincent.clipper.plist
+```
+
+然后在远程主机的tmux配置加上这样:
+
+```
+bind-key -t vi-copy Enter copy-pipe "nc localhost 8377"
+
+```
+这样就可以了。
+
+在使用mosh的情况下，mosh是不支持端口转发的，需要先用ssh端口转发，然后再用mosh链接:
+
+```
+Host sandbox
+  ControlMaster no
+  ControlPath none
+  Hostname sandbox.example.com
+
+Host sandbox-clipper
+  ControlMaster no
+  ControlPath none
+  ExitOnForwardFailure yes
+  Hostname sandbox.example.com
+  RemoteForward 8377 localhost:8377
+  
+ssh -N -f sandbox-clipper
+mosh sandbox
+```
+
+clipper的文档讲的超级详细，可以看看。
+
+<https://github.com/wincent/clipper>

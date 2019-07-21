@@ -29,7 +29,7 @@
 <footer class="post-info">
         <span class="published" title="2019-06-24T00:00:00+02:00">
                 <a href='#'>06/24/2019 </a>
-                <a href="/category/misc.html">misc</a>
+                <a href="/category/learning.html">Learning</a>
         </span>
 
 
@@ -164,8 +164,8 @@ $           重命名当前会话</p>
 #<span class="nv">set</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">automatic</span><span class="o">-</span><span class="nv">rename</span> <span class="nv">on</span>
 #<span class="nv">set</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">automatic</span><span class="o">-</span><span class="nv">rename</span><span class="o">-</span><span class="nv">format</span> <span class="s1">&#39;</span><span class="s">#{b:pane_current_path}</span><span class="s1">&#39;</span>
 
-<span class="nv">set</span><span class="o">-</span><span class="nv">window</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">current</span><span class="o">-</span><span class="nv">format</span> <span class="s1">&#39;</span><span class="s">#[fg=white,bold]** #{window_index} #[fg=green]#{pane_current_command} #[fg=blue]#(echo &quot;#{pane_current_path}&quot; | rev | cut -d</span><span class="s1">&#39;</span><span class="o">/</span><span class="s1">&#39;</span><span class="s"> -f-3 | rev) #[fg=white]**|</span><span class="s1">&#39;</span>
-<span class="nv">set</span><span class="o">-</span><span class="nv">window</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">format</span> <span class="s1">&#39;</span><span class="s">#[fg=white,bold]#{window_index} #[fg=green]#{pane_current_command} #[fg=blue]#(echo &quot;#{pane_current_path}&quot; | rev | cut -d</span><span class="s1">&#39;</span><span class="o">/</span><span class="s1">&#39;</span><span class="s"> -f-3 | rev) #[fg=white]|</span><span class="s1">&#39;</span>
+<span class="nv">set</span><span class="o">-</span><span class="nv">window</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">current</span><span class="o">-</span><span class="nv">format</span> <span class="s1">&#39;</span><span class="s">#[fg=white,bold]** #{window_index} #[fg=green]#W #[fg=blue]#(echo &quot;#{pane_current_path}&quot; | rev | cut -d</span><span class="s1">&#39;</span><span class="o">/</span><span class="s1">&#39;</span><span class="s"> -f-3 | rev) #[fg=white]**|</span><span class="s1">&#39;</span>
+<span class="nv">set</span><span class="o">-</span><span class="nv">window</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">format</span> <span class="s1">&#39;</span><span class="s">#[fg=white,bold]#{window_index} #[fg=green]#W #[fg=blue]#(echo &quot;#{pane_current_path}&quot; | rev | cut -d</span><span class="s1">&#39;</span><span class="o">/</span><span class="s1">&#39;</span><span class="s"> -f-3 | rev) #[fg=white]|</span><span class="s1">&#39;</span>
 <span class="nv">bind</span><span class="o">-</span><span class="nv">key</span> <span class="o">-</span><span class="nv">r</span> <span class="nv">w</span> <span class="nv">choose</span><span class="o">-</span><span class="nv">window</span> <span class="o">-</span><span class="nv">F</span> <span class="s1">&#39;</span><span class="s">#{window_index} | #{pane_current_command} | #{pane_current_path}</span><span class="s1">&#39;</span>
 #<span class="nv">bind</span><span class="o">-</span><span class="nv">key</span> <span class="o">-</span><span class="nv">r</span> <span class="nv">w</span> <span class="nv">choose</span><span class="o">-</span><span class="nv">window</span> <span class="o">-</span><span class="nv">F</span> <span class="s1">&#39;</span><span class="s">#{window_index} | #{pane_current_command} | #{host} | #{pane_current_path}</span><span class="s1">&#39;</span>
 
@@ -189,13 +189,13 @@ $           重命名当前会话</p>
 <span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">pane</span><span class="o">-</span><span class="nv">border</span><span class="o">-</span><span class="nv">bg</span> <span class="nv">black</span>
 <span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">pane</span><span class="o">-</span><span class="nv">active</span><span class="o">-</span><span class="nv">border</span><span class="o">-</span><span class="nv">fg</span> <span class="nv">red</span>
 <span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">pane</span><span class="o">-</span><span class="nv">active</span><span class="o">-</span><span class="nv">border</span><span class="o">-</span><span class="nv">bg</span> <span class="nv">black</span>
-
+<span class="nv">bind</span><span class="o">-</span><span class="nv">key</span> <span class="o">-</span><span class="nv">t</span> <span class="nv">vi</span><span class="o">-</span><span class="nv">copy</span> <span class="nv">Enter</span> <span class="nv">copy</span><span class="o">-</span><span class="nv">pipe</span> <span class="s2">&quot;</span><span class="s">nc localhost 8377</span><span class="s2">&quot;</span>
 
 <span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">left</span><span class="o">-</span><span class="nv">length</span> <span class="mi">40</span>
 #<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">left</span> <span class="s2">&quot;</span><span class="s">#[fg=green]Session[#S] #[fg=yellow]#I #[fg=cyan]#P</span><span class="s2">&quot;</span>
 <span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">left</span> <span class="s2">&quot;</span><span class="s">#[fg=green][#S]</span><span class="s2">&quot;</span>
 <span class="nv">set</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">set</span><span class="o">-</span><span class="nv">titles</span> <span class="nv">on</span>
-<span class="nv">set</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">set</span><span class="o">-</span><span class="nv">titles</span><span class="o">-</span><span class="nv">string</span> <span class="s1">&#39;</span><span class="s">#H:#S.#I.#P #W #T</span><span class="s1">&#39;</span> # <span class="nv">window</span> <span class="nv">number</span>,<span class="nv">program</span> <span class="nv">name</span>, <span class="nv">active</span><span class="ss">(</span><span class="nv">or</span> <span class="nv">not</span><span class="ss">)</span>
+<span class="nv">set</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">set</span><span class="o">-</span><span class="nv">titles</span><span class="o">-</span><span class="nv">string</span> <span class="s1">&#39;</span><span class="s">#h:#S.#I.#P #W #T</span><span class="s1">&#39;</span> # <span class="nv">window</span> <span class="nv">number</span>,<span class="nv">program</span> <span class="nv">name</span>, <span class="nv">active</span><span class="ss">(</span><span class="nv">or</span> <span class="nv">not</span><span class="ss">)</span>
 
 <span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">history</span><span class="o">-</span><span class="nv">limit</span> <span class="mi">10000</span>
 
@@ -206,7 +206,9 @@ $           重命名当前会话</p>
 <span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">bell</span><span class="o">-</span><span class="nv">action</span> <span class="nv">any</span>
 <span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">visual</span><span class="o">-</span><span class="nv">activity</span> <span class="nv">on</span>
 <span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">justify</span> <span class="nv">centre</span>
-<span class="nv">bind</span><span class="o">-</span><span class="nv">key</span> <span class="nv">j</span> <span class="nv">command</span><span class="o">-</span><span class="nv">prompt</span> <span class="o">-</span><span class="nv">p</span> <span class="s2">&quot;</span><span class="s">Create pane from window #:</span><span class="s2">&quot;</span> <span class="s2">&quot;</span><span class="s">join-pane -s &#39;:%%&#39;</span><span class="s2">&quot;</span>
+<span class="nv">bind</span><span class="o">-</span><span class="nv">key</span> <span class="nv">J</span> <span class="nv">command</span><span class="o">-</span><span class="nv">prompt</span> <span class="o">-</span><span class="nv">p</span> <span class="s2">&quot;</span><span class="s">Create pane from window #:</span><span class="s2">&quot;</span> <span class="s2">&quot;</span><span class="s">join-pane -s &#39;:%%&#39;</span><span class="s2">&quot;</span>
+<span class="nv">set</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">s</span> <span class="nv">set</span><span class="o">-</span><span class="nv">clipboard</span> <span class="nv">off</span>
+
 
 <span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> @<span class="nv">plugin</span> <span class="s1">&#39;</span><span class="s">tmux-plugins/tpm</span><span class="s1">&#39;</span>
 <span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> @<span class="nv">plugin</span> <span class="s1">&#39;</span><span class="s">tmux-plugins/tmux-sensible</span><span class="s1">&#39;</span>
@@ -216,7 +218,62 @@ $           重命名当前会话</p>
 <span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> @<span class="nv">plugin</span> <span class="s1">&#39;</span><span class="s">tmux-plugins/tmux-continuum</span><span class="s1">&#39;</span>
 <span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> @<span class="nv">continuum</span><span class="o">-</span><span class="nv">save</span><span class="o">-</span><span class="nv">interval</span> <span class="s1">&#39;</span><span class="s">0</span><span class="s1">&#39;</span>
 <span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> @<span class="nv">continuum</span><span class="o">-</span><span class="nv">restore</span> <span class="s1">&#39;</span><span class="s">on</span><span class="s1">&#39;</span>
+<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> @<span class="nv">plugin</span> <span class="s1">&#39;</span><span class="s">tmux-plugins/tmux-yank</span><span class="s1">&#39;</span>
+<span class="nv">run</span><span class="o">-</span><span class="nv">shell</span> <span class="o">~/</span>.<span class="nv">tmux</span><span class="o">/</span><span class="nv">plugins</span><span class="o">/</span><span class="nv">tmux</span><span class="o">-</span><span class="nv">resurrect</span><span class="o">/</span><span class="nv">resurrect</span>.<span class="nv">tmux</span>
+<span class="nv">r</span>
+
+<span class="nv">run</span> <span class="s1">&#39;</span><span class="s">~/.tmux/plugins/tpm/tpm</span><span class="s1">&#39;</span>
 </pre></div>
+
+
+<p>再安装一个tpm插件:</p>
+<div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">~/</span><span class="p">.</span><span class="n">tmux</span><span class="o">/</span><span class="n">plugins</span><span class="o">/</span>
+<span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">tmux</span><span class="o">-</span><span class="n">plugins</span><span class="o">/</span><span class="n">tpm</span> <span class="o">~/</span><span class="p">.</span><span class="n">tmux</span><span class="o">/</span><span class="n">plugins</span><span class="o">/</span><span class="n">tpm</span>
+
+<span class="n">Press</span> <span class="k">prefix</span> <span class="o">+</span> <span class="n">I</span> <span class="p">(</span><span class="n">capital</span> <span class="n">i</span><span class="p">,</span> <span class="k">as</span> <span class="k">in</span> <span class="n">Install</span><span class="p">)</span> <span class="k">to</span> <span class="k">fetch</span> <span class="n">the</span> <span class="n">plugin</span><span class="p">.</span>
+</pre></div>
+
+
+<p><code>I</code>安装插件，</p>
+<p>saved a session (prefix + ctrl-s) </p>
+<p>最后的最后，如果是本机macosx，远程是vps，当复制远程vps内容的时候，复制的内容是到了远程主机的buffer，这个时候需要clipper来把远程主机复制到本地，我用的tmux版本是2.1。在mac上的ssh配置文件加上端口转发:</p>
+<div class="highlight"><pre><span></span><span class="n">RemoteForward</span> <span class="mi">8377</span> <span class="n">localhost</span><span class="p">:</span><span class="mi">8377</span>
+</pre></div>
+
+
+<p>配置开机启动:</p>
+<div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">cp</span> <span class="n">clipper</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="k">local</span><span class="o">/</span><span class="n">bin</span>
+<span class="n">cp</span> <span class="n">contrib</span><span class="o">/</span><span class="n">darwin</span><span class="o">/</span><span class="n">tcp</span><span class="o">-</span><span class="n">port</span><span class="o">/</span><span class="n">com</span><span class="p">.</span><span class="n">wincent</span><span class="p">.</span><span class="n">clipper</span><span class="p">.</span><span class="n">plist</span> <span class="o">~/</span><span class="n">Library</span><span class="o">/</span><span class="n">LaunchAgents</span><span class="o">/</span>
+<span class="n">launchctl</span> <span class="k">load</span> <span class="o">-</span><span class="n">w</span> <span class="o">-</span><span class="n">S</span> <span class="n">Aqua</span> <span class="o">~/</span><span class="n">Library</span><span class="o">/</span><span class="n">LaunchAgents</span><span class="o">/</span><span class="n">com</span><span class="p">.</span><span class="n">wincent</span><span class="p">.</span><span class="n">clipper</span><span class="p">.</span><span class="n">plist</span>
+</pre></div>
+
+
+<p>然后在远程主机的tmux配置加上这样:</p>
+<div class="highlight"><pre><span></span><span class="n">bind</span><span class="o">-</span><span class="k">key</span> <span class="o">-</span><span class="n">t</span> <span class="n">vi</span><span class="o">-</span><span class="k">copy</span> <span class="n">Enter</span> <span class="k">copy</span><span class="o">-</span><span class="n">pipe</span> <span class="ss">&quot;nc localhost 8377&quot;</span>
+</pre></div>
+
+
+<p>这样就可以了。</p>
+<p>在使用mosh的情况下，mosh是不支持端口转发的，需要先用ssh端口转发，然后再用mosh链接:</p>
+<div class="highlight"><pre><span></span><span class="k">Host</span> <span class="n">sandbox</span>
+  <span class="n">ControlMaster</span> <span class="k">no</span>
+  <span class="n">ControlPath</span> <span class="k">none</span>
+  <span class="n">Hostname</span> <span class="n">sandbox</span><span class="p">.</span><span class="n">example</span><span class="p">.</span><span class="n">com</span>
+
+<span class="k">Host</span> <span class="n">sandbox</span><span class="o">-</span><span class="n">clipper</span>
+  <span class="n">ControlMaster</span> <span class="k">no</span>
+  <span class="n">ControlPath</span> <span class="k">none</span>
+  <span class="n">ExitOnForwardFailure</span> <span class="n">yes</span>
+  <span class="n">Hostname</span> <span class="n">sandbox</span><span class="p">.</span><span class="n">example</span><span class="p">.</span><span class="n">com</span>
+  <span class="n">RemoteForward</span> <span class="mi">8377</span> <span class="n">localhost</span><span class="p">:</span><span class="mi">8377</span>
+
+<span class="n">ssh</span> <span class="o">-</span><span class="n">N</span> <span class="o">-</span><span class="n">f</span> <span class="n">sandbox</span><span class="o">-</span><span class="n">clipper</span>
+<span class="n">mosh</span> <span class="n">sandbox</span>
+</pre></div>
+
+
+<p>clipper的文档讲的超级详细，可以看看。</p>
+<p><a href="https://github.com/wincent/clipper">https://github.com/wincent/clipper</a></p>
     </div><!-- /.entry-content -->
 
   </article>
