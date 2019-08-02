@@ -37,7 +37,38 @@
 </footer><!-- /.post-info -->
     <div class="entry-content">
       
-      <div class="highlight"><pre><span></span><span class="err">参数执行</span><span class="o">:</span>
+      <p>2019.8.1更新</p>
+<p>这样子执行完就不会多出来<defunc>的进程，也不会多出来<code>php-fpm</code>进程:</p>
+<div class="highlight"><pre><span></span><span class="o">&lt;</span>?<span class="nv">php</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * 子进程通过信号kill自己,也可以在父进程中发送kil信号结束子进程</span>
+<span class="cm"> */</span>
+
+<span class="o">//</span>生成子进程
+<span class="mh">$c</span><span class="nv">md</span> <span class="o">=</span> $<span class="nv">_REQUEST</span>[<span class="s1">&#39;</span><span class="s">cmd</span><span class="s1">&#39;</span>]<span class="c1">;</span>
+$<span class="nv">pid</span> <span class="o">=</span> <span class="nv">pcntl_fork</span><span class="ss">()</span><span class="c1">;</span>
+<span class="k">if</span><span class="ss">(</span>$<span class="nv">pid</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="ss">)</span>{
+    <span class="nv">die</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">could not fork</span><span class="s1">&#39;</span><span class="ss">)</span><span class="c1">;</span>
+}<span class="k">else</span>{
+    <span class="k">if</span><span class="ss">(</span>$<span class="nv">pid</span><span class="ss">)</span>{
+        $<span class="nv">status</span> <span class="o">=</span> <span class="mi">0</span><span class="c1">;</span>
+        <span class="nv">pcntl_exec</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">md</span>[<span class="mi">0</span>], <span class="mh">$c</span><span class="nv">md</span>[<span class="mi">1</span>]<span class="ss">)</span><span class="c1">;</span>
+        <span class="nv">posix_kill</span><span class="ss">(</span><span class="nv">getmypid</span><span class="ss">()</span>,<span class="mi">9</span><span class="ss">)</span><span class="c1">;</span>
+<span class="o">//</span>阻塞父进程，直到子进程结束，不适合需要长时间运行的脚本.
+        <span class="o">//</span>可使用<span class="nv">pcntl_wait</span><span class="ss">(</span>$<span class="nv">status</span>, <span class="nv">WNOHANG</span><span class="ss">)</span>实现非阻塞式
+
+        <span class="nv">pcntl_wait</span><span class="ss">(</span>$<span class="nv">status</span><span class="ss">)</span><span class="c1">;</span>
+        <span class="k">exit</span><span class="c1">;</span>
+    }
+}
+</pre></div>
+
+
+<p><code>cmd[0]=/bin/bash&amp;cmd[1][0]=-c&amp;cmd[1][1]=ping%20baidu.com%20%26%26%20pkill%20php-fpm</code></p>
+<p><strong>执行命令的时候不要阻塞，不要阻塞,不要阻塞(举个例子，ping baidu.com就很蠢了)</strong></p>
+<hr>
+<div class="highlight"><pre><span></span><span class="err">参数执行</span><span class="o">:</span>
 <span class="n">pcntl_exec</span><span class="o">(</span><span class="s2">&quot;/bin/bash&quot;</span><span class="o">,</span><span class="n">array</span><span class="o">(</span><span class="s2">&quot;-c&quot;</span><span class="o">,</span><span class="s2">&quot;id &gt; 1.txt&quot;</span><span class="o">))</span> <span class="c1">//返回值可能是502</span>
 
 <span class="err">执行脚本</span><span class="o">:</span>
@@ -62,6 +93,7 @@
 
 
 <span class="nv">cmd</span>[<span class="mi">0</span>]<span class="o">=/</span><span class="nv">bin</span><span class="o">/</span><span class="nv">bash</span><span class="o">&amp;</span><span class="nv">cmd</span>[<span class="mi">1</span>][<span class="mi">0</span>]<span class="o">=-</span><span class="nv">c</span><span class="o">&amp;</span><span class="nv">cmd</span>[<span class="mi">1</span>][<span class="mi">1</span>]<span class="o">=</span><span class="nv">id</span> <span class="o">&gt;</span> <span class="o">/</span><span class="nv">tmp</span><span class="o">/</span><span class="nv">xxx</span>.<span class="nv">txt</span>
+
 <span class="o">/</span><span class="nv">index</span>.<span class="nv">php</span>?<span class="nv">s</span><span class="o">=/</span><span class="nv">index</span><span class="o">/</span>\<span class="nv">think</span>\<span class="nv">app</span><span class="o">/</span><span class="nv">invokefunction</span><span class="o">&amp;</span><span class="nv">function</span><span class="o">=</span><span class="nv">call_user_func_array</span><span class="o">&amp;</span><span class="nv">vars</span>[<span class="mi">0</span>]<span class="o">=</span><span class="nv">pcntl_exec</span><span class="o">&amp;</span><span class="nv">vars</span>[<span class="mi">1</span>][<span class="mi">0</span>]<span class="o">=/</span><span class="nv">bin</span><span class="o">/</span><span class="nv">bash</span><span class="o">&amp;</span><span class="nv">vars</span>[<span class="mi">1</span>][<span class="mi">1</span>][<span class="mi">0</span>]<span class="o">=/</span><span class="nv">tmp</span><span class="o">/</span><span class="mi">1</span>.<span class="nv">sh</span>
 </pre></div>
 
