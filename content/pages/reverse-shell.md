@@ -6,6 +6,10 @@ slug: reverse-shell
 来源: <https://klionsec.github.io/2016/09/27/revese-shell/> 
 
 --
+2019.8.5 update:
+alfred上反弹shell的这几个方法如果是在aliyun主机上面，会被实时检测到 :)
+
+--
 2019.1.23 更新:
 
 这个是mac下的alfred软件，导入下面的workflow就能用了，触发关键词是pp，源代码很简单，可以照着改。
