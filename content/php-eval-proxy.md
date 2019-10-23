@@ -1,4 +1,10 @@
 
+Title: PHP Eval Proxy
+Category: Pentest
+Slug: php-eval-proxy
+Date: 2019-10-23
+
+
 背景: linux，php环境下的reGeorg不可用。
 目标: 分析reGeorg的原理尝试改一下
 结果: 造了一个半成品，因为不能保持socks连通，可以用来访问简单的协议流数据。比如http，mongo，redis
@@ -261,11 +267,11 @@ while 1:
         exit(0)
 ```
 
-使用方法: `python rego.py webshell pass` 
+使用方法: `python rego.py <webshell> <webshell's pass>` 
 
 这个很烂的单线程代码实现了这样的功能:
 
-1. 开启一个本地的8889的socks5代理
+1. 开启一个本地的9999的socks5代理
 2. 使用这个代理可以用curl访问内网web服务
 3. 可以访问这些数据库，mongo可用
 4. 使用了8080作为代理，放在burp里面看流量

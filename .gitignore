@@ -1,2 +1,3 @@
 evn/
+*.pyc
 env/lib/python3.7/site-packages/__pycache__/ghp_import.cpython-37.pyc
