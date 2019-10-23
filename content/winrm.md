@@ -1,4 +1,3 @@
-# winrm
 Title: winRM端口复用
 Category: Pentest
 Slug: winrm-backdoor
