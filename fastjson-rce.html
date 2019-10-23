@@ -37,7 +37,13 @@
 </footer><!-- /.post-info -->
     <div class="entry-content">
       
-      <p>2019/08/02 Update:</p>
+      <p>2019/08/13 Update.</p>
+<ol>
+<li>代码没有考虑到json里面套json的情况。</li>
+<li>代码没有考虑到在使用x-www-form-urlencoded的参数是json的情况。
+这两个加上去之后感觉每个请求的时间都会增加，先挖坑。</li>
+</ol>
+<p>2019/08/02 Update:</p>
 <ol>
 <li>之前的代码太的太烂，去掉了不用的代码</li>
 <li>增加了hash验证，如果已经请求过的URL第二次就不检测了，需建立<code>/var/tmp/hash.txt</code>文件（自己看着改吧)</li>
