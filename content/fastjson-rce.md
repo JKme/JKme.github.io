@@ -3,6 +3,14 @@ Category: Pentest
 Slug: fastjson-rce
 Date: 2019-7-22
 
+
+2019/08/13 Update.
+
+1. 代码没有考虑到json里面套json的情况。
+2. 代码没有考虑到在使用x-www-form-urlencoded的参数是json的情况。
+这两个加上去之后感觉每个请求的时间都会增加，先挖坑。
+
+
 2019/08/02 Update:
 
 1. 之前的代码太的太烂，去掉了不用的代码

