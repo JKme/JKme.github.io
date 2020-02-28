@@ -34,8 +34,8 @@
 <blockquote>
 <p>时间后面<code>-20</code>，带<code>+</code>表示符合<strong>该数量以前</strong>, <code>-</code>表示符合符合<strong>该数量以后</strong></p>
 </blockquote>
-<p>查找当前<code>html</code>文件，包含<code>Strings</code>文件，然后替换为字符串
-<code>find . -name "*.html" |xargs grep -w Strings|sed 's/Strings/字符串/'</code></p>
+<p>查找当前包含<code>oldString</code>文件，然后替换为字符串,<code>-i</code>对源文件生效
+<code>grep -rl "oldString" . |xargs sed -i 's/oldString/newString/g''</code></p>
 <h2>Mac屏幕共享</h2>
 <h3>开启</h3>
 <p><code>sudo  /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -activate -configure -access -on -clientopts -setvnclegacy -vnclegacy yes -clientopts -setvncpw -vncpw mypasswd -restart -agent -privs -all</code></p>

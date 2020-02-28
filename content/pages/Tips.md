@@ -10,8 +10,8 @@ Title: Tips
 
 > 时间后面`-20`，带`+`表示符合**该数量以前**, `-`表示符合符合**该数量以后**
 
-查找当前`html`文件，包含`Strings`文件，然后替换为字符串
-` find . -name "*.html" |xargs grep -w Strings|sed 's/Strings/字符串/'`
+查找当前包含`oldString`文件，然后替换为字符串,`-i`对源文件生效
+` grep -rl "oldString" . |xargs sed -i 's/oldString/newString/g''`
 
 ##Mac屏幕共享
 ###开启

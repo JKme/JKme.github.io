@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
         <meta charset="utf-8" />
-        <title>记一次python调试</title>
+        <title>Pycharm远程调试Docker</title>
         <link rel="stylesheet" href="/theme/css/main.css" />
 </head>
 
@@ -24,11 +24,11 @@
     <header>
       <h1 class="entry-title">
         <a href="/python-debug.html" rel="bookmark"
-           title="Permalink to 记一次python调试">记一次python调试</a></h1>
+           title="Permalink to Pycharm远程调试Docker">Pycharm远程调试Docker</a></h1>
     </header>
 <footer class="post-info">
-        <span class="published" title="2017-11-10T00:00:00+01:00">
-                <a href='#'>11/10/2017 </a>
+        <span class="published" title="2019-12-13T00:00:00+01:00">
+                <a href='#'>12/13/2019 </a>
                 <a href="/category/python.html">Python</a>
         </span>
 
@@ -37,7 +37,7 @@
 </footer><!-- /.post-info -->
     <div class="entry-content">
       
-      <p>Hawkeye在爬虫的时候，总是阻塞卡住不动了。使用Pycharm调试，如下流水账:</p>
+      <p>调试的流水账:</p>
 <p>原理就是pycharm作为server，远程要debug的是client。在client要安装pycharm-debug.egg，安装之后</p>
 <div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">easy_install</span> <span class="n">pycharm</span><span class="o">-</span><span class="n">debug</span><span class="p">.</span><span class="n">egg</span>
 </pre></div>
@@ -54,27 +54,39 @@
 
 
 <p>然后配置pycharm:</p>
-<div class="highlight"><pre><span></span><span class="err">在</span><span class="n">Preferences</span> <span class="o">-&gt;</span> <span class="n">project</span> <span class="err">会有当前项目，先设置</span> <span class="n">project</span> <span class="n">Interpreter</span>
+<div class="highlight"><pre><span></span><span class="err">在</span><span class="n">Preferences</span> <span class="o">-&gt;</span> <span class="n">project</span> <span class="err">会有当前项目，可以先设置</span> <span class="n">project</span> <span class="n">Interpreter</span><span class="err">，但是如果单单为了调试，这个不用设置就可以。为了测试方便可以添加一个</span><span class="n">sftp同步</span><span class="p">:</span>
 
-<span class="err">点开最右边的小齿轮，选择添加</span><span class="n">remote</span> <span class="n">interpreter</span><span class="err">。</span>
+<span class="n">Flie</span><span class="o">-&gt;</span><span class="n">Setting</span><span class="o">-&gt;</span><span class="n">Build</span><span class="p">,</span><span class="k">Exception</span><span class="p">,</span><span class="n">Deployment</span><span class="o">-&gt;</span><span class="n">Deployment</span>
 
-<span class="err">然后在配置项目运行的配置文件，添加一个</span><span class="n">python</span> <span class="n">remote</span> <span class="n">debug</span><span class="err">。</span>
+<span class="err">添加和</span><span class="n">Docker相关的端口和IP</span><span class="err">，举例来说把</span><span class="n">Docker的22端口映射到本机的20022</span><span class="err">。设置完了之后，可以在这里同步代码</span><span class="p">:</span>
 
-<span class="err">其中的</span><span class="sb">`local host name`</span><span class="err">要设置</span><span class="n">pycharm机子的IP</span><span class="err">，</span><span class="n">PORT随便填</span><span class="err">，最后把两行代码加到要</span><span class="n">debug的机子文件上</span><span class="p">:</span>
+<span class="n">Tools</span><span class="o">-&gt;</span><span class="n">Deployment</span><span class="o">-&gt;</span><span class="n">Sync</span> <span class="k">with</span> <span class="n">deploymed</span> <span class="k">to</span> <span class="n">sftp</span>
+</pre></div>
 
+
+<p>经过上面的步骤现在有了一个sftp来同步本地的代码和远程的代码，然后设置使用pydevd来远程调试。</p>
+<p>在Run/Debug configurations里面，选择添加Python Remote Debug。</p>
+<p>其中的<code>local host name</code>要设置为pycharm机子的IP，PORT随便填，比如11000。
+设置完成之后，注意设置下Path Mappings，设置好本地主机的路径源代码和远程的路径。如果这里不设置好，在调试的时候Py</p>
+<p>最后把两行代码加到要debug的机子文件上,注意把pycharm-debug.egg添加到路径里面:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;/root/pycharm-debug.egg&#39;</span><span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">pydevd</span>
-
 <span class="n">pydevd</span><span class="o">.</span><span class="n">settrace</span><span class="p">(</span><span class="s1">&#39;192.168.140.40&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">stdoutToServer</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">stderrToServer</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 
 
-<p>先pycharm启动调试，然后远程运行即可。</p>
+<p>这个时候已经设置全部完成，本地的pycharm启动远程调试，然后在docker上面启动Python应用。</p>
+<p>如果不确定本地的pycharm是不是启动成功了，可以telnet一下对应的端口，会有类似这种内容出现:</p>
+<p><img alt="" src="../output/images/15762160114084.jpg"></p>
 <div class="highlight"><pre><span></span><span class="n">strace</span> <span class="o">-</span><span class="n">p</span> <span class="mi">27691</span> <span class="o">-</span><span class="n">e</span> <span class="n">trace</span><span class="o">=</span><span class="k">read</span><span class="p">,</span><span class="k">write</span> <span class="o">-</span><span class="n">s</span> <span class="mi">1024</span>
 </pre></div>
 
 
 <p>调试的时候可以看读写调用。</p>
+<h3>SSH Remote Debug</h3>
+<p>如果是ssh的Remote Debug，在设置interpreter的时候，设置远程服务器的python解释器就可以了，在Docker里面之所以ssh类型的远程调试失败，应该是Docker的端口没有映射到本地造成的。</p>
     </div><!-- /.entry-content -->
 
   </article>
