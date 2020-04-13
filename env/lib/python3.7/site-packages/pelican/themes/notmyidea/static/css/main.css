@@ -48,6 +48,10 @@ body {
     text-align: left;
 }
 
+entry-content {
+	line-height: 1.4
+
+}
  h3::before,h4::before,h2::before {
     padding-top: 0.8em;
     margin-right: 8px;
