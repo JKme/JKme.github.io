@@ -43,5 +43,12 @@ psr.exe /stop;
 ##END
 
 ```
-Hacking has made me feel alive. It started as a way to self-medicate depression. Later I realized that, in reality, I could do something positive. I don't regret the way I grew up at all, it brought several beautiful experiences to my life. But I knew I couldn't continue living that way. So I began to spend more time away from my computer, with other people, learning to open myself to the world, to feel my emotions, to connect with others, to accept risks and be vulnerable. Things much harder than hacking, but at the mere hour the reward is more worth it. It is still an effort, but even if it is slow and wobbly, I feel that I am on my way.
+Hacking has made me feel alive. It started as a way to self-medicate depression. Later I
+realized that, in reality, I could do something positive. I don't regret the way I grew up at 
+all, it brought several beautiful experiences to my life. But I knew I couldn't continue 
+living that way. So I began to spend more time away from my computer, with other people, 
+learning to open myself to the world, to feel my emotions, to connect with others, to accept 
+risks and be vulnerable. Things much harder than hacking, but at the mere hour the reward is 
+more worth it. It is still an effort, but even if it is slow and wobbly, I feel that I am on 
+my way.
 ```
