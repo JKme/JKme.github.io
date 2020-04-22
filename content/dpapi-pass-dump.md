@@ -149,3 +149,4 @@ sekurlsa::logonpasswords
 * <https://3gstudent.github.io/3gstudent.github.io/%E6%B8%97%E9%80%8F%E6%8A%80%E5%B7%A7-%E8%8E%B7%E5%8F%96Windows%E7%B3%BB%E7%BB%9F%E4%B8%8BDPAPI%E4%B8%AD%E7%9A%84MasterKey/>
 * <https://github.com/djhohnstein/SharpWeb>
 * <https://github.com/djhohnstein/SharpChromium>
+* <https://posts.specterops.io/operational-guidance-for-offensive-user-dpapi-abuse-1fb7fac8b107>
