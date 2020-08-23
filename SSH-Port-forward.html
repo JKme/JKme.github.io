@@ -69,16 +69,16 @@
 <p>监听本地localport端口，创建一个通过sshserver连接的socks服务，之后发往localport的代理请求将会通过sshserver转到相应地址。</p>
 <p><code>ssh -D 8000 user@sshserver.com</code></p>
 <p>输入user的密码之后，你就可以将浏览器的socks5代理设为自己的8000端口，之后会有数据以加密的方式传给sshserver，sshserver获取www.blockedwebsite.com之后返回本地。</p>
-<div class="highlight"><pre><span></span><span class="o">-</span><span class="n">f</span> <span class="n">ssh在后台运行</span><span class="err">，即认证之后，</span><span class="n">ssh退居后台</span>
-<span class="o">-</span><span class="n">T</span> <span class="err">不要分配</span><span class="n">tty终端</span>
-<span class="o">-</span><span class="n">N</span> <span class="err">不要在服务器执行命令</span>
-<span class="o">-</span><span class="k">C</span>  <span class="err">压缩数据包</span>
-<span class="o">-</span><span class="n">i</span>  <span class="err">指定认证密钥</span>
-<span class="o">-</span><span class="n">n</span>  <span class="err">将</span><span class="n">studio重定向到</span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="k">null</span> <span class="err">与</span><span class="o">-</span><span class="n">f配合使用</span>
-<span class="o">-</span><span class="n">q</span>  <span class="err">安静模式</span>
-<span class="o">-</span><span class="n">l</span>  <span class="err">指定连接远程服务器的用户名</span>
-<span class="o">-</span><span class="k">g</span>  <span class="err">允许远程主机连接主机的转发端口</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">-f ssh在后台运行，即认证之后，ssh退居后台</span>
+<span class="err">-T 不要分配tty终端</span>
+<span class="err">-N 不要在服务器执行命令</span>
+<span class="err">-C  压缩数据包</span>
+<span class="err">-i  指定认证密钥</span>
+<span class="err">-n  将studio重定向到/dev/null 与-f配合使用</span>
+<span class="err">-q  安静模式</span>
+<span class="err">-l  指定连接远程服务器的用户名</span>
+<span class="err">-g  允许远程主机连接主机的转发端口</span>
+</code></pre></div>
 
 
 <p>另外：

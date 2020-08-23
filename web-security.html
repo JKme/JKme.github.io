@@ -66,10 +66,10 @@
 <p>关于这一点可以搜索P牛的文章，其中有绕过open_basedir。</p>
 <p>如果PHP的配置选项allow_url_include为On的时候，则include/require函数可以加载远程文件，这种漏洞称为远程文件包含漏洞（Remote File Inclusion，RFI)。
 远程文件包含漏洞可以直接执行任意命令，比如攻击者服务器有以下文件:</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>
 <span class="k">echo</span> <span class="nb">system</span><span class="p">(</span><span class="s2">&quot;ver;&quot;</span><span class="p">);</span>
 <span class="cp">?&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>远程文件包含之所以可以执行命令，因为攻击者可以自定义被包含的文件内容，因此本地文件包含漏洞想要执行命令，需要找到一个攻击者可以控制内容的本地文件。</p>

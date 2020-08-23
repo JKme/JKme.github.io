@@ -51,211 +51,211 @@ $           重命名当前会话</p>
 <p>name不管是pane还是windows，是不是只要有name就可以跳过去，不对，应该是windows之间的跳，因为一组windows就是一组任务。</p>
 <p>一个session里面可以最下面的状态栏可以看到有几个windows，windows的名字如何</p>
 <h3>windows的操作:</h3>
-<div class="highlight"><pre><span></span><span class="n">p</span>  <span class="err">切换到上一个</span><span class="n">windows</span>
-<span class="n">n</span>  <span class="err">切换到下一个</span><span class="n">widnwos</span>
-<span class="p">,</span>  <span class="err">重命名窗口</span>
-<span class="p">.</span>  <span class="err">修改当前窗口编号</span>
-<span class="n">f</span>  <span class="err">根据关键词搜索</span><span class="n">windows</span>   <span class="err">这个实际测试可用，可以跳</span><span class="k">session</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">p  切换到上一个windows</span>
+<span class="err">n  切换到下一个widnwos</span>
+<span class="err">,  重命名窗口</span>
+<span class="err">.  修改当前窗口编号</span>
+<span class="err">f  根据关键词搜索windows   这个实际测试可用，可以跳session</span>
+</code></pre></div>
 
 
 <h3>Pane的操作</h3>
-<div class="highlight"><pre><span></span><span class="err">{</span>  <span class="err">向前置换面板</span>
-<span class="err">}</span>  <span class="err">向后置换面板，这个有意思</span>
-<span class="n">z</span>  <span class="err">最大化当前的面板，再输入一次就变回去了</span>
-<span class="n">Esc</span><span class="o">+</span><span class="mi">1</span>  <span class="err">横着的面板变成竖立状态</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">{  向前置换面板</span>
+<span class="err">}  向后置换面板，这个有意思</span>
+<span class="err">z  最大化当前的面板，再输入一次就变回去了</span>
+<span class="err">Esc+1  横着的面板变成竖立状态</span>
+</code></pre></div>
 
 
 <h3>Pane和windows之间的互换</h3>
 <p>比如你当前想把另外一个windows合并到现在的pane里面</p>
-<div class="highlight"><pre><span></span><span class="k">join</span><span class="o">-</span><span class="n">pane</span> <span class="o">-</span><span class="n">s</span> <span class="n">window01</span> <span class="o">#</span> <span class="err">合并名称为</span><span class="n">window01的窗口的默认</span><span class="err">（第一个）面板到当前窗口中</span>
-<span class="k">join</span><span class="o">-</span><span class="n">pane</span> <span class="o">-</span><span class="n">s</span> <span class="n">window01</span><span class="p">.</span><span class="mi">1</span> <span class="o">#</span> <span class="p">.</span><span class="mi">1</span><span class="err">显式指定了第一个面板，</span><span class="p">.</span><span class="mi">2</span><span class="err">就是第二个面板</span><span class="p">(</span><span class="err">我本地将面板编号起始值设置为</span><span class="mi">1</span><span class="err">，默认是</span><span class="mi">0</span><span class="p">)</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">join-pane -s window01 # 合并名称为window01的窗口的默认（第一个）面板到当前窗口中</span>
+<span class="err">join-pane -s window01.1 # .1显式指定了第一个面板，.2就是第二个面板(我本地将面板编号起始值设置为1，默认是0)</span>
+</code></pre></div>
 
 
 <p>有另外一种方式，通过karabiner，单独在iterm2里面绑定某个组合键盘，比如cap绑定一个Home键，这样tmux的prefix就是单独按一下cap就可以了。</p>
 <p>所以需要两个地方设置:</p>
-<div class="highlight"><pre><span></span><span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">prefix</span> <span class="nv">Home</span>
-<span class="nv">unbind</span> <span class="nv">C</span><span class="o">-</span><span class="nv">b</span>
-<span class="nv">bind</span><span class="o">-</span><span class="nv">key</span> <span class="nv">Home</span> <span class="k">send</span><span class="o">-</span><span class="nv">prefix</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">set -g prefix Home</span>
+<span class="err">unbind C-b</span>
+<span class="err">bind-key Home send-prefix</span>
+</code></pre></div>
 
 
 <p>第二个地方需要在karabiner里面针对iterm2单独设置一个规则: 即按下cap等于home键。
 这个是网上的一个例子，可以照着写</p>
-<div class="highlight"><pre><span></span>?<span class="nv">xml</span> <span class="nv">version</span><span class="o">=</span><span class="s2">&quot;</span><span class="s">1.0</span><span class="s2">&quot;</span>?<span class="o">&gt;</span>
-<span class="o">&lt;</span><span class="nv">root</span><span class="o">&gt;</span>
-  <span class="o">&lt;</span><span class="nv">appdef</span><span class="o">&gt;</span>
-    <span class="o">&lt;</span><span class="nv">appname</span><span class="o">&gt;</span><span class="nv">PYCHARM</span><span class="o">&lt;/</span><span class="nv">appname</span><span class="o">&gt;</span>
-    <span class="o">&lt;</span><span class="nv">equal</span><span class="o">&gt;</span><span class="nv">com</span>.<span class="nv">jetbrains</span>.<span class="nv">pycharm</span><span class="o">&lt;/</span><span class="nv">equal</span><span class="o">&gt;</span>
-  <span class="o">&lt;/</span><span class="nv">appdef</span><span class="o">&gt;</span>
-   <span class="o">&lt;</span><span class="nv">item</span><span class="o">&gt;</span>
-    <span class="o">&lt;</span><span class="nv">name</span><span class="o">&gt;</span><span class="nv">custom</span> <span class="nv">settings</span><span class="o">&lt;/</span><span class="nv">name</span><span class="o">&gt;</span>
-    <span class="o">&lt;</span><span class="nv">item</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nv">name</span><span class="o">&gt;</span><span class="nv">Change</span> <span class="nv">Functional</span> <span class="nv">Keys</span> <span class="nv">to</span> <span class="nv">F3</span>...<span class="nv">F10</span> <span class="k">for</span> <span class="nv">PyCharm</span><span class="o">&lt;/</span><span class="nv">name</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nv">identifier</span><span class="o">&gt;</span><span class="nv">remap</span>.<span class="nv">app_pycharm_functional2function</span><span class="o">&lt;/</span><span class="nv">identifier</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nv">only</span><span class="o">&gt;</span><span class="nv">PYCHARM</span><span class="o">&lt;/</span><span class="nv">only</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nv">autogen</span><span class="o">&gt;</span><span class="nv">__KeyToKey__</span> <span class="nv">KeyCode</span>::<span class="nv">EXPOSE_ALL</span>, <span class="nv">KeyCode</span>::<span class="nv">F3</span><span class="o">&lt;/</span><span class="nv">autogen</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nv">autogen</span><span class="o">&gt;</span><span class="nv">__KeyToKey__</span> <span class="nv">KeyCode</span>::<span class="nv">DASHBOARD</span>, <span class="nv">KeyCode</span>::<span class="nv">F4</span><span class="o">&lt;/</span><span class="nv">autogen</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nv">autogen</span><span class="o">&gt;</span><span class="nv">__KeyToKey__</span> <span class="nv">KeyCode</span>::<span class="nv">LAUNCHPAD</span>, <span class="nv">KeyCode</span>::<span class="nv">F4</span><span class="o">&lt;/</span><span class="nv">autogen</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nv">autogen</span><span class="o">&gt;</span><span class="nv">__KeyToKey__</span> <span class="nv">ConsumerKeyCode</span>::<span class="nv">KEYBOARDLIGHT_LOW</span>, <span class="nv">KeyCode</span>::<span class="nv">F5</span><span class="o">&lt;/</span><span class="nv">autogen</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nv">autogen</span><span class="o">&gt;</span><span class="nv">__KeyToKey__</span> <span class="nv">ConsumerKeyCode</span>::<span class="nv">KEYBOARDLIGHT_HIGH</span>, <span class="nv">KeyCode</span>::<span class="nv">F6</span><span class="o">&lt;/</span><span class="nv">autogen</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nv">autogen</span><span class="o">&gt;</span><span class="nv">__KeyToKey__</span> <span class="nv">ConsumerKeyCode</span>::<span class="nv">MUSIC_PREV</span>, <span class="nv">KeyCode</span>::<span class="nv">F7</span><span class="o">&lt;/</span><span class="nv">autogen</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nv">autogen</span><span class="o">&gt;</span><span class="nv">__KeyToKey__</span> <span class="nv">ConsumerKeyCode</span>::<span class="nv">MUSIC_PLAY</span>, <span class="nv">KeyCode</span>::<span class="nv">F8</span><span class="o">&lt;/</span><span class="nv">autogen</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nv">autogen</span><span class="o">&gt;</span><span class="nv">__KeyToKey__</span> <span class="nv">ConsumerKeyCode</span>::<span class="nv">MUSIC_NEXT</span>, <span class="nv">KeyCode</span>::<span class="nv">F9</span><span class="o">&lt;/</span><span class="nv">autogen</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nv">autogen</span><span class="o">&gt;</span><span class="nv">__KeyToKey__</span> <span class="nv">ConsumerKeyCode</span>::<span class="nv">VOLUME_MUTE</span>, <span class="nv">KeyCode</span>::<span class="nv">F10</span><span class="o">&lt;/</span><span class="nv">autogen</span><span class="o">&gt;</span>
-    <span class="o">&lt;/</span><span class="nv">item</span><span class="o">&gt;</span>
-  <span class="o">&lt;/</span><span class="nv">item</span><span class="o">&gt;</span>
-<span class="o">&lt;/</span><span class="nv">root</span><span class="o">&gt;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code>?xml version=&quot;1.0&quot;?&gt;
+<span class="nt">&lt;root&gt;</span>
+  <span class="nt">&lt;appdef&gt;</span>
+    <span class="nt">&lt;appname&gt;</span>PYCHARM<span class="nt">&lt;/appname&gt;</span>
+    <span class="nt">&lt;equal&gt;</span>com.jetbrains.pycharm<span class="nt">&lt;/equal&gt;</span>
+  <span class="nt">&lt;/appdef&gt;</span>
+   <span class="nt">&lt;item&gt;</span>
+    <span class="nt">&lt;name&gt;</span>custom settings<span class="nt">&lt;/name&gt;</span>
+    <span class="nt">&lt;item&gt;</span>
+      <span class="nt">&lt;name&gt;</span>Change Functional Keys to F3...F10 for PyCharm<span class="nt">&lt;/name&gt;</span>
+      <span class="nt">&lt;identifier&gt;</span>remap.app_pycharm_functional2function<span class="nt">&lt;/identifier&gt;</span>
+      <span class="nt">&lt;only&gt;</span>PYCHARM<span class="nt">&lt;/only&gt;</span>
+      <span class="nt">&lt;autogen&gt;</span>__KeyToKey__ KeyCode::EXPOSE_ALL, KeyCode::F3<span class="nt">&lt;/autogen&gt;</span>
+      <span class="nt">&lt;autogen&gt;</span>__KeyToKey__ KeyCode::DASHBOARD, KeyCode::F4<span class="nt">&lt;/autogen&gt;</span>
+      <span class="nt">&lt;autogen&gt;</span>__KeyToKey__ KeyCode::LAUNCHPAD, KeyCode::F4<span class="nt">&lt;/autogen&gt;</span>
+      <span class="nt">&lt;autogen&gt;</span>__KeyToKey__ ConsumerKeyCode::KEYBOARDLIGHT_LOW, KeyCode::F5<span class="nt">&lt;/autogen&gt;</span>
+      <span class="nt">&lt;autogen&gt;</span>__KeyToKey__ ConsumerKeyCode::KEYBOARDLIGHT_HIGH, KeyCode::F6<span class="nt">&lt;/autogen&gt;</span>
+      <span class="nt">&lt;autogen&gt;</span>__KeyToKey__ ConsumerKeyCode::MUSIC_PREV, KeyCode::F7<span class="nt">&lt;/autogen&gt;</span>
+      <span class="nt">&lt;autogen&gt;</span>__KeyToKey__ ConsumerKeyCode::MUSIC_PLAY, KeyCode::F8<span class="nt">&lt;/autogen&gt;</span>
+      <span class="nt">&lt;autogen&gt;</span>__KeyToKey__ ConsumerKeyCode::MUSIC_NEXT, KeyCode::F9<span class="nt">&lt;/autogen&gt;</span>
+      <span class="nt">&lt;autogen&gt;</span>__KeyToKey__ ConsumerKeyCode::VOLUME_MUTE, KeyCode::F10<span class="nt">&lt;/autogen&gt;</span>
+    <span class="nt">&lt;/item&gt;</span>
+  <span class="nt">&lt;/item&gt;</span>
+<span class="nt">&lt;/root&gt;</span>
+</code></pre></div>
 
 
 <p>获取程序的<code>budnle identifiers</code>:</p>
-<div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">osascript</span> <span class="o">-</span><span class="n">e</span> <span class="s1">&#39;id of app &quot;WebStorm&quot;&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;</span> <span class="n">osascript</span> <span class="o">-</span><span class="n">e</span> <span class="s1">&#39;id of app &quot;WebStorm&quot;&#39;</span>
   <span class="n">com</span><span class="p">.</span><span class="n">jetbrains</span><span class="p">.</span><span class="n">WebStorm</span>
 
   <span class="o">&gt;</span> <span class="n">osascript</span> <span class="o">-</span><span class="n">e</span> <span class="s1">&#39;id of app &quot;Pycharm&quot;&#39;</span>
   <span class="n">com</span><span class="p">.</span><span class="n">jetbrains</span><span class="p">.</span><span class="n">pycharm</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>tmux的最大化利用是远程服务器的时候，在iterm2里面新开一个标签。可以选择每一个vps一个标签，然后在每一个标签里面利用tmux,w</p>
 <p>可以在iterm2里面修改切换tab是<code>cmd + [</code>，和<code>cmd + ]</code>。</p>
-<div class="highlight"><pre><span></span><span class="o">#</span><span class="p">(</span><span class="nb">date</span><span class="p">)</span> <span class="n">shell</span> <span class="n">command</span>
-<span class="o">#</span><span class="n">I</span>  <span class="n">window</span> <span class="k">index</span>
-<span class="o">#</span><span class="n">S</span>  <span class="k">session</span> <span class="n">name</span>
-<span class="o">#</span><span class="n">W</span>  <span class="n">window</span> <span class="n">name</span>
-<span class="o">#</span><span class="n">F</span>  <span class="n">window</span> <span class="n">flags</span>
-<span class="o">#</span><span class="n">H</span>  <span class="n">Hostname</span>
-<span class="o">#</span><span class="n">h</span>  <span class="n">Hostname</span><span class="p">,</span> <span class="n">short</span>
-<span class="o">#</span><span class="n">D</span>  <span class="n">pane</span> <span class="n">id</span>
-<span class="o">#</span><span class="n">P</span>  <span class="n">pane</span> <span class="k">index</span>
-<span class="o">#</span><span class="n">T</span>  <span class="n">pane</span> <span class="n">title</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">#(date) shell command</span>
+<span class="err">#I  window index</span>
+<span class="err">#S  session name</span>
+<span class="err">#W  window name</span>
+<span class="err">#F  window flags</span>
+<span class="err">#H  Hostname</span>
+<span class="err">#h  Hostname, short</span>
+<span class="err">#D  pane id</span>
+<span class="err">#P  pane index</span>
+<span class="err">#T  pane title</span>
+</code></pre></div>
 
 
 <p>最后，我的tmux配置是这个:</p>
-<div class="highlight"><pre><span></span><span class="nv">unbind</span> <span class="nv">C</span><span class="o">-</span><span class="nv">b</span>
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">prefix</span> <span class="nv">C</span><span class="o">-</span><span class="nv">d</span>
+<div class="highlight"><pre><span></span><code><span class="n">unbind</span><span class="w"> </span><span class="n">C</span><span class="o">-</span><span class="n">b</span><span class="w"></span>
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="k">prefix</span><span class="w"> </span><span class="n">C</span><span class="o">-</span><span class="n">d</span><span class="w"></span>
 
-<span class="nv">bind</span> <span class="nv">r</span> <span class="nv">source</span><span class="o">-</span><span class="nv">file</span> <span class="o">~/</span>.<span class="nv">tmux</span>.<span class="nv">conf</span> \<span class="c1">; display-message &quot;Config reloaded&quot;</span>
-
-
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">default</span><span class="o">-</span><span class="nv">terminal</span> <span class="s2">&quot;</span><span class="s">screen-256color</span><span class="s2">&quot;</span>
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">mode</span><span class="o">-</span><span class="nv">keys</span> <span class="nv">vi</span>
-<span class="nv">run</span><span class="o">-</span><span class="nv">shell</span> <span class="s2">&quot;</span><span class="s">tmux rename-window \</span><span class="s2">&quot;</span>#{<span class="nv">pane_current_command</span>}\<span class="s2">&quot;&quot;</span>
+<span class="n">bind</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="n">source</span><span class="o">-</span><span class="k">file</span><span class="w"> </span><span class="o">~/</span><span class="p">.</span><span class="n">tmux</span><span class="p">.</span><span class="n">conf</span><span class="w"> </span><span class="err">\</span><span class="p">;</span><span class="w"> </span><span class="n">display</span><span class="o">-</span><span class="n">message</span><span class="w"> </span><span class="ss">&quot;Config reloaded&quot;</span><span class="w"></span>
 
 
-<span class="nv">bind</span> \ <span class="nv">split</span><span class="o">-</span><span class="nv">window</span> <span class="o">-</span><span class="nv">h</span>
-<span class="nv">bind</span> <span class="o">-</span> <span class="nv">split</span><span class="o">-</span><span class="nv">window</span> <span class="o">-</span><span class="nv">v</span>
-
-<span class="nv">bind</span> <span class="nv">h</span> <span class="nv">select</span><span class="o">-</span><span class="nv">pane</span> <span class="o">-</span><span class="nv">L</span>
-<span class="nv">bind</span> <span class="nv">j</span> <span class="nv">select</span><span class="o">-</span><span class="nv">pane</span> <span class="o">-</span><span class="nv">D</span>
-<span class="nv">bind</span> <span class="nv">k</span> <span class="nv">select</span><span class="o">-</span><span class="nv">pane</span> <span class="o">-</span><span class="nv">U</span>
-<span class="nv">bind</span> <span class="nv">l</span> <span class="nv">select</span><span class="o">-</span><span class="nv">pane</span> <span class="o">-</span><span class="nv">R</span>
-<span class="nv">bind</span> <span class="nv">q</span> <span class="nv">killp</span>
-
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">base</span><span class="o">-</span><span class="nv">index</span> <span class="mi">1</span>
-<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">pane</span><span class="o">-</span><span class="nv">base</span><span class="o">-</span><span class="nv">index</span> <span class="mi">1</span>
-<span class="nv">set</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">interval</span> <span class="mi">1</span>
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="k">default</span><span class="o">-</span><span class="n">terminal</span><span class="w"> </span><span class="ss">&quot;screen-256color&quot;</span><span class="w"></span>
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">mode</span><span class="o">-</span><span class="n">keys</span><span class="w"> </span><span class="n">vi</span><span class="w"></span>
+<span class="n">run</span><span class="o">-</span><span class="n">shell</span><span class="w"> </span><span class="ss">&quot;tmux rename-window \&quot;</span><span class="err">#{</span><span class="n">pane_current_command</span><span class="err">}\</span><span class="ss">&quot;&quot;</span><span class="w"></span>
 
 
-#<span class="nv">set</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">automatic</span><span class="o">-</span><span class="nv">rename</span> <span class="nv">on</span>
-#<span class="nv">set</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">automatic</span><span class="o">-</span><span class="nv">rename</span><span class="o">-</span><span class="nv">format</span> <span class="s1">&#39;</span><span class="s">#{b:pane_current_path}</span><span class="s1">&#39;</span>
+<span class="n">bind</span><span class="w"> </span><span class="err">\</span><span class="w"> </span><span class="n">split</span><span class="o">-</span><span class="k">window</span><span class="w"> </span><span class="o">-</span><span class="n">h</span><span class="w"></span>
+<span class="n">bind</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">split</span><span class="o">-</span><span class="k">window</span><span class="w"> </span><span class="o">-</span><span class="n">v</span><span class="w"></span>
 
-<span class="nv">set</span><span class="o">-</span><span class="nv">window</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">current</span><span class="o">-</span><span class="nv">format</span> <span class="s1">&#39;</span><span class="s">#[fg=white,bold]** #{window_index} #[fg=green]#W #[fg=blue]#(echo &quot;#{pane_current_path}&quot; | rev | cut -d</span><span class="s1">&#39;</span><span class="o">/</span><span class="s1">&#39;</span><span class="s"> -f-3 | rev) #[fg=white]**|</span><span class="s1">&#39;</span>
-<span class="nv">set</span><span class="o">-</span><span class="nv">window</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">format</span> <span class="s1">&#39;</span><span class="s">#[fg=white,bold]#{window_index} #[fg=green]#W #[fg=blue]#(echo &quot;#{pane_current_path}&quot; | rev | cut -d</span><span class="s1">&#39;</span><span class="o">/</span><span class="s1">&#39;</span><span class="s"> -f-3 | rev) #[fg=white]|</span><span class="s1">&#39;</span>
-<span class="nv">bind</span><span class="o">-</span><span class="nv">key</span> <span class="o">-</span><span class="nv">r</span> <span class="nv">w</span> <span class="nv">choose</span><span class="o">-</span><span class="nv">window</span> <span class="o">-</span><span class="nv">F</span> <span class="s1">&#39;</span><span class="s">#{window_index} | #{pane_current_command} | #{pane_current_path}</span><span class="s1">&#39;</span>
-#<span class="nv">bind</span><span class="o">-</span><span class="nv">key</span> <span class="o">-</span><span class="nv">r</span> <span class="nv">w</span> <span class="nv">choose</span><span class="o">-</span><span class="nv">window</span> <span class="o">-</span><span class="nv">F</span> <span class="s1">&#39;</span><span class="s">#{window_index} | #{pane_current_command} | #{host} | #{pane_current_path}</span><span class="s1">&#39;</span>
+<span class="n">bind</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="k">select</span><span class="o">-</span><span class="n">pane</span><span class="w"> </span><span class="o">-</span><span class="n">L</span><span class="w"></span>
+<span class="n">bind</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="k">select</span><span class="o">-</span><span class="n">pane</span><span class="w"> </span><span class="o">-</span><span class="n">D</span><span class="w"></span>
+<span class="n">bind</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="k">select</span><span class="o">-</span><span class="n">pane</span><span class="w"> </span><span class="o">-</span><span class="n">U</span><span class="w"></span>
+<span class="n">bind</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="k">select</span><span class="o">-</span><span class="n">pane</span><span class="w"> </span><span class="o">-</span><span class="n">R</span><span class="w"></span>
+<span class="n">bind</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="n">killp</span><span class="w"></span>
 
-# <span class="nv">status</span> <span class="nv">bar</span> <span class="nv">updates</span> <span class="nv">every</span> <span class="mi">15</span><span class="nv">s</span> <span class="nv">by</span> <span class="nv">default</span><span class="o">**</span>, <span class="nv">change</span> <span class="nv">to</span> <span class="mi">1</span><span class="nv">s</span> <span class="nv">here</span>
-# <span class="ss">(</span><span class="nv">this</span> <span class="nv">step</span> <span class="nv">is</span> <span class="nv">optional</span> <span class="o">-</span> <span class="nv">a</span> <span class="nv">lower</span> <span class="nv">latency</span> <span class="nv">might</span> <span class="nv">have</span> <span class="nv">negative</span> <span class="nv">battery</span><span class="o">/</span><span class="nv">cpu</span> <span class="nv">usage</span> <span class="nv">impacts</span><span class="ss">)</span>
-<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">mouse</span> <span class="nv">on</span>
-#<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">mouse</span><span class="o">-</span><span class="nv">select</span><span class="o">-</span><span class="nv">pane</span> <span class="nv">on</span>
-#<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">mouse</span><span class="o">-</span><span class="nv">resize</span><span class="o">-</span><span class="nv">pane</span> <span class="nv">on</span>
-#<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">mouse</span><span class="o">-</span><span class="nv">select</span><span class="o">-</span><span class="nv">window</span> <span class="nv">on</span>
-
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">fg</span> <span class="nv">white</span>
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">bg</span> <span class="nv">black</span>
-<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">fg</span> <span class="nv">cyan</span>
-<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">bg</span> <span class="nv">default</span>
-<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">attr</span> <span class="nv">dim</span>
-
-<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">current</span><span class="o">-</span><span class="nv">fg</span> <span class="nv">white</span>
-<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">current</span><span class="o">-</span><span class="nv">bg</span> <span class="nv">red</span>
-<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">window</span><span class="o">-</span><span class="nv">status</span><span class="o">-</span><span class="nv">current</span><span class="o">-</span><span class="nv">attr</span> <span class="nv">bright</span>
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">pane</span><span class="o">-</span><span class="nv">border</span><span class="o">-</span><span class="nv">fg</span> <span class="nv">green</span>
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">pane</span><span class="o">-</span><span class="nv">border</span><span class="o">-</span><span class="nv">bg</span> <span class="nv">black</span>
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">pane</span><span class="o">-</span><span class="nv">active</span><span class="o">-</span><span class="nv">border</span><span class="o">-</span><span class="nv">fg</span> <span class="nv">red</span>
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">pane</span><span class="o">-</span><span class="nv">active</span><span class="o">-</span><span class="nv">border</span><span class="o">-</span><span class="nv">bg</span> <span class="nv">black</span>
-<span class="nv">bind</span><span class="o">-</span><span class="nv">key</span> <span class="o">-</span><span class="nv">t</span> <span class="nv">vi</span><span class="o">-</span><span class="nv">copy</span> <span class="nv">Enter</span> <span class="nv">copy</span><span class="o">-</span><span class="nv">pipe</span> <span class="s2">&quot;</span><span class="s">nc localhost 8377</span><span class="s2">&quot;</span>
-
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">left</span><span class="o">-</span><span class="nv">length</span> <span class="mi">40</span>
-#<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">left</span> <span class="s2">&quot;</span><span class="s">#[fg=green]Session[#S] #[fg=yellow]#I #[fg=cyan]#P</span><span class="s2">&quot;</span>
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">left</span> <span class="s2">&quot;</span><span class="s">#[fg=green][#S]</span><span class="s2">&quot;</span>
-<span class="nv">set</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">set</span><span class="o">-</span><span class="nv">titles</span> <span class="nv">on</span>
-<span class="nv">set</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">set</span><span class="o">-</span><span class="nv">titles</span><span class="o">-</span><span class="nv">string</span> <span class="s1">&#39;</span><span class="s">#h:#S.#I.#P #W #T</span><span class="s1">&#39;</span> # <span class="nv">window</span> <span class="nv">number</span>,<span class="nv">program</span> <span class="nv">name</span>, <span class="nv">active</span><span class="ss">(</span><span class="nv">or</span> <span class="nv">not</span><span class="ss">)</span>
-
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">history</span><span class="o">-</span><span class="nv">limit</span> <span class="mi">10000</span>
-
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">right</span> <span class="s2">&quot;</span><span class="s">#[fg=cyan] #(date &#39;+%%Y-%%B&#39;)</span><span class="s2">&quot;</span>
-#<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">right</span> <span class="s2">&quot;</span><span class="s">#[fg-cyan] %Y-%m</span><span class="s2">&quot;</span>
-#<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">right</span> <span class="s1">&#39;</span><span class="s">#[fg=green,bg=default,bright]#(uptime) #[fg=white,bg=default]%l:%M:%S %p#[default] #[fg=blue]%Y-%m-%d%a</span><span class="s1">&#39;</span>
-<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">monitor</span><span class="o">-</span><span class="nv">activity</span> <span class="nv">on</span>
-<span class="nv">setw</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">bell</span><span class="o">-</span><span class="nv">action</span> <span class="nv">any</span>
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">visual</span><span class="o">-</span><span class="nv">activity</span> <span class="nv">on</span>
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> <span class="nv">status</span><span class="o">-</span><span class="nv">justify</span> <span class="nv">centre</span>
-<span class="nv">bind</span><span class="o">-</span><span class="nv">key</span> <span class="nv">J</span> <span class="nv">command</span><span class="o">-</span><span class="nv">prompt</span> <span class="o">-</span><span class="nv">p</span> <span class="s2">&quot;</span><span class="s">Create pane from window #:</span><span class="s2">&quot;</span> <span class="s2">&quot;</span><span class="s">join-pane -s &#39;:%%&#39;</span><span class="s2">&quot;</span>
-<span class="nv">set</span><span class="o">-</span><span class="nv">option</span> <span class="o">-</span><span class="nv">s</span> <span class="nv">set</span><span class="o">-</span><span class="nv">clipboard</span> <span class="nv">off</span>
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">base</span><span class="o">-</span><span class="k">index</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
+<span class="n">setw</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">pane</span><span class="o">-</span><span class="n">base</span><span class="o">-</span><span class="k">index</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
+<span class="k">set</span><span class="o">-</span><span class="k">option</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">status</span><span class="o">-</span><span class="k">interval</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
 
 
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> @<span class="nv">plugin</span> <span class="s1">&#39;</span><span class="s">tmux-plugins/tpm</span><span class="s1">&#39;</span>
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> @<span class="nv">plugin</span> <span class="s1">&#39;</span><span class="s">tmux-plugins/tmux-sensible</span><span class="s1">&#39;</span>
+<span class="n">#set</span><span class="o">-</span><span class="k">option</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">automatic</span><span class="o">-</span><span class="n">rename</span><span class="w"> </span><span class="k">on</span><span class="w"></span>
+<span class="n">#set</span><span class="o">-</span><span class="k">option</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">automatic</span><span class="o">-</span><span class="n">rename</span><span class="o">-</span><span class="nf">format</span><span class="w"> </span><span class="s1">&#39;#{b:pane_current_path}&#39;</span><span class="w"></span>
 
-# <span class="nv">plugins</span>
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> @<span class="nv">plugin</span> <span class="s1">&#39;</span><span class="s">tmux-plugins/tmux-resurrect</span><span class="s1">&#39;</span>
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> @<span class="nv">plugin</span> <span class="s1">&#39;</span><span class="s">tmux-plugins/tmux-continuum</span><span class="s1">&#39;</span>
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> @<span class="nv">continuum</span><span class="o">-</span><span class="nv">save</span><span class="o">-</span><span class="nv">interval</span> <span class="s1">&#39;</span><span class="s">0</span><span class="s1">&#39;</span>
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> @<span class="nv">continuum</span><span class="o">-</span><span class="nv">restore</span> <span class="s1">&#39;</span><span class="s">on</span><span class="s1">&#39;</span>
-<span class="nv">set</span> <span class="o">-</span><span class="nv">g</span> @<span class="nv">plugin</span> <span class="s1">&#39;</span><span class="s">tmux-plugins/tmux-yank</span><span class="s1">&#39;</span>
-<span class="nv">run</span><span class="o">-</span><span class="nv">shell</span> <span class="o">~/</span>.<span class="nv">tmux</span><span class="o">/</span><span class="nv">plugins</span><span class="o">/</span><span class="nv">tmux</span><span class="o">-</span><span class="nv">resurrect</span><span class="o">/</span><span class="nv">resurrect</span>.<span class="nv">tmux</span>
-<span class="nv">r</span>
+<span class="k">set</span><span class="o">-</span><span class="k">window</span><span class="o">-</span><span class="k">option</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="k">window</span><span class="o">-</span><span class="n">status</span><span class="o">-</span><span class="k">current</span><span class="o">-</span><span class="nf">format</span><span class="w"> </span><span class="s1">&#39;#[fg=white,bold]** #{window_index} #[fg=green]#W #[fg=blue]#(echo &quot;#{pane_current_path}&quot; | rev | cut -d&#39;</span><span class="o">/</span><span class="s1">&#39; -f-3 | rev) #[fg=white]**|&#39;</span><span class="w"></span>
+<span class="k">set</span><span class="o">-</span><span class="k">window</span><span class="o">-</span><span class="k">option</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="k">window</span><span class="o">-</span><span class="n">status</span><span class="o">-</span><span class="nf">format</span><span class="w"> </span><span class="s1">&#39;#[fg=white,bold]#{window_index} #[fg=green]#W #[fg=blue]#(echo &quot;#{pane_current_path}&quot; | rev | cut -d&#39;</span><span class="o">/</span><span class="s1">&#39; -f-3 | rev) #[fg=white]|&#39;</span><span class="w"></span>
+<span class="n">bind</span><span class="o">-</span><span class="k">key</span><span class="w"> </span><span class="o">-</span><span class="n">r</span><span class="w"> </span><span class="n">w</span><span class="w"> </span><span class="nf">choose</span><span class="o">-</span><span class="k">window</span><span class="w"> </span><span class="o">-</span><span class="n">F</span><span class="w"> </span><span class="s1">&#39;#{window_index} | #{pane_current_command} | #{pane_current_path}&#39;</span><span class="w"></span>
+<span class="n">#bind</span><span class="o">-</span><span class="k">key</span><span class="w"> </span><span class="o">-</span><span class="n">r</span><span class="w"> </span><span class="n">w</span><span class="w"> </span><span class="nf">choose</span><span class="o">-</span><span class="k">window</span><span class="w"> </span><span class="o">-</span><span class="n">F</span><span class="w"> </span><span class="s1">&#39;#{window_index} | #{pane_current_command} | #{host} | #{pane_current_path}&#39;</span><span class="w"></span>
 
-<span class="nv">run</span> <span class="s1">&#39;</span><span class="s">~/.tmux/plugins/tpm/tpm</span><span class="s1">&#39;</span>
-</pre></div>
+<span class="err">#</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="n">bar</span><span class="w"> </span><span class="n">updates</span><span class="w"> </span><span class="k">every</span><span class="w"> </span><span class="mi">15</span><span class="n">s</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="k">default</span><span class="o">**</span><span class="p">,</span><span class="w"> </span><span class="n">change</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="mi">1</span><span class="n">s</span><span class="w"> </span><span class="n">here</span><span class="w"></span>
+<span class="err">#</span><span class="w"> </span><span class="p">(</span><span class="n">this</span><span class="w"> </span><span class="n">step</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">optional</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="nf">lower</span><span class="w"> </span><span class="n">latency</span><span class="w"> </span><span class="n">might</span><span class="w"> </span><span class="n">have</span><span class="w"> </span><span class="n">negative</span><span class="w"> </span><span class="n">battery</span><span class="o">/</span><span class="n">cpu</span><span class="w"> </span><span class="k">usage</span><span class="w"> </span><span class="n">impacts</span><span class="p">)</span><span class="w"></span>
+<span class="n">setw</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">mouse</span><span class="w"> </span><span class="k">on</span><span class="w"></span>
+<span class="n">#set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">mouse</span><span class="o">-</span><span class="k">select</span><span class="o">-</span><span class="n">pane</span><span class="w"> </span><span class="k">on</span><span class="w"></span>
+<span class="n">#set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">mouse</span><span class="o">-</span><span class="n">resize</span><span class="o">-</span><span class="n">pane</span><span class="w"> </span><span class="k">on</span><span class="w"></span>
+<span class="n">#set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">mouse</span><span class="o">-</span><span class="k">select</span><span class="o">-</span><span class="k">window</span><span class="w"> </span><span class="k">on</span><span class="w"></span>
+
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">status</span><span class="o">-</span><span class="n">fg</span><span class="w"> </span><span class="n">white</span><span class="w"></span>
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">status</span><span class="o">-</span><span class="n">bg</span><span class="w"> </span><span class="n">black</span><span class="w"></span>
+<span class="n">setw</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="k">window</span><span class="o">-</span><span class="n">status</span><span class="o">-</span><span class="n">fg</span><span class="w"> </span><span class="n">cyan</span><span class="w"></span>
+<span class="n">setw</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="k">window</span><span class="o">-</span><span class="n">status</span><span class="o">-</span><span class="n">bg</span><span class="w"> </span><span class="k">default</span><span class="w"></span>
+<span class="n">setw</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="k">window</span><span class="o">-</span><span class="n">status</span><span class="o">-</span><span class="n">attr</span><span class="w"> </span><span class="n">dim</span><span class="w"></span>
+
+<span class="n">setw</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="k">window</span><span class="o">-</span><span class="n">status</span><span class="o">-</span><span class="k">current</span><span class="o">-</span><span class="n">fg</span><span class="w"> </span><span class="n">white</span><span class="w"></span>
+<span class="n">setw</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="k">window</span><span class="o">-</span><span class="n">status</span><span class="o">-</span><span class="k">current</span><span class="o">-</span><span class="n">bg</span><span class="w"> </span><span class="n">red</span><span class="w"></span>
+<span class="n">setw</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="k">window</span><span class="o">-</span><span class="n">status</span><span class="o">-</span><span class="k">current</span><span class="o">-</span><span class="n">attr</span><span class="w"> </span><span class="n">bright</span><span class="w"></span>
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">pane</span><span class="o">-</span><span class="n">border</span><span class="o">-</span><span class="n">fg</span><span class="w"> </span><span class="n">green</span><span class="w"></span>
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">pane</span><span class="o">-</span><span class="n">border</span><span class="o">-</span><span class="n">bg</span><span class="w"> </span><span class="n">black</span><span class="w"></span>
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">pane</span><span class="o">-</span><span class="n">active</span><span class="o">-</span><span class="n">border</span><span class="o">-</span><span class="n">fg</span><span class="w"> </span><span class="n">red</span><span class="w"></span>
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">pane</span><span class="o">-</span><span class="n">active</span><span class="o">-</span><span class="n">border</span><span class="o">-</span><span class="n">bg</span><span class="w"> </span><span class="n">black</span><span class="w"></span>
+<span class="n">bind</span><span class="o">-</span><span class="k">key</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">vi</span><span class="o">-</span><span class="n">copy</span><span class="w"> </span><span class="n">Enter</span><span class="w"> </span><span class="n">copy</span><span class="o">-</span><span class="n">pipe</span><span class="w"> </span><span class="ss">&quot;nc localhost 8377&quot;</span><span class="w"></span>
+
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">status</span><span class="o">-</span><span class="nf">left</span><span class="o">-</span><span class="n">length</span><span class="w"> </span><span class="mi">40</span><span class="w"></span>
+<span class="n">#set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">status</span><span class="o">-</span><span class="nf">left</span><span class="w"> </span><span class="ss">&quot;#[fg=green]Session[#S] #[fg=yellow]#I #[fg=cyan]#P&quot;</span><span class="w"></span>
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">status</span><span class="o">-</span><span class="nf">left</span><span class="w"> </span><span class="ss">&quot;#[fg=green][#S]&quot;</span><span class="w"></span>
+<span class="k">set</span><span class="o">-</span><span class="k">option</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="k">set</span><span class="o">-</span><span class="n">titles</span><span class="w"> </span><span class="k">on</span><span class="w"></span>
+<span class="k">set</span><span class="o">-</span><span class="k">option</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="k">set</span><span class="o">-</span><span class="n">titles</span><span class="o">-</span><span class="n">string</span><span class="w"> </span><span class="s1">&#39;#h:#S.#I.#P #W #T&#39;</span><span class="w"> </span><span class="err">#</span><span class="w"> </span><span class="k">window</span><span class="w"> </span><span class="n">number</span><span class="p">,</span><span class="n">program</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">active</span><span class="p">(</span><span class="ow">or</span><span class="w"> </span><span class="ow">not</span><span class="p">)</span><span class="w"></span>
+
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">history</span><span class="o">-</span><span class="k">limit</span><span class="w"> </span><span class="mi">10000</span><span class="w"></span>
+
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">status</span><span class="o">-</span><span class="nf">right</span><span class="w"> </span><span class="ss">&quot;#[fg=cyan] #(date &#39;+%%Y-%%B&#39;)&quot;</span><span class="w"></span>
+<span class="n">#set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">status</span><span class="o">-</span><span class="nf">right</span><span class="w"> </span><span class="ss">&quot;#[fg-cyan] %Y-%m&quot;</span><span class="w"></span>
+<span class="n">#set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">status</span><span class="o">-</span><span class="nf">right</span><span class="w"> </span><span class="s1">&#39;#[fg=green,bg=default,bright]#(uptime) #[fg=white,bg=default]%l:%M:%S %p#[default] #[fg=blue]%Y-%m-%d%a&#39;</span><span class="w"></span>
+<span class="n">setw</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">monitor</span><span class="o">-</span><span class="n">activity</span><span class="w"> </span><span class="k">on</span><span class="w"></span>
+<span class="n">setw</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">bell</span><span class="o">-</span><span class="k">action</span><span class="w"> </span><span class="ow">any</span><span class="w"></span>
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">visual</span><span class="o">-</span><span class="n">activity</span><span class="w"> </span><span class="k">on</span><span class="w"></span>
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">status</span><span class="o">-</span><span class="n">justify</span><span class="w"> </span><span class="n">centre</span><span class="w"></span>
+<span class="n">bind</span><span class="o">-</span><span class="k">key</span><span class="w"> </span><span class="n">J</span><span class="w"> </span><span class="n">command</span><span class="o">-</span><span class="n">prompt</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="ss">&quot;Create pane from window #:&quot;</span><span class="w"> </span><span class="ss">&quot;join-pane -s &#39;:%%&#39;&quot;</span><span class="w"></span>
+<span class="k">set</span><span class="o">-</span><span class="k">option</span><span class="w"> </span><span class="o">-</span><span class="n">s</span><span class="w"> </span><span class="k">set</span><span class="o">-</span><span class="n">clipboard</span><span class="w"> </span><span class="k">off</span><span class="w"></span>
+
+
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="nv">@plugin</span><span class="w"> </span><span class="s1">&#39;tmux-plugins/tpm&#39;</span><span class="w"></span>
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="nv">@plugin</span><span class="w"> </span><span class="s1">&#39;tmux-plugins/tmux-sensible&#39;</span><span class="w"></span>
+
+<span class="err">#</span><span class="w"> </span><span class="n">plugins</span><span class="w"></span>
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="nv">@plugin</span><span class="w"> </span><span class="s1">&#39;tmux-plugins/tmux-resurrect&#39;</span><span class="w"></span>
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="nv">@plugin</span><span class="w"> </span><span class="s1">&#39;tmux-plugins/tmux-continuum&#39;</span><span class="w"></span>
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="nv">@continuum</span><span class="o">-</span><span class="k">save</span><span class="o">-</span><span class="k">interval</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="w"></span>
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="nv">@continuum</span><span class="o">-</span><span class="k">restore</span><span class="w"> </span><span class="s1">&#39;on&#39;</span><span class="w"></span>
+<span class="k">set</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="nv">@plugin</span><span class="w"> </span><span class="s1">&#39;tmux-plugins/tmux-yank&#39;</span><span class="w"></span>
+<span class="n">run</span><span class="o">-</span><span class="n">shell</span><span class="w"> </span><span class="o">~/</span><span class="p">.</span><span class="n">tmux</span><span class="o">/</span><span class="n">plugins</span><span class="o">/</span><span class="n">tmux</span><span class="o">-</span><span class="n">resurrect</span><span class="o">/</span><span class="n">resurrect</span><span class="p">.</span><span class="n">tmux</span><span class="w"></span>
+<span class="n">r</span><span class="w"></span>
+
+<span class="n">run</span><span class="w"> </span><span class="s1">&#39;~/.tmux/plugins/tpm/tpm&#39;</span><span class="w"></span>
+</code></pre></div>
 
 
 <p>再安装一个tpm插件:</p>
-<div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">~/</span><span class="p">.</span><span class="n">tmux</span><span class="o">/</span><span class="n">plugins</span><span class="o">/</span>
+<div class="highlight"><pre><span></span><code><span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">~/</span><span class="p">.</span><span class="n">tmux</span><span class="o">/</span><span class="n">plugins</span><span class="o">/</span>
 <span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">tmux</span><span class="o">-</span><span class="n">plugins</span><span class="o">/</span><span class="n">tpm</span> <span class="o">~/</span><span class="p">.</span><span class="n">tmux</span><span class="o">/</span><span class="n">plugins</span><span class="o">/</span><span class="n">tpm</span>
 
 <span class="n">Press</span> <span class="k">prefix</span> <span class="o">+</span> <span class="n">I</span> <span class="p">(</span><span class="n">capital</span> <span class="n">i</span><span class="p">,</span> <span class="k">as</span> <span class="k">in</span> <span class="n">Install</span><span class="p">)</span> <span class="k">to</span> <span class="k">fetch</span> <span class="n">the</span> <span class="n">plugin</span><span class="p">.</span>
-</pre></div>
+</code></pre></div>
 
 
 <p><code>I</code>安装插件，</p>
 <p>saved a session (prefix + ctrl-s) </p>
 <p>最后的最后，如果是本机macosx，远程是vps，当复制远程vps内容的时候，复制的内容是到了远程主机的buffer，这个时候需要clipper来把远程主机复制到本地，我用的tmux版本是2.1。在mac上的ssh配置文件加上端口转发:</p>
-<div class="highlight"><pre><span></span><span class="n">RemoteForward</span> <span class="mi">8377</span> <span class="n">localhost</span><span class="p">:</span><span class="mi">8377</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">RemoteForward 8377 localhost:8377</span>
+</code></pre></div>
 
 
 <p>配置开机启动:</p>
-<div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">cp</span> <span class="n">clipper</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="k">local</span><span class="o">/</span><span class="n">bin</span>
-<span class="n">cp</span> <span class="n">contrib</span><span class="o">/</span><span class="n">darwin</span><span class="o">/</span><span class="n">tcp</span><span class="o">-</span><span class="n">port</span><span class="o">/</span><span class="n">com</span><span class="p">.</span><span class="n">wincent</span><span class="p">.</span><span class="n">clipper</span><span class="p">.</span><span class="n">plist</span> <span class="o">~/</span><span class="n">Library</span><span class="o">/</span><span class="n">LaunchAgents</span><span class="o">/</span>
-<span class="n">launchctl</span> <span class="k">load</span> <span class="o">-</span><span class="n">w</span> <span class="o">-</span><span class="n">S</span> <span class="n">Aqua</span> <span class="o">~/</span><span class="n">Library</span><span class="o">/</span><span class="n">LaunchAgents</span><span class="o">/</span><span class="n">com</span><span class="p">.</span><span class="n">wincent</span><span class="p">.</span><span class="n">clipper</span><span class="p">.</span><span class="n">plist</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">sudo cp clipper /usr/local/bin</span>
+<span class="err">cp contrib/darwin/tcp-port/com.wincent.clipper.plist ~/Library/LaunchAgents/</span>
+<span class="err">launchctl load -w -S Aqua ~/Library/LaunchAgents/com.wincent.clipper.plist</span>
+</code></pre></div>
 
 
 <p>然后在远程主机的tmux配置加上这样:</p>
-<div class="highlight"><pre><span></span><span class="n">bind</span><span class="o">-</span><span class="k">key</span> <span class="o">-</span><span class="n">t</span> <span class="n">vi</span><span class="o">-</span><span class="k">copy</span> <span class="n">Enter</span> <span class="k">copy</span><span class="o">-</span><span class="n">pipe</span> <span class="ss">&quot;nc localhost 8377&quot;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">bind-key -t vi-copy Enter copy-pipe &quot;nc localhost 8377&quot;</span>
+</code></pre></div>
 
 
 <p>这样就可以了。</p>
 <p>在使用mosh的情况下，mosh是不支持端口转发的，需要先用ssh端口转发，然后再用mosh链接:</p>
-<div class="highlight"><pre><span></span><span class="k">Host</span> <span class="n">sandbox</span>
+<div class="highlight"><pre><span></span><code><span class="k">Host</span> <span class="n">sandbox</span>
   <span class="n">ControlMaster</span> <span class="k">no</span>
   <span class="n">ControlPath</span> <span class="k">none</span>
   <span class="n">Hostname</span> <span class="n">sandbox</span><span class="p">.</span><span class="n">example</span><span class="p">.</span><span class="n">com</span>
@@ -269,7 +269,7 @@ $           重命名当前会话</p>
 
 <span class="n">ssh</span> <span class="o">-</span><span class="n">N</span> <span class="o">-</span><span class="n">f</span> <span class="n">sandbox</span><span class="o">-</span><span class="n">clipper</span>
 <span class="n">mosh</span> <span class="n">sandbox</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>clipper的文档讲的超级详细，可以看看。</p>

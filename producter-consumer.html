@@ -38,7 +38,7 @@
     <div class="entry-content">
       
       <p>代码捉急,先看例子:</p>
-<div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">jianshu</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">p</span><span class="o">/</span><span class="n">d85a4329d0c2</span><span class="o">&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">jianshu</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">p</span><span class="o">/</span><span class="n">d85a4329d0c2</span><span class="o">&gt;</span>
 <span class="c1">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
@@ -58,10 +58,10 @@
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
             <span class="n">randomnum</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">randomnum</span><span class="p">)</span>
-            <span class="k">print</span> <span class="s1">&#39;put num in Queue </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>  <span class="n">randomnum</span>
+            <span class="nb">print</span> <span class="s1">&#39;put num in Queue </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>  <span class="n">randomnum</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="k">print</span> <span class="s1">&#39;put queue done&#39;</span>
+        <span class="nb">print</span> <span class="s1">&#39;put queue done&#39;</span>
 
 
 <span class="k">class</span> <span class="nc">ConsumeEven</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
@@ -71,15 +71,15 @@
         <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">t_name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">queue_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">print</span> <span class="n">e</span>
+                <span class="nb">print</span> <span class="n">e</span>
                 <span class="k">break</span><span class="p">;</span>
 
             <span class="k">if</span> <span class="n">queue_val</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">print</span> <span class="s1">&#39;Get Even Num </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="n">queue_val</span>
+                <span class="nb">print</span> <span class="s1">&#39;Get Even Num </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="n">queue_val</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">queue_val</span><span class="p">)</span>
 
@@ -91,7 +91,7 @@
 <span class="n">pt</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 <span class="n">pt</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
 <span class="n">ce</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>照着写:</p>
@@ -215,7 +215,7 @@
 118
 119
 120
-121</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+121</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># coding: utf-8</span>
 
 <span class="kn">from</span> <span class="nn">elasticsearch</span> <span class="kn">import</span> <span class="n">Elasticsearch</span>
@@ -282,8 +282,8 @@
             <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">res2</span><span class="p">[</span><span class="s1">&#39;hits&#39;</span><span class="p">][</span><span class="s1">&#39;hits&#39;</span><span class="p">]:</span>
                 <span class="c1"># print hit[&#39;_source&#39;][&#39;@timestamp&#39;], hit[&#39;_id&#39;], hit[&#39;_source&#39;][&#39;path&#39;]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">([</span><span class="n">hit</span><span class="p">[</span><span class="s1">&#39;_source&#39;</span><span class="p">][</span><span class="s1">&#39;path&#39;</span><span class="p">],</span> <span class="n">hit</span><span class="p">[</span><span class="s1">&#39;_source&#39;</span><span class="p">][</span><span class="s1">&#39;http&#39;</span><span class="p">][</span><span class="s1">&#39;request&#39;</span><span class="p">][</span><span class="s1">&#39;params&#39;</span><span class="p">],</span> <span class="n">hit</span><span class="p">[</span><span class="s1">&#39;_source&#39;</span><span class="p">][</span><span class="s1">&#39;method&#39;</span><span class="p">]])</span>
-                <span class="k">print</span> <span class="s2">&quot;Put </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">hit</span><span class="p">[</span><span class="s1">&#39;_id&#39;</span><span class="p">]</span>
-                <span class="k">print</span> <span class="n">hit</span><span class="p">[</span><span class="s1">&#39;_source&#39;</span><span class="p">][</span><span class="s1">&#39;@timestamp&#39;</span><span class="p">]</span>
+                <span class="nb">print</span> <span class="s2">&quot;Put </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">hit</span><span class="p">[</span><span class="s1">&#39;_id&#39;</span><span class="p">]</span>
+                <span class="nb">print</span> <span class="n">hit</span><span class="p">[</span><span class="s1">&#39;_source&#39;</span><span class="p">][</span><span class="s1">&#39;@timestamp&#39;</span><span class="p">]</span>
             <span class="n">latest_time</span> <span class="o">=</span> <span class="n">res2</span><span class="p">[</span><span class="s1">&#39;hits&#39;</span><span class="p">][</span><span class="s1">&#39;hits&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;_source&#39;</span><span class="p">][</span><span class="s1">&#39;@timestamp&#39;</span><span class="p">]</span>
 
 
@@ -324,8 +324,8 @@
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">rep</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://xxxxx:9999&quot;</span> <span class="o">+</span> <span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;?&#39;</span> <span class="o">+</span> <span class="n">param</span> <span class="o">+</span> <span class="s2">&quot;union select&quot;</span><span class="p">)</span>
                 <span class="c1">#else  写POST</span>
-                <span class="k">print</span> <span class="s2">&quot;Get </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">request</span>
-                <span class="k">print</span> <span class="n">rep</span><span class="o">.</span><span class="n">status_code</span>
+                <span class="nb">print</span> <span class="s2">&quot;Get </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">request</span>
+                <span class="nb">print</span> <span class="n">rep</span><span class="o">.</span><span class="n">status_code</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">e</span>
 
@@ -336,14 +336,14 @@
 <span class="n">pt</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 <span class="n">pt</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
 <span class="n">ce</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <p>代码应该还有点问题，先记录下大概的流程：</p>
 <p>使用: <code>packetbeat</code>在A服务器抓包，格式化之后把数据发送到B服务器，存储在elk里面，然后B服务器画图对这些请求进行分析，比如某个接口报警之类的。</p>
 <p>这个时候在B服务器设置一个naxsi防火墙代理，然后把es里面的输出取出来，再发送一遍给B。经过测试，虽然这样子请求大部分都是404，但是如果请求中存在恶意payload，防火墙会记录日志。（所以这里的规则要设置的特别严格，严格到每个请求都不放过）</p>
 <p>上面的脚本就是在B防火墙的转发脚本demo，测试为GET请求，因为POST请求的body没有存储到es里面，脚本的大概思路是这样的：</p>
-<div class="highlight"><pre><span></span><span class="nl">因为es里面存储的数据包是这样的格式</span><span class="p">:</span><span class="w"> </span><span class="n">packet</span><span class="o">-[</span><span class="n">year</span><span class="o">]-[</span><span class="n">days</span><span class="o">]</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="nl">因为es里面存储的数据包是这样的格式</span><span class="p">:</span><span class="w"> </span><span class="n">packet</span><span class="o">-[</span><span class="n">year</span><span class="o">]-[</span><span class="n">days</span><span class="o">]</span><span class="w"></span>
 <span class="n">所以先得到今天的日期</span><span class="err">，</span><span class="n">随便选100条</span><span class="err">，</span><span class="n">记录最新的时间戳</span><span class="err">，</span><span class="n">此时初始化完成</span><span class="err">。</span><span class="w"></span>
 
 <span class="n">下面的请求都是基于这个时间戳来的</span><span class="err">，</span><span class="n">每隔10s</span><span class="err">，</span><span class="n">在这个时间戳的基础上</span><span class="err">，</span><span class="n">轮询请求一次es</span><span class="err">，</span><span class="n">然后组装起来发送到B服务器</span><span class="err">。</span><span class="w"></span>
@@ -352,7 +352,7 @@
 <span class="n">latest_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">res2</span><span class="o">[</span><span class="n">&#39;hits&#39;</span><span class="o">][</span><span class="n">&#39;hits&#39;</span><span class="o">][</span><span class="n">0</span><span class="o">][</span><span class="n">&#39;_source&#39;</span><span class="o">][</span><span class="n">&#39;@timestamp&#39;</span><span class="o">]</span><span class="w"></span>
 
 <span class="n">当es的存储数据按照大于某个时间点去筛选的时候</span><span class="err">，</span><span class="n">只会出现匹配的时间条数</span><span class="err">，</span><span class="n">所以可以把请求的size设置得大一点</span><span class="w"></span>
-</pre></div>
+</code></pre></div>
 
 
 <p>暂时的问题：</p>

@@ -37,14 +37,14 @@
 </footer><!-- /.post-info -->
     <div class="entry-content">
       
-      <div class="highlight"><pre><span></span><span class="o">*</span> <span class="n">set_by_lua</span><span class="p">:</span> <span class="err">流程分支处理判断变量初始化</span>
-<span class="o">*</span> <span class="n">rewrite_by_lua</span><span class="p">:</span> <span class="err">转发，重定向，缓存等功能</span>
-<span class="o">*</span> <span class="n">access_by_lua</span><span class="p">:</span> <span class="n">IP准入</span><span class="err">，接口权限等情况集中处理</span>
-<span class="o">*</span> <span class="n">content_by_lua</span><span class="err">：</span> <span class="err">内容生成</span>
-<span class="o">*</span> <span class="n">body_filter_by_lua</span><span class="p">:</span> <span class="err">应答</span><span class="n">body过滤处理</span>
-<span class="o">*</span> <span class="n">Header_filter_by_lua</span><span class="p">:</span> <span class="err">应答</span><span class="n">HTTP过滤处理</span>
-<span class="o">*</span> <span class="n">log_by_lua</span><span class="p">:</span> <span class="err">回话完成后本地异步完成日志记录</span>
-</pre></div>
+      <div class="highlight"><pre><span></span><code><span class="err">* set_by_lua: 流程分支处理判断变量初始化</span>
+<span class="err">* rewrite_by_lua: 转发，重定向，缓存等功能</span>
+<span class="err">* access_by_lua: IP准入，接口权限等情况集中处理</span>
+<span class="err">* content_by_lua： 内容生成</span>
+<span class="err">* body_filter_by_lua: 应答body过滤处理</span>
+<span class="err">* Header_filter_by_lua: 应答HTTP过滤处理</span>
+<span class="err">* log_by_lua: 回话完成后本地异步完成日志记录</span>
+</code></pre></div>
 
 
 <p>local logger = require "resty.logger.socket"</p>
@@ -52,36 +52,36 @@
 <p>不用修改nginx的日志格式，修改lua脚本。</p>
 <p>openwaf如何获取日志的／
 或者最简单的 这个logger的用法</p>
-<div class="highlight"><pre><span></span><span class="o">--</span> <span class="nv">lua_package_path</span> <span class="s2">&quot;</span><span class="s">/path/to/lua-resty-logger-socket/lib/?.lua;;</span><span class="s2">&quot;</span><span class="c1">;</span>
-<span class="o">--</span>
-<span class="o">--</span>    <span class="nv">server</span> {
-<span class="o">--</span>        <span class="nv">location</span> <span class="o">/</span> {
-<span class="o">--</span>            <span class="nv">content_by_lua_file</span> <span class="nv">lua</span><span class="o">/</span><span class="nv">log</span>.<span class="nv">lua</span><span class="c1">;</span>
-<span class="o">--</span>        }
-<span class="o">--</span>    }
+<div class="highlight"><pre><span></span><code><span class="c1">-- lua_package_path &quot;/path/to/lua-resty-logger-socket/lib/?.lua;;&quot;;</span>
+<span class="c1">--</span>
+<span class="c1">--    server {</span>
+<span class="c1">--        location / {</span>
+<span class="c1">--            content_by_lua_file lua/log.lua;</span>
+<span class="c1">--        }</span>
+<span class="c1">--    }</span>
 
-<span class="o">--</span> <span class="nv">lua</span><span class="o">/</span><span class="nv">log</span>.<span class="nv">lua</span>
-<span class="nv">local</span> <span class="nv">logger</span> <span class="o">=</span> <span class="nv">require</span> <span class="s2">&quot;</span><span class="s">resty.logger.socket</span><span class="s2">&quot;</span>
-<span class="k">if</span> <span class="nv">not</span> <span class="nv">logger</span>.<span class="nv">initted</span><span class="ss">()</span> <span class="k">then</span>
-    <span class="nv">local</span> <span class="nv">ok</span>, <span class="nv">err</span> <span class="o">=</span> <span class="nv">logger</span>.<span class="nv">init</span>{
-        <span class="nv">host</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="s">xxx</span><span class="s1">&#39;</span>,
-        <span class="nv">port</span> <span class="o">=</span> <span class="mi">1234</span>,
-        <span class="nv">flush_limit</span> <span class="o">=</span> <span class="mi">1</span>,   <span class="o">--</span>日志长度大于<span class="nv">flush_limit</span>的时候会将<span class="nv">msg</span>信息推送一次
-        <span class="nv">drop_limit</span> <span class="o">=</span> <span class="mi">99999</span>,
-    }
-    <span class="k">if</span> <span class="nv">not</span> <span class="nv">ok</span> <span class="k">then</span>
-        <span class="nv">ngx</span>.<span class="nv">log</span><span class="ss">(</span><span class="nv">ngx</span>.<span class="nv">ERR</span>, <span class="s2">&quot;</span><span class="s">failed to initialize the logger: </span><span class="s2">&quot;</span>,<span class="nv">err</span><span class="ss">)</span>
+<span class="c1">-- lua/log.lua</span>
+<span class="k">local</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">require</span> <span class="ss">&quot;resty.logger.socket&quot;</span>
+<span class="k">if</span> <span class="k">not</span> <span class="n">logger</span><span class="p">.</span><span class="n">initted</span><span class="p">()</span> <span class="k">then</span>
+    <span class="k">local</span> <span class="n">ok</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">logger</span><span class="p">.</span><span class="n">init</span><span class="err">{</span>
+        <span class="k">host</span> <span class="o">=</span> <span class="s1">&#39;xxx&#39;</span><span class="p">,</span>
+        <span class="n">port</span> <span class="o">=</span> <span class="mi">1234</span><span class="p">,</span>
+        <span class="n">flush_limit</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>   <span class="c1">--日志长度大于flush_limit的时候会将msg信息推送一次</span>
+        <span class="n">drop_limit</span> <span class="o">=</span> <span class="mi">99999</span><span class="p">,</span>
+    <span class="err">}</span>
+    <span class="k">if</span> <span class="k">not</span> <span class="n">ok</span> <span class="k">then</span>
+        <span class="n">ngx</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">ngx</span><span class="p">.</span><span class="n">ERR</span><span class="p">,</span> <span class="ss">&quot;failed to initialize the logger: &quot;</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="k">end</span>
 <span class="k">end</span>
 
-<span class="nv">local</span> <span class="nv">msg</span> <span class="o">=</span> <span class="nv">string</span>.<span class="nv">format</span><span class="ss">(</span>.....<span class="ss">)</span>
-<span class="nv">local</span> <span class="nv">bytes</span>, <span class="nv">err</span> <span class="o">=</span> <span class="nv">logger</span>.<span class="nv">log</span><span class="ss">(</span><span class="nv">msg</span><span class="ss">)</span>
-<span class="k">if</span> <span class="nv">err</span> <span class="k">then</span>
-    <span class="nv">ngx</span>.<span class="nv">log</span><span class="ss">(</span><span class="nv">ngx</span>.<span class="nv">ERR</span>, <span class="s2">&quot;</span><span class="s">failed to log message: </span><span class="s2">&quot;</span>, <span class="nv">err</span><span class="ss">)</span>
+<span class="k">local</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">format</span><span class="p">(.....)</span>
+<span class="k">local</span> <span class="n">bytes</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">logger</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">err</span> <span class="k">then</span>
+    <span class="n">ngx</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">ngx</span><span class="p">.</span><span class="n">ERR</span><span class="p">,</span> <span class="ss">&quot;failed to log message: &quot;</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
     <span class="k">return</span>
 <span class="k">end</span>
-</pre></div>
+</code></pre></div>
     </div><!-- /.entry-content -->
 
   </article>

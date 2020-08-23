@@ -45,7 +45,7 @@
 如果一个线程B中调用thread.join()，则thread结束后，线程B才会接着thread.join()往后运行</p>
 </blockquote>
 <p>所以这样一个例子:</p>
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">threading</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
 <span class="k">class</span> <span class="nc">my</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
@@ -74,20 +74,20 @@
         <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">Threadlist</span><span class="p">:</span>
         <span class="n">t</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>上面的脚本会一瞬间完成，如果把:</p>
-<div class="highlight"><pre><span></span><span class="k">for</span> <span class="nv">t</span> <span class="nv">in</span> <span class="nv">Threadlist</span>:
-    <span class="nv">t</span>.<span class="nv">join</span>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">t</span> <span class="k">in</span> <span class="n">Threadlist</span><span class="p">:</span>
+    <span class="n">t</span><span class="p">.</span><span class="k">join</span>
 
 
-这个<span class="nv">for</span>注释掉，变成:
+<span class="err">这个</span><span class="n">for注释掉</span><span class="err">，变成</span><span class="p">:</span>
 
-<span class="k">for</span> <span class="nv">t</span> <span class="nv">in</span> <span class="nv">Threadlist</span>:
-    <span class="nv">t</span>.<span class="nv">start</span><span class="ss">()</span>
-    <span class="nv">t</span>.<span class="nv">join</span><span class="ss">()</span>
-</pre></div>
+<span class="k">for</span> <span class="n">t</span> <span class="k">in</span> <span class="n">Threadlist</span><span class="p">:</span>
+    <span class="n">t</span><span class="p">.</span><span class="k">start</span><span class="p">()</span>
+    <span class="n">t</span><span class="p">.</span><span class="k">join</span><span class="p">()</span>
+</code></pre></div>
 
 
 <p>这样运行结果就是跟单线程一样，因为<code>t.join()</code>会导致下一个线程阻塞，只有当前join的线程完成之后，才会下一个运行。</p>

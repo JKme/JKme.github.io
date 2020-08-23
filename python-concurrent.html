@@ -49,16 +49,16 @@
 </ol>
 <p><a href="http://www.cnblogs.com/linhaifeng/articles/7429894.html">http://www.cnblogs.com/linhaifeng/articles/7429894.html</a>
 里面程序实现可以得出结果:</p>
-<div class="highlight"><pre><span></span><span class="n">yield</span> <span class="err">单纯的切换会降低运行效率</span>
-<span class="n">yield</span> <span class="err">不能实现遇到</span><span class="n">IO就切换程序</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">yield 单纯的切换会降低运行效率</span>
+<span class="err">yield 不能实现遇到IO就切换程序</span>
+</code></pre></div>
 
 
 <p>所以会有后来的<code>get_event_loop()</code>来获取当前的IOevent么？使用event_loop卡住主线程？</p>
 <p>完美状态就是在yield的时候，继续下一个任务的运行，等上一个任务完成之后，在yield之后继续运行。</p>
-<div class="highlight"><pre><span></span><span class="mi">1</span><span class="p">.</span> <span class="err">可以控制在多个任务之间切换，切换之前的状态保存下来，在重新运行的时候，基于暂停的位置继续执行</span>
-<span class="mi">2</span><span class="p">.</span> <span class="err">作为</span><span class="mi">1</span><span class="err">的补充，可以检测</span><span class="n">IO操作</span><span class="err">，在遇到</span><span class="n">io操作的情况下才发生切换</span><span class="err">。</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">1. 可以控制在多个任务之间切换，切换之前的状态保存下来，在重新运行的时候，基于暂停的位置继续执行</span>
+<span class="err">2. 作为1的补充，可以检测IO操作，在遇到io操作的情况下才发生切换。</span>
+</code></pre></div>
 
 
 <p>yield from 是什么鬼：<a href="http://blog.theerrorlog.com/yield-from-in-python-3.html">http://blog.theerrorlog.com/yield-from-in-python-3.html</a></p>

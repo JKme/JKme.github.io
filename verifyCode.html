@@ -38,16 +38,16 @@
     <div class="entry-content">
       
       <p>先灰度处理</p>
-<div class="highlight"><pre><span></span><span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">.</span><span class="k">open</span><span class="p">(</span><span class="s1">&#39;1317.png&#39;</span><span class="p">)</span> <span class="o">#</span> <span class="err">打开图片</span>
-<span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="p">.</span><span class="k">convert</span><span class="p">(</span><span class="s1">&#39;L&#39;</span><span class="p">)</span> <span class="o">#</span> <span class="err">转换成灰度图片</span>
-<span class="n">img</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;1317-L.png&#39;</span><span class="p">)</span> <span class="o">#</span> <span class="err">保存图片</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">img = Image.open(&#39;1317.png&#39;) # 打开图片</span>
+<span class="err">img = img.convert(&#39;L&#39;) # 转换成灰度图片</span>
+<span class="err">img.save(&#39;1317-L.png&#39;) # 保存图片</span>
+</code></pre></div>
 
 
 <p>然后是二值化, 二值化处理之后，投影</p>
 <p>以预发布为例子，获取验证的url: https://wxxx.net/api/h5/getVerifyCode
 得到的验证码是base64编码，使用python解码之后保存即可:</p>
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://xxxxx/getVerifyCode&quot;</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
@@ -56,14 +56,14 @@
     <span class="n">image_data</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;result&quot;</span><span class="p">][</span><span class="s2">&quot;imageEncode&quot;</span><span class="p">]</span>
     <span class="n">fh</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/xxx/Desktop/imagecode/&quot;</span> <span class="o">+</span> <span class="n">imgfile</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span>
     <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">image_data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;base64&#39;</span><span class="p">))</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>上面的代码可以获取20个验证码，
 然后处理验证码：</p>
 <p>先灰度处理--&gt; 二值化 --&gt; 投影或者使用8邻域算法</p>
 <p>我们这里使用8邻域算法。</p>
-<div class="highlight"><pre><span></span><span class="c1"># coding: utf-8</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># coding: utf-8</span>
 <span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
@@ -121,7 +121,7 @@
       <span class="n">matches</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">vcode</span><span class="p">)</span>
       <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">matches</span><span class="p">))</span>
       <span class="n">v</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;/xxx/Desktop/train/&quot;</span> <span class="o">+</span> <span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;.jpg&#39;</span><span class="p">)</span>
-</pre></div>
+</code></pre></div>
 
 
 <p><a href="http://www.hi-roy.com/source/all-tags/%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB/">http://www.hi-roy.com/source/all-tags/%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB/</a></p>

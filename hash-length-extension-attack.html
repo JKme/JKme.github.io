@@ -77,16 +77,16 @@
 <li>append = <code>append</code> （这个就是我们的payload，换句话说就是攻击的精华啊）</li>
 </ul>
 <p>服务器发送<code>data</code>和<code>signature</code>给小白，然后小白一看就知道是md5加密（md5加密是128bits，就是16bytes，或者是从源代码推算出来的），现在我们有三个已知：<code>data</code>, <code>加密算法</code>， <code>signature</code>，小白的目标就是把如何把<code>append</code>添加到<code>data</code>，然后产生一个新的data，同时一个新的signature。现在我们来进行md5的计算步骤，不了解的话看看前面。话说那个作者在研究各种hash算法的时候说了这么一句话，这都是人家费了几天时间的，赶紧记下来:</p>
-<div class="highlight"><pre><span></span> <span class="n">The</span> <span class="n">endianness</span> <span class="k">of</span> <span class="n">the</span> <span class="k">length</span> <span class="n">field</span> <span class="k">is</span> <span class="n">also</span> <span class="n">important</span><span class="p">.</span> <span class="n">MD4</span><span class="p">,</span> <span class="n">MD5</span><span class="p">,</span> <span class="k">and</span> <span class="n">RIPEMD</span><span class="o">-</span><span class="mi">160</span> <span class="k">are</span> <span class="n">little</span><span class="o">-</span><span class="n">endian</span><span class="p">,</span> <span class="n">whereas</span> <span class="n">the</span> <span class="n">SHA</span> <span class="n">family</span> <span class="k">and</span> <span class="n">WHIRLPOOL</span> <span class="k">are</span> <span class="n">big</span><span class="o">-</span><span class="n">endian</span><span class="p">.</span> <span class="n">Trust</span> <span class="n">me</span><span class="p">,</span> <span class="n">that</span> <span class="n">distinction</span> <span class="n">cost</span> <span class="n">me</span> <span class="n">days</span> <span class="k">of</span> <span class="k">work</span><span class="o">!</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err"> The endianness of the length field is also important. MD4, MD5, and RIPEMD-160 are little-endian, whereas the SHA family and WHIRLPOOL are big-endian. Trust me, that distinction cost me days of work!</span>
+</code></pre></div>
 
 
 <p>回到我们的例子来，<code>length(secret || data) = length("secretdata")</code>（为毛要这样写呢，因为md5计算里面，后面的pading里有表示message长度的字段），这个总共是10（0x0a）bytes，or 80(0x50)bits。 然后先补位（补到什么时候呢？满足对512bit取模之后等于448bit，也就是总共56Byte，再减去前面10Bytes），也就是补46bytes(80 00 00 00 ...)，然后是8 byte的长度字段(50 00 00 00 00 00 00 00)。全部加起来是64bytes, or one block, 这一坨放一起，看起来就是下面这一坨：</p>
-<div class="highlight"><pre><span></span><span class="mi">0000</span>  <span class="mi">73</span> <span class="mi">65</span> <span class="mi">63</span> <span class="mi">72</span> <span class="mi">65</span> <span class="mi">74</span> <span class="mi">64</span> <span class="mi">61</span> <span class="mi">74</span> <span class="mi">61</span> <span class="mi">80</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span>  <span class="n">secretdata</span><span class="p">......</span>
-<span class="mi">0010</span>  <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span>  <span class="p">................</span>
-<span class="mi">0020</span>  <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span>  <span class="p">................</span>
-<span class="mi">0030</span>  <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">50</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span>  <span class="p">........</span><span class="n">P</span><span class="p">.......</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">0000  73 65 63 72 65 74 64 61 74 61 80 00 00 00 00 00  secretdata......</span>
+<span class="err">0010  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................</span>
+<span class="err">0020  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................</span>
+<span class="err">0030  00 00 00 00 00 00 00 00 50 00 00 00 00 00 00 00  ........P.......</span>
+</code></pre></div>
 
 
 <p>这一坨的结构是如下：</p>
@@ -98,22 +98,22 @@
 </ul>
 <p>然后小白可以开始attack， Fire The Hole.
 拿起来我们存半年的append，添加到上面这一坨，添加之后就变成这样了：</p>
-<div class="highlight"><pre><span></span><span class="mi">0000</span>  <span class="mi">73</span> <span class="mi">65</span> <span class="mi">63</span> <span class="mi">72</span> <span class="mi">65</span> <span class="mi">74</span> <span class="mi">64</span> <span class="mi">61</span> <span class="mi">74</span> <span class="mi">61</span> <span class="mi">80</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span>  <span class="n">secretdata</span><span class="p">......</span>
-<span class="mi">0010</span>  <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span>  <span class="p">................</span>
-<span class="mi">0020</span>  <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span>  <span class="p">................</span>
-<span class="mi">0030</span>  <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">50</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span>  <span class="p">........</span><span class="n">P</span><span class="p">.......</span>
-<span class="mi">0040</span>  <span class="mi">61</span> <span class="mi">70</span> <span class="mi">70</span> <span class="mi">65</span> <span class="mi">6</span><span class="n">e</span> <span class="mi">64</span>                                <span class="n">append</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">0000  73 65 63 72 65 74 64 61 74 61 80 00 00 00 00 00  secretdata......</span>
+<span class="err">0010  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................</span>
+<span class="err">0020  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................</span>
+<span class="err">0030  00 00 00 00 00 00 00 00 50 00 00 00 00 00 00 00  ........P.......</span>
+<span class="err">0040  61 70 70 65 6e 64                                append</span>
+</code></pre></div>
 
 
 <p>这一坨就是最后我们把他返回给服务器的data，<code>data</code>是我们可以控制的。我们继续：
 服务器接受到上面那坨之后开始计算md5，我们也可以计算这一坨的md5。先说说服务器是怎么算的，简单来说就是直接算：</p>
-<div class="highlight"><pre><span></span><span class="mi">0000</span>  <span class="mi">73</span> <span class="mi">65</span> <span class="mi">63</span> <span class="mi">72</span> <span class="mi">65</span> <span class="mi">74</span> <span class="mi">64</span> <span class="mi">61</span> <span class="mi">74</span> <span class="mi">61</span> <span class="mi">80</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span>  <span class="n">secretdata</span><span class="p">......</span>
-<span class="mi">0010</span>  <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span>  <span class="p">................</span>
-<span class="mi">0020</span>  <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span>  <span class="p">................</span>
-<span class="mi">0030</span>  <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">50</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span> <span class="mi">00</span>  <span class="p">........</span><span class="n">P</span><span class="p">.......</span>
-<span class="mi">0040</span>  <span class="mi">61</span> <span class="mi">70</span> <span class="mi">70</span> <span class="mi">65</span> <span class="mi">6</span><span class="n">e</span> <span class="mi">64</span>                                <span class="n">append</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">0000  73 65 63 72 65 74 64 61 74 61 80 00 00 00 00 00  secretdata......</span>
+<span class="err">0010  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................</span>
+<span class="err">0020  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................</span>
+<span class="err">0030  00 00 00 00 00 00 00 00 50 00 00 00 00 00 00 00  ........P.......</span>
+<span class="err">0040  61 70 70 65 6e 64                                append</span>
+</code></pre></div>
 
 
 <p>歪果仁给的结果是<code>6ee582a1669ce442f3719c47430dadee</code>

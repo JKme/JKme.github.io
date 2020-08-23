@@ -41,52 +41,52 @@
 <li>Docker container(容器): 应用在内部跑，有自己完整的文件系统和操作系统。</li>
 <li>Docker image(镜像): 应用代码各种库和文件打包一个文件，这个就是image，需要加载到容器才能运行。</li>
 </ul>
-<div class="highlight"><pre><span></span><span class="nv">docker</span> <span class="nv">info</span>  #列出<span class="nv">container</span>和<span class="nv">image</span>的数量，宿主操作系统等
+<div class="highlight"><pre><span></span><code><span class="n">docker</span> <span class="n">info</span>  <span class="o">#</span><span class="err">列出</span><span class="n">container和image的数量</span><span class="err">，宿主操作系统等</span>
 
-<span class="nv">docker</span> <span class="nv">run</span> <span class="o">-</span><span class="nv">t</span> <span class="o">-</span><span class="nv">i</span> <span class="nv">ubuntu</span> <span class="o">/</span><span class="nv">bin</span><span class="o">/</span><span class="nv">bash</span>
-#<span class="nv">run</span> 运行一个容器，<span class="o">-</span><span class="nv">t</span> 创造一个伪<span class="nv">TTY</span>, <span class="o">-</span><span class="nv">i</span>表示吧<span class="nv">STDIN</span>打开，这两个参数是让终端可用，<span class="nv">ubuntu</span>是指镜像名，<span class="o">/</span><span class="nv">bin</span><span class="o">/</span><span class="nv">bash</span>是要运行的命令。<span class="nv">exit</span>或者<span class="nv">Ctrl</span><span class="o">+</span><span class="nv">d</span> 退出
+<span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">t</span> <span class="o">-</span><span class="n">i</span> <span class="n">ubuntu</span> <span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span>
+<span class="o">#</span><span class="n">run</span> <span class="err">运行一个容器，</span><span class="o">-</span><span class="n">t</span> <span class="err">创造一个伪</span><span class="n">TTY</span><span class="p">,</span> <span class="o">-</span><span class="n">i表示吧STDIN打开</span><span class="err">，这两个参数是让终端可用，</span><span class="n">ubuntu是指镜像名</span><span class="err">，</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash是要运行的命令</span><span class="err">。</span><span class="n">exit或者Ctrl</span><span class="o">+</span><span class="n">d</span> <span class="err">退出</span>
 
-<span class="nv">docker</span> <span class="nv">ps</span> <span class="o">-</span><span class="nv">a</span> #查看有哪些容器在运行
+<span class="n">docker</span> <span class="n">ps</span> <span class="o">-</span><span class="n">a</span> <span class="o">#</span><span class="err">查看有哪些容器在运行</span>
 
-<span class="nv">docker</span> <span class="nv">start</span> <span class="nv">e0521aa52895</span> #启动那个容器
-<span class="nv">docker</span> <span class="nv">attach</span> <span class="nv">e0521aa52895</span> #再次登录上去，不能用<span class="nv">run</span>，否则会新建一个容器
+<span class="n">docker</span> <span class="k">start</span> <span class="n">e0521aa52895</span> <span class="o">#</span><span class="err">启动那个容器</span>
+<span class="n">docker</span> <span class="n">attach</span> <span class="n">e0521aa52895</span> <span class="o">#</span><span class="err">再次登录上去，不能用</span><span class="n">run</span><span class="err">，否则会新建一个容器</span>
 
-上面两个命令用一个命令代替：
-<span class="nv">docker</span> <span class="nv">start</span> <span class="o">-</span><span class="nv">a</span> <span class="o">-</span><span class="nv">i</span> <span class="nv">e0521aa52895</span>
-# <span class="o">-</span><span class="nv">a</span> 表示<span class="nv">attach</span>， <span class="o">-</span><span class="nv">i</span> 表示开启<span class="nv">stdin</span>
+<span class="err">上面两个命令用一个命令代替：</span>
+<span class="n">docker</span> <span class="k">start</span> <span class="o">-</span><span class="n">a</span> <span class="o">-</span><span class="n">i</span> <span class="n">e0521aa52895</span>
+<span class="o">#</span> <span class="o">-</span><span class="n">a</span> <span class="err">表示</span><span class="n">attach</span><span class="err">，</span> <span class="o">-</span><span class="n">i</span> <span class="err">表示开启</span><span class="k">stdin</span>
 
-如果想多连<span class="nv">shell</span>，<span class="nv">attach</span>命令会卡，可以用<span class="nv">exec</span>让这个容器再运行一个<span class="nv">bash</span>
-<span class="nv">docker</span> <span class="k">exec</span> <span class="o">-</span><span class="nv">i</span> <span class="o">-</span><span class="nv">t</span> <span class="nv">e0521aa52895</span> <span class="o">/</span><span class="nv">bin</span><span class="o">/</span><span class="nv">bash</span>
+<span class="err">如果想多连</span><span class="n">shell</span><span class="err">，</span><span class="n">attach命令会卡</span><span class="err">，可以用</span><span class="n">exec让这个容器再运行一个bash</span>
+<span class="n">docker</span> <span class="k">exec</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">t</span> <span class="n">e0521aa52895</span> <span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span>
 
-<span class="nv">docker</span> <span class="nv">rm</span> <span class="nv">e0521aa52895</span> #删除容器
-<span class="nv">docker</span> <span class="nv">rm</span> $<span class="ss">(</span><span class="nv">docker</span> <span class="nv">ps</span> <span class="o">-</span><span class="nv">q</span> <span class="o">-</span><span class="nv">f</span> <span class="nv">status</span><span class="o">=</span><span class="nv">exited</span><span class="ss">)</span><span class="nv">d</span>
-#删除所有退出状态的容器
+<span class="n">docker</span> <span class="n">rm</span> <span class="n">e0521aa52895</span> <span class="o">#</span><span class="err">删除容器</span>
+<span class="n">docker</span> <span class="n">rm</span> <span class="err">$</span><span class="p">(</span><span class="n">docker</span> <span class="n">ps</span> <span class="o">-</span><span class="n">q</span> <span class="o">-</span><span class="n">f</span> <span class="n">status</span><span class="o">=</span><span class="n">exited</span><span class="p">)</span><span class="n">d</span>
+<span class="o">#</span><span class="err">删除所有退出状态的容器</span>
 
-<span class="nv">docker</span> <span class="nv">run</span> <span class="o">-</span><span class="nv">it</span> <span class="o">-</span><span class="nv">p</span> <span class="mi">8888</span>:<span class="mi">80</span> <span class="nv">imagine10255</span><span class="o">/</span><span class="nv">centos6</span><span class="o">-</span><span class="nv">lnmp</span><span class="o">-</span><span class="nv">php56</span>
-#<span class="nv">lnmp</span>的<span class="mi">80</span>端口映射到<span class="mi">8888</span>端口，并且开启一个交互的<span class="nv">shell</span>
-</pre></div>
+<span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">it</span> <span class="o">-</span><span class="n">p</span> <span class="mi">8888</span><span class="p">:</span><span class="mi">80</span> <span class="n">imagine10255</span><span class="o">/</span><span class="n">centos6</span><span class="o">-</span><span class="n">lnmp</span><span class="o">-</span><span class="n">php56</span>
+<span class="o">#</span><span class="n">lnmp的80端口映射到8888端口</span><span class="err">，并且开启一个交互的</span><span class="n">shell</span>
+</code></pre></div>
 
 
 <p>我想要docker在后台运行，每次都可以进去修改一些东西，但是查了资料不太如意，docker后台运行的时候，他里面必须要有一个程序一直在运行。为了偷懒我用了screen，然后<code>docker run -it -p 8888:80 --name web  imagine10255/centos6-lnmp-php56</code>，这样退出之后使用<code>docker exec -t -i 35f89fd74804 /bin/bash</code>。突然感觉好方便=。=</p>
-<div class="highlight"><pre><span></span>给<span class="nv">docker</span>起一个名字之后可以这样执行命令
-<span class="nv">docker</span> <span class="k">exec</span> <span class="nv">web</span> <span class="nv">ls</span>
-<span class="nv">docker</span> <span class="nv">start</span> <span class="nv">web</span>
-<span class="nv">docker</span> <span class="nv">port</span> <span class="nv">web</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">给docker起一个名字之后可以这样执行命令</span>
+<span class="err">docker exec web ls</span>
+<span class="err">docker start web</span>
+<span class="err">docker port web</span>
+</code></pre></div>
 
 
 <p>docker修改了部分文件之后可以先退出，使得docker的container是exited状态，然后docker commit 3d1d1748aaeb web 这样保存，下次直接运行web这个images即可。</p>
-<div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">save</span> <span class="n">IMAGENAMW</span> <span class="o">|</span><span class="n">bazip2</span> <span class="o">-</span><span class="mi">9</span> <span class="o">-</span><span class="n">c</span> <span class="o">&gt;</span> <span class="n">img</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">bz2</span>
+<div class="highlight"><pre><span></span><code><span class="n">docker</span> <span class="n">save</span> <span class="n">IMAGENAMW</span> <span class="o">|</span><span class="n">bazip2</span> <span class="o">-</span><span class="mi">9</span> <span class="o">-</span><span class="n">c</span> <span class="o">&gt;</span> <span class="n">img</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">bz2</span>
 <span class="n">bzip2</span> <span class="o">-</span><span class="n">d</span> <span class="o">-</span><span class="n">c</span> <span class="o">&lt;</span> <span class="n">img</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">bz2</span> <span class="o">|</span><span class="n">docker</span> <span class="n">load</span>
 
 
 <span class="n">docker</span> <span class="n">export</span> <span class="o">&lt;</span><span class="n">container</span> <span class="nb">id</span><span class="o">&gt;</span> <span class="o">|</span><span class="n">bzip2</span> <span class="o">-</span><span class="mi">9</span> <span class="o">-</span><span class="n">c</span> <span class="o">&gt;</span> <span class="n">img</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">bz2</span>
 <span class="n">bzip2</span> <span class="o">-</span><span class="n">d</span> <span class="o">-</span><span class="n">c</span> <span class="o">&lt;</span> <span class="n">img</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">bz2</span> <span class="o">|</span> <span class="n">docker</span> <span class="kn">import</span> <span class="o">-</span> <span class="n">name</span><span class="o">/</span><span class="n">versio</span><span class="p">:</span><span class="n">tag</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>现在做一个lnmp的docker，使用ubuntu12.04,lnmp1.3版本，dockerfile如下</p>
-<div class="highlight"><pre><span></span><span class="k">FROM</span> <span class="n">ubuntu</span><span class="p">:</span><span class="mi">12</span><span class="p">.</span><span class="mi">04</span>
+<div class="highlight"><pre><span></span><code><span class="k">FROM</span> <span class="n">ubuntu</span><span class="p">:</span><span class="mi">12</span><span class="p">.</span><span class="mi">04</span>
 
 <span class="n">ENV</span> <span class="n">ROOT_PATH</span> <span class="o">/</span><span class="n">root</span>
 <span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="k">get</span> <span class="k">update</span> <span class="o">&amp;&amp;</span> <span class="n">apt</span><span class="o">-</span><span class="k">get</span> <span class="n">upgrade</span> <span class="o">-</span><span class="n">y</span> <span class="o">&amp;&amp;</span> <span class="n">apt</span><span class="o">-</span><span class="k">get</span> <span class="n">install</span> <span class="n">axel</span> <span class="o">-</span><span class="n">y</span> <span class="o">&amp;&amp;</span> <span class="n">apt</span><span class="o">-</span><span class="k">get</span> <span class="n">install</span> <span class="n">net</span><span class="o">-</span><span class="n">tools</span> <span class="o">-</span><span class="n">y</span>
@@ -98,25 +98,25 @@
 
 <span class="n">EXPOSE</span> <span class="mi">80</span> <span class="mi">3306</span> <span class="mi">9000</span>
 <span class="n">CMD</span> <span class="p">[</span><span class="ss">&quot;bash&quot;</span><span class="p">]</span>
-</pre></div>
+</code></pre></div>
 
 
 <p><code>docker build -t user/lnmp:tag  .</code>，在vps上面等等就ok，最后可以看到新生成的images，<code>docker start -it IMAGEID bash</code>删除一些东西，mysql进不去可以这样修改</p>
-<div class="highlight"><pre><span></span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">init</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">mysql</span> <span class="n">stop</span>
+<div class="highlight"><pre><span></span><code><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">init</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">mysql</span> <span class="n">stop</span>
 <span class="n">mysqld_safe</span> <span class="c1">--user=mysql --skip-grant-tables --skip-networking &amp;</span>
 <span class="n">mysql</span> <span class="o">-</span><span class="n">uroot</span> <span class="o">-</span><span class="n">p</span>
 
 <span class="k">update</span> <span class="k">user</span> <span class="k">set</span> <span class="n">Password</span><span class="o">=</span><span class="n">PASSWORD</span><span class="p">(</span><span class="s1">&#39;newpassword&#39;</span><span class="p">)</span> <span class="k">where</span> <span class="k">USER</span><span class="o">=</span><span class="s1">&#39;root&#39;</span>
 <span class="n">FLUSH</span> <span class="k">PRIVILEGES</span><span class="p">;</span>
 <span class="n">quit</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>最后删除掉lnmp1.3.tar.gz和解压缩不必要的文件，最后保存推送到hub.docker.io，下次直接下载即可。</p>
-<div class="highlight"><pre><span></span><span class="n">docker</span> <span class="k">commit</span> <span class="n">ContainerID</span>  <span class="k">user</span><span class="o">/</span><span class="n">lnmp</span><span class="p">:</span><span class="n">tag</span>
-<span class="n">docker</span> <span class="n">login</span>
-<span class="n">docker</span> <span class="n">push</span> <span class="n">ImageID</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">docker commit ContainerID  user/lnmp:tag</span>
+<span class="err">docker login</span>
+<span class="err">docker push ImageID</span>
+</code></pre></div>
 
 
 <p><a href="https://www.keakon.net/2016/03/07/Docker学习后记">https://www.keakon.net/2016/03/07/Docker学习后记</a></p>
