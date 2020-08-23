@@ -2,13 +2,19 @@
 	Name: Reset Stylesheet
 	Description: Resets browser's default CSS
 	Author: Eric Meyer
-	Author URI: https://meyerweb.com/eric/tools/css/reset/
+	Author URI: http://meyerweb.com/eric/tools/css/reset/
 */
+
+
+
+p, blockquote, ul, ol {
+    margin-bottom: 1.5em;
+}
 
 /* v1.0 | 20080212 */
 html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
+h1, h2, h3, h4, h5, h6,  blockquote, 
+a,  acronym, address, big, cite, code,
 del, dfn, em, font, img, ins, kbd, q, s, samp,
 small, strike, strong, sub, sup, tt, var,
 b, u, i, center,
@@ -17,12 +23,70 @@ fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td {
 	background: transparent;
 	border: 0;
-	font-size: 100%;
+	font-size: 108%;
 	margin: 0;
 	outline: 0;
 	padding: 0;
 	vertical-align: baseline;
 }
+
+p code, p tt, li code, li tt {
+    display: inline-block;
+    white-space: no-wrap;
+/*    background-color: #f9f2f4;
+*/  
+	background-color: #131313;  
+	background: #131313;
+    font-size: .8em;
+    line-height: 1.5em;
+/*    color: #c7254e;*/
+	color: #fff;
+    border: 1px solid #ddd;
+    -webkit-border-radius: 0.4em;
+    -moz-border-radius: 0.4em;
+    -ms-border-radius: 0.4em;
+    -o-border-radius: 0.4em;
+    border-radius: 0.4em;
+    padding: 0 .3em;
+    margin: -1px 0;
+}
+
+.mono, pre, code, tt, p code, p tt, li code, li tt {
+    font-family: Menlo,Monaco,"Andale Mono","lucida console","Courier New",monospace;
+}
+
+pre {
+    background-color: rgb(238, 238, 238);
+    padding: 10px;
+    margin: 10px;
+    overflow: auto;
+    font-size: 70%;
+}
+
+/*.highlight pre, .gist-highlight pre {
+    background: none;
+    -webkit-border-radius: none;
+    -moz-border-radius: none;
+    -ms-border-radius: none;
+    -o-border-radius: none;
+    border-radius: none;
+    border: none;
+    padding: 0;
+    margin-bottom: 0;
+}*/
+
+/* .pre-code, html .gist .gist-file .gist-syntax .gist-highlight pre, .highlight pre, .gist-highlight pre, .highlight code {
+    font-family: Menlo,Monaco,"Andale Mono","lucida console","Courier New",monospace !important;
+    overflow: scroll;
+    overflow-y: hidden;
+    display: block;
+    padding: .8em !important;
+    overflow-x: auto;
+    line-height: 1.45em;
+    background: #002b36 url('../images/noise.png?1395516324') top left !important;
+    color: #93a1a1 !important;
+}*/
+
 
 body {line-height: 1;}
 
