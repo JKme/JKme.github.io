@@ -1,4 +1,4 @@
-#!/Users/Duck_JK/code/blog/JKme.github.io/env/bin/python3.7
+#!/Users/Duck_JK/code/blog/JKme.github.io/env/bin/python3.8
 
 # $Id: rst2odt.py 5839 2009-01-07 19:09:28Z dkuhlman $
 # Author: Dave Kuhlman <dkuhlman@rexx.com>

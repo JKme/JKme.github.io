@@ -1,6 +1,6 @@
-#!/Users/Duck_JK/code/blog/JKme.github.io/env/bin/python3.7
+#!/Users/Duck_JK/code/blog/JKme.github.io/env/bin/python3.8
 
-# Author: 
+# Author:
 # Contact: grubert@users.sf.net
 # Copyright: This module has been placed in the public domain.
 

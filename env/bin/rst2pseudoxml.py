@@ -1,4 +1,4 @@
-#!/Users/Duck_JK/code/blog/JKme.github.io/env/bin/python3.7
+#!/Users/Duck_JK/code/blog/JKme.github.io/env/bin/python3.8
 
 # $Id: rst2pseudoxml.py 4564 2006-05-21 20:44:42Z wiemann $
 # Author: David Goodger <goodger@python.org>

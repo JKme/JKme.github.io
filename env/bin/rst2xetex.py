@@ -1,4 +1,4 @@
-#!/Users/Duck_JK/code/blog/JKme.github.io/env/bin/python3.7
+#!/Users/Duck_JK/code/blog/JKme.github.io/env/bin/python3.8
 
 # $Id: rst2xetex.py 7847 2015-03-17 17:30:47Z milde $
 # Author: Guenter Milde
