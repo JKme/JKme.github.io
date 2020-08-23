@@ -79,22 +79,22 @@
 <ul>
 <li>LEA: 取地址指令，将MEM的地址存至REG，格式为</li>
 </ul>
-<div class="highlight"><pre><span></span><span class="n">lea</span> <span class="n">REG</span><span class="p">,</span> <span class="n">MEM</span><span class="p">;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">lea REG, MEM;</span>
+</code></pre></div>
 
 
 <ul>
 <li>ADD/SUB: 加/减指令， 将运算结果存至DST, 格式</li>
 </ul>
-<div class="highlight"><pre><span></span><span class="k">ADD</span><span class="o">/</span><span class="n">SUB</span> <span class="n">DST</span><span class="p">,</span> <span class="n">SRC</span><span class="p">;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">ADD/SUB DST, SRC;</span>
+</code></pre></div>
 
 
 <ul>
 <li>RET: 返回指令，操作将栈顶数据弹出至eip。将返回地址出栈，并跳转到返回地址.它就是将栈顶保存的数据出栈，然后跳转到这个数字指向的空间。</li>
 </ul>
-<div class="highlight"><pre><span></span><span class="n">RET</span><span class="p">;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">RET;</span>
+</code></pre></div>
 
 
 <ul>
@@ -109,7 +109,7 @@
 <p>函数调用栈在内存中从高地址向低地址生长，所以栈顶对应的内存地址在压栈时变小，退栈时变大。</p>
 </blockquote>
 <p>函数调用大致包含以下步骤：</p>
-<div class="highlight"><pre><span></span><span class="err">参数入栈（一般是逆序入栈）</span><span class="p">:</span> <span class="err">具体包括：</span>
+<div class="highlight"><pre><span></span><code><span class="err">参数入栈（一般是逆序入栈）</span><span class="p">:</span> <span class="err">具体包括：</span>
 <span class="err">压入需要保存的寄存器，通常这些寄存器包括</span><span class="n">eax</span><span class="err">，</span><span class="n">ecx</span><span class="err">，</span><span class="n">edx等</span>
 
 <span class="err">返回地址入栈</span>
@@ -118,7 +118,7 @@
 <span class="err">保存当前栈帧状态值（</span><span class="n">push</span> <span class="n">ebp</span><span class="err">）</span>
 <span class="err">将当前栈帧切换到新栈帧（</span><span class="k">move</span> <span class="n">ebp</span><span class="p">,</span><span class="n">esp</span><span class="err">）</span>
 <span class="err">给新栈帧分配空间（把</span><span class="n">ESP减去所需空间大小</span><span class="err">，抬高栈顶）</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>相关指令：</p>
@@ -128,13 +128,13 @@
 <li>Ret -&gt; pop pc</li>
 </ul>
 <p>函数返回大致包含如下步骤：</p>
-<div class="highlight"><pre><span></span><span class="err">保存返回值（通常保存在</span><span class="n">EAX中</span><span class="err">）</span>
+<div class="highlight"><pre><span></span><code><span class="err">保存返回值（通常保存在EAX中）</span>
 <span class="err">弹出当前栈帧，恢复上一个栈帧：具体包括</span>
-<span class="err">在堆栈平衡的基础上给</span><span class="n">ESP加上栈帧的大小</span><span class="err">，降低栈顶，回收当前栈空间</span>
-<span class="err">将当前栈帧底部保存的前栈帧</span><span class="n">EBP值弹入EBP</span><span class="err">，恢复出上一个栈帧</span>
-<span class="err">将函数返回地址弹给</span><span class="n">EIP</span>
+<span class="err">在堆栈平衡的基础上给ESP加上栈帧的大小，降低栈顶，回收当前栈空间</span>
+<span class="err">将当前栈帧底部保存的前栈帧EBP值弹入EBP，恢复出上一个栈帧</span>
+<span class="err">将函数返回地址弹给EIP</span>
 <span class="err">跳转</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>Stack is collections of stack frame, each function in program create a new fram in stack and frame pointer keep the current location of frame which is executing</p>
@@ -199,13 +199,13 @@
 <p>栈溢出要实现什么样的效果:</p>
 <p>ROP常见的拼凑效果是实现一次系统调用，Linux系统下对应的汇编指令是int 0x80。执行这条指令时，被调用函数的编号存入eax，调用参数按照顺序依次存入ebx,ecx,edx,esi,edi中。</p>
 <p>用exec系统调用打开一个shell终端需要的参数和指令如下:</p>
-<div class="highlight"><pre><span></span>        <span class="nv">mov</span> <span class="nv">rax</span>, <span class="mi">0</span><span class="nv">x3b</span>   <span class="c1">; system call number, 0x3b for sys_exec</span>
-        <span class="nv">mov</span> <span class="nv">rdi</span>, <span class="nv">PROG</span>   <span class="c1">; char *prog (program path)</span>
-        <span class="nv">mov</span> <span class="nv">rsi</span>, <span class="mi">0</span>      <span class="c1">; char **agcv</span>
-        <span class="nv">mov</span> <span class="nv">rdx</span>, <span class="mi">0</span>      <span class="c1">; char **env</span>
-        <span class="nv">syscall</span>
-<span class="nv">PROG</span>:   <span class="nv">DB</span> <span class="s2">&quot;</span><span class="s">/bin/sh</span><span class="s2">&quot;</span>, <span class="mi">0</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">        mov rax, 0x3b   ; system call number, 0x3b for sys_exec</span>
+<span class="err">        mov rdi, PROG   ; char *prog (program path)</span>
+<span class="err">        mov rsi, 0      ; char **agcv</span>
+<span class="err">        mov rdx, 0      ; char **env</span>
+<span class="err">        syscall</span>
+<span class="c">PROG:   DB &quot;/bin/sh&quot;, 0</span>
+</code></pre></div>
 
 
 <p>rax为系统调用编码，rdi为字符串指针，指向可执行程序的完整路径，rsi和rdx都是字符串指针数组，保存了参数列表和环境变量。</p>

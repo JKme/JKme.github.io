@@ -47,13 +47,13 @@
 <h3>0x04: /绕过</h3>
 <p><img alt="" src="./images/15589537987606.jpg"></p>
 <h3>0x05: \绕过</h3>
-<div class="highlight"><pre><span></span><span class="err">\在浏览器会自动转变为</span><span class="o">/</span>
+<div class="highlight"><pre><span></span><code><span class="err">\在浏览器会自动转变为</span><span class="o">/</span>
 
  <span class="n">http</span><span class="p">:</span><span class="o">/</span><span class="err">\</span><span class="o">/</span><span class="n">baidu</span><span class="p">.</span><span class="n">com</span>
  <span class="n">http</span><span class="p">:</span><span class="err">\</span><span class="o">//</span><span class="n">baidu</span><span class="p">.</span><span class="n">com</span>
   <span class="o">/</span><span class="err">\</span><span class="o">/</span><span class="n">baidu</span><span class="p">.</span><span class="n">com</span>
  <span class="n">http</span><span class="p">:</span><span class="err">\\\</span><span class="o">//</span><span class="n">baidu</span><span class="p">.</span><span class="n">com</span>
-</pre></div>
+</code></pre></div>
 
 
 <h3>0x06: 子域名绕过</h3>
@@ -67,12 +67,12 @@
 <ol>
 <li>URL八进制</li>
 </ol>
-<div class="highlight"><pre><span></span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mi">0</span><span class="p">[</span><span class="err">八进制</span><span class="p">]</span> <span class="err">比如</span> <span class="mi">115</span><span class="p">.</span><span class="mi">239</span><span class="p">.</span><span class="mi">210</span><span class="p">.</span><span class="mi">26</span> <span class="err">首先用</span><span class="p">.</span><span class="err">分割数字</span> <span class="mi">115</span> <span class="mi">239</span> <span class="mi">210</span> <span class="mi">26</span> <span class="err">然后选择</span><span class="mi">10</span><span class="err">进制转换</span><span class="mi">16</span><span class="err">进制！</span>
+<div class="highlight"><pre><span></span><code><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mi">0</span><span class="p">[</span><span class="err">八进制</span><span class="p">]</span> <span class="err">比如</span> <span class="mi">115</span><span class="p">.</span><span class="mi">239</span><span class="p">.</span><span class="mi">210</span><span class="p">.</span><span class="mi">26</span> <span class="err">首先用</span><span class="p">.</span><span class="err">分割数字</span> <span class="mi">115</span> <span class="mi">239</span> <span class="mi">210</span> <span class="mi">26</span> <span class="err">然后选择</span><span class="mi">10</span><span class="err">进制转换</span><span class="mi">16</span><span class="err">进制！</span>
 
 <span class="p">(</span><span class="err">要用</span><span class="mi">0</span><span class="err">来表示前缀，可以是一个</span><span class="mi">0</span><span class="err">也可以是多个</span><span class="mi">0</span> <span class="err">跟</span><span class="n">XSS中多加几个0来绕过过滤一样</span><span class="err">！</span><span class="p">)</span>
 <span class="err">首先把这四段数字给</span> <span class="err">转成</span> <span class="mi">16</span> <span class="err">进制！结果：</span><span class="mi">73</span> <span class="n">ef</span> <span class="n">d2</span> <span class="mi">1</span><span class="n">a</span>  <span class="err">然后把</span> <span class="mi">73</span><span class="n">efd21a</span> <span class="err">这十六进制一起转换成</span><span class="mi">8</span><span class="err">进制！</span>
 <span class="err">结果就是</span><span class="p">:</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mi">0016373751032</span>
-</pre></div>
+</code></pre></div>
 
 
 <ol>

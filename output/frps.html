@@ -41,7 +41,7 @@
 <p>首先是reGeorg,如果是Linux的话需要上传no-socket的文件，但是实际测试，网站打开特别慢。 pass</p>
 <p>其次是ew，之前在windows上面测试过ew，效果还不错，不过没有扫描比较大的局域网。这次测试了下，中间扫到一半出现了段错误。pass</p>
 <p>最后试frps，实际效果不错，至少可以解决问题了。配置文件这样的:</p>
-<div class="highlight"><pre><span></span><span class="n">frps</span><span class="p">.</span><span class="nl">ini</span><span class="p">:</span><span class="w"> </span>
+<div class="highlight"><pre><span></span><code><span class="n">frps</span><span class="p">.</span><span class="nl">ini</span><span class="p">:</span><span class="w"> </span>
 
 <span class="o">[</span><span class="n">common</span><span class="o">]</span><span class="w"></span>
 <span class="n">bind_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10086</span><span class="w"></span>
@@ -52,11 +52,11 @@
 <span class="n">dashboard_pwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="n">password</span><span class="o">]</span><span class="w"></span>
 <span class="n">use_encryption</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span><span class="w"></span>
 <span class="n">use_compression</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span><span class="w"></span>
-</pre></div>
+</code></pre></div>
 
 
 <p>上面试在vps上面启动，会在对应端口开一个web服务，看到已经启动的流量和节点存活</p>
-<div class="highlight"><pre><span></span><span class="n">frpc</span><span class="p">.</span><span class="n">ini</span>
+<div class="highlight"><pre><span></span><code><span class="n">frpc</span><span class="p">.</span><span class="n">ini</span>
 
 <span class="p">[</span><span class="n">common</span><span class="p">]</span>
 <span class="n">server_addr</span> <span class="o">=</span> <span class="p">[</span><span class="n">vps</span> <span class="n">ip</span><span class="p">]</span>
@@ -69,7 +69,7 @@
 <span class="n">type</span> <span class="o">=</span> <span class="n">tcp</span>
 <span class="n">remote_port</span> <span class="o">=</span> <span class="p">[</span><span class="n">port</span><span class="p">]</span>
 <span class="n">plugin</span> <span class="o">=</span> <span class="n">socks5</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>这个在被控制主机上启动，运行完之后，vps的remote_port端口就会开一个socks5的代理，这样就进入到被控主机的网络里面。nmap扫描要带上<code>-sT -Pn</code>选项。</p>

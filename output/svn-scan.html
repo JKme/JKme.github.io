@@ -39,7 +39,7 @@
       
       <p>程序是最开始学习Python写的，基本是东拼西凑，从这个程序开始接触多进程。有两个版本第一种是直接使用<code>sock</code>的<code>connect</code>连接来判断，第二种使用了<code>scapy</code>，本着追求最快的程序，结果使用<code>scapy</code>比<code>socket</code>要慢好多。</p>
 <p>下面是第一个程序，使用<code>socket</code>扫描:</p>
-<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*-coding:utf-8-*-</span>
 
 <span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span><span class="p">,</span><span class="n">PIPE</span>
@@ -56,10 +56,10 @@
             <span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">()</span>
             <span class="n">s</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">connect_ex</span><span class="p">((</span><span class="nb">str</span><span class="p">(</span><span class="n">ip</span><span class="p">),</span> <span class="mi">3690</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">p</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="s2">&quot;svn info svn://&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ip</span><span class="p">),</span><span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">PIPE</span><span class="p">)</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="s2">&quot;svn info svn://&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ip</span><span class="p">),</span><span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">PIPE</span><span class="p">)</span>
                 <span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
                 <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;UUID&#39;</span><span class="p">,</span> <span class="n">out</span><span class="p">):</span>
-                     <span class="k">print</span> <span class="n">ip</span>
+                     <span class="nb">print</span> <span class="n">ip</span>
             <span class="n">s</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 
@@ -78,12 +78,12 @@
     <span class="n">threads</span> <span class="o">=</span> <span class="p">[</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">worker</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">)]</span>
     <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">start</span><span class="p">(),</span> <span class="n">threads</span><span class="p">)</span>
     <span class="n">q</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-    <span class="k">print</span> <span class="s1">&#39;need time </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
-</pre></div>
+    <span class="nb">print</span> <span class="s1">&#39;need time </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
+</code></pre></div>
 
 
 <p>然后是使用了<code>scapy</code>的<code>syn</code>扫描：</p>
-<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/env python</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;scapy.runtime&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span> <span class="c1">#关闭import scapy的警告</span>
 <span class="kn">from</span> <span class="nn">scapy.all</span> <span class="kn">import</span> <span class="o">*</span>
@@ -99,15 +99,15 @@
 <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 <span class="k">def</span> <span class="nf">svn_scan</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
     <span class="n">ans</span> <span class="o">=</span> <span class="n">sr1</span><span class="p">(</span><span class="n">IP</span><span class="p">(</span><span class="n">dst</span><span class="o">=</span><span class="n">target</span><span class="p">)</span><span class="o">/</span><span class="n">TCP</span><span class="p">(</span><span class="n">dport</span><span class="o">=</span><span class="mi">3690</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="s2">&quot;S&quot;</span><span class="p">),</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">ans</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">ans</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">pass</span>
     <span class="k">elif</span> <span class="n">ans</span><span class="o">.</span><span class="n">haslayer</span><span class="p">(</span><span class="n">TCP</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">ans</span><span class="o">.</span><span class="n">getlayer</span><span class="p">(</span><span class="n">TCP</span><span class="p">)</span><span class="o">.</span><span class="n">flags</span> <span class="o">==</span> <span class="mi">18</span><span class="p">:</span>
             <span class="n">sr</span><span class="p">(</span><span class="n">IP</span><span class="p">(</span><span class="n">dst</span><span class="o">=</span><span class="n">target</span><span class="p">)</span><span class="o">/</span><span class="n">TCP</span><span class="p">(</span><span class="n">dport</span><span class="o">=</span><span class="mi">3690</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="s2">&quot;RA&quot;</span><span class="p">),</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="s2">&quot;svn info svn://&quot;</span> <span class="o">+</span> <span class="n">target</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">PIPE</span><span class="p">)</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="s2">&quot;svn info svn://&quot;</span> <span class="o">+</span> <span class="n">target</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">PIPE</span><span class="p">)</span>
             <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
             <span class="k">if</span>   <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;UUID&#39;</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span> <span class="p">:</span>
-                <span class="k">print</span> <span class="n">target</span>
+                <span class="nb">print</span> <span class="n">target</span>
 
 <span class="k">def</span> <span class="nf">worker</span><span class="p">():</span>
     <span class="k">while</span> <span class="ow">not</span> <span class="n">q</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
@@ -122,22 +122,22 @@
     <span class="n">threads</span> <span class="o">=</span> <span class="p">[</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">worker</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">)]</span>
     <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">start</span><span class="p">(),</span> <span class="n">threads</span><span class="p">)</span>
     <span class="n">q</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-    <span class="k">print</span> <span class="s1">&#39;need time </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
-</pre></div>
+    <span class="nb">print</span> <span class="s1">&#39;need time </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
+</code></pre></div>
 
 
 <p>====2017-12-15更新</p>
 <p>关于多线程，上面两个的<code>q.join</code>写错了，删掉之后改为:</p>
-<div class="highlight"><pre><span></span><span class="k">map</span><span class="p">(</span><span class="n">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">.</span><span class="k">join</span><span class="p">(),</span> <span class="n">threads</span><span class="p">)</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">map(lambda x: x.join(), threads)</span>
+</code></pre></div>
 
 
 <p>扫描<code>/24</code>的主机，花费的时间从8s变为了0.5s，时间不是这么计算的。</p>
 <p>如果上面没有设置线程的daemon，最后运行的时候会一直卡着，因为进程默认不会停的，要这样:</p>
-<div class="highlight"><pre><span></span><span class="k">map</span><span class="p">(</span><span class="n">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">.</span><span class="n">setDaemon</span><span class="p">(</span><span class="k">True</span><span class="p">),</span> <span class="n">threads</span><span class="p">)</span>
-<span class="k">map</span><span class="p">(</span><span class="n">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">.</span><span class="k">start</span><span class="p">(),</span> <span class="n">threads</span><span class="p">)</span>
-<span class="k">map</span><span class="p">(</span><span class="n">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">.</span><span class="k">join</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">threads</span><span class="p">)</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">map(lambda x: x.setDaemon(True), threads)</span>
+<span class="err">map(lambda x: x.start(), threads)</span>
+<span class="err">map(lambda x: x.join(3), threads)</span>
+</code></pre></div>
 
 
 <p>最后的几句修改为上面的样子才是终极形态：</p>

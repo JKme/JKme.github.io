@@ -38,13 +38,13 @@
     <div class="entry-content">
       
       <p>html的实体编码，比如十进制编码和十六进制编码，需要放在html标签里面。</p>
-<div class="highlight"><pre><span></span><span class="n">Fun</span> <span class="n">fact</span> <span class="n">Decoding</span> <span class="k">Order</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="n">Fun</span> <span class="n">fact</span> <span class="n">Decoding</span> <span class="k">Order</span><span class="p">:</span>
 <span class="mi">1</span><span class="p">.</span> <span class="n">HTML</span> <span class="n">Decoding</span>
 <span class="mi">2</span><span class="p">.</span> <span class="n">URL</span> <span class="n">Decoding</span>
 <span class="mi">3</span><span class="p">.</span> <span class="n">Javascript</span> <span class="n">Decoding</span>
 
 <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">slides</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">mscasharjaved</span><span class="o">/</span><span class="n">deck</span><span class="o">-</span><span class="mi">13</span><span class="o">#/</span><span class="mi">169</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>三种编码，对于html来说是(10进制和16进制）</p>
@@ -67,9 +67,9 @@
 </ul>
 <h3>html实体编码本身存在的意义是防止与HTML本身语义标记的冲突：</h3>
 <p>举个例子：</p>
-<div class="highlight"><pre><span></span><span class="ni">&amp;lt;</span>script<span class="ni">&amp;gt;</span>alert(1)<span class="ni">&amp;lt;</span>/script<span class="ni">&amp;gt;</span>
+<div class="highlight"><pre><span></span><code><span class="ni">&amp;lt;</span>script<span class="ni">&amp;gt;</span>alert(1)<span class="ni">&amp;lt;</span>/script<span class="ni">&amp;gt;</span>
 <span class="nt">&lt;script&gt;</span>alert(66)<span class="nt">&lt;/script&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>上面保存未html文档之后，用浏览器打开，弹出的是66，查看源代码可以看到两个是一模一样，不同的就是第二个可以执行，第一个只是在页面显示出来。</p>
@@ -92,19 +92,19 @@
 <p>利用location变形,就可以在后面使用js编码咯：</p>
 <p><code>&lt;img src="1" onerror=location="javascript:\u0061\u006c\u0065\u0072\u0074\u0028\u0022\u0036\u0036\u0036\u0022\u0029"&gt;</code></p>
 <h3>只有在js中才可以拼接字符串</h3>
-<div class="highlight"><pre><span></span> <span class="n">Wrong</span><span class="p">:</span>
- <span class="o">&lt;</span><span class="n">img</span><span class="o">/</span><span class="n">src</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="n">onerror</span><span class="o">=</span><span class="s1">&#39;al&#39;</span><span class="o">+</span><span class="s1">&#39;er&#39;</span><span class="o">+</span><span class="s1">&#39;t(1)&#39;</span><span class="o">&gt;</span>
- <span class="k">right</span><span class="p">:</span>
- <span class="o">&lt;</span><span class="n">img</span><span class="o">/</span><span class="n">src</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="n">onerror</span><span class="o">=</span><span class="k">location</span><span class="o">=</span><span class="ss">&quot;javascr&quot;</span><span class="o">+</span><span class="ss">&quot;ipt:al&quot;</span><span class="o">+</span><span class="ss">&quot;ert%28docu&quot;</span><span class="o">+</span><span class="ss">&quot;ment.co&quot;</span><span class="o">+</span><span class="ss">&quot;okie%29&quot;</span><span class="o">&gt;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err"> Wrong:</span>
+<span class="err"> &lt;img/src=&#39;x&#39;onerror=&#39;al&#39;+&#39;er&#39;+&#39;t(1)&#39;&gt;</span>
+<span class="err"> right:</span>
+<span class="err"> &lt;img/src=&#39;x&#39;onerror=location=&quot;javascr&quot;+&quot;ipt:al&quot;+&quot;ert%28docu&quot;+&quot;ment.co&quot;+&quot;okie%29&quot;&gt;</span>
+</code></pre></div>
 
 
 <p>上面的是利用location来变形xss，现在来瞅瞅如下的代码:</p>
-<div class="highlight"><pre><span></span><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;javascript:alert(1)&quot;</span><span class="nt">&gt;</span>this is alert(1)<span class="nt">&lt;/a&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;javascript:alert(1)&quot;</span><span class="nt">&gt;</span>this is alert(1)<span class="nt">&lt;/a&gt;</span>
 <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;javascript:&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#49;&amp;#50;&amp;#51;&amp;#41;&amp;#10;&quot;</span><span class="nt">&gt;</span>this is html encode<span class="nt">&lt;/a&gt;</span>
 <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;javascript:%61%6c%65%72%74%28%32%32%29&quot;</span><span class="nt">&gt;</span>abc<span class="nt">&lt;/a&gt;</span>
 <span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">&quot;1&quot;</span> <span class="na">onerror=</span><span class="s">location=&quot;javascr&quot;+&quot;ipt:al&quot;+&quot;ert%28docu&quot;+&quot;ment.co&quot;+&quot;okie%29&quot;</span><span class="nt">&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <ul>

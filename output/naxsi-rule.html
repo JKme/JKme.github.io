@@ -44,22 +44,22 @@
 </ul>
 <h3>Checkrules</h3>
 <p>Checkrules指令有四种动作：</p>
-<div class="highlight"><pre><span></span><span class="n">LOG</span><span class="p">,</span> <span class="n">BLOCK</span><span class="p">,</span> <span class="k">DROP</span><span class="p">,</span> <span class="n">ALLOW</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">LOG, BLOCK, DROP, ALLOW</span>
+</code></pre></div>
 
 
 <p>何时执行这四种动作？根据制定的得分(score)</p>
 <h4>Basic Usage</h4>
-<div class="highlight"><pre><span></span><span class="n">CheckRule</span> <span class="ss">&quot;$SQL &gt;= 8&quot;</span> <span class="n">BLOCK</span><span class="p">;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">CheckRule &quot;$SQL &gt;= 8&quot; BLOCK;</span>
+</code></pre></div>
 
 
 <p>如果<code>$SQL</code>大于等于8，则<code>BLOCK</code>掉这个请求。（前提是打开防火墙的过滤模式，而不是learning模式）</p>
 <h4>Other Usages</h4>
 <p>看看另外的一种用法，白名单和黑名单一起用的时候，比如有这样的规则:</p>
-<div class="highlight"><pre><span></span><span class="n">CheckRule</span> <span class="ss">&quot;$UWA &gt;= 4&quot;</span> <span class="k">DROP</span><span class="p">;</span>
-<span class="n">CheckRule</span> <span class="ss">&quot;$XSS &gt;= 8&quot;</span> <span class="n">BLOCK</span><span class="p">;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">CheckRule &quot;$UWA &gt;= 4&quot; DROP;</span>
+<span class="err">CheckRule &quot;$XSS &gt;= 8&quot; BLOCK;</span>
+</code></pre></div>
 
 
 <p>意思是任何请求只要匹配了<code>$UWA</code>规则，得分大于等于4，就block掉这个请求。
@@ -67,8 +67,8 @@
 <h2>Rules BNF</h2>
 <h3>RUles</h3>
 <p>规则是用来匹配请求中的攻击。比如DROP掉任何包含字符串<code>zz</code>的GET或者POST请求:</p>
-<div class="highlight"><pre><span></span><span class="nt">MainRule</span> <span class="nt">id</span><span class="p">:</span><span class="nd">424242</span> <span class="s2">&quot;str:zz&quot;</span> <span class="s2">&quot;mz:ARGS|BODY&quot;</span> <span class="s2">&quot;s:DROP&quot;</span><span class="o">;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">MainRule id:424242 &quot;str:zz&quot; &quot;mz:ARGS|BODY&quot; &quot;s:DROP&quot;;</span>
+</code></pre></div>
 
 
 <p>Rules can be present at location level(BasicRule) or http level (MainRule)</p>
@@ -94,19 +94,19 @@ naxsi的匹配值大小写不敏感的。</p>
 <code>s:</code>后面可以直接制定匹配的动作<code>DROP</code>或者<code>BLOCK</code></p>
 <h3>MatchZone(mz:...)</h3>
 <p>mz是匹配区域，决定了规则匹配哪一部分:</p>
-<div class="highlight"><pre><span></span><span class="nt">MainRule</span> <span class="nt">id</span><span class="p">:</span><span class="nd">4242</span> <span class="nt">str</span><span class="p">:</span><span class="nd">z</span> <span class="s2">&quot;mz:$ARGS_VAR:X|BODY&quot;</span><span class="o">;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">MainRule id:4242 str:z &quot;mz:$ARGS_VAR:X|BODY&quot;;</span>
+</code></pre></div>
 
 
 <p>在GET请求的参数X里面或者BODY里面的参数，搜索字符串z</p>
-<div class="highlight"><pre><span></span><span class="nt">MainRule</span> <span class="nt">id</span><span class="p">:</span><span class="nd">4342</span> <span class="nt">str</span><span class="p">:</span><span class="nd">z</span> <span class="s2">&quot;mz:$ARGS_VAR:X|BODY|$URL_X:^/foo&quot;</span><span class="o">;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">MainRule id:4342 str:z &quot;mz:$ARGS_VAR:X|BODY|$URL_X:^/foo&quot;;</span>
+</code></pre></div>
 
 
 <p>在GET请求的X参数里面或者BODY里面或者URL里以/foo开头的路径搜索是否有z字符串
 从0.55rc0版本里面，对于不知道的content-type,可以使用RAW_BODY来匹配:</p>
-<div class="highlight"><pre><span></span><span class="nt">MainRule</span> <span class="nt">id</span><span class="p">:</span><span class="nd">4241</span> <span class="nt">s</span><span class="p">:</span><span class="nd">DROP</span> <span class="nt">str</span><span class="p">:</span><span class="nd">z</span> <span class="nt">mz</span><span class="p">:</span><span class="nd">RAQ_BODY</span><span class="o">;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">MainRule id:4241 s:DROP str:z mz:RAQ_BODY;</span>
+</code></pre></div>
 
 
 <p>只有在以下情况才会匹配RAW_BODy:</p>

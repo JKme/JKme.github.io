@@ -39,14 +39,14 @@
       
       <p><a href="https://github.com/realgam3/pymultitor">https://github.com/realgam3/pymultitor</a></p>
 <p>安装方法看github就可以了，mac下需要安装tor和mitmproxy</p>
-<div class="highlight"><pre><span></span><span class="n">brew</span> <span class="n">install</span> <span class="n">mitmproxy</span>
-<span class="n">brew</span> <span class="n">install</span> <span class="n">tor</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">brew install mitmproxy</span>
+<span class="err">brew install tor</span>
+</code></pre></div>
 
 
 <p>设置下proxifier的规则，tor使用代理，然后:</p>
-<div class="highlight"><pre><span></span><span class="n">pymultitor</span> <span class="o">-</span><span class="n">lp</span> <span class="mi">8081</span> <span class="o">-</span><span class="n">lh</span> <span class="mi">127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span> <span class="c1">--on-count  2 -d</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">pymultitor -lp 8081 -lh 127.0.0.1 --on-count  2 -d</span>
+</code></pre></div>
 
 
 <p>在本机的8081端口开了一个http代理，这个代理可以转成socks，未测试。</p>

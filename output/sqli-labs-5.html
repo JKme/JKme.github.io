@@ -70,30 +70,30 @@
 <p>Less-10存在时间盲注，使用<code>"</code>闭合，在使用sqlmap之后还存在布尔盲注，果然和less-9一样坑。</p>
 <h3>Less-11</h3>
 <p>网页提示报错注入，在用户名和密码那里可以使用burp截获Post数据。变量是被单引号包含，可以使用union,error,time-based这三种注入。其中time-based的时候有以下个问题:</p>
-<div class="highlight"><pre><span></span> <span class="nv">mysql</span><span class="o">&gt;</span> <span class="nv">select</span> <span class="mi">1</span><span class="o">=</span><span class="mi">0</span> <span class="nv">and</span> <span class="k">if</span><span class="ss">(</span><span class="nv">mid</span><span class="ss">(</span><span class="nv">version</span><span class="ss">()</span>,<span class="mi">1</span>,<span class="mi">1</span><span class="ss">)</span><span class="o">=</span><span class="mi">5</span>,<span class="nv">sleep</span><span class="ss">(</span><span class="mi">5</span><span class="ss">)</span>,<span class="mi">0</span><span class="ss">)</span><span class="c1">;</span>
-<span class="o">+---------------------------------------------+</span>
-<span class="o">|</span> <span class="mi">1</span><span class="o">=</span><span class="mi">0</span> <span class="nv">and</span> <span class="k">if</span><span class="ss">(</span><span class="nv">mid</span><span class="ss">(</span><span class="nv">version</span><span class="ss">()</span>,<span class="mi">1</span>,<span class="mi">1</span><span class="ss">)</span><span class="o">=</span><span class="mi">5</span>,<span class="nv">sleep</span><span class="ss">(</span><span class="mi">5</span><span class="ss">)</span>,<span class="mi">0</span><span class="ss">)</span> <span class="o">|</span>
-<span class="o">+---------------------------------------------+</span>
+<div class="highlight"><pre><span></span><code> <span class="n">mysql</span><span class="o">&gt;</span> <span class="k">select</span> <span class="mi">1</span><span class="o">=</span><span class="mi">0</span> <span class="k">and</span> <span class="k">if</span><span class="p">(</span><span class="n">mid</span><span class="p">(</span><span class="k">version</span><span class="p">(),</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span><span class="mi">0</span><span class="p">);</span>
+<span class="o">+</span><span class="c1">---------------------------------------------+</span>
+<span class="o">|</span> <span class="mi">1</span><span class="o">=</span><span class="mi">0</span> <span class="k">and</span> <span class="k">if</span><span class="p">(</span><span class="n">mid</span><span class="p">(</span><span class="k">version</span><span class="p">(),</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span><span class="mi">0</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------------------------------------+</span>
 <span class="o">|</span>                                           <span class="mi">0</span> <span class="o">|</span>
-<span class="o">+---------------------------------------------+</span>
-<span class="mi">1</span> <span class="nv">row</span> <span class="nv">in</span> <span class="nv">set</span> <span class="ss">(</span><span class="mi">0</span>.<span class="mi">00</span> <span class="nv">sec</span><span class="ss">)</span>
+<span class="o">+</span><span class="c1">---------------------------------------------+</span>
+<span class="mi">1</span> <span class="k">row</span> <span class="k">in</span> <span class="k">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
 
-<span class="nv">mysql</span><span class="o">&gt;</span> <span class="nv">select</span> <span class="mi">1</span><span class="o">=</span><span class="mi">0</span> <span class="nv">and</span> <span class="ss">(</span><span class="nv">select</span><span class="o">*</span><span class="nv">from</span><span class="ss">(</span><span class="nv">select</span> <span class="nv">sleep</span><span class="ss">(</span><span class="mi">5</span><span class="ss">))</span><span class="nv">x</span><span class="ss">)</span><span class="c1">;</span>
-<span class="o">+-----------------------------------------+</span>
-<span class="o">|</span> <span class="mi">1</span><span class="o">=</span><span class="mi">0</span> <span class="nv">and</span> <span class="ss">(</span><span class="nv">select</span><span class="o">*</span><span class="nv">from</span><span class="ss">(</span><span class="nv">select</span> <span class="nv">sleep</span><span class="ss">(</span><span class="mi">5</span><span class="ss">))</span><span class="nv">x</span><span class="ss">)</span> <span class="o">|</span>
-<span class="o">+-----------------------------------------+</span>
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">select</span> <span class="mi">1</span><span class="o">=</span><span class="mi">0</span> <span class="k">and</span> <span class="p">(</span><span class="k">select</span><span class="o">*</span><span class="k">from</span><span class="p">(</span><span class="k">select</span> <span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span><span class="n">x</span><span class="p">);</span>
+<span class="o">+</span><span class="c1">-----------------------------------------+</span>
+<span class="o">|</span> <span class="mi">1</span><span class="o">=</span><span class="mi">0</span> <span class="k">and</span> <span class="p">(</span><span class="k">select</span><span class="o">*</span><span class="k">from</span><span class="p">(</span><span class="k">select</span> <span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span><span class="n">x</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------------------------------------+</span>
 <span class="o">|</span>                                       <span class="mi">0</span> <span class="o">|</span>
-<span class="o">+-----------------------------------------+</span>
-<span class="mi">1</span> <span class="nv">row</span> <span class="nv">in</span> <span class="nv">set</span> <span class="ss">(</span><span class="mi">5</span>.<span class="mi">00</span> <span class="nv">sec</span><span class="ss">)</span>
+<span class="o">+</span><span class="c1">-----------------------------------------+</span>
+<span class="mi">1</span> <span class="k">row</span> <span class="k">in</span> <span class="k">set</span> <span class="p">(</span><span class="mi">5</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
 
-<span class="nv">mysql</span><span class="o">&gt;</span> <span class="nv">select</span> <span class="nv">mid</span><span class="ss">(</span><span class="nv">version</span><span class="ss">()</span>,<span class="mi">1</span>,<span class="mi">1</span><span class="ss">)</span><span class="c1">;</span>
-<span class="o">+--------------------+</span>
-<span class="o">|</span> <span class="nv">mid</span><span class="ss">(</span><span class="nv">version</span><span class="ss">()</span>,<span class="mi">1</span>,<span class="mi">1</span><span class="ss">)</span> <span class="o">|</span>
-<span class="o">+--------------------+</span>
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">select</span> <span class="n">mid</span><span class="p">(</span><span class="k">version</span><span class="p">(),</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="o">+</span><span class="c1">--------------------+</span>
+<span class="o">|</span> <span class="n">mid</span><span class="p">(</span><span class="k">version</span><span class="p">(),</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">--------------------+</span>
 <span class="o">|</span> <span class="mi">5</span>                  <span class="o">|</span>
-<span class="o">+--------------------+</span>
-<span class="mi">1</span> <span class="nv">row</span> <span class="nv">in</span> <span class="nv">set</span> <span class="ss">(</span><span class="mi">0</span>.<span class="mi">00</span> <span class="nv">sec</span><span class="ss">)</span>
-</pre></div>
+<span class="o">+</span><span class="c1">--------------------+</span>
+<span class="mi">1</span> <span class="k">row</span> <span class="k">in</span> <span class="k">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
+</code></pre></div>
 
 
 <p>当前面条件为假的时候，如果直接使用<code>and if(mid(version(),1,1)=5,sleep(5),0)</code>是不会睡5s。当<code>and</code>替换为<code>xor</code>或者<code>sleep(5)替换为benchmark(1000000,sha1(1))</code>就会发生时间延迟，再或者使用sqlmap的payload：<code>AND (SELECT * FROM (SELECT(SLEEP([SLEEPTIME]-(IF([INFERENCE],0,[SLEEPTIME])))))[RANDSTR])</code></p>
