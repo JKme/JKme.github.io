@@ -3,28 +3,69 @@
 	Date: July 2009
 	Description: Sample layout for HTML5 and CSS3 goodness.
 	Version: 1.0
-	License: MIT <https://opensource.org/licenses/MIT>
-	Licensed by: Smashing Media GmbH <https://www.smashingmagazine.com/>
+	License: MIT <http://opensource.org/licenses/MIT>
+	Licensed by: Smashing Media GmbH <http://www.smashingmagazine.com/>
 	Original author: Enrique Ramírez <http://enrique-ramirez.com/>
 */
 
 /* Imports */
 @import url("reset.css");
-@import url("pygment.css");
-@import url("typogrify.css");
+/*@import url("pygment.css");
+*/@import url("typogrify.css");
 @import url("fonts.css");
 
 /***** Global *****/
 /* Body */
+li {
+	margin: 0;
+padding: 0;
+border: 0;
+font: inherit;
+    font-size: inherit;
+    font-family: "PT Serif",Georgia,Times,"Times New Roman",serif;
+font-size: 100%;
+vertical-align: baseline;
+}
+
+p {
+    margin: 0;
+        margin-bottom: 0px;
+    padding: 0;
+    border: 0;
+    font-family: : "PT Serif",Georgia,Times,"Times New Roman",serif;
+    font-size: 22px;
+    vertical-align: baseline;
+}
+
 body {
-    background: #F5F4EF;
+    /*background: #F5F4EF;*/
     color: #000305;
-    font-size: 87.5%; /* Base font size: 14px */
-    font-family: 'Trebuchet MS', Trebuchet, 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    line-height: 1.429;
+    font-size: 19px; /* Base font size: 14px */
+    font-family: "PT Serif",Georgia,Times,"Times New Roman",serif;
+    line-height: 1.1;
     margin: 0;
     padding: 0;
     text-align: left;
+}
+
+entry-content {
+	line-height: 1.4
+
+}
+ h3::before,h4::before,h2::before {
+    padding-top: 0.8em;
+    margin-right: 8px;
+    content: "#";
+    color: #e8a6a6;
+/*    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAABCAYAAACsXeyTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAFUlEQVQIHWNIS0sr/v//PwMMDzY+ADqMahlW4J91AAAAAElFTkSuQmCC') top left repeat-x;
+*/}
+
+ 
+
+p, blockquote, ul, ol {
+
+    margin-bottom: 1.5em;
+
 }
 
 /* Headings */
@@ -36,10 +77,10 @@ h5 {font-size: 1.143em}	/* 16px */
 h6 {font-size: 1em}		/* 14px */
 
 h1, h2, h3, h4, h5, h6 {
-	font-weight: 400;
-	line-height: 1.1;
+/*	font-weight: 400;
+*/	line-height: 1.1;
 	margin-bottom: .8em;
-    font-family: 'Yanone Kaffeesatz', arial, serif;
+    font-family: STXihei, "华文细黑", "Microsoft YaHei", "微软雅黑",   serif;
 }
 
 h3, h4, h5, h6 { margin-top: .8em; }
@@ -50,16 +91,17 @@ hr { border: 2px solid #EEEEEE; }
 a {outline: 0;}
 a img {border: 0px; text-decoration: none;}
 a:link, a:visited {
-	color: #C74350;
+/*	color: #C74350;*/
+	color: #131313;
 	padding: 0 1px;
-	text-decoration: underline;
+	text-decoration: none;
 }
-a:hover, a:active {
+/*a:hover, a:active {
 	background-color: #C74350;
 	color: #fff;
 	text-decoration: none;
 	text-shadow: 1px 1px 1px #333;
-}
+}*/
 
 h1 a:hover {
     background-color: inherit
@@ -67,8 +109,8 @@ h1 a:hover {
 
 /* Paragraphs */
 div.line-block,
-p { margin-top: 1em;
-    margin-bottom: 1em;}
+p { margin-top: 1.5em;
+    margin-bottom: 1.5em;}
 
 strong, b {font-weight: bold;}
 em, i {font-style: italic;}
@@ -82,17 +124,57 @@ ul {
 ol {
 	list-style: outside decimal;
 	margin: 0em 0 0 1.5em;
+	line-height: 1.3;
+	margin-bottom: 1.5em;
 }
 
-li { margin-top: 0.5em;
-     margin-bottom: 1em; }
+/*li { margin-top: 1em;
+     margin-bottom: 1em; 
+     line-height: 1.3;
+ }*/
 
-.post-info {
+/*.post-info {
     float:right;
     margin:10px;
     padding:5px;
 }
+*/
+.post-label{
 
+	float:right;
+
+}
+.post-info {
+    margin: 0;
+    padding: 5px 0 15px;
+    margin-bottom: 25px;
+    text-align: right;
+}
+
+.post-info span{
+	text-align:right;
+}
+
+.post-info a {
+    font-size: 13px;
+    font-weight: normal;
+    display: inline-block;
+    margin: 4px 8px 0 0;
+    padding: 0 15px;
+/*    font-family: Lato,Helvetica,Arial,sans-serif;
+*//*    -webkit-transition-duration: .4s;
+    transition-duration: .4s;*/
+    letter-spacing: 0;
+
+    
+}
+
+.post-info a:nth-child(1n) {
+    color: #fff;
+    border: 1px solid #f8bbd0;
+    border-radius: 15px;
+    background: #f8bbd0;
+}
 .post-info p{
     margin-top: 1px;
     margin-bottom: 1px;
@@ -100,9 +182,18 @@ li { margin-top: 0.5em;
 
 .readmore { float: right }
 
-dl {margin: 0 0 1.5em 0;}
+dl {margin: 0 0 1em 0;}
 dt {font-weight: bold;}
-dd {margin-left: 1.5em;}
+/*dd {margin-left: 1.5em;
+
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+
+
+}*/
 
 pre{background-color:  rgb(238, 238, 238); padding: 10px; margin: 10px; overflow: auto;}
 
@@ -147,24 +238,9 @@ aside, nav, article, figure {
 }
 
 /***** Layout *****/
-.body {clear: both; margin: 0 auto; width: 800px;}
-img.right, figure.right, div.figure.align-right {
-    float: right;
-    margin: 0 0 2em 2em;
-}
-img.left, figure.left, div.figure.align-left {
-    float: left;
-    margin: 0 2em 2em 0;
-}
-
-/* .rst support */
-div.figure img, figure img {  /* to fill figure exactly */
-    width: 100%;
-}
-div.figure p.caption, figure p.caption { /* margin provided by figure */
-    margin-top: 0;
-    margin-bottom: 0;
-}
+.body {clear: both; margin: 0 auto; width: 900px;}
+img.right, figure.right {float: right; margin: 0 0 2em 2em;}
+img.left, figure.left {float: left; margin: 0 2em 2em 0;}
 
 /*
 	Header
@@ -185,7 +261,7 @@ div.figure p.caption, figure p.caption { /* margin provided by figure */
 	}
 	#banner h1 a:hover, #banner h1 a:active {
 		background: none;
-		color: #C74350;
+	/*	color: #C74350;*/
 		text-shadow: none;
 	}
 
@@ -193,34 +269,36 @@ div.figure p.caption, figure p.caption { /* margin provided by figure */
 
 	/* Main Nav */
 	#banner nav {
-		background: #000305;
-		font-size: 1.143em;
+/*		background: #000305;
+*/		font-size: 1.143em;
 		height: 40px;
 		line-height: 30px;
-		margin: 0 auto 2em auto;
+		margin: 0 auto 3em auto;
 		padding: 0;
 		text-align: center;
-		width: 800px;
+		width: 950px;
 
 		border-radius: 5px;
 		-moz-border-radius: 5px;
 		-webkit-border-radius: 5px;
 	}
 
-	#banner nav ul {list-style: none; margin: 0 auto; width: 800px;}
+	#banner nav ul {list-style: none; margin: 0 auto; /*width: 800px;*/}
 	#banner nav li {float: left; display: inline; margin: 0;}
 
 	#banner nav a:link, #banner nav a:visited {
-		color: #fff;
+/*		color: #fff;
+*/		color: #131313;
 		display: inline-block;
 		height: 30px;
-		padding: 5px 1.5em;
+		padding: 5px 0.7em;
 		text-decoration: none;
 	}
 	#banner nav a:hover, #banner nav a:active,
 	#banner nav .active a:link, #banner nav .active a:visited {
-		background: #C74451;
-		color: #fff;
+/*		background: #C74451;
+*/		
+		color: #131313;
 		text-shadow: none !important;
 	}
 
@@ -271,7 +349,7 @@ div.figure p.caption, figure p.caption { /* margin provided by figure */
 	margin-bottom: 2em;
 	overflow: hidden;
 	padding: 20px 20px;
-	width: 760px;
+	width: 900px;
 
 	border-radius: 10px;
 	-moz-border-radius: 10px;
@@ -326,6 +404,7 @@ div.figure p.caption, figure p.caption { /* margin provided by figure */
 		.social a[href*='about.me'] {background-image: url('../images/icons/aboutme.png');}
 		.social a[href*='bitbucket.org'] {background-image: url('../images/icons/bitbucket.png');}
 		.social a[href*='delicious.com'] {background-image: url('../images/icons/delicious.png');}
+		.social a[href*='digg.com'] {background-image: url('../images/icons/digg.png');}
 		.social a[href*='facebook.com'] {background-image: url('../images/icons/facebook.png');}
 		.social a[href*='gitorious.org'] {background-image: url('../images/icons/gitorious.png');}
 		.social a[href*='github.com'],
@@ -390,11 +469,11 @@ div.figure p.caption, figure p.caption { /* margin provided by figure */
 li:last-child .hentry, #content > .hentry {border: 0; margin: 0;}
 #content > .hentry {padding: 1em 0;}
 .hentry img{display : none ;}
-.entry-title {font-size: 3em; margin-bottom: 10px; margin-top: 0;}
+.entry-title {font-size: 2em; margin-bottom: 10px; margin-top: 0;}
 .entry-title a:link, .entry-title a:visited {text-decoration: none; color: #333;}
 .entry-title a:visited {background-color: #fff;}
 
-.hentry .post-info * {font-style: normal;}
+.hentry .post-info * {font-style: normal;font-size:14px;}
 
 	/* Content */
 	.hentry footer {margin-bottom: 2em;}
