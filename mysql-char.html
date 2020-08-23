@@ -37,22 +37,22 @@
 </footer><!-- /.post-info -->
     <div class="entry-content">
       
-      <div class="highlight"><pre><span></span><span class="n">Illegal</span> <span class="n">mix</span> <span class="k">of</span> <span class="n">collations</span> <span class="p">(</span><span class="n">gbk_chinese_ci</span><span class="p">,</span><span class="k">IMPLICIT</span><span class="p">)</span> <span class="k">and</span> <span class="p">(</span><span class="n">latin1_bin</span><span class="p">,</span><span class="k">IMPLICIT</span><span class="p">)</span>
-</pre></div>
+      <div class="highlight"><pre><span></span><code><span class="err">Illegal mix of collations (gbk_chinese_ci,IMPLICIT) and (latin1_bin,IMPLICIT)</span>
+</code></pre></div>
 
 
 <p>然后看看两个表:</p>
-<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">table_schema</span><span class="p">,</span> <span class="k">table_name</span><span class="p">,</span> <span class="k">column_name</span><span class="p">,</span> <span class="k">character_set_name</span><span class="p">,</span> <span class="k">collation_name</span>  <span class="k">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">columns</span>  <span class="k">WHERE</span> <span class="k">collation_name</span> <span class="o">=</span> <span class="s1">&#39;gbk_chinese_ci&#39;</span>  <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">table_schema</span><span class="p">,</span> <span class="k">table_name</span><span class="p">,</span><span class="n">ordinal_position</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="k">SELECT</span> <span class="n">table_schema</span><span class="p">,</span> <span class="k">table_name</span><span class="p">,</span> <span class="k">column_name</span><span class="p">,</span> <span class="k">character_set_name</span><span class="p">,</span> <span class="k">collation_name</span>  <span class="k">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">columns</span>  <span class="k">WHERE</span> <span class="k">collation_name</span> <span class="o">=</span> <span class="s1">&#39;gbk_chinese_ci&#39;</span>  <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">table_schema</span><span class="p">,</span> <span class="k">table_name</span><span class="p">,</span><span class="n">ordinal_position</span><span class="p">;</span>
 
 
 <span class="k">SELECT</span> <span class="n">table_schema</span><span class="p">,</span> <span class="k">table_name</span><span class="p">,</span> <span class="k">column_name</span><span class="p">,</span> <span class="k">character_set_name</span><span class="p">,</span> <span class="k">collation_name</span>  <span class="k">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">columns</span>  <span class="k">WHERE</span> <span class="k">collation_name</span> <span class="o">=</span> <span class="s1">&#39;latin1_bin&#39;</span>  <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">table_schema</span><span class="p">,</span> <span class="k">table_name</span><span class="p">,</span><span class="n">ordinal_position</span><span class="p">;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>修改方法:</p>
-<div class="highlight"><pre><span></span><span class="err">先切换到</span><span class="n">mysql表</span>
-<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">user</span> <span class="k">CONVERT</span> <span class="k">TO</span> <span class="nb">CHARACTER</span> <span class="k">SET</span> <span class="n">gbk</span><span class="p">;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">先切换到mysql表</span>
+<span class="err">ALTER TABLE user CONVERT TO CHARACTER SET gbk;</span>
+</code></pre></div>
 
 
 <p>后续:</p>

@@ -46,7 +46,7 @@
 <p><code>http :9200/_cat/indices?v  查看elasticsearch节点状态</code>
 <code>http DELETE    :9200/some_index  删除节点</code></p>
 <p><code>inotifywait -mrq --timefmt '%d/%m/%y/%H:%M' --format '%T %e %w %f' -e open,close_write,modify,delete,create,attrib /tmp</code></p>
-<div class="highlight"><pre><span></span><span class="o">%</span><span class="n">T</span> <span class="n">time</span>
+<div class="highlight"><pre><span></span><code><span class="o">%</span><span class="n">T</span> <span class="n">time</span>
 <span class="nf">%e</span> <span class="err">文件的变化</span>
 <span class="nf">%w</span> <span class="err">工作目录</span>
 <span class="nf">%f</span> <span class="err">文件</span>
@@ -55,22 +55,22 @@
 <span class="mi">19</span><span class="o">/</span><span class="mi">10</span><span class="o">/</span><span class="mi">16</span><span class="o">/</span><span class="mi">11</span><span class="o">:</span><span class="mi">08</span> <span class="n">CREATE</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span> <span class="n">phpc3MhO9</span>
 <span class="mi">19</span><span class="o">/</span><span class="mi">10</span><span class="o">/</span><span class="mi">16</span><span class="o">/</span><span class="mi">11</span><span class="o">:</span><span class="mi">08</span> <span class="n">MODIFY</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span> <span class="n">phpc3MhO9</span>
 <span class="mi">19</span><span class="o">/</span><span class="mi">10</span><span class="o">/</span><span class="mi">16</span><span class="o">/</span><span class="mi">11</span><span class="o">:</span><span class="mi">08</span> <span class="n">DELETE</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span> <span class="n">phpc3MhO9</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>子域名最长长度是63个字节，或者说63个字母。</p>
-<div class="highlight"><pre><span></span><span class="n">kiallall</span> <span class="n">php</span><span class="o">-</span><span class="n">fpm</span>  <span class="err">杀死</span><span class="n">php</span><span class="o">-</span><span class="n">fpm进程</span>
+<div class="highlight"><pre><span></span><code><span class="n">kiallall</span> <span class="n">php</span><span class="o">-</span><span class="n">fpm</span>  <span class="err">杀死</span><span class="n">php</span><span class="o">-</span><span class="n">fpm进程</span>
 
 <span class="n">php</span><span class="o">-</span><span class="n">fpm</span> <span class="o">-</span><span class="k">c</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="k">local</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">php</span><span class="o">/</span><span class="mi">5</span><span class="p">.</span><span class="mi">5</span><span class="o">/</span><span class="n">php</span><span class="p">.</span><span class="n">ini</span> <span class="o">-</span><span class="n">y</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="k">local</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">php</span><span class="o">/</span><span class="mi">5</span><span class="p">.</span><span class="mi">5</span><span class="o">/</span><span class="n">php</span><span class="o">-</span><span class="n">fpm</span><span class="p">.</span><span class="n">conf</span> <span class="o">-</span><span class="n">D</span>  <span class="err">重启</span><span class="n">php</span><span class="o">-</span><span class="n">fpm</span>
 
 <span class="n">php</span><span class="o">-</span><span class="n">fpm一般监听9000端口</span><span class="err">，如果使用</span><span class="n">xdebug</span><span class="err">，制定</span><span class="mi">9001</span><span class="err">端口</span>
 
 <span class="n">lsof</span> <span class="o">-</span><span class="n">Pni4</span> <span class="o">|</span> <span class="n">grep</span> <span class="k">LISTEN</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">php</span>  <span class="err">查看</span><span class="n">php占用端口</span>
-</pre></div>
+</code></pre></div>
 
 
 <h2>Git删除敏感信息</h2>
-<div class="highlight"><pre><span></span><span class="err">测试可用</span><span class="o">:</span>
+<div class="highlight"><pre><span></span><code><span class="err">测试可用</span><span class="o">:</span>
 <span class="n">git</span> <span class="n">filter</span><span class="o">-</span><span class="n">branch</span> <span class="o">--</span><span class="n">force</span> <span class="o">--</span><span class="n">index</span><span class="o">-</span><span class="n">filter</span> <span class="err">&#39;</span><span class="n">git</span> <span class="n">rm</span> <span class="o">--</span><span class="n">cached</span> <span class="o">--</span><span class="n">ignore</span><span class="o">-</span><span class="n">unmatch</span> <span class="p">[</span><span class="n">sensitive</span><span class="o">-</span><span class="n">data</span><span class="p">.</span><span class="n">txt</span><span class="p">]</span><span class="err">&#39;</span> <span class="o">--</span><span class="n">prune</span><span class="o">-</span><span class="n">empty</span> <span class="o">--</span><span class="n">tag</span><span class="o">-</span><span class="n">name</span><span class="o">-</span><span class="n">filter</span> <span class="n">cat</span> <span class="o">--</span> <span class="o">--</span><span class="n">all</span>
 
 <span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="o">--</span><span class="n">force</span> <span class="o">-</span><span class="n">all</span>
@@ -83,57 +83,57 @@
 
 <span class="err">替换掉文件里面的敏感信息</span>
 <span class="n">bfg</span> <span class="o">--</span><span class="n">replace</span><span class="o">-</span><span class="n">text</span> <span class="p">[</span><span class="n">sensitive</span><span class="o">-</span><span class="n">data</span><span class="p">.</span><span class="n">txt</span><span class="p">]</span> <span class="p">[</span><span class="n">git</span> <span class="n">repo</span><span class="p">]</span>
-</pre></div>
+</code></pre></div>
 
 
 <h2>rsync使用私钥</h2>
-<div class="highlight"><pre><span></span><span class="n">rsync</span><span class="w"> </span><span class="o">-</span><span class="n">Pav</span><span class="w"> </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="ss">&quot;ssh -i $HOME/.ssh/private&quot;</span><span class="w">  </span><span class="n">jdk</span><span class="o">-</span><span class="mi">8</span><span class="n">u101</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span><span class="w"> </span><span class="n">root</span><span class="nv">@xxxxx</span><span class="err">:</span><span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="w"></span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">rsync -Pav -e &quot;ssh -i $HOME/.ssh/private&quot;  jdk-8u101-linux-x64.tar.gz root@xxxxx:/root/</span>
+</code></pre></div>
 
 
 <p>update-alternatives --config java</p>
 <h2>MONGO基本操作</h2>
-<div class="highlight"><pre><span></span><span class="k">show</span> <span class="nv">dbs</span>
-<span class="nv">use</span> [<span class="nv">db</span>]
-<span class="k">show</span> <span class="nv">collections</span>
-<span class="nv">db</span>.[<span class="nv">col</span>].<span class="nv">find</span><span class="ss">(</span>{<span class="nv">_id</span>:<span class="s2">&quot;</span><span class="s">[id]</span><span class="s2">&quot;</span>}<span class="ss">)</span>
-<span class="nv">db</span>.[<span class="nv">col</span>].<span class="nv">remove</span><span class="ss">(</span>{<span class="nv">_id</span>:<span class="s2">&quot;</span><span class="s">[id]</span><span class="s2">&quot;</span>}<span class="ss">)</span>
-<span class="nv">var</span> <span class="nv">ids</span> <span class="o">=</span> <span class="nv">db</span>.[<span class="nv">col</span>].<span class="nv">distinct</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">_id</span><span class="s1">&#39;</span>, {}, {}<span class="ss">)</span><span class="c1">; 获取所有的ID值</span>
-<span class="nv">db</span>.<span class="nv">leakage</span>.<span class="nv">find</span><span class="ss">(</span>{<span class="s2">&quot;</span><span class="s">ignore</span><span class="s2">&quot;</span>:<span class="mi">0</span>},{<span class="s2">&quot;</span><span class="s">_id</span><span class="s2">&quot;</span>:<span class="mi">1</span>}<span class="ss">)</span>   查找<span class="nv">ignore</span>为<span class="mi">0</span>，返回所有对应的<span class="nv">id</span>值
-<span class="nv">DBQuery</span>.<span class="nv">shellBatchSize</span> <span class="o">=</span> <span class="mi">1500</span>  返回条数有限制，这个是返回的数量
-<span class="nv">db</span>.<span class="nv">leakage</span>.<span class="nv">find</span><span class="ss">(</span>{},{<span class="s2">&quot;</span><span class="s">ignore</span><span class="s2">&quot;</span>:<span class="mi">1</span>}<span class="ss">)</span>.<span class="nv">forEach</span><span class="ss">(</span><span class="nv">function</span><span class="ss">(</span><span class="nv">f</span><span class="ss">)</span>{<span class="nv">print</span><span class="ss">(</span><span class="nv">tojson</span><span class="ss">(</span><span class="nv">f</span>, <span class="s1">&#39;&#39;</span>, <span class="nv">true</span><span class="ss">))</span><span class="c1">;}); 返回所有的对应id和字段</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">show</span><span class="w"> </span><span class="n">dbs</span><span class="w"></span>
+<span class="k">use</span><span class="w"> </span><span class="o">[</span><span class="n">db</span><span class="o">]</span><span class="w"></span>
+<span class="n">show</span><span class="w"> </span><span class="n">collections</span><span class="w"></span>
+<span class="n">db</span><span class="p">.</span><span class="o">[</span><span class="n">col</span><span class="o">]</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="err">{</span><span class="nl">_id</span><span class="p">:</span><span class="ss">&quot;[id]&quot;</span><span class="err">}</span><span class="p">)</span><span class="w"></span>
+<span class="n">db</span><span class="p">.</span><span class="o">[</span><span class="n">col</span><span class="o">]</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="err">{</span><span class="nl">_id</span><span class="p">:</span><span class="ss">&quot;[id]&quot;</span><span class="err">}</span><span class="p">)</span><span class="w"></span>
+<span class="nf">var</span><span class="w"> </span><span class="n">ids</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="o">[</span><span class="n">col</span><span class="o">]</span><span class="p">.</span><span class="k">distinct</span><span class="p">(</span><span class="s1">&#39;_id&#39;</span><span class="p">,</span><span class="w"> </span><span class="err">{}</span><span class="p">,</span><span class="w"> </span><span class="err">{}</span><span class="p">);</span><span class="w"> </span><span class="n">获取所有的ID值</span><span class="w"></span>
+<span class="n">db</span><span class="p">.</span><span class="n">leakage</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="err">{</span><span class="ss">&quot;ignore&quot;</span><span class="err">:</span><span class="mi">0</span><span class="err">}</span><span class="p">,</span><span class="err">{</span><span class="ss">&quot;_id&quot;</span><span class="err">:</span><span class="mi">1</span><span class="err">}</span><span class="p">)</span><span class="w">   </span><span class="n">查找ignore为0</span><span class="err">，</span><span class="n">返回所有对应的id值</span><span class="w"></span>
+<span class="n">DBQuery</span><span class="p">.</span><span class="n">shellBatchSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1500</span><span class="w">  </span><span class="n">返回条数有限制</span><span class="err">，</span><span class="n">这个是返回的数量</span><span class="w"></span>
+<span class="n">db</span><span class="p">.</span><span class="n">leakage</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="err">{}</span><span class="p">,</span><span class="err">{</span><span class="ss">&quot;ignore&quot;</span><span class="err">:</span><span class="mi">1</span><span class="err">}</span><span class="p">).</span><span class="n">forEach</span><span class="p">(</span><span class="k">function</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="err">{</span><span class="k">print</span><span class="p">(</span><span class="n">tojson</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">true</span><span class="p">));</span><span class="err">}</span><span class="p">);</span><span class="w"> </span><span class="n">返回所有的对应id和字段</span><span class="w"></span>
+</code></pre></div>
 
 
 <h2>INSTALL ss 2.8.2</h2>
-<div class="highlight"><pre><span></span><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">pypi</span><span class="p">.</span><span class="n">python</span><span class="p">.</span><span class="n">org</span><span class="o">/</span><span class="n">packages</span><span class="o">/</span><span class="k">source</span><span class="o">/</span><span class="n">s</span><span class="o">/</span><span class="n">shadowsocks</span><span class="o">/</span><span class="n">shadowsocks</span><span class="o">-</span><span class="mi">2</span><span class="p">.</span><span class="mi">8</span><span class="p">.</span><span class="mi">2</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span>
-<span class="n">tar</span> <span class="n">zxvf</span> <span class="n">shadowsocks</span><span class="o">-</span><span class="mi">2</span><span class="p">.</span><span class="mi">8</span><span class="p">.</span><span class="mi">2</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span>
-<span class="n">cd</span> <span class="n">shadowsocks</span><span class="o">-</span><span class="mi">2</span><span class="p">.</span><span class="mi">8</span><span class="p">.</span><span class="mi">2</span>
-<span class="n">python</span> <span class="n">setup</span><span class="p">.</span><span class="n">py</span> <span class="n">install</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">wget https://pypi.python.org/packages/source/s/shadowsocks/shadowsocks-2.8.2.tar.gz</span>
+<span class="err">tar zxvf shadowsocks-2.8.2.tar.gz</span>
+<span class="err">cd shadowsocks-2.8.2</span>
+<span class="err">python setup.py install</span>
+</code></pre></div>
 
 
 <h2>SHELL组合</h2>
-<div class="highlight"><pre><span></span><span class="n">ps</span> <span class="o">-</span><span class="n">ef</span> <span class="o">|</span><span class="n">grep</span> <span class="ss">&quot;sh -c&quot;</span> <span class="o">|</span><span class="n">grep</span> <span class="o">-</span><span class="n">v</span> <span class="n">grep</span> <span class="o">|</span><span class="n">awk</span> <span class="s1">&#39;{print $2}&#39;</span> <span class="o">|</span><span class="n">xargs</span> <span class="n">kill</span> <span class="o">-</span><span class="mi">9</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">ps -ef |grep &quot;sh -c&quot; |grep -v grep |awk &#39;{print $2}&#39; |xargs kill -9</span>
+</code></pre></div>
 
 
 <h2>Iterm2背景颜色</h2>
-<div class="highlight"><pre><span></span><span class="n">R</span><span class="o">:</span><span class="mi">14</span>
+<div class="highlight"><pre><span></span><code><span class="n">R</span><span class="o">:</span><span class="mi">14</span>
 <span class="n">G</span><span class="o">:</span><span class="mi">40</span>
 <span class="n">B</span><span class="o">:</span><span class="mi">50</span>
-</pre></div>
+</code></pre></div>
 
 
 <h2>zlib解压缩</h2>
-<div class="highlight"><pre><span></span><span class="n">openssl</span><span class="w"> </span><span class="n">zlib</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="o">[</span><span class="n">zlibfile</span><span class="o">]</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">openssl</span><span class="w"> </span><span class="n">zlib</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="o">[</span><span class="n">zlibfile</span><span class="o">]</span><span class="w"></span>
 <span class="n">如果使用hexdump查看文件</span><span class="err">，</span><span class="n">hexdump</span><span class="w"> </span><span class="o">-</span><span class="n">C</span><span class="w"> </span><span class="o">[</span><span class="n">zlibfile</span><span class="o">]</span><span class="w"></span>
 <span class="n">文件头是</span><span class="w"> </span><span class="mi">78</span><span class="w"> </span><span class="mi">9</span><span class="n">c</span><span class="w"></span>
-</pre></div>
+</code></pre></div>
 
 
 <h2>ssh-agent的forward</h2>
-<div class="highlight"><pre><span></span><span class="n">A主机有私钥</span><span class="err">，</span><span class="n">B</span><span class="p">,</span><span class="n">C有公钥</span><span class="err">。</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">A主机有私钥</span><span class="err">，</span><span class="n">B</span><span class="p">,</span><span class="n">C有公钥</span><span class="err">。</span><span class="w"></span>
 <span class="n">现在从A登录到B</span><span class="err">，</span><span class="n">再从B登录到C</span><span class="err">，</span><span class="n">使用ssh</span><span class="o">-</span><span class="nl">agent步骤</span><span class="p">:</span><span class="w"></span>
 <span class="n">A配置ssh的config</span><span class="err">，</span><span class="nl">添加</span><span class="p">:</span><span class="w"></span>
 <span class="n">ForwardAgent</span><span class="w"> </span><span class="n">yes</span><span class="w"></span>
@@ -144,49 +144,49 @@
 <span class="n">eval</span><span class="w"> </span><span class="err">$</span><span class="p">(</span><span class="n">ssh</span><span class="o">-</span><span class="n">agent</span><span class="p">)</span><span class="w"> </span>
 <span class="n">然后从B到C登录就不需要密码</span><span class="err">，</span><span class="n">可以使用</span><span class="w"></span>
 <span class="n">ssh</span><span class="w"> </span><span class="o">-</span><span class="n">vvv</span><span class="w"> </span><span class="n">root</span><span class="nv">@ip</span><span class="w"> </span><span class="n">查看详细信息</span><span class="err">。</span><span class="w"></span>
-</pre></div>
+</code></pre></div>
 
 
 <h2>SSH的反向代理端口</h2>
-<div class="highlight"><pre><span></span><span class="nv">A</span>是<span class="nv">vps</span>主机，<span class="nv">B</span>,<span class="nv">C</span> 是内网
-现在从<span class="nv">C</span>通过<span class="nv">A</span>主机去连接<span class="nv">B</span>主机，步骤如下:
-<span class="nv">B</span>: <span class="nv">ssh</span> <span class="o">-</span><span class="nv">p</span> <span class="mi">22</span> <span class="o">-</span><span class="nv">qngfNTR</span> <span class="s2">&quot;</span><span class="s">*:7777:localhost:22</span><span class="s2">&quot;</span> <span class="nv">root</span>@<span class="nv">A</span>的<span class="nv">vps</span>
-（注意是<span class="o">*</span>,如果没有<span class="o">*</span>，在<span class="nv">A</span>主机默认监听的是<span class="mi">127</span>.<span class="mi">0</span>.<span class="mi">0</span>.<span class="mi">1</span>地址），相当于把<span class="nv">B</span>主机的<span class="mi">22</span>端口反弹到转发的<span class="nv">vps</span>的<span class="mi">7777</span>端口，这个时候直接连接<span class="nv">A</span>端口的<span class="mi">7777</span>就可以连<span class="nv">B</span>的<span class="nv">ssh</span>了
-然后编辑<span class="nv">A</span>主机的<span class="nv">sshd</span>配置文件<span class="o">/</span><span class="nv">etc</span><span class="o">/</span><span class="nv">ssh</span><span class="o">/</span><span class="nv">sshd_config</span>添加：
-<span class="nv">GatewayPorts</span> <span class="nv">yes</span>
+<div class="highlight"><pre><span></span><code><span class="n">A是vps主机</span><span class="err">，</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="w"> </span><span class="n">是内网</span><span class="w"></span>
+<span class="n">现在从C通过A主机去连接B主机</span><span class="err">，</span><span class="nl">步骤如下</span><span class="p">:</span><span class="w"></span>
+<span class="nl">B</span><span class="p">:</span><span class="w"> </span><span class="n">ssh</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="mi">22</span><span class="w"> </span><span class="o">-</span><span class="n">qngfNTR</span><span class="w"> </span><span class="ss">&quot;*:7777:localhost:22&quot;</span><span class="w"> </span><span class="n">root</span><span class="nv">@A的vps</span><span class="w"></span>
+<span class="err">（</span><span class="n">注意是</span><span class="o">*</span><span class="p">,</span><span class="n">如果没有</span><span class="o">*</span><span class="err">，</span><span class="n">在A主机默认监听的是127</span><span class="mf">.0.0.1</span><span class="n">地址</span><span class="err">），</span><span class="n">相当于把B主机的22端口反弹到转发的vps的7777端口</span><span class="err">，</span><span class="n">这个时候直接连接A端口的7777就可以连B的ssh了</span><span class="w"></span>
+<span class="n">然后编辑A主机的sshd配置文件</span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">ssh</span><span class="o">/</span><span class="n">sshd_config添加</span><span class="err">：</span><span class="w"></span>
+<span class="n">GatewayPorts</span><span class="w"> </span><span class="n">yes</span><span class="w"></span>
 
-在<span class="nv">C</span>主机上面运行:
-<span class="nv">C</span>: <span class="nv">ssh</span> <span class="o">-</span><span class="nv">p</span> <span class="mi">7777</span> <span class="o">-</span><span class="nv">qngfNTD</span> <span class="mi">8888</span> <span class="nv">root</span>@<span class="nv">A</span>的<span class="nv">vps</span> 
-然后输入<span class="nv">B</span>主机的<span class="nv">ssh</span>密码,此时就可以以<span class="nv">C</span>主机的<span class="mi">8888</span>端口作为<span class="nv">socks5</span>代理来进入<span class="nv">B</span>的内网。
+<span class="nl">在C主机上面运行</span><span class="p">:</span><span class="w"></span>
+<span class="nl">C</span><span class="p">:</span><span class="w"> </span><span class="n">ssh</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="mi">7777</span><span class="w"> </span><span class="o">-</span><span class="n">qngfNTD</span><span class="w"> </span><span class="mi">8888</span><span class="w"> </span><span class="n">root</span><span class="nv">@A的vps</span><span class="w"> </span>
+<span class="n">然后输入B主机的ssh密码</span><span class="p">,</span><span class="n">此时就可以以C主机的8888端口作为socks5代理来进入B的内网</span><span class="err">。</span><span class="w"></span>
 
-<span class="nv">socat</span>挺好使，在第一步的时候，反弹到<span class="mi">127</span>.<span class="mi">0</span>.<span class="mi">0</span>.<span class="mi">1</span>端口了，然后使用<span class="nv">socat</span>，监听<span class="mi">0</span>.<span class="mi">0</span>.<span class="mi">0</span>.<span class="mi">0</span>的某个端口，把流量转发到<span class="mi">7777</span>即可
-<span class="nv">socat</span> <span class="o">-</span><span class="nv">v</span> <span class="nv">tcp</span><span class="o">-</span><span class="nv">listen</span>:<span class="mi">7777</span>,<span class="nv">fork</span> <span class="nv">tcp</span><span class="o">-</span><span class="k">connect</span>:<span class="nv">localhost</span>:<span class="mi">6666</span>
-
-
-本地访问<span class="mi">127</span>.<span class="mi">0</span>.<span class="mi">0</span>.<span class="mi">1</span>:<span class="nv">port1</span>就是<span class="nv">host</span>:<span class="nv">port2</span>
-<span class="nv">ssh</span> <span class="o">-</span><span class="nv">CfNg</span> <span class="o">-</span><span class="nv">L</span> <span class="nv">port1</span>:<span class="mi">127</span>.<span class="mi">0</span>.<span class="mi">0</span>.<span class="mi">1</span>:<span class="nv">port2</span> <span class="nv">user</span>@<span class="nv">host</span>    #本地转发
-
-访问<span class="nv">host</span>:<span class="nv">port2</span>就是访问<span class="mi">127</span>.<span class="mi">0</span>.<span class="mi">0</span>.<span class="mi">1</span>:<span class="nv">port1</span>
-<span class="nv">ssh</span> <span class="o">-</span><span class="nv">CfNg</span> <span class="o">-</span><span class="nv">R</span> <span class="nv">port2</span>:<span class="mi">127</span>.<span class="mi">0</span>.<span class="mi">0</span>.<span class="mi">1</span>:<span class="nv">port1</span> <span class="nv">user</span>@<span class="nv">host</span>    #远程转发
-远程转发可以用于<span class="nv">msf</span>反弹，使用本地的<span class="nv">msf</span>，将远程<span class="nv">vps</span>的端口流量转发到本地,在<span class="nv">mac</span>下可以这样:
-
-<span class="nv">autossh</span> <span class="o">-</span><span class="nv">M</span> <span class="mi">20000</span> <span class="o">-</span><span class="nv">N</span> <span class="o">-</span><span class="nv">R</span> <span class="mi">11111</span>:<span class="mi">192</span>.<span class="mi">168</span>.<span class="mi">14</span>.<span class="mi">102</span>:<span class="mi">10000</span> <span class="nv">vps</span>
-<span class="o">-</span><span class="nv">M</span> <span class="mi">20000</span>选项指定了中继服务器上的见识端口，用户交换监视<span class="nv">ssh</span>会话的测试数据
+<span class="n">socat挺好使</span><span class="err">，</span><span class="n">在第一步的时候</span><span class="err">，</span><span class="n">反弹到127</span><span class="mf">.0.0.1</span><span class="n">端口了</span><span class="err">，</span><span class="n">然后使用socat</span><span class="err">，</span><span class="n">监听0</span><span class="mf">.0.0.0</span><span class="n">的某个端口</span><span class="err">，</span><span class="n">把流量转发到7777即可</span><span class="w"></span>
+<span class="n">socat</span><span class="w"> </span><span class="o">-</span><span class="n">v</span><span class="w"> </span><span class="n">tcp</span><span class="o">-</span><span class="nl">listen</span><span class="p">:</span><span class="mi">7777</span><span class="p">,</span><span class="n">fork</span><span class="w"> </span><span class="n">tcp</span><span class="o">-</span><span class="k">connect</span><span class="err">:</span><span class="nl">localhost</span><span class="p">:</span><span class="mi">6666</span><span class="w"></span>
 
 
+<span class="n">本地访问127</span><span class="mf">.0.0.1</span><span class="err">:</span><span class="nl">port1就是host</span><span class="p">:</span><span class="n">port2</span><span class="w"></span>
+<span class="n">ssh</span><span class="w"> </span><span class="o">-</span><span class="n">CfNg</span><span class="w"> </span><span class="o">-</span><span class="n">L</span><span class="w"> </span><span class="nl">port1</span><span class="p">:</span><span class="mf">127.0.0.1</span><span class="err">:</span><span class="n">port2</span><span class="w"> </span><span class="k">user</span><span class="nv">@host</span><span class="w">    </span><span class="n">#本地转发</span><span class="w"></span>
 
-可以将<span class="nv">dmz_host</span>的<span class="nv">hostport</span>端口通过<span class="nv">remote_ip</span>转发到本地的<span class="nv">port</span>端口
-<span class="nv">ssh</span> <span class="o">-</span><span class="nv">qTfnN</span> <span class="o">-</span><span class="nv">L</span> <span class="nv">port</span>:<span class="nv">dmz_host</span>:<span class="nv">host</span>：<span class="nv">port</span> <span class="o">-</span><span class="nv">l</span> <span class="nv">user</span> <span class="nv">remote_ip</span>   #正向隧道，监听本地<span class="nv">port</span>
+<span class="nl">访问host</span><span class="p">:</span><span class="n">port2就是访问127</span><span class="mf">.0.0.1</span><span class="err">:</span><span class="n">port1</span><span class="w"></span>
+<span class="n">ssh</span><span class="w"> </span><span class="o">-</span><span class="n">CfNg</span><span class="w"> </span><span class="o">-</span><span class="n">R</span><span class="w"> </span><span class="nl">port2</span><span class="p">:</span><span class="mf">127.0.0.1</span><span class="err">:</span><span class="n">port1</span><span class="w"> </span><span class="k">user</span><span class="nv">@host</span><span class="w">    </span><span class="n">#远程转发</span><span class="w"></span>
+<span class="n">远程转发可以用于msf反弹</span><span class="err">，</span><span class="n">使用本地的msf</span><span class="err">，</span><span class="n">将远程vps的端口流量转发到本地</span><span class="p">,</span><span class="nl">在mac下可以这样</span><span class="p">:</span><span class="w"></span>
 
-可以将<span class="nv">dmz_host</span>的<span class="nv">hostport</span>端口转发到<span class="nv">remote_ip</span>的<span class="nv">port</span>端口
-<span class="nv">ssh</span> <span class="o">-</span><span class="nv">qTfnN</span> <span class="o">-</span><span class="nv">R</span> <span class="nv">port</span>:<span class="nv">dmz_host</span>:<span class="nv">host</span>：<span class="nv">port</span> <span class="o">-</span><span class="nv">l</span> <span class="nv">user</span> <span class="nv">remote_ip</span>   #反向隧道，用于内网穿透防火墙限制之类
+<span class="n">autossh</span><span class="w"> </span><span class="o">-</span><span class="n">M</span><span class="w"> </span><span class="mi">20000</span><span class="w"> </span><span class="o">-</span><span class="n">N</span><span class="w"> </span><span class="o">-</span><span class="n">R</span><span class="w"> </span><span class="mi">11111</span><span class="err">:</span><span class="mf">192.168.14.102</span><span class="err">:</span><span class="mi">10000</span><span class="w"> </span><span class="n">vps</span><span class="w"></span>
+<span class="o">-</span><span class="n">M</span><span class="w"> </span><span class="mi">20000</span><span class="n">选项指定了中继服务器上的见识端口</span><span class="err">，</span><span class="n">用户交换监视ssh会话的测试数据</span><span class="w"></span>
 
-<span class="o">-</span><span class="nv">C</span> 进行数据压缩 <span class="o">-</span><span class="nv">q</span> 安静模式 <span class="o">-</span><span class="nv">T</span> 不占用 <span class="nv">shell</span> 了 <span class="o">-</span><span class="nv">f</span> 后台运行，并推荐加上 <span class="o">-</span><span class="nv">n</span> 参数 <span class="o">-</span><span class="nv">N</span> 不执行远程命令，端口转发就用它 <span class="o">-</span><span class="nv">g</span> 允许所有远程主机连接到转发的端口
-</pre></div>
+
+
+<span class="n">可以将dmz_host的hostport端口通过remote_ip转发到本地的port端口</span><span class="w"></span>
+<span class="n">ssh</span><span class="w"> </span><span class="o">-</span><span class="n">qTfnN</span><span class="w"> </span><span class="o">-</span><span class="n">L</span><span class="w"> </span><span class="nl">port</span><span class="p">:</span><span class="nl">dmz_host</span><span class="p">:</span><span class="k">host</span><span class="err">：</span><span class="n">port</span><span class="w"> </span><span class="o">-</span><span class="n">l</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="n">remote_ip</span><span class="w">   </span><span class="n">#正向隧道</span><span class="err">，</span><span class="n">监听本地port</span><span class="w"></span>
+
+<span class="n">可以将dmz_host的hostport端口转发到remote_ip的port端口</span><span class="w"></span>
+<span class="n">ssh</span><span class="w"> </span><span class="o">-</span><span class="n">qTfnN</span><span class="w"> </span><span class="o">-</span><span class="n">R</span><span class="w"> </span><span class="nl">port</span><span class="p">:</span><span class="nl">dmz_host</span><span class="p">:</span><span class="k">host</span><span class="err">：</span><span class="n">port</span><span class="w"> </span><span class="o">-</span><span class="n">l</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="n">remote_ip</span><span class="w">   </span><span class="n">#反向隧道</span><span class="err">，</span><span class="n">用于内网穿透防火墙限制之类</span><span class="w"></span>
+
+<span class="o">-</span><span class="n">C</span><span class="w"> </span><span class="n">进行数据压缩</span><span class="w"> </span><span class="o">-</span><span class="n">q</span><span class="w"> </span><span class="n">安静模式</span><span class="w"> </span><span class="o">-</span><span class="n">T</span><span class="w"> </span><span class="n">不占用</span><span class="w"> </span><span class="n">shell</span><span class="w"> </span><span class="n">了</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="n">后台运行</span><span class="err">，</span><span class="n">并推荐加上</span><span class="w"> </span><span class="o">-</span><span class="n">n</span><span class="w"> </span><span class="n">参数</span><span class="w"> </span><span class="o">-</span><span class="n">N</span><span class="w"> </span><span class="n">不执行远程命令</span><span class="err">，</span><span class="n">端口转发就用它</span><span class="w"> </span><span class="o">-</span><span class="n">g</span><span class="w"> </span><span class="n">允许所有远程主机连接到转发的端口</span><span class="w"></span>
+</code></pre></div>
 
 
 <h3>F5解密脚本</h3>
-<div class="highlight"><pre><span></span><span class="c1">#Set-Cookie: BIGipServerpool_8.29_8030=487098378.24095.0000</span>
+<div class="highlight"><pre><span></span><code><span class="c1">#Set-Cookie: BIGipServerpool_8.29_8030=487098378.24095.0000</span>
 <span class="err">$</span> <span class="n">python</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="mf">1.</span><span class="n">py</span> <span class="mf">487098378.24095</span><span class="o">.</span><span class="mo">0000</span>
 <span class="mf">10.136</span><span class="o">.</span><span class="mf">8.29</span><span class="p">:</span><span class="mi">8030</span>
 
@@ -201,11 +201,11 @@
     <span class="k">print</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">port</span><span class="p">)</span>
 
 <span class="n">decode</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-</pre></div>
+</code></pre></div>
 
 
 <h3>Linux下elf与txt的互相转化</h3>
-<div class="highlight"><pre><span></span><span class="nl">https</span><span class="p">:</span><span class="o">//</span><span class="n">stackoverflow</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">questions</span><span class="o">/</span><span class="mi">15490728</span><span class="o">/</span><span class="n">decode</span><span class="o">-</span><span class="n">base64</span><span class="o">-</span><span class="n">invalid</span><span class="o">-</span><span class="k">input</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="nl">https</span><span class="p">:</span><span class="o">//</span><span class="n">stackoverflow</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">questions</span><span class="o">/</span><span class="mi">15490728</span><span class="o">/</span><span class="n">decode</span><span class="o">-</span><span class="n">base64</span><span class="o">-</span><span class="n">invalid</span><span class="o">-</span><span class="k">input</span><span class="w"></span>
 
 <span class="n">把elf文件转成base64</span><span class="err">，</span><span class="n">mac下是这样的</span><span class="err">：</span><span class="w"></span>
 
@@ -213,35 +213,35 @@
 
 <span class="nl">然后在Linux上面</span><span class="p">:</span><span class="w"></span>
 <span class="n">cat</span><span class="w"> </span><span class="n">res</span><span class="p">.</span><span class="n">txt</span><span class="o">|</span><span class="n">base64</span><span class="w"> </span><span class="o">-</span><span class="n">di</span><span class="w"> </span><span class="o">[</span><span class="n">elf-file</span><span class="o">]</span><span class="w"></span>
-</pre></div>
+</code></pre></div>
 
 
 <h3>tomcat相关的路径</h3>
-<div class="highlight"><pre><span></span><span class="o">/</span><span class="n">webapps</span><span class="o">/</span><span class="n">WEB</span><span class="o">-</span><span class="n">INF</span><span class="o">/</span><span class="n">web</span><span class="p">.</span><span class="n">xml</span>
-<span class="o">/</span><span class="n">webapps</span><span class="o">/</span><span class="n">WEB</span><span class="o">-</span><span class="n">INF</span><span class="o">/</span><span class="n">classes</span><span class="o">/</span>
-<span class="o">/</span><span class="n">webapps</span><span class="o">/</span><span class="n">WEB</span><span class="o">-</span><span class="n">INF</span><span class="o">/</span><span class="n">classes</span><span class="o">/</span><span class="n">sysinfo</span><span class="p">.</span><span class="n">properties</span>
-<span class="o">/</span><span class="n">webapps</span><span class="o">/</span><span class="n">WEB</span><span class="o">-</span><span class="n">INF</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">/webapps/WEB-INF/web.xml</span>
+<span class="err">/webapps/WEB-INF/classes/</span>
+<span class="err">/webapps/WEB-INF/classes/sysinfo.properties</span>
+<span class="err">/webapps/WEB-INF/lib/</span>
+</code></pre></div>
 
 
 <p>Linux上面经常查看自己IP，偷懒</p>
-<div class="highlight"><pre><span></span><span class="err">在／</span><span class="n">etc</span><span class="o">/</span><span class="n">profile</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="err">下面新建一个文件</span><span class="k">alias</span><span class="p">.</span><span class="n">sh</span>
+<div class="highlight"><pre><span></span><code><span class="err">在／</span><span class="n">etc</span><span class="o">/</span><span class="n">profile</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="err">下面新建一个文件</span><span class="k">alias</span><span class="p">.</span><span class="n">sh</span>
 
 <span class="k">alias</span> <span class="n">ip</span><span class="o">=</span><span class="ss">&quot;hostname -I&quot;</span>
 
 <span class="err">保存，然后</span><span class="k">source</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">profile</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="k">alias</span><span class="p">.</span><span class="n">sh</span>
-</pre></div>
+</code></pre></div>
 
 
 <h3>NAVICAT连接mysql，1146错误</h3>
-<div class="highlight"><pre><span></span><span class="n">mysql里面没有performance_schema表</span>
-<span class="n">mysql_upgrade</span> <span class="o">-</span><span class="n">u</span> <span class="n">root</span> <span class="o">-</span><span class="n">p</span> <span class="c1">--force</span>
-<span class="err">重启</span><span class="n">mysql</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">mysql里面没有performance_schema表</span>
+<span class="err">mysql_upgrade -u root -p --force</span>
+<span class="err">重启mysql</span>
+</code></pre></div>
 
 
 <h3>iptables只允许某个国家连接</h3>
-<div class="highlight"><pre><span></span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">superuser</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">questions</span><span class="o">/</span><span class="mi">996526</span><span class="o">/</span><span class="n">ubuntu</span><span class="o">-</span><span class="n">iptables</span><span class="o">-</span><span class="n">allow</span><span class="o">-</span><span class="k">only</span><span class="o">-</span><span class="n">allow</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">country</span>
+<div class="highlight"><pre><span></span><code><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">superuser</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">questions</span><span class="o">/</span><span class="mi">996526</span><span class="o">/</span><span class="n">ubuntu</span><span class="o">-</span><span class="n">iptables</span><span class="o">-</span><span class="n">allow</span><span class="o">-</span><span class="k">only</span><span class="o">-</span><span class="n">allow</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">country</span>
 
 <span class="n">apt</span><span class="o">-</span><span class="k">get</span> <span class="n">install</span> <span class="n">xtables</span><span class="o">-</span><span class="n">addons</span><span class="o">-</span><span class="n">common</span>
 <span class="n">mkdir</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="k">share</span><span class="o">/</span><span class="n">xt_geoip</span>
@@ -251,32 +251,32 @@
 
 <span class="n">iptables</span> <span class="o">-</span><span class="n">A</span> <span class="k">INPUT</span> <span class="o">-</span><span class="n">m</span> <span class="n">geoip</span> <span class="c1">--src-cc CN  --dstport &lt;port&gt; -j ACCEPT</span>
 <span class="n">iptables</span> <span class="o">-</span><span class="n">A</span> <span class="k">INPUT</span> <span class="o">-</span><span class="n">p</span> <span class="n">tcp</span> <span class="c1">--dport &lt;port&gt; -j DROP</span>
-</pre></div>
+</code></pre></div>
 
 
 <h3>AWS创建ENA支持的AMI</h3>
-<div class="highlight"><pre><span></span><span class="mi">1</span><span class="p">.</span> <span class="err">登录到主机检测是否支持</span><span class="n">ena</span><span class="p">:</span> <span class="n">modinfo</span> <span class="n">ena</span>
+<div class="highlight"><pre><span></span><code><span class="mi">1</span><span class="p">.</span> <span class="err">登录到主机检测是否支持</span><span class="n">ena</span><span class="p">:</span> <span class="n">modinfo</span> <span class="n">ena</span>
 <span class="mi">2</span><span class="p">.</span> <span class="err">关机之后启用</span><span class="n">ena</span><span class="p">:</span>
 <span class="n">aws</span> <span class="n">ec2</span> <span class="k">modify</span><span class="o">-</span><span class="n">instance</span><span class="o">-</span><span class="n">attribute</span> <span class="c1">--instance-id instance_id --ena-support</span>
 
 <span class="mi">3</span><span class="p">.</span> <span class="err">创建</span><span class="n">snap之后根据snap创建AMI</span><span class="p">:</span>
 <span class="n">aws</span> <span class="n">ec2</span> <span class="n">register</span><span class="o">-</span><span class="n">image</span> <span class="c1">--architecture x86_64 --descriptio 20190226 --ena-support --name 20190226 --virtualization-type hvm  --block-device-mappings &#39;[{&quot;DeviceName&quot;: &quot;/dev/sda1&quot;,&quot;Ebs&quot;: {&quot;SnapshotId&quot;: &quot;snap-XXXX&quot;}}]&#39;  --root-device-name /dev/sda1</span>
-</pre></div>
+</code></pre></div>
 
 
 <h3>持续监听某个端口</h3>
-<div class="highlight"><pre><span></span><span class="nv">socat</span> <span class="o">-</span><span class="nv">v</span> <span class="o">-</span><span class="nv">dd</span> <span class="nv">tcp</span><span class="o">-</span><span class="nv">listen</span>:<span class="o">&lt;</span><span class="nv">port</span><span class="o">&gt;</span>,<span class="nv">reuseaddr</span>,<span class="nv">fork</span> <span class="nv">system</span>:<span class="s1">&#39;</span><span class="s">echo &quot;$SOCAT_PEERADDR&quot;</span><span class="s1">&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">socat</span> <span class="nt">-v</span> <span class="nt">-dd</span> <span class="nt">tcp-listen</span><span class="o">:&lt;</span><span class="nt">port</span><span class="o">&gt;,</span><span class="nt">reuseaddr</span><span class="o">,</span><span class="nt">fork</span> <span class="nt">system</span><span class="o">:</span><span class="s1">&#39;echo &quot;$SOCAT_PEERADDR&quot;&#39;</span>
 
-<span class="nv">socat</span> <span class="o">-</span><span class="nv">v</span> <span class="o">-</span><span class="nv">dd</span> <span class="nv">tcp</span><span class="o">-</span><span class="nv">listen</span>:<span class="mi">444</span>,<span class="nv">reuseaddr</span>,<span class="nv">fork</span> <span class="nv">system</span>:<span class="s1">&#39;</span><span class="s">echo &quot;some command&quot;;echo &quot;exit&quot;</span><span class="s1">&#39;</span>
+<span class="nt">socat</span> <span class="nt">-v</span> <span class="nt">-dd</span> <span class="nt">tcp-listen</span><span class="p">:</span><span class="nd">444</span><span class="o">,</span><span class="nt">reuseaddr</span><span class="o">,</span><span class="nt">fork</span> <span class="nt">system</span><span class="o">:</span><span class="s1">&#39;echo &quot;some command&quot;;echo &quot;exit&quot;&#39;</span>
 
-可以用来持续监听端口，<span class="nv">shell</span>来之后执行后面的操作
-</pre></div>
+<span class="nt">可以用来持续监听端口</span><span class="err">，</span><span class="nt">shell来之后执行后面的操作</span>
+</code></pre></div>
 
 
 <h3>LINUX自带ping扫描</h3>
-<div class="highlight"><pre><span></span>扫描整个段，<span class="nv">B</span>段的话去掉一个<span class="nv">for</span>
-<span class="k">for</span> <span class="nv">i</span> <span class="nv">in</span> $<span class="ss">(</span><span class="nv">seq</span> <span class="mi">1</span> <span class="mi">255</span><span class="ss">)</span><span class="c1">;do for j in $(seq 1 255);do for x in $(seq 1 255);do if ping -c 1 -w 3 10.$i.$j.$x &amp;&gt;/dev/null; then echo 10.$i.$j.$x;fi &gt;&gt;/tmp/scan.txt;done;done;done</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">扫描整个段，B段的话去掉一个for</span>
+<span class="err">for i in $(seq 1 255);do for j in $(seq 1 255);do for x in $(seq 1 255);do if ping -c 1 -w 3 10.$i.$j.$x &amp;&gt;/dev/null; then echo 10.$i.$j.$x;fi &gt;&gt;/tmp/scan.txt;done;done;done</span>
+</code></pre></div>
 </section>
         <section id="extras" class="body">
         </section><!-- /#extras -->

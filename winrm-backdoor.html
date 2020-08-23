@@ -44,61 +44,61 @@
 <p>Windows 2008默认不开启该服务，windows 2012以及以上默认开启该服务。</p>
 <h3>开启服务</h3>
 <p>本地机器需要连接远程WinRM服务的时候，本地也需要开启WinRM服务，然后设置信任连接的主机，执行命令:</p>
-<div class="highlight"><pre><span></span><span class="n">winrm</span> <span class="n">quickconfig</span> <span class="o">-</span><span class="n">q</span>
-<span class="n">winrm</span> <span class="k">set</span> <span class="n">winrm</span><span class="o">/</span><span class="n">config</span><span class="o">/</span><span class="n">Client</span> <span class="o">@</span><span class="err">{</span><span class="n">TrustedHosts</span><span class="o">=</span><span class="ss">&quot;*&quot;</span><span class="err">}</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">winrm quickconfig -q</span>
+<span class="err">winrm set winrm/config/Client @{TrustedHosts=&quot;*&quot;}</span>
+</code></pre></div>
 
 
 <p>连接(默认端口是5985，需要加上去):</p>
-<div class="highlight"><pre><span></span><span class="n">winrs</span> <span class="o">-</span><span class="n">r</span><span class="p">:</span><span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">ip</span><span class="o">&gt;</span><span class="p">:</span><span class="o">&lt;</span><span class="n">port</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">u</span><span class="p">:</span><span class="o">&lt;</span><span class="k">user</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">p</span><span class="p">:</span><span class="o">&lt;</span><span class="n">pass</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">command</span><span class="o">&gt;</span> 
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">winrs -r:http://&lt;ip&gt;:&lt;port&gt; -u:&lt;user&gt; -p:&lt;pass&gt; &lt;command&gt; </span>
+</code></pre></div>
 
 
 <h3>设置后门:</h3>
-<div class="highlight"><pre><span></span><span class="err">修改默认端口为</span><span class="mi">80</span><span class="o">:</span> <span class="n">winrm</span> <span class="kd">set</span> <span class="n">winrm</span><span class="sr">/config/</span><span class="n">Listener</span><span class="o">?</span><span class="n">Address</span><span class="o">=*+</span><span class="n">Transport</span><span class="o">=</span><span class="n">HTTP</span> <span class="err">@</span><span class="o">{</span><span class="n">Port</span><span class="o">=</span><span class="s2">&quot;80&quot;</span><span class="o">}</span>
+<div class="highlight"><pre><span></span><code><span class="err">修改默认端口为</span><span class="mi">80</span><span class="o">:</span> <span class="n">winrm</span> <span class="kd">set</span> <span class="n">winrm</span><span class="sr">/config/</span><span class="n">Listener</span><span class="o">?</span><span class="n">Address</span><span class="o">=*+</span><span class="n">Transport</span><span class="o">=</span><span class="n">HTTP</span> <span class="err">@</span><span class="o">{</span><span class="n">Port</span><span class="o">=</span><span class="s2">&quot;80&quot;</span><span class="o">}</span>
 <span class="err">还原为</span><span class="mi">5985</span><span class="o">:</span> <span class="n">winrm</span> <span class="kd">set</span> <span class="n">winrm</span><span class="sr">/config/</span><span class="n">Listener</span><span class="o">?</span><span class="n">Address</span><span class="o">=*+</span><span class="n">Transport</span><span class="o">=</span><span class="n">HTTP</span> <span class="err">@</span><span class="o">{</span><span class="n">Port</span><span class="o">=</span><span class="s2">&quot;5985&quot;</span><span class="o">}</span>
 <span class="err">设置</span><span class="n">URI</span><span class="o">:</span> <span class="n">winrm</span> <span class="kd">set</span> <span class="n">winrm</span><span class="sr">/config/</span><span class="n">Listener</span><span class="o">?</span><span class="n">Address</span><span class="o">=*+</span><span class="n">Transport</span><span class="o">=</span><span class="n">HTTP</span> <span class="err">@</span><span class="o">{</span><span class="n">URLPrefix</span><span class="o">=</span><span class="s2">&quot;lalala&quot;</span><span class="o">}</span>
-</pre></div>
+</code></pre></div>
 
 
 <h3>常用命令</h3>
-<div class="highlight"><pre><span></span>查看注册的<span class="nv">URL</span>: <span class="nv">netsh</span> <span class="nv">http</span> <span class="k">show</span> <span class="nv">servicestate</span>
-查看监听配置: <span class="nv">winrm</span> <span class="nv">e</span> <span class="nv">winrm</span><span class="o">/</span><span class="nv">config</span><span class="o">/</span><span class="nv">listener</span>
-查看配置: <span class="nv">winrm</span> <span class="nv">get</span> <span class="nv">winrm</span><span class="o">/</span><span class="nv">config</span>
-新增<span class="mi">80</span>端口监听: <span class="nv">winrm</span> <span class="nv">set</span> <span class="nv">winrm</span><span class="o">/</span><span class="nv">config</span><span class="o">/</span><span class="nv">service</span> @{<span class="nv">EnableCompatibilityHttpListener</span><span class="o">=</span><span class="s2">&quot;</span><span class="s">true</span><span class="s2">&quot;</span>}
-删除<span class="mi">80</span>端口监听: <span class="nv">winrm</span> <span class="nv">set</span> <span class="nv">winrm</span><span class="o">/</span><span class="nv">config</span><span class="o">/</span><span class="nv">service</span> @{<span class="nv">EnableCompatibilityHttpListener</span><span class="o">=</span><span class="s2">&quot;</span><span class="s">false</span><span class="s2">&quot;</span>}
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">查看注册的</span><span class="n">URL</span><span class="o">:</span> <span class="n">netsh</span> <span class="n">http</span> <span class="n">show</span> <span class="n">servicestate</span>
+<span class="err">查看监听配置</span><span class="o">:</span> <span class="n">winrm</span> <span class="n">e</span> <span class="n">winrm</span><span class="sr">/config/</span><span class="n">listener</span>
+<span class="err">查看配置</span><span class="o">:</span> <span class="n">winrm</span> <span class="kd">get</span> <span class="n">winrm</span><span class="o">/</span><span class="n">config</span>
+<span class="err">新增</span><span class="mi">80</span><span class="err">端口监听</span><span class="o">:</span> <span class="n">winrm</span> <span class="kd">set</span> <span class="n">winrm</span><span class="sr">/config/s</span><span class="n">ervice</span> <span class="err">@</span><span class="o">{</span><span class="n">EnableCompatibilityHttpListener</span><span class="o">=</span><span class="s2">&quot;true&quot;</span><span class="o">}</span>
+<span class="err">删除</span><span class="mi">80</span><span class="err">端口监听</span><span class="o">:</span> <span class="n">winrm</span> <span class="kd">set</span> <span class="n">winrm</span><span class="sr">/config/s</span><span class="n">ervice</span> <span class="err">@</span><span class="o">{</span><span class="n">EnableCompatibilityHttpListener</span><span class="o">=</span><span class="s2">&quot;false&quot;</span><span class="o">}</span>
+</code></pre></div>
 
 
 <h3>设置明文连接</h3>
 <p>使用pywinrm的时候，如果是直接使用账户密码，在transport可以不用设置，但是需要在服务端设置winrm使用不加密连接:</p>
-<div class="highlight"><pre><span></span><span class="n">winrm</span> <span class="k">set</span> <span class="n">winrm</span><span class="o">/</span><span class="n">config</span><span class="o">/</span><span class="n">service</span><span class="o">/</span><span class="n">auth</span> <span class="s1">&#39;@{Basic=&quot;true&quot;}&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="n">winrm</span> <span class="k">set</span> <span class="n">winrm</span><span class="o">/</span><span class="n">config</span><span class="o">/</span><span class="n">service</span><span class="o">/</span><span class="n">auth</span> <span class="s1">&#39;@{Basic=&quot;true&quot;}&#39;</span>
 <span class="n">winrm</span> <span class="k">set</span> <span class="n">winrm</span><span class="o">/</span><span class="n">config</span><span class="o">/</span><span class="n">service</span> <span class="s1">&#39;@{AllowUnencrypted=&quot;true&quot;}&#39;</span>
 
 <span class="n">s</span> <span class="o">=</span>  <span class="n">winrm</span><span class="p">.</span><span class="k">Session</span><span class="p">(</span><span class="ss">&quot;http://192.168.1.26:5985&quot;</span><span class="p">,</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="ss">&quot;administrator&quot;</span><span class="p">,</span><span class="ss">&quot;123456&quot;</span><span class="p">))</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>当设置basic可以认证的时候，请求5985可以看到有两种认证方式: <code>Negotiate</code>和<code>basic</code>, <code>basic</code>和普通的head头认证一样，需要base64编码</p>
 <h3>winrs.py</h3>
 <p>实现一个winrs的客户端，执行cmd命令。因为在pywirnm的源代码里面的powershell是这样的，他调用的还是run_cmd函数，而且是直接<code>powershell -encodedcommand</code>,这很不清。所以只需要完成执行cmd命令，自己写powershell调用就好了。</p>
-<div class="highlight"><pre><span></span><span class="nv">def</span> <span class="nv">run_ps</span><span class="ss">(</span><span class="nv">self</span>, <span class="nv">script</span><span class="ss">)</span>:
-        <span class="s2">&quot;&quot;&quot;</span><span class="s">base64 encodes a Powershell script and executes the powershell</span>
-        <span class="nv">encoded</span> <span class="nv">script</span> <span class="nv">command</span>
-        <span class="s2">&quot;&quot;&quot;</span>
-        # <span class="nv">must</span> <span class="nv">use</span> <span class="nv">utf16</span> <span class="nv">little</span> <span class="nv">endian</span> <span class="nv">on</span> <span class="nv">windows</span>
-        <span class="nv">encoded_ps</span> <span class="o">=</span> <span class="nv">b64encode</span><span class="ss">(</span><span class="nv">script</span>.<span class="nv">encode</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">utf_16_le</span><span class="s1">&#39;</span><span class="ss">))</span>.<span class="nv">decode</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">ascii</span><span class="s1">&#39;</span><span class="ss">)</span>
-        <span class="nv">rs</span> <span class="o">=</span> <span class="nv">self</span>.<span class="nv">run_cmd</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">powershell -encodedcommand {0}</span><span class="s1">&#39;</span>.<span class="nv">format</span><span class="ss">(</span><span class="nv">encoded_ps</span><span class="ss">))</span>
-        <span class="k">if</span> <span class="nv">len</span><span class="ss">(</span><span class="nv">rs</span>.<span class="nv">std_err</span><span class="ss">)</span>:
-            # <span class="k">if</span> <span class="nv">there</span> <span class="nv">was</span> <span class="nv">an</span> <span class="nv">error</span> <span class="nv">message</span>, <span class="nv">clean</span> <span class="nv">it</span> <span class="nv">it</span> <span class="nv">up</span> <span class="nv">and</span> <span class="nv">make</span> <span class="nv">it</span> <span class="nv">human</span>
-            # <span class="nv">readable</span>
-            <span class="nv">rs</span>.<span class="nv">std_err</span> <span class="o">=</span> <span class="nv">self</span>.<span class="nv">_clean_error_msg</span><span class="ss">(</span><span class="nv">rs</span>.<span class="nv">std_err</span><span class="ss">)</span>
-        <span class="k">return</span> <span class="nv">rs</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">def run_ps(self, script):</span>
+<span class="err">        &quot;&quot;&quot;base64 encodes a Powershell script and executes the powershell</span>
+<span class="err">        encoded script command</span>
+<span class="err">        &quot;&quot;&quot;</span>
+<span class="err">        # must use utf16 little endian on windows</span>
+<span class="err">        encoded_ps = b64encode(script.encode(&#39;utf_16_le&#39;)).decode(&#39;ascii&#39;)</span>
+<span class="err">        rs = self.run_cmd(&#39;powershell -encodedcommand {0}&#39;.format(encoded_ps))</span>
+<span class="err">        if len(rs.std_err):</span>
+<span class="err">            # if there was an error message, clean it it up and make it human</span>
+<span class="err">            # readable</span>
+<span class="err">            rs.std_err = self._clean_error_msg(rs.std_err)</span>
+<span class="err">        return rs</span>
+</code></pre></div>
 
 
 <h3>成品</h3>
-<div class="highlight"><pre><span></span><span class="c1"># 代码参考: https://lianzhang.org/index.php/archives/8/</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># 代码参考: https://lianzhang.org/index.php/archives/8/</span>
 <span class="c1">#!/usr/bin/env python</span>
 <span class="c1"># encoding: utf-8</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
@@ -165,15 +165,15 @@
         <span class="n">RunCmd</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">passwd</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">passwd</span><span class="p">,</span> <span class="n">hashpasswd</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">hashpasswd</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">print</span> <span class="s2">&quot;[*]&gt; Windwos WinRM服务未开启请检查服务是否开启！&quot;</span>
-</pre></div>
+</code></pre></div>
 
 
 <h3>注意事项</h3>
 <ol>
 <li>WinRM服务受UAC影响，本地管理员用户组只有administrator可以登录，其他管理员用户无法远程登录WinRM，如果要允许其他管理员用户远程登录WinRM，需要修改注册表:</li>
 </ol>
-<div class="highlight"><pre><span></span><span class="n">reg</span> <span class="k">add</span> <span class="n">HKLM</span><span class="err">\</span><span class="n">SOFTWARE</span><span class="err">\</span><span class="n">Microsoft</span><span class="err">\</span><span class="n">Windows</span><span class="err">\</span><span class="n">CurrentVersion</span><span class="err">\</span><span class="n">Policies</span><span class="err">\</span><span class="k">System</span> <span class="o">/</span><span class="n">v</span> <span class="n">LocalAccountTokenFilterPolicy</span> <span class="o">/</span><span class="n">t</span> <span class="n">REG_DWORD</span> <span class="o">/</span><span class="n">d</span> <span class="mi">1</span> <span class="o">/</span><span class="n">f</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v LocalAccountTokenFilterPolicy /t REG_DWORD /d 1 /f</span>
+</code></pre></div>
 
 
 <ol>

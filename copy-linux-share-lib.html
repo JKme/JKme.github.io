@@ -38,11 +38,11 @@
     <div class="entry-content">
       
       <p>需求： 从一台Linux复制命令到另外一台上面，由于命令依赖动态库，比如gcc:</p>
-<div class="highlight"><pre><span></span><span class="n">ldd</span> <span class="o">`</span><span class="n">which</span> <span class="n">gcc</span><span class="o">`</span>
-    <span class="n">linux</span><span class="o">-</span><span class="n">vdso</span><span class="p">.</span><span class="n">so</span><span class="p">.</span><span class="mi">1</span> <span class="o">=&gt;</span>  <span class="p">(</span><span class="mi">0</span><span class="n">x00007fffdb7eb000</span><span class="p">)</span>
-    <span class="n">libc</span><span class="p">.</span><span class="n">so</span><span class="p">.</span><span class="mi">6</span> <span class="o">=&gt;</span> <span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">x86_64</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">libc</span><span class="p">.</span><span class="n">so</span><span class="p">.</span><span class="mi">6</span> <span class="p">(</span><span class="mi">0</span><span class="n">x00007fcf12441000</span><span class="p">)</span>
-    <span class="o">/</span><span class="n">lib64</span><span class="o">/</span><span class="n">ld</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">x86</span><span class="o">-</span><span class="mi">64</span><span class="p">.</span><span class="n">so</span><span class="p">.</span><span class="mi">2</span> <span class="p">(</span><span class="mi">0</span><span class="n">x000055a28350c000</span><span class="p">)</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">ldd `which gcc`</span>
+<span class="err">    linux-vdso.so.1 =&gt;  (0x00007fffdb7eb000)</span>
+<span class="err">    libc.so.6 =&gt; /lib/x86_64-linux-gnu/libc.so.6 (0x00007fcf12441000)</span>
+<span class="err">    /lib64/ld-linux-x86-64.so.2 (0x000055a28350c000)</span>
+</code></pre></div>
 
 
 <p>这种情况下单单复制gcc没卵用，google了下找到某个bash脚本:</p>
@@ -81,7 +81,7 @@
 33
 34
 35
-36</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+36</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
 
 <span class="k">if</span> <span class="o">[</span> <span class="nv">$#</span> !<span class="o">=</span> <span class="m">2</span> <span class="o">]</span> <span class="p">;</span> <span class="k">then</span>
     <span class="nb">echo</span> <span class="s2">&quot;usage </span><span class="nv">$0</span><span class="s2"> PATH_TO_BINARY TARGET_FOLDER&quot;</span>
@@ -117,7 +117,7 @@ cp --parents -v <span class="s2">&quot;</span><span class="nv">$PATH_TO_BINARY</
 <span class="k">if</span> <span class="o">[</span> ! -d <span class="s2">&quot;</span><span class="nv">$TARGET_FOLDER</span><span class="s2">/lib64&quot;</span> <span class="o">]</span> <span class="p">;</span> <span class="k">then</span>
     mkdir -v <span class="s2">&quot;</span><span class="nv">$TARGET_FOLDER</span><span class="s2">/lib64&quot;</span>
 <span class="k">fi</span>
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <p>用法: <code>exportbin.sh &lt;path to the binary&gt;  &lt;target floder&gt;</code></p>

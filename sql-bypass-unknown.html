@@ -38,7 +38,7 @@
     <div class="entry-content">
       
       <p><a href="http://blog.7ell.me/2017/05/30/2017-DDCTF-SQL注入之过滤列名get数据/">http://blog.7ell.me/2017/05/30/2017-DDCTF-SQL注入之过滤列名get数据/</a> </p>
-<div class="highlight"><pre><span></span><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="p">(</span><span class="k">select</span> <span class="mi">1</span><span class="p">)</span><span class="n">a</span><span class="p">,(</span><span class="k">select</span> <span class="mi">2</span><span class="p">)</span><span class="n">b</span><span class="p">,(</span><span class="k">select</span> <span class="mi">3</span><span class="p">)</span><span class="k">c</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="p">(</span><span class="k">select</span> <span class="mi">1</span><span class="p">)</span><span class="n">a</span><span class="p">,(</span><span class="k">select</span> <span class="mi">2</span><span class="p">)</span><span class="n">b</span><span class="p">,(</span><span class="k">select</span> <span class="mi">3</span><span class="p">)</span><span class="k">c</span><span class="p">;</span>
 <span class="o">+</span><span class="c1">---+---+---+</span>
 <span class="o">|</span> <span class="mi">1</span> <span class="o">|</span> <span class="mi">2</span> <span class="o">|</span> <span class="mi">3</span> <span class="o">|</span>
 <span class="o">+</span><span class="c1">---+---+---+</span>
@@ -93,7 +93,7 @@
 <span class="o">|</span> <span class="mi">7195</span><span class="k">C</span> <span class="o">|</span> <span class="mi">2</span>        <span class="o">|</span> <span class="mi">3</span>                                <span class="o">|</span>
 <span class="o">+</span><span class="c1">-------+----------+----------------------------------+</span>
 <span class="mi">2</span> <span class="k">rows</span> <span class="k">in</span> <span class="k">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
-</pre></div>
+</code></pre></div>
     </div><!-- /.entry-content -->
 
   </article>

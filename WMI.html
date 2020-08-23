@@ -53,17 +53,17 @@ schtasks.exe /change /RI $minute /tn "name"  //测试失败</p>
 <p>静态或动态的信息（对象的属性）就保存在CIM库中，同时保存对象的方法。比如启动一个服务，通过执行对象的方法实现，实际上是通过COM技术调用各种dll，最后由dll中封装的API完成请求。WMI是事件驱动的，操作系统、服务、应用程序、设备驱动程序等都可以作为事件源，通过COM接口生成事件通知，WinMgmt捕捉到事件，然后刷新CIM库中的动态信息。这也是为什么WMI服务依赖于EventLog的原因。就像注册表有根键一样，CIM库也有分类，用面向对象的术语描述来来说，叫做命名空间(Name Space）</p>
 <p><a href="http://huaidan.org/archives/1087.html">http://huaidan.org/archives/1087.html</a></p>
 <p>可以调用wmi的方式或者语言:</p>
-<div class="highlight"><pre><span></span><span class="o">*</span> <span class="n">wmic</span><span class="p">.</span><span class="n">exe</span>
-<span class="o">*</span> <span class="n">winrm</span><span class="p">.</span><span class="n">exe</span>
-<span class="o">*</span> <span class="n">winrs</span><span class="p">.</span><span class="n">exe</span>
-<span class="o">*</span> <span class="n">powershell</span>
-<span class="o">*</span> <span class="n">windows</span> <span class="n">scripting</span> <span class="k">host</span><span class="p">(</span><span class="n">WSH</span><span class="p">)</span>
-   <span class="o">*</span> <span class="n">VBScript</span>
-   <span class="o">*</span> <span class="n">JScript</span>
-<span class="o">*</span> <span class="n">mof</span>
-<span class="o">*</span> <span class="k">C</span><span class="o">/</span><span class="k">C</span><span class="o">++</span> <span class="n">via</span> <span class="n">IWbem</span><span class="o">*</span> <span class="n">COM</span> <span class="n">API</span>
-<span class="o">*</span> <span class="p">.</span><span class="n">NET</span> <span class="k">System</span><span class="p">.</span><span class="n">Management</span> <span class="n">classes</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">* wmic.exe</span>
+<span class="err">* winrm.exe</span>
+<span class="err">* winrs.exe</span>
+<span class="err">* powershell</span>
+<span class="err">* windows scripting host(WSH)</span>
+<span class="err">   * VBScript</span>
+<span class="err">   * JScript</span>
+<span class="err">* mof</span>
+<span class="err">* C/C++ via IWbem* COM API</span>
+<span class="err">* .NET System.Management classes</span>
+</code></pre></div>
 
 
 <p>单一点：
@@ -80,16 +80,16 @@ schtasks.exe /change /RI $minute /tn "name"  //测试失败</p>
 <p>为了支持XML而设计的对象，通过http协议访问网络，常用户跨站脚本执行漏洞和SQL Injection</p>
 <h4>ADSI(活动目录服务接口，主要用于windows域管理)</h4>
 <h4>WBEM对象，wmi服务提供该对象的接口</h4>
-<div class="highlight"><pre><span></span><span class="nv">strComputer</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">.</span><span class="s2">&quot;</span>
-<span class="nv">Set</span> <span class="nv">objWMIService</span> <span class="o">=</span> <span class="nv">GetObject</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">winmgmts:</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">strComputer</span> <span class="o">&amp;</span> <span class="s2">&quot;</span><span class="s">\root\default</span><span class="s2">&quot;</span><span class="ss">)</span>
-<span class="nv">Set</span> <span class="nv">colEvents</span> <span class="o">=</span> <span class="nv">objWMIService</span>.<span class="nv">ExecNotificationQuery</span> <span class="nv">_</span>
-    <span class="ss">(</span><span class="s2">&quot;</span><span class="s">SELECT * FROM RegistryKeyChangeEvent WHERE Hive=&#39;HKEY_LOCAL_MACHINE&#39; AND </span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">_</span>
-        <span class="s2">&quot;</span><span class="s">KeyPath=&#39;SOFTWARE</span><span class="se">\\</span><span class="s">Microsoft</span><span class="se">\\</span><span class="s">Windows</span><span class="se">\\</span><span class="s">CurrentVersion</span><span class="se">\\</span><span class="s">Run&#39;</span><span class="s2">&quot;</span><span class="ss">)</span> 
-<span class="k">Do</span>
-    <span class="nv">Set</span> <span class="nv">objLatestEvent</span> <span class="o">=</span> <span class="nv">colEvents</span>.<span class="nv">NextEvent</span>
-    <span class="nv">Wscript</span>.<span class="nv">Echo</span> <span class="nv">Now</span> <span class="o">&amp;</span> <span class="s2">&quot;</span><span class="s">: The registry has been modified.</span><span class="s2">&quot;</span>
-<span class="k">Loop</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">strComputer = &quot;.&quot;</span>
+<span class="err">Set objWMIService = GetObject(&quot;winmgmts:\\&quot; &amp; strComputer &amp; &quot;\root\default&quot;)</span>
+<span class="err">Set colEvents = objWMIService.ExecNotificationQuery _</span>
+<span class="err">    (&quot;SELECT * FROM RegistryKeyChangeEvent WHERE Hive=&#39;HKEY_LOCAL_MACHINE&#39; AND &quot; &amp; _</span>
+<span class="err">        &quot;KeyPath=&#39;SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run&#39;&quot;) </span>
+<span class="err">Do</span>
+<span class="err">    Set objLatestEvent = colEvents.NextEvent</span>
+<span class="err">    Wscript.Echo Now &amp; &quot;: The registry has been modified.&quot;</span>
+<span class="err">Loop</span>
+</code></pre></div>
 
 
 <p>如下例子：vbs脚本操作wmi对象的时候，有两种方法<code>winmgmts:\\</code>和<code>WbemScripting.SWBemlocator</code></p>
@@ -102,15 +102,15 @@ schtasks.exe /change /RI $minute /tn "name"  //测试失败</p>
 <li>Connect to WMI if you are runing a WMI script from within a Web page.</li>
 </ol>
 <p>创建对象并连接服务器：</p>
-<div class="highlight"><pre><span></span><span class="k">set</span> <span class="n">objlocator</span><span class="o">=</span><span class="n">createobject</span><span class="p">(</span><span class="ss">&quot;wbemscripting.swbemlocator&quot;</span><span class="p">)</span>
-<span class="k">set</span> <span class="n">objswbemservices</span><span class="o">=</span><span class="n">objlocator</span><span class="p">.</span><span class="n">connectserver</span><span class="p">(</span><span class="n">ipaddress</span><span class="p">,</span><span class="ss">&quot;root\default&quot;</span><span class="p">,</span><span class="n">username</span><span class="p">,</span><span class="n">password</span><span class="p">)</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">set objlocator=createobject(&quot;wbemscripting.swbemlocator&quot;)</span>
+<span class="err">set objswbemservices=objlocator.connectserver(ipaddress,&quot;root\default&quot;,username,password)</span>
+</code></pre></div>
 
 
 <p>访问WMI还有一个特权的额问题。</p>
-<div class="highlight"><pre><span></span><span class="n">objswbemservices</span><span class="p">.</span><span class="n">security_</span><span class="p">.</span><span class="k">privileges</span><span class="p">.</span><span class="k">add</span> <span class="mi">23</span><span class="p">,</span><span class="k">true</span>
-<span class="n">objswbemservices</span><span class="p">.</span><span class="n">security_</span><span class="p">.</span><span class="k">privileges</span><span class="p">.</span><span class="k">add</span> <span class="mi">18</span><span class="p">,</span><span class="k">true</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">objswbemservices.security_.privileges.add 23,true</span>
+<span class="err">objswbemservices.security_.privileges.add 18,true</span>
+</code></pre></div>
 
 
 <p>这是在向WMI服务申请权限，18和23都是权限代号，以下是重要的代号:
@@ -123,31 +123,31 @@ schtasks.exe /change /RI $minute /tn "name"  //测试失败</p>
 22 绕过历遍检查
 23 允许远程关机</p>
 <p>运行如下脚本可以获得所有权限ID及对应说明</p>
-<div class="highlight"><pre><span></span><span class="nv">strComputer</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">.</span><span class="s2">&quot;</span>
-<span class="nv">set</span> <span class="nv">objWMIService</span> <span class="o">=</span> <span class="nv">GetObject</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">winmgmts:</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="nv">_</span>
-    <span class="o">&amp;</span> <span class="nv">strComputer</span> <span class="o">&amp;</span> <span class="s2">&quot;</span><span class="s">\root\cimv2</span><span class="s2">&quot;</span><span class="ss">)</span>
-<span class="nv">set</span> <span class="nv">colPrivileges</span> <span class="o">=</span> <span class="nv">objWMIService</span>.<span class="nv">Security_</span>.<span class="nv">Privileges</span>
-<span class="k">for</span> <span class="nv">I</span> <span class="o">=</span> <span class="mi">1</span> <span class="nv">to</span> <span class="mi">27</span>
-<span class="nv">colPrivileges</span>.<span class="nv">Add</span><span class="ss">(</span><span class="nv">I</span><span class="ss">)</span>
-<span class="k">Next</span>
-<span class="s1">&#39;</span><span class="s"> Display information about each privilege </span>
-<span class="k">For</span> <span class="nv">Each</span> <span class="nv">objItem</span> <span class="nv">In</span> <span class="nv">colPrivileges</span>
-<span class="nv">wscript</span>.<span class="nv">echo</span> <span class="nv">objItem</span>.<span class="nv">Identifier</span> <span class="o">&amp;</span> <span class="nv">vbtab</span> <span class="o">&amp;</span> <span class="nv">objItem</span>.<span class="nv">Name</span> <span class="nv">_</span>
-    <span class="o">&amp;</span> <span class="nv">vbtab</span> <span class="o">&amp;</span> <span class="nv">objItem</span>.<span class="nv">Displayname</span> <span class="nv">_</span>
-    <span class="o">&amp;</span> <span class="nv">vbtab</span> <span class="o">&amp;</span> <span class="s2">&quot;</span><span class="s">Enabled = </span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">objItem</span>.<span class="nv">IsEnabled</span>
-<span class="k">Next</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">strComputer = &quot;.&quot;</span>
+<span class="err">set objWMIService = GetObject(&quot;winmgmts:\\&quot; _</span>
+<span class="err">    &amp; strComputer &amp; &quot;\root\cimv2&quot;)</span>
+<span class="err">set colPrivileges = objWMIService.Security_.Privileges</span>
+<span class="err">for I = 1 to 27</span>
+<span class="err">colPrivileges.Add(I)</span>
+<span class="err">Next</span>
+<span class="err">&#39; Display information about each privilege </span>
+<span class="err">For Each objItem In colPrivileges</span>
+<span class="err">wscript.echo objItem.Identifier &amp; vbtab &amp; objItem.Name _</span>
+<span class="err">    &amp; vbtab &amp; objItem.Displayname _</span>
+<span class="err">    &amp; vbtab &amp; &quot;Enabled = &quot; &amp; objItem.IsEnabled</span>
+<span class="err">Next</span>
+</code></pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="nv">strComputer</span><span class="o">=</span><span class="s2">&quot;</span><span class="s">.</span><span class="s2">&quot;</span>
-<span class="nv">set</span> <span class="nv">objService</span> <span class="o">=</span> <span class="nv">GetObject</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">winmgmts:</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">strComputer</span> <span class="o">&amp;</span> <span class="s2">&quot;</span><span class="s">\root\cimv2</span><span class="s2">&quot;</span><span class="ss">)</span>
-<span class="s1">&#39;</span><span class="s">set objWmi = CreateObject(&quot;WbemScripting.SWBemLocator&quot;)</span>
-<span class="s1">&#39;</span><span class="s">set objService = objWmi.ConnectServer(strComputer, &quot;root\cimv2&quot;)</span>
-<span class="nv">set</span> <span class="nv">objSet</span> <span class="o">=</span> <span class="nv">objService</span>.<span class="nv">InstancesOf</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">Win32_Process</span><span class="s2">&quot;</span><span class="ss">)</span>
-<span class="k">for</span> <span class="nv">each</span> <span class="nv">obj</span> <span class="nv">in</span> <span class="nv">objSet</span>
-    <span class="nv">Wscript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Name: </span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">obj</span>.<span class="nv">Name</span>
-<span class="k">Next</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">strComputer=&quot;.&quot;</span>
+<span class="err">set objService = GetObject(&quot;winmgmts:\\&quot; &amp; strComputer &amp; &quot;\root\cimv2&quot;)</span>
+<span class="err">&#39;set objWmi = CreateObject(&quot;WbemScripting.SWBemLocator&quot;)</span>
+<span class="err">&#39;set objService = objWmi.ConnectServer(strComputer, &quot;root\cimv2&quot;)</span>
+<span class="err">set objSet = objService.InstancesOf(&quot;Win32_Process&quot;)</span>
+<span class="err">for each obj in objSet</span>
+<span class="err">    Wscript.Echo &quot;Name: &quot; &amp; obj.Name</span>
+<span class="err">Next</span>
+</code></pre></div>
 
 
 <p>wmi是事件驱动，整个事件处理机制分4个部分:
@@ -166,23 +166,23 @@ schtasks.exe /change /RI $minute /tn "name"  //测试失败</p>
 <p><code>select * from meta_class where __this ISA "Win32_BaseService"</code></p>
 <h3>consumer</h3>
 <p>可以理解为满足条件之后执行的操作，包括如下查询:</p>
-<div class="highlight"><pre><span></span><span class="err">（</span><span class="mi">1</span><span class="err">）</span> <span class="n">ActiveScriptEventConsumer</span>
- <span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="n">LogFileEventConsumer</span>
- <span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="n">NTEventLogEventConsumer</span>
- <span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="n">SMTPEventConsumer</span>
- <span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="n">CommandLineEventConsumer</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">（1） ActiveScriptEventConsumer</span>
+<span class="err"> (2) LogFileEventConsumer</span>
+<span class="err"> (3) NTEventLogEventConsumer</span>
+<span class="err"> (4) SMTPEventConsumer</span>
+<span class="err"> (5) CommandLineEventConsumer</span>
+</code></pre></div>
 
 
 <p>wmi需要两个可以执行，Eventfilter和consumer。</p>
 <p>EventFilter</p>
-<div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">__InstanceModificationEvent</span> <span class="k">where</span> <span class="n">TargetInstance</span> <span class="n">Isa</span> <span class="ss">&quot;Win32_localTime&quot;</span> <span class="k">And</span> <span class="n">TargetInstance</span><span class="p">.</span><span class="k">Second</span> <span class="o">=</span> <span class="mi">1</span>
+<div class="highlight"><pre><span></span><code><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">__InstanceModificationEvent</span> <span class="k">where</span> <span class="n">TargetInstance</span> <span class="n">Isa</span> <span class="ss">&quot;Win32_localTime&quot;</span> <span class="k">And</span> <span class="n">TargetInstance</span><span class="p">.</span><span class="k">Second</span> <span class="o">=</span> <span class="mi">1</span>
 
 <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">__InstanceModificationEvent</span> <span class="n">WITHIN</span> <span class="mi">10</span> <span class="k">where</span> <span class="n">TargetInstance</span> <span class="n">ISA</span> <span class="s1">&#39;Win32_Service&#39;</span> <span class="k">AND</span> <span class="n">TargetInstance</span><span class="p">.</span><span class="n">_Class</span> <span class="o">=</span> <span class="s1">&#39;win32_TerminalService&#39;</span>
 
 <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">_InstanceModificationEvent</span> <span class="n">within</span> <span class="mi">5</span> <span class="k">where</span> <span class="n">Targetinstance</span> <span class="n">ISA</span> <span class="s1">&#39;Win32_service&#39;</span> <span class="k">AND</span> 
 <span class="n">TargetInstance</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;spooler&#39;</span> <span class="k">and</span> <span class="n">Targetinstatnce</span><span class="p">.</span><span class="k">state</span><span class="o">=</span><span class="s1">&#39;stopped&#39;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>2003系统上，一个用户登陆的时候，日志记录ID是680，注销断开的时候ID是551，所以当一个用户登陆的时候，wmi监测登陆id，如果登陆成功，杀掉后们和挖矿进程。
@@ -198,40 +198,40 @@ schtasks.exe /change /RI $minute /tn "name"  //测试失败</p>
 <ol>
 <li>实例查询  －－用于查询WMI类的实例</li>
 </ol>
-<div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">property</span> <span class="n">name</span><span class="o">&gt;</span> <span class="k">from</span> <span class="o">&lt;</span><span class="k">class</span> <span class="n">name</span><span class="o">&gt;</span> <span class="k">where</span> <span class="o">&lt;&gt;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">select &lt;class property name&gt; from &lt;class name&gt; where &lt;&gt;</span>
+</code></pre></div>
 
 
 <ol>
 <li>事件查询  －－用于一个WMI事件注册机制，如WMI对象的创建，修改或删除</li>
 </ol>
-<div class="highlight"><pre><span></span><span class="err">交互式用户登录的事件查询：</span>
-<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">__InstanceCreationEvent</span> <span class="n">WITHIN</span> <span class="mi">15</span> <span class="k">WHERE</span> <span class="n">TargetInstance</span> <span class="n">ISA</span> <span class="s1">&#39;Win32_LogonSession&#39;</span> <span class="k">AND</span> <span class="n">TargetInstance</span><span class="p">.</span><span class="n">LogonType</span> <span class="o">=</span> <span class="mi">2</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">交互式用户登录的事件查询：</span>
+<span class="err">SELECT * FROM __InstanceCreationEvent WITHIN 15 WHERE TargetInstance ISA &#39;Win32_LogonSession&#39; AND TargetInstance.LogonType = 2</span>
+</code></pre></div>
 
 
 <ol>
 <li>元查询    －－用于查询WMI类架构</li>
 </ol>
-<div class="highlight"><pre><span></span><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">Meta_classes</span> <span class="k">where</span> <span class="n">__class</span> <span class="k">like</span> <span class="ss">&quot;win32%&quot;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">select * from Meta_classes where __class like &quot;win32%&quot;</span>
+</code></pre></div>
 
 
 <p>例子:</p>
 <p>每10s查询一次事件修改，记录</p>
-<div class="highlight"><pre><span></span><span class="nv">strComputer</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">.</span><span class="s2">&quot;</span> 
-<span class="nv">Set</span> <span class="nv">objWMIService</span> <span class="o">=</span> <span class="nv">GetObject</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">winmgmts:</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">strComputer</span> <span class="o">&amp;</span> <span class="s2">&quot;</span><span class="s">\root\cimv2</span><span class="s2">&quot;</span><span class="ss">)</span> 
-<span class="nv">Set</span> <span class="nv">colMonitorProcess</span> <span class="o">=</span> <span class="nv">objWMIService</span>.<span class="nv">ExecNotificationQuery</span> <span class="nv">_</span> 
- <span class="ss">(</span><span class="s2">&quot;</span><span class="s">SELECT * FROM __instancemodificationevent WITHIN 10</span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">_</span> 
- <span class="s2">&quot;</span><span class="s">WHERE TargetInstance ISA &#39;Win32_Service&#39;</span><span class="s2">&quot;</span><span class="ss">)</span>  
-<span class="nv">WScript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Waiting for process change event ...</span><span class="s2">&quot;</span> 
-<span class="nv">Set</span> <span class="nv">objLatestEvent</span> <span class="o">=</span> <span class="nv">colMonitorProcess</span>.<span class="nv">NextEvent</span> 
-<span class="nv">WScript</span>.<span class="nv">Echo</span> <span class="nv">VbCrLf</span> <span class="o">&amp;</span> <span class="nv">objLatestEvent</span>.<span class="nv">Path_</span>.<span class="nv">Class</span> 
-<span class="nv">Wscript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Process Name: </span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">objLatestEvent</span>.<span class="nv">TargetInstance</span>.<span class="nv">Name</span> 
-<span class="nv">Wscript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Process ID: </span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">objLatestEvent</span>.<span class="nv">TargetInstance</span>.<span class="nv">ProcessId</span> 
-<span class="nv">Wscript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Process State:</span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">objLatestEvent</span>.<span class="nv">TargetInstance</span>.<span class="nv">state</span>
-<span class="nv">WScript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Time: </span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">Now</span> 
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">strComputer = &quot;.&quot; </span>
+<span class="err">Set objWMIService = GetObject(&quot;winmgmts:\\&quot; &amp; strComputer &amp; &quot;\root\cimv2&quot;) </span>
+<span class="err">Set colMonitorProcess = objWMIService.ExecNotificationQuery _ </span>
+<span class="err"> (&quot;SELECT * FROM __instancemodificationevent WITHIN 10&quot; &amp; _ </span>
+<span class="err"> &quot;WHERE TargetInstance ISA &#39;Win32_Service&#39;&quot;)  </span>
+<span class="err">WScript.Echo &quot;Waiting for process change event ...&quot; </span>
+<span class="err">Set objLatestEvent = colMonitorProcess.NextEvent </span>
+<span class="err">WScript.Echo VbCrLf &amp; objLatestEvent.Path_.Class </span>
+<span class="err">Wscript.Echo &quot;Process Name: &quot; &amp; objLatestEvent.TargetInstance.Name </span>
+<span class="err">Wscript.Echo &quot;Process ID: &quot; &amp; objLatestEvent.TargetInstance.ProcessId </span>
+<span class="err">Wscript.Echo &quot;Process State:&quot; &amp; objLatestEvent.TargetInstance.state</span>
+<span class="err">WScript.Echo &quot;Time: &quot; &amp; Now </span>
+</code></pre></div>
 
 
 <p>以下来自鬼哥的文章：<a href="http://huaidan.org/archives/1087.html">http://huaidan.org/archives/1087.html</a></p>
@@ -240,7 +240,7 @@ schtasks.exe /change /RI $minute /tn "name"  //测试失败</p>
 <p><code>__EventFilter</code>的时候，要制定命名空间为<code>root\cimv2</code>,整个脚本是注册在<code>root\subscription</code>里面的。</p>
 <p>一句话:
 以<code>root\cimv2</code>空间的事件为驱动，使用<code>root\subscription</code>空间里面的<code>CommandLineEventConsumer</code>来运行程序。</p>
-<div class="highlight"><pre><span></span><span class="n">nslink</span><span class="o">=</span><span class="ss">&quot;winmgmts:\\.\root\cimv2:&quot;</span>         <span class="s1">&#39;只需要本地连接，所以用这种语法，不用swbemlocator对象&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="n">nslink</span><span class="o">=</span><span class="ss">&quot;winmgmts:\\.\root\cimv2:&quot;</span>         <span class="s1">&#39;只需要本地连接，所以用这种语法，不用swbemlocator对象&#39;</span>
 <span class="n">nslink2</span><span class="o">=</span><span class="ss">&quot;winmgmts:\\.\root\subscription:&quot;</span>
 <span class="k">set</span> <span class="n">asec</span><span class="o">=</span><span class="n">getobject</span><span class="p">(</span><span class="n">nslink2</span><span class="o">&amp;</span><span class="ss">&quot;CommandLineEventConsumer&quot;</span><span class="p">).</span><span class="n">spawninstance_</span>   <span class="s1">&#39;创建“活动脚本事件消费者”&#39;</span>
 <span class="n">asec</span><span class="p">.</span><span class="n">name</span><span class="o">=</span><span class="ss">&quot;stopped_spooler_restart_consumer&quot;</span>                  <span class="s1">&#39;定义消费者的名字&#39;</span>
@@ -265,11 +265,11 @@ schtasks.exe /change /RI $minute /tn "name"  //测试失败</p>
 <span class="s1">fcbnd.put_                                                              &#39;</span><span class="err">执行绑定&#39;</span>
 
 <span class="n">wscript</span><span class="p">.</span><span class="n">echo</span> <span class="ss">&quot;success&quot;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>上面提到过有5种消费者，然后这次以LogFileEventConsumer来测试，打开任务管理器之后，在C盘根目录下生成1.php，内容是<code>&lt;?php phpinfo();?&gt;</code>:</p>
-<div class="highlight"><pre><span></span><span class="nx">nslink</span><span class="o">=</span><span class="s2">&quot;winmgmts:\\.\root\cimv2:&quot;</span>         <span class="s1">&#39;只需要本地连接，所以用这种语法，不用swbemlocator对象&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="nx">nslink</span><span class="o">=</span><span class="s2">&quot;winmgmts:\\.\root\cimv2:&quot;</span>         <span class="s1">&#39;只需要本地连接，所以用这种语法，不用swbemlocator对象&#39;</span>
 <span class="nx">nslink2</span><span class="o">=</span><span class="s2">&quot;winmgmts:\\.\root\subscription:&quot;</span>
 <span class="nx">set</span> <span class="nx">asec</span><span class="o">=</span><span class="nx">getobject</span><span class="p">(</span><span class="nx">nslink2</span><span class="o">&amp;</span><span class="s2">&quot;LogFileEventConsumer&quot;</span><span class="p">).</span><span class="nx">spawninstance_</span>   <span class="s1">&#39;创建“活动脚本事件消费者”&#39;</span>
 <span class="nx">asec</span><span class="p">.</span><span class="nx">name</span><span class="o">=</span><span class="s2">&quot;stopped_spooler_restart_consumer&quot;</span>                  <span class="s1">&#39;定义消费者的名字&#39;</span>
@@ -296,12 +296,12 @@ schtasks.exe /change /RI $minute /tn "name"  //测试失败</p>
 <span class="s1">fcbnd.put_                                                              &#39;</span><span class="nx">执行绑定</span><span class="err">&#39;</span>
 
 <span class="nx">wscript</span><span class="p">.</span><span class="nx">echo</span> <span class="s2">&quot;success&quot;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>wmi监听用户登录和注销事件：</p>
 <p>2003系统上，一个用户登陆的时候，日志记录ID是680，注销断开的时候ID是551，所以当一个用户登陆的时候，wmi监测登陆id，如果登陆成功，打开calc.exe：</p>
-<div class="highlight"><pre><span></span><span class="n">nslink</span><span class="o">=</span><span class="ss">&quot;winmgmts:\\.\root\cimv2:&quot;</span>         <span class="s1">&#39;只需要本地连接，所以用这种语法，不用swbemlocator对象&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="n">nslink</span><span class="o">=</span><span class="ss">&quot;winmgmts:\\.\root\cimv2:&quot;</span>         <span class="s1">&#39;只需要本地连接，所以用这种语法，不用swbemlocator对象&#39;</span>
 <span class="n">nslink2</span><span class="o">=</span><span class="ss">&quot;winmgmts:\\.\root\subscription:&quot;</span>
 <span class="k">set</span> <span class="n">asec</span><span class="o">=</span><span class="n">getobject</span><span class="p">(</span><span class="n">nslink2</span><span class="o">&amp;</span><span class="ss">&quot;CommandLineEventConsumer&quot;</span><span class="p">).</span><span class="n">spawninstance_</span>   <span class="s1">&#39;创建“活动脚本事件消费者”&#39;</span>
 <span class="n">asec</span><span class="p">.</span><span class="n">name</span><span class="o">=</span><span class="ss">&quot;stopped_spooler_restart_consumer&quot;</span>                  <span class="s1">&#39;定义消费者的名字&#39;</span>
@@ -324,12 +324,12 @@ schtasks.exe /change /RI $minute /tn "name"  //测试失败</p>
 <span class="s1">fcbnd.put_                                                              &#39;</span><span class="err">执行绑定&#39;</span>
 
 <span class="n">wscript</span><span class="p">.</span><span class="n">echo</span> <span class="ss">&quot;success&quot;</span>
-</pre></div>
+</code></pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="err">在每分钟的第</span><span class="mi">5</span><span class="n">s之行一次</span>
-<span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">__instanceModificationEvent</span> <span class="k">where</span> <span class="n">targetinstance</span> <span class="n">ISA</span> <span class="s1">&#39;win32_localtime&#39;</span> <span class="k">and</span> <span class="n">targetinstance</span><span class="p">.</span><span class="k">Second</span><span class="o">=</span><span class="mi">5</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">在每分钟的第5s之行一次</span>
+<span class="err">select * from __instanceModificationEvent where targetinstance ISA &#39;win32_localtime&#39; and targetinstance.Second=5</span>
+</code></pre></div>
 
 
 <p>wmi对象在硬盘中是存储在<code>C:\Windows\System32\wbem\Repository\fs\objects.data</code></p>
@@ -340,7 +340,7 @@ schtasks.exe /change /RI $minute /tn "name"  //测试失败</p>
 </blockquote>
 <p>多个消费者可以对应一个filter，多个filter也可以对应一个消费者。但是实际测试并没有成功，在多个filter存在的情况下，消费未达到期望，测试代码:</p>
 <p>测试期望是5s之内打开cmd和taskmgr的时候会打开calc.exe，实际测试未成功。</p>
-<div class="highlight"><pre><span></span><span class="n">nslink</span><span class="o">=</span><span class="ss">&quot;winmgmts:\\.\root\cimv2:&quot;</span>         
+<div class="highlight"><pre><span></span><code><span class="n">nslink</span><span class="o">=</span><span class="ss">&quot;winmgmts:\\.\root\cimv2:&quot;</span>         
 <span class="n">nslink2</span><span class="o">=</span><span class="ss">&quot;winmgmts:\\.\root\subscription:&quot;</span>
 <span class="k">set</span> <span class="n">asec</span><span class="o">=</span><span class="n">getobject</span><span class="p">(</span><span class="n">nslink2</span><span class="o">&amp;</span><span class="ss">&quot;CommandLineEventConsumer&quot;</span><span class="p">).</span><span class="n">spawninstance_</span>   
 <span class="n">asec</span><span class="p">.</span><span class="n">name</span><span class="o">=</span><span class="ss">&quot;taskmgr_consumer&quot;</span>                                                
@@ -381,26 +381,26 @@ schtasks.exe /change /RI $minute /tn "name"  //测试失败</p>
 <span class="s1">&#39;</span><span class="n">fcbnd</span><span class="p">.</span><span class="n">filter</span><span class="o">=</span><span class="n">fltpath2</span><span class="p">.</span><span class="n">path</span>                                               
 <span class="s1">&#39;fcbnd.put_                                                              </span>
 <span class="s1">&#39;</span><span class="n">wscript</span><span class="p">.</span><span class="n">echo</span> <span class="ss">&quot;success2&quot;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>下面这个脚本是用来监控事件变化的，可以根据需要自己修改。</p>
-<div class="highlight"><pre><span></span><span class="nv">strComputer</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">.</span><span class="s2">&quot;</span> 
-<span class="nv">Set</span> <span class="nv">objWMIService</span> <span class="o">=</span> <span class="nv">GetObject</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">winmgmts:</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">strComputer</span> <span class="o">&amp;</span> <span class="s2">&quot;</span><span class="s">\root\cimv2</span><span class="s2">&quot;</span><span class="ss">)</span> 
-<span class="nv">Set</span> <span class="nv">colMonitorProcess</span> <span class="o">=</span> <span class="nv">objWMIService</span>.<span class="nv">ExecNotificationQuery</span> <span class="nv">_</span> 
- <span class="ss">(</span><span class="s2">&quot;</span><span class="s">SELECT * FROM __instanceCreationEvent WITHIN 5</span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">_</span> 
- <span class="s2">&quot;</span><span class="s">WHERE TargetInstance ISA &#39;win32_NTLogEvent&#39;</span><span class="s2">&quot;</span><span class="ss">)</span>  
-<span class="nv">WScript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Waiting for process change event ...</span><span class="s2">&quot;</span> 
-<span class="k">while</span> <span class="mi">1</span><span class="o">&gt;</span><span class="mi">0</span>
-<span class="nv">Set</span> <span class="nv">objLatestEvent</span> <span class="o">=</span> <span class="nv">colMonitorProcess</span>.<span class="nv">NextEvent</span> 
-<span class="nv">WScript</span>.<span class="nv">Echo</span> <span class="nv">VbCrLf</span> <span class="o">&amp;</span> <span class="nv">objLatestEvent</span>.<span class="nv">Path_</span>.<span class="nv">Class</span> 
-<span class="nv">Wscript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Process Name: </span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">objLatestEvent</span>.<span class="nv">TargetInstance</span>.<span class="nv">EventCode</span> 
-<span class="nv">Wscript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Process ID: </span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">objLatestEvent</span>.<span class="nv">TargetInstance</span>.<span class="nv">Categorystring</span> 
-<span class="nv">WScript</span>.<span class="nv">Echo</span> <span class="s2">&quot;</span><span class="s">Time: </span><span class="s2">&quot;</span> <span class="o">&amp;</span> <span class="nv">Now</span> 
-<span class="nv">wend</span>
-<span class="s1">&#39;</span><span class="s">__instanceDeletionEvent</span>
-<span class="s1">&#39;</span><span class="s">__instanceModificationEvent</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">strComputer = &quot;.&quot; </span>
+<span class="err">Set objWMIService = GetObject(&quot;winmgmts:\\&quot; &amp; strComputer &amp; &quot;\root\cimv2&quot;) </span>
+<span class="err">Set colMonitorProcess = objWMIService.ExecNotificationQuery _ </span>
+<span class="err"> (&quot;SELECT * FROM __instanceCreationEvent WITHIN 5&quot; &amp; _ </span>
+<span class="err"> &quot;WHERE TargetInstance ISA &#39;win32_NTLogEvent&#39;&quot;)  </span>
+<span class="err">WScript.Echo &quot;Waiting for process change event ...&quot; </span>
+<span class="err">while 1&gt;0</span>
+<span class="err">Set objLatestEvent = colMonitorProcess.NextEvent </span>
+<span class="err">WScript.Echo VbCrLf &amp; objLatestEvent.Path_.Class </span>
+<span class="err">Wscript.Echo &quot;Process Name: &quot; &amp; objLatestEvent.TargetInstance.EventCode </span>
+<span class="err">Wscript.Echo &quot;Process ID: &quot; &amp; objLatestEvent.TargetInstance.Categorystring </span>
+<span class="err">WScript.Echo &quot;Time: &quot; &amp; Now </span>
+<span class="err">wend</span>
+<span class="err">&#39;__instanceDeletionEvent</span>
+<span class="err">&#39;__instanceModificationEvent</span>
+</code></pre></div>
 
 
 <ul>

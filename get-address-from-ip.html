@@ -37,7 +37,7 @@
 </footer><!-- /.post-info -->
     <div class="entry-content">
       
-      <div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+      <div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>
 <span class="nb">error_reporting</span><span class="p">(</span><span class="k">E_ALL</span> <span class="o">^</span> <span class="nx">E_NOTICE</span><span class="p">);</span>
     <span class="nb">header</span><span class="p">(</span><span class="s1">&#39;Content-Type:text/html;charset=utf-8&#39;</span><span class="p">);</span>
     <span class="k">function</span> <span class="nf">get_addr</span><span class="p">(</span><span class="nv">$_ip</span><span class="p">)</span> <span class="p">{</span> 
@@ -68,11 +68,11 @@
     <span class="p">}</span>
 
 <span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
+</code></pre></div>
 
 
 <p>上面保存为test.php,然后是<code>1.php</code>：</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>
 <span class="nb">header</span><span class="p">(</span><span class="s1">&#39;Content-Type:text/html;charset=utf-8&#39;</span><span class="p">);</span> 
 <span class="nv">$_ip</span><span class="o">=</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">&#39;REMOTE_ADDR&#39;</span><span class="p">];</span> 
 <span class="nv">$_ip_addr</span><span class="o">=</span><span class="nb">file_get_contents</span><span class="p">(</span><span class="s1">&#39;http://127.0.0.1/test.php?ip=&#39;</span><span class="o">.</span><span class="nv">$_ip</span><span class="p">);</span> 
@@ -83,18 +83,18 @@
 <span class="nb">imagejpeg</span><span class="p">(</span><span class="nv">$im</span><span class="p">);</span> 
 <span class="nb">imagedestroy</span><span class="p">(</span><span class="nv">$im</span><span class="p">);</span> 
 <span class="cp">?&gt;</span><span class="x"></span>
-</pre></div>
+</code></pre></div>
 
 
 <p>找个<code>2.jpg</code>的图片，在windows下执行：<code>copy 2.jpg+1.php ip.jpg</code>。</p>
 <p>最后在vps上面配置nginx解析jpg图片，这里需要设置下：</p>
 <p>对于<strong>5.3.9</strong>以上版本的php，需要设置<code>php-fpm.ini</code>，加上这个字段:
 <code>security.limit_extensions = .php .jpg</code>或者直接修改为<code>true</code>，然后在nginx配置的<code>location</code>位置加上这样的语句：</p>
-<div class="highlight"><pre><span></span><span class="nv">location</span> <span class="o">~</span> \.<span class="nv">jpg</span>$ {
-            <span class="nv">fastcgi_pass</span> <span class="nv">unix</span>:<span class="o">/</span><span class="nv">tmp</span><span class="o">/</span><span class="nv">php</span><span class="o">-</span><span class="nv">cgi</span>.<span class="nv">sock</span><span class="c1">;</span>
-            <span class="k">include</span> <span class="o">/</span><span class="nv">usr</span><span class="o">/</span><span class="nv">local</span><span class="o">/</span><span class="nv">nginx</span><span class="o">/</span><span class="nv">conf</span><span class="o">/</span><span class="nv">fastcgi</span>.<span class="nv">conf</span><span class="c1">;</span>
-}
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">location ~ \.jpg$ {</span>
+<span class="err">            fastcgi_pass unix:/tmp/php-cgi.sock;</span>
+<span class="err">            include /usr/local/nginx/conf/fastcgi.conf;</span>
+<span class="err">}</span>
+</code></pre></div>
 
 
 <p>不管怎么配置，大概意思就是让jpg结尾的图片，丢到<code>php-fpm</code>去处理，然后解析执行。</p>

@@ -43,7 +43,7 @@
 <p>这个时候就差不多done了，然后配置下nginx
 https://mozilla.github.io/server-side-tls/ssl-config-generator</p>
 <p>这个是mozilla一个HTTPS配置文件自动生成器。重点是以下几行：</p>
-<div class="highlight"><pre><span></span><span class="n">server</span> <span class="err">{</span>  
+<div class="highlight"><pre><span></span><code><span class="n">server</span> <span class="err">{</span>  
     <span class="k">listen</span> <span class="mi">443</span> <span class="n">ssl</span> <span class="n">http2</span><span class="p">;</span>
     <span class="p">....</span>
     <span class="n">ssl_certificate</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">letsencrypt</span><span class="o">/</span><span class="n">live</span><span class="o">/</span><span class="n">example</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">fullchain</span><span class="p">.</span><span class="n">pem</span><span class="p">;</span>
@@ -55,83 +55,83 @@ https://mozilla.github.io/server-side-tls/ssl-config-generator</p>
     <span class="n">resolver</span> <span class="o">&lt;</span><span class="n">IP</span> <span class="n">DNS</span> <span class="n">resolver</span><span class="o">&gt;</span><span class="p">;</span>
     <span class="p">....</span>
 <span class="err">}</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>ssl_dhparam通过下面的命令生成：</p>
-<div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">ssl</span>
-<span class="n">openssl</span> <span class="n">dhparam</span> <span class="o">-</span><span class="k">out</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">ssl</span><span class="o">/</span><span class="n">dhparam</span><span class="p">.</span><span class="n">pem</span> <span class="mi">2048</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">mkdir /etc/nginx/ssl</span>
+<span class="err">openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048</span>
+</code></pre></div>
 
 
 <p>ssl_trusted_certificate可选：</p>
-<div class="highlight"><pre><span></span> <span class="n">cd</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">letsencrypt</span><span class="o">/</span><span class="n">live</span><span class="o">/</span><span class="n">example</span><span class="p">.</span><span class="n">com</span>
-<span class="err">$</span> <span class="n">sudo</span> <span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">letsencrypt</span><span class="p">.</span><span class="n">org</span><span class="o">/</span><span class="n">certs</span><span class="o">/</span><span class="n">isrgrootx1</span><span class="p">.</span><span class="n">pem</span>
-<span class="err">$</span> <span class="n">sudo</span> <span class="n">mv</span> <span class="n">isrgrootx1</span><span class="p">.</span><span class="n">pem</span> <span class="n">root</span><span class="p">.</span><span class="n">pem</span>
-<span class="err">$</span> <span class="n">sudo</span> <span class="n">cat</span> <span class="n">root</span><span class="p">.</span><span class="n">pem</span> <span class="k">chain</span><span class="p">.</span><span class="n">pem</span> <span class="o">&gt;</span> <span class="n">root_ca_cert_plus_intermediates</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err"> cd /etc/letsencrypt/live/example.com</span>
+<span class="err">$ sudo wget https://letsencrypt.org/certs/isrgrootx1.pem</span>
+<span class="err">$ sudo mv isrgrootx1.pem root.pem</span>
+<span class="err">$ sudo cat root.pem chain.pem &gt; root_ca_cert_plus_intermediates</span>
+</code></pre></div>
 
 
 <p>resolver作用是解析OCSP服务器域名，建议填写VPS提供的DNS服务器。
 最后下面是配置文件</p>
-<div class="highlight"><pre><span></span><span class="nv">server</span> {
-        <span class="nv">listen</span> <span class="mi">80</span> <span class="nv">default_server</span><span class="c1">;</span>
-#       <span class="nv">ssl</span> <span class="nv">on</span><span class="c1">;</span>
-        <span class="nv">server_name</span> <span class="nv">domain</span>.<span class="nv">com</span> <span class="c1">;</span>
-        <span class="k">return</span> <span class="mi">301</span> <span class="nv">https</span>:<span class="o">//</span>$<span class="nv">host</span>$<span class="nv">request_uri</span><span class="c1">;</span>
-}
-<span class="nv">server</span>
-{
+<div class="highlight"><pre><span></span><code><span class="nt">server</span> <span class="p">{</span>
+        <span class="err">listen</span> <span class="err">80</span> <span class="err">default_server</span><span class="p">;</span>
+<span class="err">#</span>       <span class="err">ssl</span> <span class="err">on</span><span class="p">;</span>
+        <span class="err">server_name</span> <span class="err">domain.com</span> <span class="p">;</span>
+        <span class="err">return</span> <span class="err">301</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="err">$</span><span class="n">host</span><span class="err">$</span><span class="n">request_uri</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nt">server</span>
+<span class="p">{</span>
 
 
-    <span class="nv">root</span> <span class="o">/</span><span class="nv">var</span><span class="o">/</span><span class="nv">www</span><span class="c1">;</span>
-    <span class="nv">index</span> <span class="nv">index</span>.<span class="nv">html</span><span class="c1">;</span>
-    <span class="nv">listen</span> <span class="mi">443</span> <span class="nv">ssl</span> <span class="nv">http2</span><span class="c1">;</span>
-    <span class="nv">listen</span> [::]:<span class="mi">443</span> <span class="nv">ssl</span> <span class="nv">http2</span><span class="c1">;</span>
-        <span class="nv">ssl_ciphers</span> <span class="s1">&#39;</span><span class="s">ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS</span><span class="s1">&#39;</span><span class="c1">;</span>
+    <span class="err">root</span> <span class="err">/var/www</span><span class="p">;</span>
+    <span class="err">index</span> <span class="err">index.html</span><span class="p">;</span>
+    <span class="err">listen</span> <span class="err">443</span> <span class="err">ssl</span> <span class="err">http2</span><span class="p">;</span>
+    <span class="n">listen</span> <span class="cp">[</span><span class="p">::</span><span class="cp">]</span><span class="p">:</span><span class="mi">443</span> <span class="n">ssl</span> <span class="n">http2</span><span class="p">;</span>
+        <span class="err">ssl_ciphers</span> <span class="err">&#39;</span><span class="n">ECDHE-ECDSA-CHACHA20-POLY1305</span><span class="p">:</span><span class="n">ECDHE-RSA-CHACHA20-POLY1305</span><span class="o">:</span><span class="n">ECDHE-ECDSA-AES128-GCM-SHA256</span><span class="o">:</span><span class="n">ECDHE-RSA-AES128-GCM-SHA256</span><span class="o">:</span><span class="n">ECDHE-ECDSA-AES256-GCM-SHA384</span><span class="o">:</span><span class="n">ECDHE-RSA-AES256-GCM-SHA384</span><span class="o">:</span><span class="n">DHE-RSA-AES128-GCM-SHA256</span><span class="o">:</span><span class="n">DHE-RSA-AES256-GCM-SHA384</span><span class="o">:</span><span class="n">ECDHE-ECDSA-AES128-SHA256</span><span class="o">:</span><span class="n">ECDHE-RSA-AES128-SHA256</span><span class="o">:</span><span class="n">ECDHE-ECDSA-AES128-SHA</span><span class="o">:</span><span class="n">ECDHE-RSA-AES256-SHA384</span><span class="o">:</span><span class="n">ECDHE-RSA-AES128-SHA</span><span class="o">:</span><span class="n">ECDHE-ECDSA-AES256-SHA384</span><span class="o">:</span><span class="n">ECDHE-ECDSA-AES256-SHA</span><span class="o">:</span><span class="n">ECDHE-RSA-AES256-SHA</span><span class="o">:</span><span class="n">DHE-RSA-AES128-SHA256</span><span class="o">:</span><span class="n">DHE-RSA-AES128-SHA</span><span class="o">:</span><span class="n">DHE-RSA-AES256-SHA256</span><span class="o">:</span><span class="n">DHE-RSA-AES256-SHA</span><span class="o">:</span><span class="n">ECDHE-ECDSA-DES-CBC3-SHA</span><span class="o">:</span><span class="n">ECDHE-RSA-DES-CBC3-SHA</span><span class="o">:</span><span class="n">EDH-RSA-DES-CBC3-SHA</span><span class="o">:</span><span class="n">AES128-GCM-SHA256</span><span class="o">:</span><span class="n">AES256-GCM-SHA384</span><span class="o">:</span><span class="n">AES128-SHA256</span><span class="o">:</span><span class="n">AES256-SHA256</span><span class="o">:</span><span class="n">AES128-SHA</span><span class="o">:</span><span class="n">AES256-SHA</span><span class="o">:</span><span class="n">DES-CBC3-SHA</span><span class="o">:!</span><span class="n">DSS</span><span class="s1">&#39;;</span>
 
-  <span class="nv">ssl_prefer_server_ciphers</span> <span class="nv">on</span><span class="c1">;</span>
-    <span class="nv">ssl_certificate</span> <span class="o">/</span><span class="nv">etc</span><span class="o">/</span><span class="nv">letsencrypt</span><span class="o">/</span><span class="nv">live</span><span class="o">/</span><span class="nv">domain</span>.<span class="nv">com</span><span class="o">/</span><span class="nv">fullchain</span>.<span class="nv">pem</span><span class="c1">;</span>
-    <span class="nv">ssl_certificate_key</span> <span class="o">/</span><span class="nv">etc</span><span class="o">/</span><span class="nv">letsencrypt</span><span class="o">/</span><span class="nv">live</span><span class="o">/</span><span class="nv">domain</span>.<span class="nv">com</span><span class="o">/</span><span class="nv">privkey</span>.<span class="nv">pem</span><span class="c1">;</span>
-    <span class="nv">ssl_dhparam</span> <span class="o">/</span><span class="nv">etc</span><span class="o">/</span><span class="nv">nginx</span><span class="o">/</span><span class="nv">ssl</span><span class="o">/</span><span class="nv">dhparam</span>.<span class="nv">pem</span><span class="c1">;</span>
-    <span class="nv">ssl_stapling</span> <span class="nv">on</span><span class="c1">;</span>
-    <span class="nv">ssl_stapling_verify</span> <span class="nv">on</span><span class="c1">;</span>
-    <span class="nv">ssl_session_timeout</span> <span class="mi">1</span><span class="nv">d</span><span class="c1">;</span>
-    <span class="nv">ssl_session_cache</span> <span class="nv">shared</span>:<span class="nv">SSL</span>:<span class="mi">50</span><span class="nv">m</span><span class="c1">;</span>
-    <span class="nv">ssl_session_tickets</span> <span class="nv">off</span><span class="c1">;</span>
-    <span class="nv">resolver</span> <span class="mi">108</span>.<span class="mi">61</span>.<span class="mi">10</span>.<span class="mi">10</span><span class="c1">;</span>
-    <span class="nv">ssl_trusted_certificate</span> <span class="o">/</span><span class="nv">etc</span><span class="o">/</span><span class="nv">letsencrypt</span><span class="o">/</span><span class="nv">live</span><span class="o">/</span><span class="nv">domain</span>.<span class="nv">com</span><span class="o">/</span><span class="nv">root_ca_cert_plus_intermediates</span><span class="c1">;</span>
-   # <span class="nv">location</span> <span class="o">^~</span> <span class="o">/</span>.<span class="nv">well</span><span class="o">-</span><span class="nv">known</span><span class="o">/</span><span class="nv">acme</span><span class="o">-</span><span class="nv">challenge</span><span class="o">/</span> {
-   #     <span class="nv">alias</span> <span class="o">/</span><span class="nv">var</span><span class="o">/</span><span class="nv">www</span><span class="o">/</span><span class="nv">challenges</span><span class="o">/</span><span class="c1">;</span>
-   #     <span class="nv">try_files</span> $<span class="nv">uri</span> <span class="o">=</span><span class="mi">404</span><span class="c1">;</span>
-   # }
-   # <span class="k">if</span> <span class="ss">(</span>$<span class="nv">host</span> <span class="o">!=</span> <span class="s1">&#39;</span><span class="s">domain.com</span><span class="s1">&#39;</span><span class="ss">)</span>{
-#           <span class="nv">rewrite</span> <span class="s2">&quot;</span><span class="s">^/(.*)$</span><span class="s2">&quot;</span> <span class="nv">http</span>:<span class="o">//</span><span class="nv">domainc</span>.<span class="nv">om</span><span class="o">/</span><span class="mh">$1</span> <span class="nv">permanent</span><span class="c1">;</span>
-    #}
-#  <span class="nv">location</span> <span class="o">/</span> {
-#       <span class="nv">rewrite</span> <span class="o">^/</span><span class="ss">(</span>.<span class="o">*</span><span class="ss">)</span>$ <span class="nv">https</span>:<span class="o">//</span><span class="nv">domain</span>.<span class="nv">com</span><span class="o">/</span><span class="mh">$1</span> <span class="nv">permanent</span><span class="c1">;</span>
- #  }
+<span class="s1">  ssl_prefer_server_ciphers on;</span>
+<span class="s1">    ssl_certificate /etc/letsencrypt/live/domain.com/fullchain.pem;</span>
+<span class="s1">    ssl_certificate_key /etc/letsencrypt/live/domain.com/privkey.pem;</span>
+<span class="s1">    ssl_dhparam /etc/nginx/ssl/dhparam.pem;</span>
+<span class="s1">    ssl_stapling on;</span>
+<span class="s1">    ssl_stapling_verify on;</span>
+<span class="s1">    ssl_session_timeout 1d;</span>
+<span class="s1">    ssl_session_cache shared:SSL:50m;</span>
+<span class="s1">    ssl_session_tickets off;</span>
+<span class="s1">    resolver 108.61.10.10;</span>
+<span class="s1">    ssl_trusted_certificate /etc/letsencrypt/live/domain.com/root_ca_cert_plus_intermediates;</span>
+<span class="s1">   # location ^~ /.well-known/acme-challenge/ {</span>
+<span class="s1">   #     alias /var/www/challenges/;</span>
+<span class="s1">   #     try_files $uri =404;</span>
+<span class="s1">   # }</span>
+<span class="s1">   # if ($host != &#39;</span><span class="n">domain</span><span class="o">.</span><span class="n">com</span><span class="err">&#39;</span><span class="p">)</span><span class="err">{</span>
+<span class="err">#</span>           <span class="n">rewrite</span> <span class="s2">&quot;^/(.*)$&quot;</span> <span class="n">http</span><span class="o">://</span><span class="n">domainc</span><span class="o">.</span><span class="n">om</span><span class="o">/</span><span class="err">$</span><span class="mi">1</span> <span class="n">permanent</span><span class="p">;</span>
+    <span class="err">#</span><span class="p">}</span>
+<span class="err">#</span>  <span class="nt">location</span> <span class="o">/</span> <span class="p">{</span>
+<span class="err">#</span>       <span class="err">rewrite</span> <span class="err">^/(.*)$</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">domain</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="err">$</span><span class="mi">1</span> <span class="n">permanent</span><span class="p">;</span>
+ <span class="err">#</span>  <span class="p">}</span>
 
-#    <span class="nv">error_page</span> <span class="mi">404</span> <span class="o">=</span><span class="mi">301</span> <span class="nv">http</span>:<span class="o">//</span><span class="nv">domain</span>.<span class="nv">com</span><span class="c1">;</span>
-#    <span class="nv">location</span> <span class="o">/</span><span class="nv">index</span>.<span class="nv">php</span> {
-#        <span class="nv">rewrite</span> .<span class="o">*</span> <span class="o">/</span> <span class="nv">permanent</span><span class="c1">;</span>
-#   }
-#    <span class="nv">location</span> <span class="o">/</span> {
-#        <span class="nv">proxy_redirect</span> <span class="nv">off</span><span class="c1">;</span>
-#        <span class="nv">proxy_set_header</span> <span class="nv">Host</span> $<span class="nv">host</span><span class="c1">;</span>
-#        <span class="nv">proxy_set_header</span> <span class="nv">X</span><span class="o">-</span><span class="nv">Real</span><span class="o">-</span><span class="nv">IP</span> $<span class="nv">remote_addr</span><span class="c1">;</span>
-#        <span class="nv">proxy_set_header</span> <span class="nv">X</span><span class="o">-</span><span class="nv">Forwarded</span><span class="o">-</span><span class="k">For</span> $<span class="nv">proxy_add_x_forwarded_for</span><span class="c1">;</span>
-#        <span class="nv">proxy_pass</span> <span class="nv">http</span>:<span class="o">//</span><span class="mi">127</span>.<span class="mi">0</span>.<span class="mi">0</span>.<span class="mi">1</span>:<span class="mi">8888</span><span class="c1">;</span>
-#    }
- <span class="nv">location</span> <span class="o">~*</span> <span class="ss">(</span><span class="nv">robots</span>\.<span class="nv">txt</span><span class="o">|</span><span class="nv">favicon</span>\.<span class="nv">ico</span><span class="o">|</span><span class="nv">crossdomain</span>\.<span class="nv">xml</span><span class="o">|</span><span class="nv">google4c90d18e696bdcf8</span>\.<span class="nv">html</span><span class="o">|</span><span class="nv">BingSiteAuth</span>\.<span class="nv">xml</span><span class="ss">)</span>$ {
-        <span class="nv">root</span>             <span class="o">/</span><span class="nv">var</span><span class="o">/</span><span class="nv">www</span><span class="o">/</span><span class="nv">index</span>.<span class="nv">html</span><span class="c1">;</span>
-        <span class="nv">expires</span>          <span class="mi">1</span><span class="nv">d</span><span class="c1">;</span>
-    }
+<span class="err">#</span>    <span class="nt">error_page</span> <span class="nt">404</span> <span class="o">=</span><span class="nt">301</span> <span class="nt">http</span><span class="o">://</span><span class="nt">domain</span><span class="p">.</span><span class="nc">com</span><span class="o">;</span>
+<span class="err">#</span>    <span class="nt">location</span> <span class="o">/</span><span class="nt">index</span><span class="p">.</span><span class="nc">php</span> <span class="p">{</span>
+<span class="err">#</span>        <span class="err">rewrite</span> <span class="err">.*</span> <span class="err">/</span> <span class="err">permanent</span><span class="p">;</span>
+<span class="err">#</span>   <span class="p">}</span>
+<span class="err">#</span>    <span class="nt">location</span> <span class="o">/</span> <span class="p">{</span>
+<span class="err">#</span>        <span class="err">proxy_redirect</span> <span class="err">off</span><span class="p">;</span>
+<span class="err">#</span>        <span class="err">proxy_set_header</span> <span class="err">Host</span> <span class="err">$host</span><span class="p">;</span>
+<span class="err">#</span>        <span class="err">proxy_set_header</span> <span class="err">X-Real-IP</span> <span class="err">$remote_addr</span><span class="p">;</span>
+<span class="err">#</span>        <span class="err">proxy_set_header</span> <span class="err">X-Forwarded-For</span> <span class="err">$proxy_add_x_forwarded_for</span><span class="p">;</span>
+<span class="err">#</span>        <span class="err">proxy_pass</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0.0.1</span><span class="o">:</span><span class="mi">8888</span><span class="p">;</span>
+<span class="err">#</span>    <span class="p">}</span>
+ <span class="nt">location</span> <span class="o">~*</span> <span class="o">(</span><span class="nt">robots</span><span class="err">\</span><span class="p">.</span><span class="nc">txt</span><span class="o">|</span><span class="nt">favicon</span><span class="err">\</span><span class="p">.</span><span class="nc">ico</span><span class="o">|</span><span class="nt">crossdomain</span><span class="err">\</span><span class="p">.</span><span class="nc">xml</span><span class="o">|</span><span class="nt">google4c90d18e696bdcf8</span><span class="err">\</span><span class="p">.</span><span class="nc">html</span><span class="o">|</span><span class="nt">BingSiteAuth</span><span class="err">\</span><span class="p">.</span><span class="nc">xml</span><span class="o">)$</span> <span class="p">{</span>
+        <span class="err">root</span>             <span class="err">/var/www/index.html</span><span class="p">;</span>
+        <span class="err">expires</span>          <span class="err">1d</span><span class="p">;</span>
+    <span class="p">}</span>
 
-    <span class="nv">access_log</span> <span class="o">/</span><span class="nv">root</span><span class="o">/</span><span class="nv">abc</span>.<span class="nv">log</span><span class="c1">;</span>
-    <span class="nv">error_log</span> <span class="o">/</span><span class="nv">root</span><span class="o">/</span><span class="nv">err</span>.<span class="nv">log</span><span class="c1">;</span>
-}
-</pre></div>
+    <span class="nt">access_log</span> <span class="o">/</span><span class="nt">root</span><span class="o">/</span><span class="nt">abc</span><span class="p">.</span><span class="nc">log</span><span class="o">;</span>
+    <span class="nt">error_log</span> <span class="o">/</span><span class="nt">root</span><span class="o">/</span><span class="nt">err</span><span class="p">.</span><span class="nc">log</span><span class="o">;</span>
+<span class="err">}</span>
+</code></pre></div>
 
 
 <p>source:<a href="https://ksmx.me/letsencrypt-ssl-https/">https://ksmx.me/letsencrypt-ssl-https/</a></p>

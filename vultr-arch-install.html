@@ -37,7 +37,7 @@
 </footer><!-- /.post-info -->
     <div class="entry-content">
       
-      <div class="highlight"><pre><span></span><span class="n">分两个区</span><span class="err">：</span><span class="n">grub和其他</span><span class="w"></span>
+      <div class="highlight"><pre><span></span><code><span class="n">分两个区</span><span class="err">：</span><span class="n">grub和其他</span><span class="w"></span>
 <span class="n">gdisk</span><span class="w"> </span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">vda</span><span class="w">   </span>
 <span class="n">n</span><span class="w"></span>
 <span class="n">回车</span><span class="w"></span>
@@ -76,13 +76,13 @@
 
 <span class="o">[</span><span class="n">archlinuxfr</span><span class="o">]</span><span class="w"></span>
 <span class="n">Server</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nl">http</span><span class="p">:</span><span class="o">//</span><span class="n">repo</span><span class="p">.</span><span class="n">archlinux</span><span class="p">.</span><span class="n">fr</span><span class="o">/</span><span class="err">$</span><span class="n">arch</span><span class="w"></span>
-</pre></div>
+</code></pre></div>
 
 
 <p>====
 更新</p>
 <p>分区可以这样分:</p>
-<div class="highlight"><pre><span></span><span class="n">parted</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">sda</span>
+<div class="highlight"><pre><span></span><code><span class="n">parted</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">sda</span>
 <span class="p">(</span><span class="n">parted</span><span class="p">)</span> <span class="n">mklabel</span> <span class="n">msdos</span>
 <span class="p">(</span><span class="n">parted</span><span class="p">)</span> <span class="n">mkpart</span> <span class="k">primary</span> <span class="n">ext4</span> <span class="mi">1</span><span class="n">M</span> <span class="mi">120</span><span class="n">M</span>
 <span class="p">(</span><span class="n">parted</span><span class="p">)</span> <span class="k">set</span> <span class="mi">1</span> <span class="n">boot</span> <span class="k">on</span>
@@ -102,24 +102,24 @@
 
 <span class="o">#</span> <span class="err">退出</span><span class="p">(</span><span class="n">quit</span><span class="p">)</span>
 <span class="o">#</span> <span class="n">q</span> 
-</pre></div>
+</code></pre></div>
 
 
 <p>分区之后格式化:</p>
-<div class="highlight"><pre><span></span><span class="o">#</span> <span class="n">mkfs</span><span class="p">.</span><span class="n">ext4</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">sda1</span>
-<span class="o">#</span> <span class="n">mkfs</span><span class="p">.</span><span class="n">ext4</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">sda2</span>
-<span class="o">#</span> <span class="n">mkfs</span><span class="p">.</span><span class="n">ext4</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">sda4</span>
-<span class="o">#</span> <span class="n">mkswap</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">sda3</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err"># mkfs.ext4 /dev/sda1</span>
+<span class="err"># mkfs.ext4 /dev/sda2</span>
+<span class="err"># mkfs.ext4 /dev/sda4</span>
+<span class="err"># mkswap /dev/sda3</span>
+</code></pre></div>
 
 
 <p>挂载分区:</p>
-<div class="highlight"><pre><span></span><span class="o">#</span> <span class="n">mount</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">sda2</span> <span class="o">/</span><span class="n">mnt</span>
-<span class="o">#</span> <span class="n">mkdir</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="err">{</span><span class="n">boot</span><span class="p">,</span><span class="n">home</span><span class="err">}</span>
-<span class="o">#</span> <span class="n">mount</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">sda1</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">boot</span>
-<span class="o">#</span> <span class="n">mount</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">sda4</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">home</span>
-<span class="o">#</span> <span class="n">swapon</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">sda3</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err"># mount /dev/sda2 /mnt</span>
+<span class="err"># mkdir /mnt/{boot,home}</span>
+<span class="err"># mount /dev/sda1 /mnt/boot</span>
+<span class="err"># mount /dev/sda4 /mnt/home</span>
+<span class="err"># swapon /dev/sda3</span>
+</code></pre></div>
     </div><!-- /.entry-content -->
 
   </article>

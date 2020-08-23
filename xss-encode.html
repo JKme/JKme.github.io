@@ -42,13 +42,13 @@
 <li><a href="http://joychou.org/index.php/web/domxss-cause-by-html-auto-decode.html">http://joychou.org/index.php/web/domxss-cause-by-html-auto-decode.html</a></li>
 </ul>
 <p>在前面文章里面xss的编码提到过这个东西: </p>
-<div class="highlight"><pre><span></span><span class="n">Fun</span> <span class="n">fact</span> <span class="n">Decoding</span> <span class="k">Order</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="n">Fun</span> <span class="n">fact</span> <span class="n">Decoding</span> <span class="k">Order</span><span class="p">:</span>
 <span class="mi">1</span><span class="p">.</span> <span class="n">HTML</span> <span class="n">Decoding</span>
 <span class="mi">2</span><span class="p">.</span> <span class="n">URL</span> <span class="n">Decoding</span>
 <span class="mi">3</span><span class="p">.</span> <span class="n">Javascript</span> <span class="n">Decoding</span>
 
 <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">slides</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">mscasharjaved</span><span class="o">/</span><span class="n">deck</span><span class="o">-</span><span class="mi">13</span><span class="o">#/</span><span class="mi">169</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>在<strong>HTML标签里面</strong>，js之行之前，html形式的编码会自动decode。</p>
@@ -58,10 +58,10 @@
 <p>所以xss存在的步骤来说是这样的：
 <code>代码--&gt; 浏览器执行 --&gt; xss</code></p>
 <p>浏览器解释了其中的代码展现给人看。</p>
-<p>HTML的自动解码是在执行js代码之前，并且on*事件内可以执行js脚本，即 <strong>html解码之后才可以执行js</strong>。</p>
+<p>HTML的自动解码是在执行js代码之前，并且on<em>事件内可以执行js脚本，即 </em><em>html解码之后才可以执行js</em>*。</p>
 <p>如下的代码先htmldecode，然后执行js，最终造成DOM Xss：</p>
-<div class="highlight"><pre><span></span><span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span> <span class="na">onclick=</span><span class="s">&quot;x=&#39;&amp;lt;img src=@ onerror=alert(123) /&amp;gt;&#39;;document.write(x)&quot;</span><span class="nt">&gt;</span>xsstest2<span class="nt">&lt;/button&gt;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span> <span class="na">onclick=</span><span class="s">&quot;x=&#39;&amp;lt;img src=@ onerror=alert(123) /&amp;gt;&#39;;document.write(x)&quot;</span><span class="nt">&gt;</span>xsstest2<span class="nt">&lt;/button&gt;</span>
+</code></pre></div>
 
 
 <p>自动解码之后的代码如下：
@@ -69,7 +69,7 @@
 <p>OK到了上面的地方，如果这里想要试用URL编码，看这里
 <a href="https://www.leavesongs.com/PENETRATION/use-location-xss-bypass.html">https://www.leavesongs.com/PENETRATION/use-location-xss-bypass.html</a>利用location变形xss代码。</p>
 <p>加个例子（快把原文的摘抄完了）:</p>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span> 
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span> 
 <span class="nv">$para</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;category&#39;</span><span class="p">];</span>
 <span class="nv">$para</span> <span class="o">=</span> <span class="nb">htmlspecialchars</span><span class="p">(</span><span class="nv">$para</span><span class="p">,</span> <span class="nx">ENT_QUOTES</span><span class="p">);</span> <span class="c1">// 将单引号进行HTML编码</span>
 <span class="c1">//$para = urlencode($para);</span>
@@ -77,7 +77,7 @@
 <span class="cp">?&gt;</span>
 
 <span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span> <span class="na">onclick=</span><span class="s">&quot;window.location.href=&#39;</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nv">$url_herf</span><span class="p">;</span> <span class="cp">?&gt;</span><span class="s">&#39;&quot;</span><span class="nt">&gt;</span>click<span class="nt">&lt;/button&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>POC:

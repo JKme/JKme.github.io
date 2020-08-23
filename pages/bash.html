@@ -30,7 +30,7 @@
 6
 7
 8
-9</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+9</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
 <span class="nv">NUM</span><span class="o">=</span><span class="sb">`</span>ps -ef<span class="p">|</span>grep spider<span class="p">|</span>grep -v grep<span class="p">|</span>wc -l<span class="sb">`</span>
 <span class="nb">echo</span> <span class="nv">$NUM</span>
 <span class="k">if</span> <span class="o">[</span> <span class="nv">$NUM</span> -gt <span class="m">4</span> <span class="o">]</span>
@@ -39,7 +39,7 @@
 <span class="k">else</span>
     <span class="nb">echo</span> <span class="s2">&quot;hehe&quot;</span>
 <span class="k">fi</span>
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
@@ -52,7 +52,7 @@
  8
  9
 10
-11</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+11</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
 
 <span class="nv">DATE</span><span class="o">=</span><span class="sb">`</span>date +%Y.%m.%d --date<span class="o">=</span><span class="s1">&#39;7 days ago&#39;</span><span class="sb">`</span>
 <span class="nv">MDATE</span><span class="o">=</span><span class="sb">`</span>date +%Y.%m.%d --date<span class="o">=</span><span class="s1">&#39;7 days ago&#39;</span><span class="sb">`</span>
@@ -63,21 +63,21 @@ curl -u user:password  -XDELETE <span class="s2">&quot;http://x.x.x.x:9200/.moni
 <span class="k">then</span>
   curl -XDELETE <span class="s2">&quot;http://x.x.x.x:9200/logstash-*&quot;</span> -u user:password
 <span class="k">fi</span>
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
-<div class="highlight"><pre><span></span>这里使用<span class="nv">curl</span>发送的<span class="nv">body</span>如果有变量有个坑点，需要单引号和双引号加一起
-#<span class="o">!/</span><span class="nv">bin</span><span class="o">/</span><span class="nv">bash</span>
-<span class="nv">body</span><span class="o">=</span>`<span class="nv">curl</span> <span class="s2">&quot;</span><span class="s">https://pwnhub.cn/api/hackgame/publicgame/list/?limit=10</span><span class="s2">&quot;</span><span class="o">|</span><span class="nv">jq</span> <span class="s1">&#39;</span><span class="s">.data.results[0]|{name,start_time,end_time,tag,status}</span><span class="s1">&#39;</span>`
-<span class="nv">name</span><span class="o">=</span>`<span class="nv">echo</span> <span class="mh">$b</span><span class="nv">ody</span><span class="o">|</span><span class="nv">jq</span> <span class="o">-</span><span class="nv">r</span> .<span class="nv">name</span>`
-<span class="nv">start_time</span><span class="o">=</span>`<span class="nv">echo</span> <span class="mh">$b</span><span class="nv">ody</span><span class="o">|</span><span class="nv">jq</span> <span class="o">-</span><span class="nv">r</span> .<span class="nv">start_time</span>`
-<span class="nv">end_time</span><span class="o">=</span>`<span class="nv">echo</span> <span class="mh">$b</span><span class="nv">ody</span><span class="o">|</span><span class="nv">jq</span> <span class="o">-</span><span class="nv">r</span> .<span class="nv">end_time</span>`
-<span class="nv">tag</span><span class="o">=</span>`<span class="nv">echo</span> <span class="mh">$b</span><span class="nv">ody</span><span class="o">|</span><span class="nv">jq</span> <span class="o">-</span><span class="nv">r</span> .<span class="nv">tag</span>[<span class="mi">0</span>]`
-<span class="nv">status</span><span class="o">=</span>`<span class="nv">echo</span> <span class="mh">$b</span><span class="nv">ody</span><span class="o">|</span><span class="nv">jq</span> <span class="o">-</span><span class="nv">r</span> .<span class="nv">status</span>`
-<span class="k">if</span> [ $<span class="nv">tag</span> <span class="o">!=</span> <span class="s2">&quot;</span><span class="s">CRYPTO</span><span class="s2">&quot;</span> ]<span class="c1">;then</span>
-    <span class="nv">curl</span> <span class="o">-</span><span class="nv">X</span> <span class="nv">POST</span> <span class="o">-</span><span class="nv">H</span> <span class="s2">&quot;</span><span class="s">Content-Type: application/json</span><span class="s2">&quot;</span> <span class="o">-</span><span class="nv">d</span> <span class="s1">&#39;</span><span class="s">{&quot;text&quot;:&quot;name: </span><span class="s1">&#39;</span>$<span class="nv">name</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s">start_time:</span><span class="s1">&#39;</span>$<span class="nv">start_time</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s">end_time:</span><span class="s1">&#39;</span><span class="mh">$e</span><span class="nv">nd_time</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s">tag:</span><span class="s1">&#39;</span>$<span class="nv">tag</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s">status:</span><span class="s1">&#39;</span>$<span class="nv">status</span><span class="s1">&#39;</span><span class="s">&quot;}</span><span class="s1">&#39;</span> <span class="nv">https</span>:<span class="o">//</span><span class="nv">hook</span>.<span class="nv">bearychat</span>.<span class="nv">com</span><span class="o">/=</span><span class="nv">bwBYn</span><span class="o">/</span><span class="nv">incoming</span><span class="o">/</span><span class="nv">xxxxx</span>
-<span class="nv">fi</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">这里使用curl发送的body如果有变量有个坑点，需要单引号和双引号加一起</span>
+<span class="err">#!/bin/bash</span>
+<span class="err">body=`curl &quot;https://pwnhub.cn/api/hackgame/publicgame/list/?limit=10&quot;|jq &#39;.data.results[0]|{name,start_time,end_time,tag,status}&#39;`</span>
+<span class="err">name=`echo $body|jq -r .name`</span>
+<span class="err">start_time=`echo $body|jq -r .start_time`</span>
+<span class="err">end_time=`echo $body|jq -r .end_time`</span>
+<span class="err">tag=`echo $body|jq -r .tag[0]`</span>
+<span class="err">status=`echo $body|jq -r .status`</span>
+<span class="err">if [ $tag != &quot;CRYPTO&quot; ];then</span>
+<span class="err">    curl -X POST -H &quot;Content-Type: application/json&quot; -d &#39;{&quot;text&quot;:&quot;name: &#39;$name&#39;\nstart_time:&#39;$start_time&#39;\nend_time:&#39;$end_time&#39;\ntag:&#39;$tag&#39;\nstatus:&#39;$status&#39;&quot;}&#39; https://hook.bearychat.com/=bwBYn/incoming/xxxxx</span>
+<span class="err">fi</span>
+</code></pre></div>
 </section>
         <section id="extras" class="body">
         </section><!-- /#extras -->

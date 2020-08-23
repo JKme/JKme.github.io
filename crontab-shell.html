@@ -42,10 +42,10 @@
 <p>如果没有运行，以ubuntu为例子需要：</p>
 <p><code>service cron start</code> 开启cron服务</p>
 <p>用systemctl也行</p>
-<div class="highlight"><pre><span></span><span class="n">systemctl</span> <span class="k">start</span> <span class="n">cron</span>  <span class="err">开启</span><span class="n">cron</span>
-<span class="n">systemctl</span> <span class="n">enable</span> <span class="n">cron</span> <span class="err">开机运行</span>
-<span class="n">systemctl</span> <span class="n">status</span> <span class="n">cron</span>  <span class="err">查看状态</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">systemctl start cron  开启cron</span>
+<span class="err">systemctl enable cron 开机运行</span>
+<span class="err">systemctl status cron  查看状态</span>
+</code></pre></div>
 
 
 <p>不知道为什么python的反弹脚本反弹之后，当前shell的环境变量是<code>/usr/bin:/bin</code>，先设置下环境变量</p>

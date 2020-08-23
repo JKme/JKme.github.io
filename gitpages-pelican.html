@@ -47,49 +47,49 @@
 <p><code>pip install virtualenv</code></p>
 <p>把<code>export PIP_REQUIRE_VIRTUALENV=true</code>，添加到<code>~/.zshrc</code>或者<code>~/.bashrc</code></p>
 <p>初始化virtualenv：</p>
-<div class="highlight"><pre><span></span><span class="nb">cd</span> JKme.github.io
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span> JKme.github.io
 mkdir env
 virtualenv env
 <span class="nb">source</span> ~/.zshrc
 <span class="nb">source</span> env/bin/activate
 <span class="nb">echo</span> env/ &gt;&gt; .gitignore //忽略virtualenv环境变量
-</pre></div>
+</code></pre></div>
 
 
 <h2>0x02</h2>
 <p>新建一个分支，在这个分支上面操作content里面的内容和pelican配置文件：</p>
 <p><code>git checkout -b source</code></p>
 <p>安装pelican和Markdown，并开始pelican配置过程：</p>
-<div class="highlight"><pre><span></span>pip install pelican Markdown
+<div class="highlight"><pre><span></span><code>pip install pelican Markdown
 pelican-quickstart
-</pre></div>
+</code></pre></div>
 
 
 <h2>0x03</h2>
 <p>现在测试一下可以写first.md：</p>
-<div class="highlight"><pre><span></span><span class="nv">Title</span>: <span class="nv">Hello</span>
-<span class="nv">Date</span>: <span class="mi">2016</span><span class="o">-</span><span class="mi">3</span><span class="o">-</span><span class="mi">29</span>
+<div class="highlight"><pre><span></span><code><span class="n">Title</span><span class="o">:</span> <span class="n">Hello</span>
+<span class="n">Date</span><span class="o">:</span> <span class="mi">2016</span><span class="o">-</span><span class="mi">3</span><span class="o">-</span><span class="mi">29</span>
 
-<span class="k">Do</span> <span class="nv">the</span> <span class="nv">right</span> <span class="nv">thing</span>,
-<span class="k">Do</span> <span class="nv">the</span> <span class="nv">right</span> <span class="nv">thing</span>.
-</pre></div>
+<span class="n">Do</span> <span class="n">the</span> <span class="n">right</span> <span class="n">thing</span><span class="o">,</span>
+<span class="n">Do</span> <span class="n">the</span> <span class="n">right</span> <span class="n">thing</span><span class="o">.</span>
+</code></pre></div>
 
 
 <p>然后可以输出html：<code>make html</code></p>
 <h2>0x04</h2>
 <p>上传到github，使用gh-pages</p>
-<div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">ghp</span><span class="o">-</span><span class="kn">import</span>
+<div class="highlight"><pre><span></span><code><span class="n">pip</span> <span class="n">install</span> <span class="n">ghp</span><span class="o">-</span><span class="kn">import</span>
 <span class="nn">git</span> <span class="nn">branch</span> <span class="nn">gh</span><span class="o">-</span><span class="n">pages</span>
 <span class="n">ghp</span><span class="o">-</span><span class="kn">import</span> <span class="nn">output</span>
 <span class="n">git</span> <span class="n">checkout</span> <span class="n">master</span>
 <span class="n">git</span> <span class="n">merge</span> <span class="n">gh</span><span class="o">-</span><span class="n">pages</span>
 <span class="n">git</span> <span class="n">push</span> <span class="o">--</span><span class="nb">all</span>
-</pre></div>
+</code></pre></div>
 
 
 <h2>Tips</h2>
 <p>如果再次写文章需要先切换到source，总的来说是这么个顺序：</p>
-<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
 <span class="nv">DATE</span><span class="o">=</span><span class="sb">`</span>date +%Y-%m-%d:%H:%M:%S<span class="sb">`</span>
 <span class="nb">cd</span> /home/someone/code/JKme.github.io
 <span class="nb">source</span> env/bin/active
@@ -102,14 +102,14 @@ git checkout master
 git merge gh-pages --no-commit
 git commit -m <span class="nv">$DATE</span> 
 git push --all
-</pre></div>
+</code></pre></div>
 
 
 <p>先切换到source，初始化虚拟环境，然后再编辑文章，如果本来系统安装了pelican，而没有初始化虚拟环境，那么可能会发生其他不可预期的后果。以上脚本也可以这样子，修改当前source分支下的<code>Makefile</code>文件，在github选项里面，注释掉原来的内容，前面变量添加上一句DATE=<code>date +%Y-%m-%d:%H:%M:%S</code>（我使用这个date是用时间来区分每次commit的信息），然后再在github添加以下的内容:</p>
-<div class="highlight"><pre><span></span>github: publish
+<div class="highlight"><pre><span></span><code>github: publish
     <span class="k">$(</span>PELICAN<span class="k">)</span> <span class="k">$(</span>INPUTDIR<span class="k">)</span> -o <span class="k">$(</span>OUTPUTDIR<span class="k">)</span> -s <span class="k">$(</span>CONFFILE<span class="k">)</span> <span class="k">$(</span>PELICANOPTS<span class="k">)</span> <span class="o">&amp;&amp;</span> git add . <span class="o">&amp;&amp;</span> git commit -m <span class="nv">$DATE</span> <span class="o">&amp;&amp;</span> ghp-import output
     git checkout master <span class="o">&amp;&amp;</span> git merge gh-pages --no-commit <span class="o">&amp;&amp;</span> git commit -m <span class="nv">$DATE</span> <span class="o">&amp;&amp;</span> git push --all
-</pre></div>
+</code></pre></div>
 
 
 <p>这样子写完文章之后直接在source的分支下<code>make github</code>即可推送到GitPages。</p>

