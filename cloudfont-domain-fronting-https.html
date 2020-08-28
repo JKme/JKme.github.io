@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>Domain Fronting隐藏HTTPS</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Study The World </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/cloudfont-domain-fronting-https.html" rel="bookmark"
+           title="Permalink to Domain Fronting隐藏HTTPS">Domain Fronting隐藏HTTPS</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2020-08-28T00:00:00+02:00">
+                <a href='#'>08/28/2020 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>记录一下当使用<code>Domain Fronting</code>中使用<code>https</code>来上线时候的坑，因为查了半圈没有找到类似的资料，为啥非要https呢，因为<code>node32</code>对http的流量很敏感。</p>
+<h3>目标</h3>
+<ol>
+<li>使用<code>Windows/beacon_https/reverse_https</code>作为上线的payload</li>
+<li>AWS的<code>Cloudfront</code>作为前置域名</li>
+</ol>
+<h4>准备工作</h4>
+<div class="highlight"><pre><span></span><code><span class="err">域名</span><span class="o">:</span> <span class="n">example</span><span class="o">.</span><span class="na">com</span>
+<span class="n">VPS</span><span class="o">(</span><span class="n">Centos</span><span class="o">)</span>
+<span class="n">cloudflare</span><span class="o">(</span><span class="err">只作域名解析</span><span class="o">,</span><span class="err">不添加任何其他功能，不加</span><span class="n">CDN</span><span class="err">，不加</span><span class="n">HTTPS</span><span class="o">)</span>
+</code></pre></div>
+
+
+<h4>HTTPS的连通性</h4>
+<p>安装的apache是测试连通性，除此之外没有任何用处。</p>
+<div class="highlight"><pre><span></span><code><span class="err">yum install httpd</span>
+<span class="err">systemctl start httpd</span>
+</code></pre></div>
+
+
+<h5>增加apache配置文件</h5>
+<div class="highlight"><pre><span></span><code>#/etc/httpd/conf.d/vhost.conf
+<span class="nt">&lt;VirtualHost</span> <span class="err">*:80</span><span class="nt">&gt;</span>
+   DocumentRoot /var/www/html
+   ServerName example.com
+
+
+RewriteEngine on
+RewriteCond %{SERVER_NAME} =example.com
+RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+<span class="nt">&lt;/VirtualHost&gt;</span>
+</code></pre></div>
+
+
+<h5>设置https</h5>
+<p>运行脚本<code>HTTPsC2DoneRight.sh</code>生成对应需要的文件，比如<code>letsencrypt</code>、<code>amazon.profile</code>等文件，这个时候https会自动设置成功，测试如下:</p>
+<div class="highlight"><pre><span></span><code><span class="err">curl http://example.com</span>
+<span class="err">curl https://example.com</span>
+</code></pre></div>
+
+
+<h3>设置CloudFront</h3>
+<p>标红的点特别注意，要改成这个样子，否则测试失败。更改之后发布，测试此时的<code>CloudFront</code>是否生效:</p>
+<div class="highlight"><pre><span></span><code><span class="err">curl https://&lt;example&gt;.cloudfront.net</span>
+<span class="err">curl http://&lt;example&gt;.cloudfront.net</span>
+</code></pre></div>
+
+
+<p><img alt="" src="./images/WX20200828-01.png"></p>
+<h3>设置Profile</h3>
+<p>生成Profile，上面生成的<code>amazon.profile</code>测试上线失败。</p>
+<div class="highlight"><pre><span></span><code><span class="err">cd &amp;&amp; git clone https://github.com/bluscreenofjeff/Malleable-C2-Randomizer &amp;&amp; cd Malleable-C2-Randomizer</span>
+<span class="err">python malleable-c2-randomizer.py -profile Sample\ Templates/Pandora.profile -notest</span>
+<span class="err">cp pandora_&lt;random&gt;.profile /root/cobaltstrike/httpsProfile/ </span>
+</code></pre></div>
+
+
+<h4>修改profile</h4>
+<ol>
+<li>把amazon.profile的最后四行设置https的添加到pandora_<random>.profile里面。</li>
+<li>修改<code>pandora_&lt;random.profile</code>里面的<code>Host</code>，改为aws申请下来的加速域名。</li>
+</ol>
+<h3>设置CS</h3>
+<div class="highlight"><pre><span></span><code><span class="err">systemctl stop httpd  //关闭apache</span>
+<span class="err">./teamserver &lt;IP&gt; &lt;Pass&gt; &lt;path to pandora profile&gt;</span>
+</code></pre></div>
+
+
+<p>新建一个listener:</p>
+<p><img alt="" src="./images/WX20200828-02.png"></p>
+<p>查看CS的<code>WEBlog</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="err">curl https://cloudfront.net/Hello</span>
+</code></pre></div>
+
+
+<p>在weblog里面查看到对应的请求即设置成功。
+<img alt="" src="./images/WX20200828-03.png"></p>
+<ul>
+<li><a href="https://www.blackhillsinfosec.com/using-cloudfront-to-relay-cobalt-strike-traffic/">https://www.blackhillsinfosec.com/using-cloudfront-to-relay-cobalt-strike-traffic/</a></li>
+</ul>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>
