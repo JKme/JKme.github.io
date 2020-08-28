@@ -98,8 +98,10 @@ curl https://cloudfront.net/Hello
 ```
 
 在weblog里面查看到对应的请求即设置成功。
+
 ![](./images/WX20200828-03.png)
 
 
+###参考资料
  
 * <https://www.blackhillsinfosec.com/using-cloudfront-to-relay-cobalt-strike-traffic/>
