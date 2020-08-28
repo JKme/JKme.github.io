@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>后门隐藏-Windows</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Study The World </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/hide-your-backdoor-in-windows.html" rel="bookmark"
+           title="Permalink to 后门隐藏-Windows">后门隐藏-Windows</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2020-08-28T00:00:00+02:00">
+                <a href='#'>08/28/2020 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>分为三个部分:</p>
+<ol>
+<li>shellcode的分离免杀</li>
+<li>C2服务器的隐藏</li>
+<li>Windows后门的设置</li>
+</ol>
+<h3>shellcode的分离免杀</h3>
+<p>shellcode的分离免杀有很多种，这里把每个模块拿出来就是如下的几个:</p>
+<ol>
+<li>通信: <code>socket</code>,<code>http</code></li>
+<li><code>shellcode</code>的执行方式</li>
+<li><code>shellcode</code>的流量</li>
+<li>远程服务器的隐藏</li>
+</ol>
+<p>除去第二种方式有很多种可以执行shellcode的，其他三种最好的解决方案是实用<code>Domain Fronting</code>隐藏服务器，AES动态加密解密运行shellcode。这样子既隐藏了服务器，又避免shellcode的明文流量被探测到。当然上线之后的操作被探测不在被讨论的范围之内。</p>
+<p>在参考资料里面,<code>uknownsec</code>已经把主要的代码放出来了。只需要拿出来拼凑一下就可以食用。</p>
+<p>其中服务端出去python的功能之外，可以给自己加上一个<code>slack</code>机器人的通知，这样子上线的时候就有通知。</p>
+<h3>C2服务器的隐藏</h3>
+<p>见上一篇的<code>Domain Fronting</code>隐藏HTTPS。</p>
+<p>这个C2的隐藏如果更完美一点的话，可以加上redirector。但是我想了一下，开启CS的时间就是控制利用的那一小段，这里就不折腾了。</p>
+<h3>Windows后门的设置</h3>
+<p>除去最常见的计划任务，剩下的是一堆注册表，如果存在360之类的话，是比较难处理的。其中有一个<code>WMI</code>，很奇怪各个杀软的拦截都不是太积极。</p>
+<p>在实际测试中，如果留的后门是服务器，那么后门必须是定时启动，如果是个人电脑，那么是在特定的时间内启动。注意这个时间点的设置。</p>
+<p>在Windows上面，最后留下2个以上的后门。一个exe，一个dll劫持，dll劫持我在github上面放了两个方式，推荐使用spooler，因为它默认权限最高，每个电脑都是开机启动。</p>
+<h3>云查杀的绕过</h3>
+<p>之前在测试<code>Windows Defender</code>的时候，本来是免杀的exe，我跑两三次之后就被杀了。百思不得其解，后来发现是云上传之后被查杀了，观察一下上线云查杀的机器，可以很容易的绕过。</p>
+<p>再往后一点，考虑一下如果每个机器上线都是你动手来做的话，那么可以考虑写一个程序，为每一个被放后门的电脑生成一个唯一的hash值，这个hash值存放在shellcode加载服务器上面，shellcode执行之前先检查是否在数据库里面，这样是不是更完美的方式?</p>
+<h4>End</h4>
+<p>所以终极的方式就是:</p>
+<p><code>AES</code>动态加解密 + <code>Domain Fronting</code>隐藏存放<code>shellcode</code> + <code>Domain Fronting</code>隐藏<code>C2</code> + <code>shellcode</code>免杀的执行方式</p>
+<p>参考资料:</p>
+<ul>
+<li><a href="https://uknowsec.cn/posts/notes/ShellCode%E8%BF%9C%E7%A8%8B%E5%8A%A0%E8%BD%BD%E5%99%A8%E6%94%B9%E9%80%A0%E8%AE%A1%E5%88%92.html">https://uknowsec.cn/posts/notes/ShellCode%E8%BF%9C%E7%A8%8B%E5%8A%A0%E8%BD%BD%E5%99%A8%E6%94%B9%E9%80%A0%E8%AE%A1%E5%88%92.html</a></li>
+</ul>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>
