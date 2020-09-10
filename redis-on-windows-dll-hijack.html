@@ -74,6 +74,19 @@
 <p>在实际测试的时候，运行脚本报错，所以修改了一部分代码: <a href="https://github.com/JKme/sb_kiddie-/tree/master/dll_hijack">https://github.com/JKme/sb_kiddie-/tree/master/dll_hijack</a></p>
 <p>把生成的dll重命名为<code>dghelp.dll</code>放在redis的安装目录，然后执行<code>bgsave</code>或者<code>redis-server</code>启动的时候会执行shellcode。</p>
 <p><img alt="" src="./images/WX20200910.png"></p>
+<h3>测试结果</h3>
+<p>在实际的渗透测试中，使用<a href="https://github.com/r35tart/RedisWriteFile">RedisWriteFile</a>写入文件的时候，因为使用的是主从复制，会把redis里面的数据清空，这样攻击之后可能会被发现，所以可以这样做:</p>
+<h5>备份redis</h5>
+<ul>
+<li><a href="https://github.com/yannh/redis-dump-go">redis-dump-go</a></li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nl">备份</span><span class="p">:</span><span class="w"></span>
+<span class="p">.</span><span class="o">/</span><span class="n">redis</span><span class="o">-</span><span class="k">dump</span><span class="o">-</span><span class="k">go</span><span class="w"> </span><span class="o">-</span><span class="k">host</span><span class="w"> </span><span class="mf">192.168.2.233</span><span class="w"> </span><span class="o">-</span><span class="k">output</span><span class="w"> </span><span class="n">commands</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">redis</span><span class="p">.</span><span class="k">dump</span><span class="w"></span>
+
+
+<span class="nl">恢复</span><span class="p">:</span><span class="w"></span>
+<span class="n">redis</span><span class="o">-</span><span class="n">cli</span><span class="w"> </span><span class="o">-</span><span class="n">h</span><span class="w"> </span><span class="mf">192.168.2.233</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">redis</span><span class="p">.</span><span class="k">dump</span><span class="w"></span>
+</code></pre></div>
     </div><!-- /.entry-content -->
 
   </article>
