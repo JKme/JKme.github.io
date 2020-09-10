@@ -14,7 +14,6 @@ Redis-x64-3.2.100
 Win10
 ```
 
-
 ###可劫持的DLL
 
 按照文章中使用`Process Monitor`，在使用`redis-cli`操作的时候，观察缺失的DLL。在`Process Monitor Filter`里面设置`Image Path`的值为`redis-server.exe`的路径，比如我的是`C:\Program Files\Redis\redis-server.exe`，`Path`设置为`ends with dll`。设置好之后，使用`redis-cli`连接，执行`bgsave`命令，然后观察缺失的dll，有如下:
