@@ -87,6 +87,15 @@
 <span class="nl">恢复</span><span class="p">:</span><span class="w"></span>
 <span class="n">redis</span><span class="o">-</span><span class="n">cli</span><span class="w"> </span><span class="o">-</span><span class="n">h</span><span class="w"> </span><span class="mf">192.168.2.233</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">redis</span><span class="p">.</span><span class="k">dump</span><span class="w"></span>
 </code></pre></div>
+
+
+<h5>攻击步骤</h5>
+<ol>
+<li>准备好dll，使用<a href="https://github.com/r35tart/RedisWriteFile">RedisWriteFile</a>写入</li>
+<li>备份Redis: <code>./redis-dump-go -host 192.168.2.233 -output commands &gt; redis.dump</code></li>
+<li>执行<code>bgsave</code>,获取Shell</li>
+<li>恢复Redis: <code>redis-cli -h 192.168.2.233 &lt; redis.dump</code></li>
+</ol>
     </div><!-- /.entry-content -->
 
   </article>
