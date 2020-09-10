@@ -74,3 +74,10 @@ C:\Windows\System32\symsrv.dll
 恢复:
 redis-cli -h 192.168.2.233 < redis.dump
 ```
+
+##### 攻击步骤
+
+1. 准备好dll，使用[RedisWriteFile](https://github.com/r35tart/RedisWriteFile)写入
+2. 备份Redis: `./redis-dump-go -host 192.168.2.233 -output commands > redis.dump`
+3. 执行`bgsave`,获取Shell
+4. 恢复Redis: `redis-cli -h 192.168.2.233 < redis.dump`
