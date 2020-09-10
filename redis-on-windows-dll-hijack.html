@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <meta charset="utf-8" />
+        <title>Redis On Windows -- Dll Hijack</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">Study The World </a></h1>
+                <nav><ul>
+                    <li><a href="/category/pentest.html">Pentest</a></li>
+                    <li><a href="/category/learning.html">Learning</a></li>
+                    <li><a href="/category/python.html">Python</a></li>
+                    <li><a href="/pages/tips.html">Tips</a></li>
+                    <li><a href="/pages/bash.html">Bash</a></li>
+                    <li><a href="/pages/question.html">Question</a></li>
+                    <li><a href="/pages/reverse-shell.html">各种姿势的反弹shell</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/redis-on-windows-dll-hijack.html" rel="bookmark"
+           title="Permalink to Redis On Windows -- Dll Hijack">Redis On Windows -- Dll Hijack</a></h1>
+    </header>
+<footer class="post-info">
+        <span class="published" title="2020-09-10T00:00:00+02:00">
+                <a href='#'>09/10/2020 </a>
+                <a href="/category/pentest.html">Pentest</a>
+        </span>
+
+
+
+</footer><!-- /.post-info -->
+    <div class="entry-content">
+      
+      <p>本文测试了Redis在Windows平台下的dll劫持，主要参考文章是先知的秋水师傅: <a href="https://xz.aliyun.com/t/8153">Redis on Windows 出网利用探索</a></p>
+<h3>测试环境</h3>
+<div class="highlight"><pre><span></span><code><span class="err">Redis-x64-3.2.100</span>
+<span class="err">Win10</span>
+</code></pre></div>
+
+
+<h3>可劫持的DLL</h3>
+<p>按照文章中使用<code>Process Monitor</code>，在使用<code>redis-cli</code>操作的时候，观察缺失的DLL。在<code>Process Monitor Filter</code>里面设置<code>Image Path</code>的值为<code>redis-server.exe</code>的路径，比如我的是<code>C:\Program Files\Redis\redis-server.exe</code>，<code>Path</code>设置为<code>ends with dll</code>。设置好之后，使用<code>redis-cli</code>连接，执行<code>bgsave</code>命令，然后观察缺失的dll，有如下:</p>
+<div class="highlight"><pre><span></span><code><span class="err">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL</span>
+<span class="c">C:\Program Files\Redis\dbghelp.dll</span>
+<span class="c">C:\Windows\System32\edgegdi.dll</span>
+<span class="c">C:\Windows\System32\symsrv.dll</span>
+</code></pre></div>
+
+
+<p>当<code>redis-server.exe</code>启动的时候，有如下:</p>
+<div class="highlight"><pre><span></span><code><span class="c">C:\Windows\System32\edgegdi.dll</span>
+<span class="c">C:\Windows\System32\symsrv.dll</span>
+<span class="c">C:\Program Files\Redis\CRYPTBASE.DLL</span>
+</code></pre></div>
+
+
+<p>执行<code>BGREWRITEAOF</code>的时候，有如下:</p>
+<div class="highlight"><pre><span></span><code><span class="err">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL</span>
+<span class="c">C:\Program Files\Redis\dbghelp.dll</span>
+<span class="c">C:\Windows\System32\edgegdi.dll</span>
+<span class="c">C:\Windows\System32\symsrv.dll</span>
+</code></pre></div>
+
+
+<p>最终在Redis目录下可以利用的有两个:<code>cryptbase.dll</code>和<code>dbghelp.dll</code>。如果是权限持久性控制，两个都可以，这里我们选择主动攻击，所以使用<code>dbghelp.dll</code>。</p>
+<h3>DLLHijacker</h3>
+<p>使用kiwings师傅的<a href="https://github.com/kiwings/DLLHijacker">DLLHijacker</a>，因为在系统里面是存在<code>C:\Windows\System32\dbghelp.dll</code>的，所以，复制出来之后，运行脚本，生成DLL工程项目。修改里面的shellcode和dbghelp.dll的绝对路径。</p>
+<p>在实际测试的时候，运行脚本报错，所以修改了一部分代码: <a href="https://github.com/JKme/sb_kiddie-/tree/master/dll_hijack">https://github.com/JKme/sb_kiddie-/tree/master/dll_hijack</a></p>
+<p>把生成的dll重命名为<code>dghelp.dll</code>放在redis的安装目录，然后执行<code>bgsave</code>或者<code>redis-server</code>启动的时候会执行shellcode。</p>
+<p><img alt="" src="./images/WX20200910.png"></p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+
+</body>
+</html>
