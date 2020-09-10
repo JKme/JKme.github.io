@@ -58,3 +58,19 @@ C:\Windows\System32\symsrv.dll
 ![](./images/WX20200910.png)
 
 
+###测试结果
+
+在实际的渗透测试中，使用[RedisWriteFile](https://github.com/r35tart/RedisWriteFile)写入文件的时候，因为使用的是主从复制，会把redis里面的数据清空，这样攻击之后可能会被发现，所以可以这样做:
+
+##### 备份redis
+
+* [redis-dump-go](https://github.com/yannh/redis-dump-go)
+
+```
+备份:
+./redis-dump-go -host 192.168.2.233 -output commands > redis.dump
+
+
+恢复:
+redis-cli -h 192.168.2.233 < redis.dump
+```
