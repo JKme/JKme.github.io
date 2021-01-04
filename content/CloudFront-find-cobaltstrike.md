@@ -8,7 +8,7 @@ Date: 2021-1-4
 
 在github上面出现一个仓库分析`CobaltStrike`监听端口的特征：[https://github.com/Te-k/cobaltstrike](https://github.com/Te-k/cobaltstrike)。CS在监听Stager端口的时候，会通过URI下载Payload执行，这个URI生成的规则生成：
 
-![](https://mmbiz.qpic.cn/sz_mmbiz_png/R2O64T36XGt0smuwgia2oXdDHCYicpy16G6z6tFtBj0DiaKS1FmRQ8wVUGUOxzdjrOuXN63wjreWx4RicyfyUzlDzQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
+![](./images/360.png)
 	
 ### DomainFront
 
