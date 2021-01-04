@@ -51,6 +51,18 @@ curl http://example.com
 curl https://example.com
 ```
 
+这时候会生成https通信需要的证书文件，一般是通过自签名Letsencrypt申请下来的：
+
+```
+./letsencrypt-auto certonly --standalone -d 域名 --email 邮箱（可匿名）
+
+openssl pkcs12 -export -in fullchain.pem -inkey privkey.pem -out pkcs.p12 -name 域名 -passout pass:ABcd123456
+
+keytool -importkeystore -deststorepass ABcd123456 -destkeypass ABcd123456 -destkeystore keystore.store -srckeystore pkcs.p12 -srcstoretype PKCS12 -srcstorepass ABcd123456 -alias 域名
+
+```
+生成的keystore是后面设置CS配置文件的时候使用。
+
 ###设置CloudFront
 
 标红的点特别注意，要改成这个样子，否则测试失败。更改之后发布，测试此时的`CloudFront`是否生效:
@@ -79,6 +91,17 @@ cp pandora_<random>.profile /root/cobaltstrike/httpsProfile/
 
 1. 把amazon.profile的最后四行设置https的添加到pandora_<random>.profile里面。
 2. 修改`pandora_<random.profile`里面的`Host`，改为aws申请下来的加速域名。
+3. 在profile文件最后新增配置：
+
+```
+https-certificate {
+set keystore "keystore.store";
+set password "1234565";
+}
+http-config {
+	set trust_x_forwarded_for "true";
+}
+```
 
 ###设置CS
 
@@ -105,3 +128,4 @@ curl https://cloudfront.net/Hello
 ###参考资料
  
 * <https://www.blackhillsinfosec.com/using-cloudfront-to-relay-cobalt-strike-traffic/>
+* [Domain Fronted仍然是最佳的C2隐藏手段](https://www.cnblogs.com/donot/p/13921874.html)

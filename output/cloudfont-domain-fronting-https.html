@@ -78,6 +78,16 @@ RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
 </code></pre></div>
 
 
+<p>这时候会生成https通信需要的证书文件，一般是通过自签名Letsencrypt申请下来的：</p>
+<div class="highlight"><pre><span></span><code><span class="p">.</span><span class="o">/</span><span class="n">letsencrypt</span><span class="o">-</span><span class="n">auto</span> <span class="n">certonly</span> <span class="c1">--standalone -d 域名 --email 邮箱（可匿名）</span>
+
+<span class="n">openssl</span> <span class="n">pkcs12</span> <span class="o">-</span><span class="n">export</span> <span class="o">-</span><span class="k">in</span> <span class="n">fullchain</span><span class="p">.</span><span class="n">pem</span> <span class="o">-</span><span class="n">inkey</span> <span class="n">privkey</span><span class="p">.</span><span class="n">pem</span> <span class="o">-</span><span class="k">out</span> <span class="n">pkcs</span><span class="p">.</span><span class="n">p12</span> <span class="o">-</span><span class="n">name</span> <span class="err">域名</span> <span class="o">-</span><span class="n">passout</span> <span class="n">pass</span><span class="p">:</span><span class="n">ABcd123456</span>
+
+<span class="n">keytool</span> <span class="o">-</span><span class="n">importkeystore</span> <span class="o">-</span><span class="n">deststorepass</span> <span class="n">ABcd123456</span> <span class="o">-</span><span class="n">destkeypass</span> <span class="n">ABcd123456</span> <span class="o">-</span><span class="n">destkeystore</span> <span class="n">keystore</span><span class="p">.</span><span class="n">store</span> <span class="o">-</span><span class="n">srckeystore</span> <span class="n">pkcs</span><span class="p">.</span><span class="n">p12</span> <span class="o">-</span><span class="n">srcstoretype</span> <span class="n">PKCS12</span> <span class="o">-</span><span class="n">srcstorepass</span> <span class="n">ABcd123456</span> <span class="o">-</span><span class="k">alias</span> <span class="err">域名</span>
+</code></pre></div>
+
+
+<p>生成的keystore是后面设置CS配置文件的时候使用。</p>
 <h3>设置CloudFront</h3>
 <p>标红的点特别注意，要改成这个样子，否则测试失败。更改之后发布，测试此时的<code>CloudFront</code>是否生效:</p>
 <div class="highlight"><pre><span></span><code><span class="err">curl https://&lt;example&gt;.cloudfront.net</span>
@@ -98,7 +108,18 @@ RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
 <ol>
 <li>把amazon.profile的最后四行设置https的添加到pandora_<random>.profile里面。</li>
 <li>修改<code>pandora_&lt;random.profile</code>里面的<code>Host</code>，改为aws申请下来的加速域名。</li>
+<li>在profile文件最后新增配置：</li>
 </ol>
+<div class="highlight"><pre><span></span><code><span class="err">https-certificate {</span>
+<span class="err">set keystore &quot;keystore.store&quot;;</span>
+<span class="err">set password &quot;1234565&quot;;</span>
+<span class="err">}</span>
+<span class="err">http-config {</span>
+<span class="err">    set trust_x_forwarded_for &quot;true&quot;;</span>
+<span class="err">}</span>
+</code></pre></div>
+
+
 <h3>设置CS</h3>
 <div class="highlight"><pre><span></span><code><span class="err">systemctl stop httpd  //关闭apache</span>
 <span class="err">./teamserver &lt;IP&gt; &lt;Pass&gt; &lt;path to pandora profile&gt;</span>
@@ -117,6 +138,7 @@ RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
 <h3>参考资料</h3>
 <ul>
 <li><a href="https://www.blackhillsinfosec.com/using-cloudfront-to-relay-cobalt-strike-traffic/">https://www.blackhillsinfosec.com/using-cloudfront-to-relay-cobalt-strike-traffic/</a></li>
+<li><a href="https://www.cnblogs.com/donot/p/13921874.html">Domain Fronted仍然是最佳的C2隐藏手段</a></li>
 </ul>
     </div><!-- /.entry-content -->
 
