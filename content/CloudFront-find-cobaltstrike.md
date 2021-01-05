@@ -66,9 +66,37 @@ ipset list cloudfront
 0x03: 新增IPtables规则
 iptables -A INPUT -p tcp  --dport 443 -j DROP
 iptables -I INPUT -m set --match-set cloudfront  src -p tcp  --dport 443 -j ACCEPT
+
+0x04: 同理对teamserver端口进行规则设置
+ipset create teamserver hash:ip
+ipset add teamserver 1.2.3.4
+iptables -A INPUT -p tcp  --dport 50050 -j DROP
+iptables -I INPUT -m set --match-set teamserver src -p tcp --dport 50050 -j ACCEPT
+
+上面两个iptables规则可以合并一条：
+iptables -I INPUT -m set ! --match-set teamserver src -p tcp --dport 50050 -j DROP
+
+0x05: ipset常见命令
+ipset del teamserver 1.2.3.4  #从teamserver中删除某IP
+ipset list teamserver # 查看teamserver集合内容
+ipset flush teamserver # 清空teamserver内容
+ipset flush  # 清空所有
+ipset destroy teamserver  # 销毁teamserver
+ipset destroy # 销毁所有
+
+0x06: iptables删除规则
+# 显示规则
+iptables -L INPUT --line-numbers 
+
+# 删除规则
+iptables -D INPUT <num>
 ```
 
 当然，也可以直接修改CS的源代码重新打包。
+
+### 注意
+
+IPSET设置白名单之后，会对CS的设置VPN功能有影响。
 
 ### 参考
 
