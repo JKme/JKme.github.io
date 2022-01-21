@@ -1,0 +1,410 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>NAXSI和ELK | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="NAXSI防火墙介绍: https://github.com/nbs-system/naxsi配置安装: https://klionsec.github.io/2017/09/18/naxsiwaf/主要功能：
+过滤XSS，SQL注入，文件上传，文件遍历
+NAXSI拦截攻击之后，会产生对应的日志。类似格式是这样的：
+2017&amp;#x2F;10&amp;#x2F;25 14:52:34 [error] 896#0: *15 NAXSI_EXLOG: ip&amp;#x3D;192.168.141.232&amp;amp;server&amp;#x3D;192.168.182.141&amp;amp;uri&amp;#x3D;&amp;#x2F;sqli-labs&amp;#x2F;Less-11&amp;#x2F;index.php&amp;amp;id&amp;#x3D;1200&amp;amp;zone&amp;#x3D;BODY&amp;amp;var_name&amp;#x3D;passwd&amp;amp;content&amp;#x3D;admin..&amp;#x2F;..&amp;#x2F;..&amp;#x2F;etc&amp;#x2F;passwd, client: 192.168.141.232, server: _, request: &amp;quot;POST &amp;#x2F;sqli-labs&amp;#x2F;Less-11&amp;#x2F;index.php HTTP&amp;#x2F;1.1&amp;quot;, host: &amp;quot;192.168.182.141:8000&amp;quot;, referrer: &amp;quot;http:&amp;#x2F;&amp;#x2F;192.168.182.141:8000&amp;#x2F;sqli-labs&amp;#x2F;Less-11&amp;#x2F;index.php&amp;quot;
+2017&amp;#x2F;10&amp;#x2F;25 14:52:34 [error] 896#0: *15 NAXSI_FMT: ip&amp;#x3D;192.168.141.232&amp;amp;server&amp;#x3D;192.168.182.141&amp;amp;uri&amp;#x3D;&amp;#x2F;sqli-labs&amp;#x2F;Less-11&amp;#x2F;index.php&amp;amp;learning&amp;#x3D;0&amp;amp;vers&amp;#x3D;0.55.3&amp;amp;total_processed&amp;#x3D;4&amp;amp;total_blocked&amp;#x3D;4&amp;amp;block&amp;#x3D;1&amp;amp;cscore0&amp;#x3D;$TRAVERSAL&amp;amp;score0&amp;#x3D;12&amp;amp;zone0&amp;#x3D;BODY&amp;amp;id0&amp;#x3D;1200&amp;amp;var_name0&amp;#x3D;passwd, client: 192.168.141.232, server: _, request: &amp;quot;POST &amp;#x2F;sqli-labs&amp;#x2F;Less-11&amp;#x2F;index.php HTTP&amp;#x2F;1.1&amp;quot;, host: &amp;quot;192.168.182.141:8000&amp;quot;, referrer: &amp;quot;http:&amp;#x2F;&amp;#x2F;192.168.182.141:8000&amp;#x2F;sqli-labs&amp;#x2F;Less-11&amp;#x2F;index.php&amp;quot;
+
+这里我打开了naxsi的EXLOG开关，这样当收集到攻击的日志，可以查看对应的请求内容: https://github.com/nbs-system/naxsi/wiki/naxsilogs现在的目标是如何把上面的日志手收集到elk里面方便图形化查看，以下操作，先在logstash里面新建文件夹，写自己的正则：
+logstash&amp;gt; mkdir pattern
+logstash&amp;gt; cd pattern
+logstash&amp;gt; vim naxsi
+DA1 \d&amp;#123;4&amp;#125;&amp;#x2F;\d&amp;#123;2&amp;#125;&amp;#x2F;\d&amp;#123;2&amp;#125;
+TM1 \d&amp;#123;2&amp;#125;:\d&amp;#123;2&amp;#125;:\d&amp;#123;2&amp;#125;
+LEVEL (\w+)
+NUM1 \d+(?:#0: \*)
+NUM2 \d+
+EXLOG NAXSI_EXLOG
+FMT NAXSI_FMT
+ID1 (\d+)
+ZONE \w+
+VAR1  (.*)
+CONTENT (.*)
+T3 \w+
+T4 HTTP&amp;#x2F;1\.1&amp;quot;, host: &amp;quot;(.*)&amp;quot;, referrer: &amp;quot;
+HOST (.*)
+NAXSI %&amp;#123;DA1:date&amp;#125;\s%&amp;#123;TM1:time&amp;#125;\s\[%&amp;#123;LEVEL:level&amp;#125;\]\s%&amp;#123;NUM1:num1&amp;#125;%&amp;#123;NUM2:request_id&amp;#125;\s(?&amp;lt;logtype&amp;gt;NAXSI_EXLOG):\s\w+&amp;#x3D;%&amp;#123;HOST:client_ip&amp;#125;&amp;amp;server&amp;#x3D;%&amp;#123;HOST:hostname&amp;#125;&amp;amp;uri&amp;#x3D;%&amp;#123;PROG:filepath&amp;#125;&amp;amp;id&amp;#x3D;%&amp;#123;ID1:id&amp;#125;&amp;amp;zone&amp;#x3D;%&amp;#123;ZONE:zone&amp;#125;&amp;amp;var_name&amp;#x3D;%&amp;#123;VAR1:var&amp;#125;&amp;amp;content&amp;#x3D;%&amp;#123;CONTENT:content&amp;#125;,\sclient\:\s%&amp;#123;HOST:ip3&amp;#125;,\sserver:\s(.*)\srequest:\s&amp;quot;%&amp;#123;T3:method&amp;#125;\s%&amp;#123;HOST:uri&amp;#125;\sHTTP&amp;#x2F;1\.1&amp;quot;,\shost:\s&amp;quot;%&amp;#123;HOST:host22&amp;#125;&amp;quot;
+NAXSI2 %&amp;#123;DA1:date&amp;#125;\s%&amp;#123;TM1:time&amp;#125;\s\[%&amp;#123;LEVEL:level&amp;#125;\]\s%&amp;#123;NUM1:num1&amp;#125;%&amp;#123;NUM2:request_id&amp;#125;\s(?&amp;lt;logtype&amp;gt;NAXSI_EXLOG):\s\w+&amp;#x3D;%&amp;#123;HOST:client_ip&amp;#125;&amp;amp;server&amp;#x3D;%&amp;#123;HOST:hostname&amp;#125;&amp;amp;uri&amp;#x3D;%&amp;#123;PROG:filepath&amp;#125;&amp;amp;id&amp;#x3D;%&amp;#123;ID1:id&amp;#125;&amp;amp;zone&amp;#x3D;%&amp;#123;ZONE:zone&amp;#125;&amp;amp;var_name&amp;#x3D;%&amp;#123;VAR1:var&amp;#125;&amp;amp;content&amp;#x3D;%&amp;#123;CONTENT:content&amp;#125;,\sclient\:\s%&amp;#123;HOST:ip3&amp;#125;,\sserver:\s(.*)\srequest:\s&amp;quot;%&amp;#123;T3:method&amp;#125;\s%&amp;#123;HOST:uri&amp;#125;\sHTTP&amp;#x2F;1\.1&amp;quot;,\shost:\s&amp;quot;%&amp;#123;HOST:host22&amp;#125;&amp;quot;,\sreferrer:\s&amp;quot;(?&amp;lt;referrer&amp;gt;(.*))
+NAXSI3 %&amp;#123;DA1:date&amp;#125;\s%&amp;#123;TM1:time&amp;#125;\s\[%&amp;#123;LEVEL:level&amp;#125;\]\s(\d+(?:#0:\s\*))%&amp;#123;NUM2:request_id&amp;#125;\s(?&amp;lt;logtype&amp;gt;NAXSI_EXLOG)(.*)&amp;amp;var_name&amp;#x3D;%&amp;#123;VAR1:var&amp;#125;&amp;amp;content&amp;#x3D;%&amp;#123;CONTENT:content&amp;#125;,\sclient\:\s(.*),\sserver:\s(.*)\srequest:\s&amp;quot;%&amp;#123;T3:method&amp;#125;\s%&amp;#123;HOST:uri&amp;#125;
+NAXSI4 %&amp;#123;DA1:date&amp;#125;\s%&amp;#123;TM1:time&amp;#125;\s\[%&amp;#123;LEVEL:level&amp;#125;\]\s(\d+(?:#0:\s\*))%&amp;#123;NUM2:request_id&amp;#125;\s(?&amp;lt;logtype&amp;gt;NAXSI_EXLOG)(.*)&amp;amp;var_name&amp;#x3D;%&amp;#123;VAR1:var&amp;#125;&amp;amp;content&amp;#x3D;%&amp;#123;CONTENT:content&amp;#125;,\sclient\:\s(.*),\sserver:\s(.*)\srequest:\s&amp;quot;%&amp;#123;T3:method&amp;#125;\s%&amp;#123;HOST:uri&amp;#125;\sHTTP&amp;#x2F;1\.1&amp;quot;,\shost:\s&amp;quot;%&amp;#123;HOST:host&amp;#125;&amp;quot;,\sreferrer:\s&amp;quot;(?&amp;lt;referrer&amp;gt;(.*))
+FMT %&amp;#123;DA1:date&amp;#125;\s%&amp;#123;TM1:time&amp;#125;\s\[%&amp;#123;LEVEL:level&amp;#125;\]\s%&amp;#123;NUM1:num1&amp;#125;%&amp;#123;NUM2:request_id&amp;#125;\s(?&amp;lt;logtype&amp;gt;NAXSI_FMT):\sip&amp;#x3D;%&amp;#123;HOST:client_ip&amp;#125;&amp;amp;server&amp;#x3D;%&amp;#123;HOST:server_ip&amp;#125;&amp;amp;uri&amp;#x3D;%&amp;#123;UNIXPATH:uri&amp;#125;&amp;amp;learning&amp;#x3D;%&amp;#123;HOST:learing&amp;#125;&amp;amp;vers&amp;#x3D;%&amp;#123;HOST:vers&amp;#125;&amp;amp;total_processed&amp;#x3D;%&amp;#123;HOST:toal_processed&amp;#125;&amp;amp;total_blocked&amp;#x3D;%&amp;#123;HOST:total_blocked&amp;#125;&amp;amp;block&amp;#x3D;%&amp;#123;HOST:block&amp;#125;&amp;amp;cscore0&amp;#x3D;%&amp;#123;HOST:attack&amp;#125;&amp;amp;score0&amp;#x3D;%&amp;#123;HOST:score0&amp;#125;&amp;amp;cscore1&amp;#x3D;%&amp;#123;HOST:xss&amp;#125;&amp;amp;score1&amp;#x3D;%&amp;#123;HOST:score&amp;#125;&amp;amp;zone0&amp;#x3D;%&amp;#123;WORD:args&amp;#125;&amp;amp;id0&amp;#x3D;%&amp;#123;NUMBER:id&amp;#125;&amp;amp;var_name0&amp;#x3D;%&amp;#123;HOST:varname&amp;#125;,\sclient:\s%&amp;#123;HOST:ip3&amp;#125;,\sserver:\s(.*)\srequest:\s&amp;quot;%&amp;#123;T3:method&amp;#125;\s%&amp;#123;HOST:uri&amp;#125;\sHTTP&amp;#x2F;1\.1&amp;quot;,\shost:\s&amp;quot;%&amp;#123;HOST:host22&amp;#125;&amp;quot;
+FMT_R %&amp;#123;DA1:date&amp;#125;\s%&amp;#123;TM1:time&amp;#125;\s\[%&amp;#123;LEVEL:level&amp;#125;\]\s%&amp;#123;NUM1:num1&amp;#125;%&amp;#123;NUM2:request_id&amp;#125;\s(?&amp;lt;logtype&amp;gt;NAXSI_FMT):\sip&amp;#x3D;%&amp;#123;HOST:client_ip&amp;#125;&amp;amp;server&amp;#x3D;%&amp;#123;HOST:server_ip&amp;#125;&amp;amp;uri&amp;#x3D;%&amp;#123;UNIXPATH:uri&amp;#125;&amp;amp;learning&amp;#x3D;%&amp;#123;HOST:learing&amp;#125;&amp;amp;vers&amp;#x3D;%&amp;#123;HOST:vers&amp;#125;&amp;amp;total_processed&amp;#x3D;%&amp;#123;HOST:toal_processed&amp;#125;&amp;amp;total_blocked&amp;#x3D;%&amp;#123;HOST:total_blocked&amp;#125;&amp;amp;block&amp;#x3D;%&amp;#123;HOST:block&amp;#125;&amp;amp;cscore0&amp;#x3D;%&amp;#123;HOST:attack&amp;#125;,\sclient:\s(.*)
+
+上面这一坨翔就是解析最上面日志的正则，其中用到的是NAXSI3,NAXSI4,FMT_R,其他是调试用的。然后給logstash添加plugin:
+bin&amp;#x2F;logstash-plugin install logstash-filter-grok
+bin&amp;#x2F;logstash-plugin install logstash-filter-ruby
+
+
+然后配置/etc/logstash.conf文件：
+input&amp;#123;
+     file &amp;#123;
+       path &amp;#x3D;&amp;gt; &amp;quot;&amp;#x2F;usr&amp;#x2F;local&amp;#x2F;nginx&amp;#x2F;logs&amp;#x2F;naxsi.err&amp;quot;
+       type &amp;#x3D;&amp;gt; &amp;quot;naxsi-error&amp;quot;
+       start_position &amp;#x3D;&amp;gt; &amp;quot;beginning&amp;quot;
+   			&amp;#125;
+&amp;#125;
+filter&amp;#123;
+     if [type] &amp;#x3D;&amp;#x3D; &amp;quot;naxsi-error&amp;quot; &amp;#123;
+	grok &amp;#123;
+		patterns_dir &amp;#x3D;&amp;gt; &amp;quot;&amp;#x2F;opt&amp;#x2F;logstash-5.5.1&amp;#x2F;pattern&amp;quot;
+		match &amp;#x3D;&amp;gt; [ &amp;quot;message&amp;quot; , &amp;quot;%&amp;#123;NAXSI4&amp;#125;&amp;quot;,
+			   &amp;quot;message&amp;quot; , &amp;quot;%&amp;#123;NAXSI3&amp;#125;&amp;quot;,
+			   &amp;quot;message&amp;quot; , &amp;quot;%&amp;#123;FMT_R&amp;#125;&amp;quot;
+			]
+  	     &amp;#125;
+	ruby &amp;#123;
+	code &amp;#x3D;&amp;gt; &amp;quot;require &amp;#39;digest&amp;#x2F;md5&amp;#39;;
+	event.set(&amp;#39;computed_id&amp;#39;, Digest::MD5.hexdigest(event.get(&amp;#39;request_id&amp;#39;)+event.get(&amp;#39;time&amp;#39;)) + &amp;#39;_&amp;#39; + event.get(&amp;#39;logtype&amp;#39;))&amp;quot;
+	    &amp;#125;
+
+&amp;#125;
+&amp;#125;
+output&amp;#123;
+      if [type] &amp;#x3D;&amp;#x3D; &amp;quot;naxsi-error&amp;quot; &amp;#123;
+	elasticsearch &amp;#123;
+	   hosts &amp;#x3D;&amp;gt; [&amp;quot;localhost&amp;quot;]
+	   index &amp;#x3D;&amp;gt; &amp;quot;nxapi&amp;quot;
+           document_id &amp;#x3D;&amp;gt; &amp;quot;%&amp;#123;computed_id&amp;#125;&amp;quot;
+	&amp;#125;
+	stdout &amp;#123; codec &amp;#x3D;&amp;gt; rubydebug&amp;#125;
+     &amp;#125;
+&amp;#125;"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="NAXSI和ELK"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> NAXSI和ELK</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>NAXSI防火墙介绍: <a target="_blank" rel="noopener" href="https://github.com/nbs-system/naxsi">https://github.com/nbs-system/naxsi</a><br>配置安装: <a target="_blank" rel="noopener" href="https://klionsec.github.io/2017/09/18/naxsiwaf/">https://klionsec.github.io/2017/09/18/naxsiwaf/</a><br>主要功能：</p>
+<p>过滤XSS，SQL注入，文件上传，文件遍历</p>
+<p>NAXSI拦截攻击之后，会产生对应的日志。类似格式是这样的：</p>
+<pre class="line-numbers language-none"><code class="language-none">2017&#x2F;10&#x2F;25 14:52:34 [error] 896#0: *15 NAXSI_EXLOG: ip&#x3D;192.168.141.232&amp;server&#x3D;192.168.182.141&amp;uri&#x3D;&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&amp;id&#x3D;1200&amp;zone&#x3D;BODY&amp;var_name&#x3D;passwd&amp;content&#x3D;admin..&#x2F;..&#x2F;..&#x2F;etc&#x2F;passwd, client: 192.168.141.232, server: _, request: &quot;POST &#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php HTTP&#x2F;1.1&quot;, host: &quot;192.168.182.141:8000&quot;, referrer: &quot;http:&#x2F;&#x2F;192.168.182.141:8000&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&quot;
+2017&#x2F;10&#x2F;25 14:52:34 [error] 896#0: *15 NAXSI_FMT: ip&#x3D;192.168.141.232&amp;server&#x3D;192.168.182.141&amp;uri&#x3D;&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&amp;learning&#x3D;0&amp;vers&#x3D;0.55.3&amp;total_processed&#x3D;4&amp;total_blocked&#x3D;4&amp;block&#x3D;1&amp;cscore0&#x3D;$TRAVERSAL&amp;score0&#x3D;12&amp;zone0&#x3D;BODY&amp;id0&#x3D;1200&amp;var_name0&#x3D;passwd, client: 192.168.141.232, server: _, request: &quot;POST &#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php HTTP&#x2F;1.1&quot;, host: &quot;192.168.182.141:8000&quot;, referrer: &quot;http:&#x2F;&#x2F;192.168.182.141:8000&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>这里我打开了naxsi的EXLOG开关，这样当收集到攻击的日志，可以查看对应的请求内容: <a target="_blank" rel="noopener" href="https://github.com/nbs-system/naxsi/wiki/naxsilogs">https://github.com/nbs-system/naxsi/wiki/naxsilogs</a><br>现在的目标是如何把上面的日志手收集到elk里面方便图形化查看，以下操作，先在logstash里面新建文件夹，写自己的正则：</p>
+<pre class="line-numbers language-none"><code class="language-none">logstash&gt; mkdir pattern
+logstash&gt; cd pattern
+logstash&gt; vim naxsi
+DA1 \d&#123;4&#125;&#x2F;\d&#123;2&#125;&#x2F;\d&#123;2&#125;
+TM1 \d&#123;2&#125;:\d&#123;2&#125;:\d&#123;2&#125;
+LEVEL (\w+)
+NUM1 \d+(?:#0: \*)
+NUM2 \d+
+EXLOG NAXSI_EXLOG
+FMT NAXSI_FMT
+ID1 (\d+)
+ZONE \w+
+VAR1  (.*)
+CONTENT (.*)
+T3 \w+
+T4 HTTP&#x2F;1\.1&quot;, host: &quot;(.*)&quot;, referrer: &quot;
+HOST (.*)
+NAXSI %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG):\s\w+&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:hostname&#125;&amp;uri&#x3D;%&#123;PROG:filepath&#125;&amp;id&#x3D;%&#123;ID1:id&#125;&amp;zone&#x3D;%&#123;ZONE:zone&#125;&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;
+NAXSI2 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG):\s\w+&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:hostname&#125;&amp;uri&#x3D;%&#123;PROG:filepath&#125;&amp;id&#x3D;%&#123;ID1:id&#125;&amp;zone&#x3D;%&#123;ZONE:zone&#125;&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;,\sreferrer:\s&quot;(?&lt;referrer&gt;(.*))
+NAXSI3 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s(\d+(?:#0:\s\*))%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG)(.*)&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s(.*),\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;
+NAXSI4 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s(\d+(?:#0:\s\*))%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG)(.*)&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s(.*),\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host&#125;&quot;,\sreferrer:\s&quot;(?&lt;referrer&gt;(.*))
+FMT %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_FMT):\sip&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:server_ip&#125;&amp;uri&#x3D;%&#123;UNIXPATH:uri&#125;&amp;learning&#x3D;%&#123;HOST:learing&#125;&amp;vers&#x3D;%&#123;HOST:vers&#125;&amp;total_processed&#x3D;%&#123;HOST:toal_processed&#125;&amp;total_blocked&#x3D;%&#123;HOST:total_blocked&#125;&amp;block&#x3D;%&#123;HOST:block&#125;&amp;cscore0&#x3D;%&#123;HOST:attack&#125;&amp;score0&#x3D;%&#123;HOST:score0&#125;&amp;cscore1&#x3D;%&#123;HOST:xss&#125;&amp;score1&#x3D;%&#123;HOST:score&#125;&amp;zone0&#x3D;%&#123;WORD:args&#125;&amp;id0&#x3D;%&#123;NUMBER:id&#125;&amp;var_name0&#x3D;%&#123;HOST:varname&#125;,\sclient:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;
+FMT_R %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_FMT):\sip&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:server_ip&#125;&amp;uri&#x3D;%&#123;UNIXPATH:uri&#125;&amp;learning&#x3D;%&#123;HOST:learing&#125;&amp;vers&#x3D;%&#123;HOST:vers&#125;&amp;total_processed&#x3D;%&#123;HOST:toal_processed&#125;&amp;total_blocked&#x3D;%&#123;HOST:total_blocked&#125;&amp;block&#x3D;%&#123;HOST:block&#125;&amp;cscore0&#x3D;%&#123;HOST:attack&#125;,\sclient:\s(.*)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面这一坨翔就是解析最上面日志的正则，其中用到的是NAXSI3,NAXSI4,FMT_R,其他是调试用的。然后給logstash添加plugin:</p>
+<pre class="line-numbers language-none"><code class="language-none">bin&#x2F;logstash-plugin install logstash-filter-grok
+bin&#x2F;logstash-plugin install logstash-filter-ruby<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+<p>然后配置<code>/etc/logstash.conf</code>文件：</p>
+<pre class="line-numbers language-none"><code class="language-none">input&#123;
+     file &#123;
+       path &#x3D;&gt; &quot;&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;naxsi.err&quot;
+       type &#x3D;&gt; &quot;naxsi-error&quot;
+       start_position &#x3D;&gt; &quot;beginning&quot;
+   			&#125;
+&#125;
+filter&#123;
+     if [type] &#x3D;&#x3D; &quot;naxsi-error&quot; &#123;
+	grok &#123;
+		patterns_dir &#x3D;&gt; &quot;&#x2F;opt&#x2F;logstash-5.5.1&#x2F;pattern&quot;
+		match &#x3D;&gt; [ &quot;message&quot; , &quot;%&#123;NAXSI4&#125;&quot;,
+			   &quot;message&quot; , &quot;%&#123;NAXSI3&#125;&quot;,
+			   &quot;message&quot; , &quot;%&#123;FMT_R&#125;&quot;
+			]
+  	     &#125;
+	ruby &#123;
+	code &#x3D;&gt; &quot;require &#39;digest&#x2F;md5&#39;;
+	event.set(&#39;computed_id&#39;, Digest::MD5.hexdigest(event.get(&#39;request_id&#39;)+event.get(&#39;time&#39;)) + &#39;_&#39; + event.get(&#39;logtype&#39;))&quot;
+	    &#125;
+
+&#125;
+&#125;
+output&#123;
+      if [type] &#x3D;&#x3D; &quot;naxsi-error&quot; &#123;
+	elasticsearch &#123;
+	   hosts &#x3D;&gt; [&quot;localhost&quot;]
+	   index &#x3D;&gt; &quot;nxapi&quot;
+           document_id &#x3D;&gt; &quot;%&#123;computed_id&#125;&quot;
+	&#125;
+	stdout &#123; codec &#x3D;&gt; rubydebug&#125;
+     &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>配置好之后，启动logstash，这样对于同一次拦截会产生两条elk的日志，其中日志的document_id，前缀是请求的id和时间计算的hash，类似这样：</p>
+<pre class="line-numbers language-none"><code class="language-none">e0737c661e5e3457fbc3d847f75817fa_NAXSI_FMT
+e0737c661e5e3457fbc3d847f75817fa_NAXSI_EXLOG<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>在线调试正则: <a target="_blank" rel="noopener" href="https://grokdebug.herokuapp.com/">https://grokdebug.herokuapp.com</a></p>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/10/25/naxsi-elk.html" class="leancloud-visitors view" data-flag-title="NAXSI和ELK">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/10/30/bypass-sql-firewall.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/09/26/VerifyCode.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-10-25 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Learning/">Learning<span>16</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

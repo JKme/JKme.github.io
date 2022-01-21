@@ -1,0 +1,327 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Windows后门隐藏 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="后门的构成分为三个部分:
+
+shellcode的分离免杀
+C2服务器的隐藏
+Windows后门的设置
+
+分离免杀shellcode的分离免杀有很多种，这里把每个模块拿出来就是如下的几个:
+
+通信: socket,http
+shellcode的执行方式
+shellcode的流量
+远程服务器的隐藏
+
+除去第二种方式有很多种可以执行shellcode的，其他三种最好的解决方案是实用Domain Fronting隐藏服务器，AES动态加密解密运行shellcode。这样子既隐藏了服务器，又避免shellcode的明文流量被探测到。当然上线之后的操作被探测不在被讨论的范围之内。
+在参考资料里面,uknownsec已经把主要的代码放出来了。只需要拿出来拼凑一下就可以食用。
+其中服务端出去python的功能之外，可以给自己加上一个slack机器人的通知，这样子上线的时候就有通知。
+C2服务器的隐藏"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Windows后门隐藏"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> Windows后门隐藏</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h3 id="后门的构成"><a href="#后门的构成" class="headerlink" title="后门的构成"></a>后门的构成</h3><p>分为三个部分:</p>
+<ol>
+<li>shellcode的分离免杀</li>
+<li>C2服务器的隐藏</li>
+<li>Windows后门的设置</li>
+</ol>
+<h3 id="分离免杀"><a href="#分离免杀" class="headerlink" title="分离免杀"></a>分离免杀</h3><p>shellcode的分离免杀有很多种，这里把每个模块拿出来就是如下的几个:</p>
+<ol>
+<li>通信: <code>socket</code>,<code>http</code></li>
+<li><code>shellcode</code>的执行方式</li>
+<li><code>shellcode</code>的流量</li>
+<li>远程服务器的隐藏</li>
+</ol>
+<p>除去第二种方式有很多种可以执行shellcode的，其他三种最好的解决方案是实用<code>Domain Fronting</code>隐藏服务器，AES动态加密解密运行shellcode。这样子既隐藏了服务器，又避免shellcode的明文流量被探测到。当然上线之后的操作被探测不在被讨论的范围之内。</p>
+<p>在参考资料里面,<code>uknownsec</code>已经把主要的代码放出来了。只需要拿出来拼凑一下就可以食用。</p>
+<p>其中服务端出去python的功能之外，可以给自己加上一个<code>slack</code>机器人的通知，这样子上线的时候就有通知。</p>
+<h4 id="C2服务器的隐藏"><a href="#C2服务器的隐藏" class="headerlink" title="C2服务器的隐藏"></a>C2服务器的隐藏</h4><p>见上一篇的<code>Domain Fronting</code>隐藏HTTPS。</p>
+<p>这个C2的隐藏如果更完美一点的话，可以加上redirector。但是我想了一下，开启CS的时间就是控制利用的那一小段，这里就不折腾了。</p>
+<h4 id="Windows后门的设置"><a href="#Windows后门的设置" class="headerlink" title="Windows后门的设置"></a>Windows后门的设置</h4><p>除去最常见的计划任务，剩下的是一堆注册表，如果存在360之类的话，是比较难处理的。其中有一个<code>WMI</code>，很奇怪各个杀软的拦截都不是太积极。</p>
+<p>在实际测试中，如果留的后门是服务器，那么后门必须是定时启动，如果是个人电脑，那么是在特定的时间内启动。注意这个时间点的设置。</p>
+<p>在Windows上面，最后留下2个以上的后门。一个exe，一个dll劫持，dll劫持我在github上面放了两个方式，推荐使用spooler，因为它默认权限最高，每个电脑都是开机启动。</p>
+<h3 id="后门的形式"><a href="#后门的形式" class="headerlink" title="后门的形式"></a>后门的形式</h3><h4 id="Windows的System权限"><a href="#Windows的System权限" class="headerlink" title="Windows的System权限"></a>Windows的System权限</h4><ul>
+<li>wmi开机启动和定时启动</li>
+<li>计划任务</li>
+<li>spooler的Dll劫持</li>
+</ul>
+<h4 id="Windows的User权限"><a href="#Windows的User权限" class="headerlink" title="Windows的User权限"></a>Windows的User权限</h4><ul>
+<li>msdtc的dll劫持</li>
+</ul>
+<h4 id="Windows的Network权限"><a href="#Windows的Network权限" class="headerlink" title="Windows的Network权限"></a>Windows的Network权限</h4><ul>
+<li>Redis的Dll劫持</li>
+</ul>
+<h4 id="云查杀的绕过"><a href="#云查杀的绕过" class="headerlink" title="云查杀的绕过"></a>云查杀的绕过</h4><p>之前在测试<code>Windows Defender</code>的时候，本来是免杀的exe，跑两三次之后就被杀了。百思不得其解，后来发现是云上传之后被查杀了，观察一下上线云查杀的机器，可以很容易的绕过。</p>
+<p>再往后一点，考虑一下如果每个机器上线都是你动手来做的话，那么可以考虑写一个程序，为每一个被放后门的电脑生成一个唯一的hash值，这个hash值存放在shellcode加载服务器上面，shellcode执行之前先检查是否在数据库里面，这样是不是更完美的方式?</p>
+<h3 id="后门的进阶"><a href="#后门的进阶" class="headerlink" title="后门的进阶"></a>后门的进阶</h3><ul>
+<li><code>AES</code>动态加解密</li>
+<li><code>Domain Fronting</code>隐藏存放<code>shellcode</code> </li>
+<li><code>Domain Fronting</code>隐藏<code>C2</code> </li>
+<li><code>shellcode</code>免杀的执行方式</li>
+</ul>
+<p>参考资料:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://uknowsec.cn/posts/notes/ShellCode%E8%BF%9C%E7%A8%8B%E5%8A%A0%E8%BD%BD%E5%99%A8%E6%94%B9%E9%80%A0%E8%AE%A1%E5%88%92.html">https://uknowsec.cn/posts/notes/ShellCode%E8%BF%9C%E7%A8%8B%E5%8A%A0%E8%BD%BD%E5%99%A8%E6%94%B9%E9%80%A0%E8%AE%A1%E5%88%92.html</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2020/08/28/hide-your-windows-backdoor.html" class="leancloud-visitors view" data-flag-title="Windows后门隐藏">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2020/08/28/CloudFront-Https.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2020/07/29/mysql-UDF.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2020-08-28 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%90%8E%E9%97%A8%E7%9A%84%E6%9E%84%E6%88%90"><span class="toc-article-text">后门的构成</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%88%86%E7%A6%BB%E5%85%8D%E6%9D%80"><span class="toc-article-text">分离免杀</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#C2%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E9%9A%90%E8%97%8F"><span class="toc-article-text">C2服务器的隐藏</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#Windows%E5%90%8E%E9%97%A8%E7%9A%84%E8%AE%BE%E7%BD%AE"><span class="toc-article-text">Windows后门的设置</span></a></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%90%8E%E9%97%A8%E7%9A%84%E5%BD%A2%E5%BC%8F"><span class="toc-article-text">后门的形式</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#Windows%E7%9A%84System%E6%9D%83%E9%99%90"><span class="toc-article-text">Windows的System权限</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#Windows%E7%9A%84User%E6%9D%83%E9%99%90"><span class="toc-article-text">Windows的User权限</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#Windows%E7%9A%84Network%E6%9D%83%E9%99%90"><span class="toc-article-text">Windows的Network权限</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E4%BA%91%E6%9F%A5%E6%9D%80%E7%9A%84%E7%BB%95%E8%BF%87"><span class="toc-article-text">云查杀的绕过</span></a></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%90%8E%E9%97%A8%E7%9A%84%E8%BF%9B%E9%98%B6"><span class="toc-article-text">后门的进阶</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

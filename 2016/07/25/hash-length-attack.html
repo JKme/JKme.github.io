@@ -1,0 +1,359 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>MD5哈希长度扩展攻击 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html
+
+这篇文章里有提到的哈希长度扩展攻击看了下做个笔记。理解哈希长度扩展攻击以md5为例，需要理解下面几点：
+MD5的部分工作原理一. 先看下MD5的计算过程，只需要理解一半： 对于一个message进行md5计算的过程是这样的： 经过三个步骤，这部分可以看RFC:
+ The message is “padded” (extended) so that its length (in bits) is congruent to 448, modulo 512.   先进行补位，使得整体长度对512取模之后的值为448，len(message)%512 == 418，计算单位是bit（位）。
+
+Append Padding Bits
+ 补位是这样的，先在message后面加0x80标识，然后加无限个0，一直满足对512bit取模之后等于448bit。
+
+Append Length
+ 512bit和448相差64bit，即8Byte，这个8字节用来表示补位之前message的长度。
+
+计算消息摘
+有一个初始链变量，用来参与第一轮的运算，MD5的初始变量为：A = 0x67452301B = 0xefcdab89C = 0x98badcfeD = 0x10325476
+
+
+ 整体来说就是先补位，然后补长度，这个长度占8Byte，用来表示补位之前message的长度，然后计算md5。现在记住下面这句话：
+
+每经过一次消息摘要计算，上面的链变量会被新的值覆盖，最后一轮经过高低位互换（aabbccdd -&amp;gt; ddccbbaa）就是最终的MD5值。
+
+现在来进行md5扩展长度攻击：我觉得直接把这个看完就差不多了：https://github.com/iagox86/hash_extender"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="MD5哈希长度扩展攻击"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> MD5哈希长度扩展攻击</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html">https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html</a></p>
+</blockquote>
+<p>这篇文章里有提到的哈希长度扩展攻击看了下做个笔记。理解哈希长度扩展攻击以md5为例，需要理解下面几点：</p>
+<h3 id="MD5的部分工作原理"><a href="#MD5的部分工作原理" class="headerlink" title="MD5的部分工作原理"></a>MD5的<strong>部分工作原理</strong></h3><h4 id="一-先看下MD5的计算过程，只需要理解一半："><a href="#一-先看下MD5的计算过程，只需要理解一半：" class="headerlink" title="一. 先看下MD5的计算过程，只需要理解一半："></a>一. 先看下MD5的计算过程，只需要理解一半：</h4><p> 对于一个message进行md5计算的过程是这样的：<br> 经过三个步骤，这部分可以看<a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc1321">RFC</a>:</p>
+<p> The message is “padded” (extended) so that its length (in bits) is congruent to 448, modulo 512.<br>   先进行补位，使得整体长度对512取模之后的值为448，len(message)%512 == 418，计算单位是bit（位）。</p>
+<ol>
+<li><p>Append Padding Bits</p>
+<p> 补位是这样的，先在message后面加0x80标识，然后加无限个0，一直满足对512bit取模之后等于448bit。</p>
+</li>
+<li><p>Append Length</p>
+<p> 512bit和448相差64bit，即8Byte，这个8字节用来表示补位之前message的长度。</p>
+</li>
+<li><p>计算消息摘</p>
+<p>有一个初始链变量，用来参与第一轮的运算，MD5的初始变量为：<br>A = 0x67452301<br>B = 0xefcdab89<br>C = 0x98badcfe<br>D = 0x10325476</p>
+</li>
+</ol>
+<p> 整体来说就是先补位，然后补长度，这个长度占8Byte，用来表示补位之前message的长度，然后计算md5。现在记住下面这句话：</p>
+<blockquote>
+<p>每经过一次消息摘要计算，上面的<strong>链变量会被新的值覆盖</strong>，最后一轮经过高低位互换（aabbccdd -&gt; ddccbbaa）就是最终的MD5值。</p>
+</blockquote>
+<p>现在来进行md5扩展长度攻击：<br>我觉得直接把这个看完就差不多了：<a target="_blank" rel="noopener" href="https://github.com/iagox86/hash_extender">https://github.com/iagox86/hash_extender</a></p>
+<p>骚年我们来翻译下：<br>准备下5个变量：</p>
+<ul>
+<li>secret = <code>secret</code></li>
+<li>data = <code>data</code></li>
+<li>H = md5()</li>
+<li>signature = hash(secret || data) = 6036708eba0d11f6ef52ad44e8b74d5b</li>
+<li>append = <code>append</code> （这个就是我们的payload，换句话说就是攻击的精华啊）</li>
+</ul>
+<p> 服务器发送<code>data</code>和<code>signature</code>给小白，然后小白一看就知道是md5加密（md5加密是128bits，就是16bytes，或者是从源代码推算出来的），现在我们有三个已知：<code>data</code>, <code>加密算法</code>， <code>signature</code>，小白的目标就是把如何把<code>append</code>添加到<code>data</code>，然后产生一个新的data，同时一个新的signature。现在我们来进行md5的计算步骤，不了解的话看看前面。话说那个作者在研究各种hash算法的时候说了这么一句话，这都是人家费了几天时间的，赶紧记下来:</p>
+<pre><code> The endianness of the length field is also important. MD4, MD5, and RIPEMD-160 are little-endian, whereas the SHA family and WHIRLPOOL are big-endian. Trust me, that distinction cost me days of work!
+</code></pre>
+<p>回到我们的例子来，<code>length(secret || data) = length(&quot;secretdata&quot;)</code>（为毛要这样写呢，因为md5计算里面，后面的pading里有表示message长度的字段），这个总共是10（0x0a）bytes，or 80(0x50)bits。 然后先补位（补到什么时候呢？满足对512bit取模之后等于448bit，也就是总共56Byte，再减去前面10Bytes），也就是补46bytes(80 00 00 00 …)，然后是8 byte的长度字段(50 00 00 00 00 00 00 00)。全部加起来是64bytes, or one block, 这一坨放一起，看起来就是下面这一坨：</p>
+<pre class="line-numbers language-none"><code class="language-none">0000  73 65 63 72 65 74 64 61 74 61 80 00 00 00 00 00  secretdata......
+0010  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+0020  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+0030  00 00 00 00 00 00 00 00 50 00 00 00 00 00 00 00  ........P.......<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这一坨的结构是如下：</p>
+<ul>
+<li>“secret” = <code>secret</code></li>
+<li>“data” = <code>data</code></li>
+<li>80 00 00… The 46 Bytes of padding, start with 0x80</li>
+<li>50 00 00 00 00 00 00 00 – message的长度</li>
+</ul>
+<p>然后小白可以开始attack， Fire The Hole.<br>拿起来我们存半年的append，添加到上面这一坨，添加之后就变成这样了：</p>
+<pre class="line-numbers language-none"><code class="language-none">0000  73 65 63 72 65 74 64 61 74 61 80 00 00 00 00 00  secretdata......
+0010  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+0020  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+0030  00 00 00 00 00 00 00 00 50 00 00 00 00 00 00 00  ........P.......
+0040  61 70 70 65 6e 64                                append<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>这一坨就是最后我们把他返回给服务器的data，<code>data</code>是我们可以控制的。我们继续：<br>服务器接受到上面那坨之后开始计算md5，我们也可以计算这一坨的md5。先说说服务器是怎么算的，简单来说就是直接算：</p>
+<pre class="line-numbers language-none"><code class="language-none">0000  73 65 63 72 65 74 64 61 74 61 80 00 00 00 00 00  secretdata......
+0010  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+0020  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+0030  00 00 00 00 00 00 00 00 50 00 00 00 00 00 00 00  ........P.......
+0040  61 70 70 65 6e 64                                append<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>歪果仁给的结果是<code>6ee582a1669ce442f3719c47430dadee</code><br>小白怎么算呢？</p>
+<ul>
+<li>signature = hash(secret || data)<br>现在小白手里有signature，但是小白修改了data啊，小白又不知道secret，只知道secret的长度。</li>
+</ul>
+<blockquote>
+<p>每经过一次消息摘要计算，上面的<strong>链变量会被新的值覆盖</strong>，最后一轮经过高低位互换（aabbccdd -&gt; ddccbbaa）就是最终的MD5值。</p>
+</blockquote>
+<p>signature可以作为上一次的链变量，只需要从网上找一个md5算法，修改初始的链变量为现在的signature，重新计算下md5，结果就出来了。</p>
+<p>简单来说hash长度扩展攻击就是给数据再加点长度，服务器那边计算哈希值，然后自己又有上一次的哈希结果，自己再算一下就跟服务器的一样了。<br>解决方案就是<code>hash(secret || md5(data))</code>，这么像sql注入发生的危害，用户的输入永远都是危险的。</p>
+<p>配合以下资料看效果更好：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://ricterz.me/posts/%E5%93%88%E5%B8%8C%E9%95%BF%E5%BA%A6%E6%89%A9%E5%B1%95%E6%94%BB%E5%87%BB%E8%A7%A3%E6%9E%90">http://ricterz.me/posts/%E5%93%88%E5%B8%8C%E9%95%BF%E5%BA%A6%E6%89%A9%E5%B1%95%E6%94%BB%E5%87%BB%E8%A7%A3%E6%9E%90</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.chinaunix.net/uid-27070210-id-3255947.html">http://blog.chinaunix.net/uid-27070210-id-3255947.html</a> </li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2016/07/25/hash-length-attack.html" class="leancloud-visitors view" data-flag-title="MD5哈希长度扩展攻击">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2016/07/26/python-cpickle-shell.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2016/05/18/docker-remote-exploit.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2016-07-25 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Learning/">Learning<span>16</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#MD5%E7%9A%84%E9%83%A8%E5%88%86%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-article-text">MD5的部分工作原理</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E4%B8%80-%E5%85%88%E7%9C%8B%E4%B8%8BMD5%E7%9A%84%E8%AE%A1%E7%AE%97%E8%BF%87%E7%A8%8B%EF%BC%8C%E5%8F%AA%E9%9C%80%E8%A6%81%E7%90%86%E8%A7%A3%E4%B8%80%E5%8D%8A%EF%BC%9A"><span class="toc-article-text">一. 先看下MD5的计算过程，只需要理解一半：</span></a></li></ol></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

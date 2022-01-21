@@ -1,0 +1,302 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>SQL隐形弱类型转换绕过 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="https://tom.vg/2013/04/mysql-implicit-type-conversion/https://www.t00ls.net/articles-24308.html
+如果PHP语句中存在这样的登录漏洞比如：
+$sql=&amp;quot;select * from users where id=&amp;#39;&amp;quot;.$user.&amp;quot;&amp;#39; and password=&amp;#39;&amp;quot;.md5($pass).&amp;quot;&amp;#39;;
+但是在登录框处限制了用户名长度
+if (strlen($user)&amp;gt;4)&amp;#123;
+print &amp;quot;用户名不能超过4个字符串&amp;quot;;
+echo $user;
+echo strlen($user);
+die();
+&amp;#125;
+
+
+如果未做限制的情况下可以构造这样的语句select * from users where userid = 1 or 1=1
+在限制的情况下可以利用sql隐形转换这样子：select * from users where userid=&amp;#39;&amp;#39;=0#
+这个就全部选择出来了，然后重要的点在后面userid=&amp;#39;&amp;#39;=0#，闭合前面单引号，于是整个数值就恒等于了，也可以这么写
+userid=&amp;#39;&amp;#39;=false#,userid=&amp;#39;&amp;#39;=(1-1),userid=&amp;#39;a&amp;#39;=0
+基本原理就是上面文章提到的："> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="SQL隐形弱类型转换绕过"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> SQL隐形弱类型转换绕过</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p><a target="_blank" rel="noopener" href="https://tom.vg/2013/04/mysql-implicit-type-conversion/">https://tom.vg/2013/04/mysql-implicit-type-conversion/</a><br><a target="_blank" rel="noopener" href="https://www.t00ls.net/articles-24308.html">https://www.t00ls.net/articles-24308.html</a></p>
+<p>如果PHP语句中存在这样的登录漏洞比如：</p>
+<p><code>$sql=&quot;select * from users where id=&#39;&quot;.$user.&quot;&#39; and password=&#39;&quot;.md5($pass).&quot;&#39;;</code></p>
+<p>但是在登录框处限制了用户名长度</p>
+<pre class="line-numbers language-none"><code class="language-none">if (strlen($user)&gt;4)&#123;
+print &quot;用户名不能超过4个字符串&quot;;
+echo $user;
+echo strlen($user);
+die();
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>如果未做限制的情况下可以构造这样的语句<br><code>select * from users where userid = 1 or 1=1</code></p>
+<p>在限制的情况下可以利用sql隐形转换这样子：<br><code>select * from users where userid=&#39;&#39;=0#</code></p>
+<p>这个就全部选择出来了，然后重要的点在后面<code>userid=&#39;&#39;=0#</code>，闭合前面单引号，于是整个数值就恒等于了，也可以这么写</p>
+<p><code>userid=&#39;&#39;=false#</code>,<code>userid=&#39;&#39;=(1-1)</code>,<code>userid=&#39;a&#39;=0</code></p>
+<p>基本原理就是上面文章提到的：</p>
+<p>算数操作符<code>+</code>会将字符型的user转换为数值型的user，<br><code>dah</code>,<code>tagi</code>,<code>admin</code>对应的数值是0，<br><code>1232dfs</code>，<code>123idu</code>对应的数值是123。</p>
+<p>除去<code>+</code>号，其他操作符也会发生类型转换比如<code>MOD,DIV,*,/,%, -</code></p>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/01/05/SQL%E9%9A%90%E5%BD%A2%E8%BD%AC%E6%8D%A2%E7%BB%95%E8%BF%87waf.html" class="leancloud-visitors view" data-flag-title="SQL隐形弱类型转换绕过">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/01/07/n0js-case-postMessage-xss.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/01/04/加密webshell流量.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-01-05 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/SQL/">SQL<span>7</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

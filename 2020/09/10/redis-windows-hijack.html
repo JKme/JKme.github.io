@@ -1,0 +1,334 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Redis On Windows -- Dll Hijack | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="本文测试了Redis在Windows平台下的dll劫持，主要参考文章是先知的秋水师傅: Redis on Windows 出网利用探索
+测试环境Redis-x64-3.2.100
+Win10
+
+可劫持的DLL按照文章中使用Process Monitor，在使用redis-cli操作的时候，观察缺失的DLL。在Process Monitor Filter里面设置Image Path的值为redis-server.exe的路径，比如我的是C:\Program Files\Redis\redis-server.exe，Path设置为ends with dll。设置好之后，使用redis-cli连接，执行bgsave命令，然后观察缺失的dll，有如下:
+HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
+C:\Program Files\Redis\dbghelp.dll
+C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll
+
+
+当redis-server.exe启动的时候，有如下:
+C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll
+C:\Program Files\Redis\CRYPTBASE.DLL
+
+
+执行BGREWRITEAOF的时候，有如下:
+HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
+C:\Program Files\Redis\dbghelp.dll
+C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Redis On Windows -- Dll Hijack"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> Redis On Windows -- Dll Hijack</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>本文测试了Redis在Windows平台下的dll劫持，主要参考文章是先知的秋水师傅: <a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/8153">Redis on Windows 出网利用探索</a></p>
+<h3 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h3><pre class="line-numbers language-none"><code class="language-none">Redis-x64-3.2.100
+Win10<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="可劫持的DLL"><a href="#可劫持的DLL" class="headerlink" title="可劫持的DLL"></a>可劫持的DLL</h3><p>按照文章中使用<code>Process Monitor</code>，在使用<code>redis-cli</code>操作的时候，观察缺失的DLL。在<code>Process Monitor Filter</code>里面设置<code>Image Path</code>的值为<code>redis-server.exe</code>的路径，比如我的是<code>C:\Program Files\Redis\redis-server.exe</code>，<code>Path</code>设置为<code>ends with dll</code>。设置好之后，使用<code>redis-cli</code>连接，执行<code>bgsave</code>命令，然后观察缺失的dll，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
+C:\Program Files\Redis\dbghelp.dll
+C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>当<code>redis-server.exe</code>启动的时候，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll
+C:\Program Files\Redis\CRYPTBASE.DLL<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+<p>执行<code>BGREWRITEAOF</code>的时候，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
+C:\Program Files\Redis\dbghelp.dll
+C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>最终在Redis目录下可以利用的有两个:<code>cryptbase.dll</code>和<code>dbghelp.dll</code>。如果是权限持久性控制，两个都可以，这里我们选择主动攻击，所以使用<code>dbghelp.dll</code>。</p>
+<p>###DLLHijacker</p>
+<p>使用kiwings师傅的<a target="_blank" rel="noopener" href="https://github.com/kiwings/DLLHijacker">DLLHijacker</a>，因为在系统里面是存在<code>C:\Windows\System32\dbghelp.dll</code>的，所以，复制出来之后，运行脚本，生成DLL工程项目。修改里面的shellcode和dbghelp.dll的绝对路径。</p>
+<p>在实际测试的时候，运行脚本报错，所以修改了一部分代码: <a target="_blank" rel="noopener" href="https://github.com/JKme/sb_kiddie-/tree/master/dll_hijack">https://github.com/JKme/sb_kiddie-/tree/master/dll_hijack</a></p>
+<p>把生成的dll重命名为<code>dghelp.dll</code>放在redis的安装目录，然后执行<code>bgsave</code>或者<code>redis-server</code>启动的时候会执行shellcode。</p>
+<p><img src="/2020/09/10/redis-windows-hijack/WX20200910.png"></p>
+<h3 id="测试结果"><a href="#测试结果" class="headerlink" title="测试结果"></a>测试结果</h3><p>在实际的渗透测试中，使用<a target="_blank" rel="noopener" href="https://github.com/r35tart/RedisWriteFile">RedisWriteFile</a>写入文件的时候，因为使用的是主从复制，会把redis里面的数据清空，这样攻击之后可能会被发现，所以可以这样做:</p>
+<h5 id="备份redis"><a href="#备份redis" class="headerlink" title="备份redis"></a>备份redis</h5><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/yannh/redis-dump-go">redis-dump-go</a></li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">备份:
+.&#x2F;redis-dump-go -host 192.168.2.233 -output commands &gt; redis.dump
+
+
+恢复:
+redis-cli -h 192.168.2.233 &lt; redis.dump<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="攻击步骤"><a href="#攻击步骤" class="headerlink" title="攻击步骤"></a>攻击步骤</h3><ol>
+<li>准备好dll，使用<a target="_blank" rel="noopener" href="https://github.com/r35tart/RedisWriteFile">RedisWriteFile</a>写入</li>
+<li>备份Redis: <code>./redis-dump-go -host 192.168.2.233 -output commands &gt; redis.dump</code></li>
+<li>执行<code>bgsave</code>,获取Shell</li>
+<li>恢复Redis: <code>redis-cli -h 192.168.2.233 &lt; redis.dump</code></li>
+</ol>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2020/09/10/redis-windows-hijack.html" class="leancloud-visitors view" data-flag-title="Redis On Windows -- Dll Hijack">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2021/01/04/CloudFront-find-cobaltstrike.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2020/08/28/CloudFront-Https.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2020-09-10 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83"><span class="toc-article-text">测试环境</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%8F%AF%E5%8A%AB%E6%8C%81%E7%9A%84DLL"><span class="toc-article-text">可劫持的DLL</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%B5%8B%E8%AF%95%E7%BB%93%E6%9E%9C"><span class="toc-article-text">测试结果</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-5"><a class="toc-article-link" href="#%E5%A4%87%E4%BB%BDredis"><span class="toc-article-text">备份redis</span></a></li></ol></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%94%BB%E5%87%BB%E6%AD%A5%E9%AA%A4"><span class="toc-article-text">攻击步骤</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

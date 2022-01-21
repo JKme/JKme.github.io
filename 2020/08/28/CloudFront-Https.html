@@ -1,0 +1,367 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Domain Fronting隐藏HTTPS | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="记录一下当使用Domain Fronting中使用https来上线时候的坑，因为查了半圈没有找到类似的资料，为啥非要https呢，因为node32对http的流量很敏感。
+###目标
+
+使用Windows/beacon_https/reverse_https作为上线的payload
+AWS的Cloudfront作为前置域名
+
+准备工作域名: example.com
+VPS(Centos)
+cloudflare(只作域名解析,不添加任何其他功能，不加CDN，不加HTTPS)
+
+
+部署工作安装的apache是测试连通性，除此之外没有任何用处。
+yum install httpd
+systemctl start httpd
+
+增加apache配置文件#&amp;#x2F;etc&amp;#x2F;httpd&amp;#x2F;conf.d&amp;#x2F;vhost.conf
+&amp;lt;VirtualHost *:80&amp;gt;
+   DocumentRoot &amp;#x2F;var&amp;#x2F;www&amp;#x2F;html
+   ServerName example.com
+
+
+RewriteEngine on
+RewriteCond %&amp;#123;SERVER_NAME&amp;#125; &amp;#x3D;example.com
+RewriteRule ^ https:&amp;#x2F;&amp;#x2F;%&amp;#123;SERVER_NAME&amp;#125;%&amp;#123;REQUEST_URI&amp;#125; [END,NE,R&amp;#x3D;permanent]
+&amp;lt;&amp;#x2F;VirtualHost&amp;gt;"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Domain Fronting隐藏HTTPS"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> Domain Fronting隐藏HTTPS</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>记录一下当使用<code>Domain Fronting</code>中使用<code>https</code>来上线时候的坑，因为查了半圈没有找到类似的资料，为啥非要https呢，因为<code>node32</code>对http的流量很敏感。</p>
+<p>###目标</p>
+<ol>
+<li>使用<code>Windows/beacon_https/reverse_https</code>作为上线的payload</li>
+<li>AWS的<code>Cloudfront</code>作为前置域名</li>
+</ol>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><pre class="line-numbers language-none"><code class="language-none">域名: example.com
+VPS(Centos)
+cloudflare(只作域名解析,不添加任何其他功能，不加CDN，不加HTTPS)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+<h2 id="部署工作"><a href="#部署工作" class="headerlink" title="部署工作"></a>部署工作</h2><p>安装的apache是测试连通性，除此之外没有任何用处。</p>
+<pre class="line-numbers language-none"><code class="language-none">yum install httpd
+systemctl start httpd<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h4 id="增加apache配置文件"><a href="#增加apache配置文件" class="headerlink" title="增加apache配置文件"></a>增加apache配置文件</h4><pre class="line-numbers language-none"><code class="language-none">#&#x2F;etc&#x2F;httpd&#x2F;conf.d&#x2F;vhost.conf
+&lt;VirtualHost *:80&gt;
+   DocumentRoot &#x2F;var&#x2F;www&#x2F;html
+   ServerName example.com
+
+
+RewriteEngine on
+RewriteCond %&#123;SERVER_NAME&#125; &#x3D;example.com
+RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125; [END,NE,R&#x3D;permanent]
+&lt;&#x2F;VirtualHost&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="设置https"><a href="#设置https" class="headerlink" title="设置https"></a>设置https</h4><p>运行脚本<code>HTTPsC2DoneRight.sh</code>生成对应需要的文件，比如<code>letsencrypt</code>、<code>amazon.profile</code>等文件，这个时候https会自动设置成功，测试如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">curl http:&#x2F;&#x2F;example.com
+curl https:&#x2F;&#x2F;example.com<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>这时候会生成https通信需要的证书文件，一般是通过自签名Letsencrypt申请下来的：</p>
+<pre class="line-numbers language-none"><code class="language-none">.&#x2F;letsencrypt-auto certonly --standalone -d 域名 --email 邮箱（可匿名）
+
+openssl pkcs12 -export -in fullchain.pem -inkey privkey.pem -out pkcs.p12 -name 域名 -passout pass:ABcd123456
+
+keytool -importkeystore -deststorepass ABcd123456 -destkeypass ABcd123456 -destkeystore keystore.store -srckeystore pkcs.p12 -srcstoretype PKCS12 -srcstorepass ABcd123456 -alias 域名
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>生成的keystore是后面设置CS配置文件的时候使用。</p>
+<h4 id="设置CloudFront"><a href="#设置CloudFront" class="headerlink" title="设置CloudFront"></a>设置CloudFront</h4><p>标红的点特别注意，要改成这个样子，否则测试失败。更改之后发布，测试此时的<code>CloudFront</code>是否生效:</p>
+<pre class="line-numbers language-none"><code class="language-none">curl https:&#x2F;&#x2F;&lt;example&gt;.cloudfront.net
+curl http:&#x2F;&#x2F;&lt;example&gt;.cloudfront.net<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+<p><img src="/2020/08/28/CloudFront-Https/WX20200828-01.png"></p>
+<h4 id="设置Profile"><a href="#设置Profile" class="headerlink" title="设置Profile"></a>设置Profile</h4><p>生成Profile，上面生成的<code>amazon.profile</code>测试上线失败。</p>
+<pre class="line-numbers language-none"><code class="language-none">cd &amp;&amp; git clone https:&#x2F;&#x2F;github.com&#x2F;bluscreenofjeff&#x2F;Malleable-C2-Randomizer &amp;&amp; cd Malleable-C2-Randomizer
+python malleable-c2-randomizer.py -profile Sample\ Templates&#x2F;Pandora.profile -notest
+cp pandora_&lt;random&gt;.profile &#x2F;root&#x2F;cobaltstrike&#x2F;httpsProfile&#x2F; <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="修改profile"><a href="#修改profile" class="headerlink" title="修改profile"></a>修改profile</h4><ol>
+<li>把amazon.profile的最后四行设置https的添加到pandora_<random>.profile里面。</random></li>
+<li>修改<code>pandora_&lt;random.profile</code>里面的<code>Host</code>，改为aws申请下来的加速域名。</li>
+<li>在profile文件最后新增配置：</li>
+</ol>
+<pre class="line-numbers language-none"><code class="language-none">https-certificate &#123;
+set keystore &quot;keystore.store&quot;;
+set password &quot;1234565&quot;;
+&#125;
+http-config &#123;
+	set trust_x_forwarded_for &quot;true&quot;;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="设置CS"><a href="#设置CS" class="headerlink" title="设置CS"></a>设置CS</h4><pre class="line-numbers language-none"><code class="language-none">systemctl stop httpd  &#x2F;&#x2F;关闭apache
+.&#x2F;teamserver &lt;IP&gt; &lt;Pass&gt; &lt;path to pandora profile&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>新建一个listener:</p>
+<p><img src="/2020/08/28/CloudFront-Https/WX20200828-02.png"></p>
+<p>查看CS的<code>WEBlog</code>:</p>
+<pre class="line-numbers language-none"><code class="language-none">curl https:&#x2F;&#x2F;cloudfront.net&#x2F;Hello<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>在weblog里面查看到对应的请求即设置成功。</p>
+<p><img src="/2020/08/28/CloudFront-Https/WX20200828-03.png"></p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://www.blackhillsinfosec.com/using-cloudfront-to-relay-cobalt-strike-traffic/">https://www.blackhillsinfosec.com/using-cloudfront-to-relay-cobalt-strike-traffic/</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/donot/p/13921874.html">Domain Fronted仍然是最佳的C2隐藏手段</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2020/08/28/CloudFront-Https.html" class="leancloud-visitors view" data-flag-title="Domain Fronting隐藏HTTPS">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2020/09/10/redis-windows-hijack.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2020/08/28/hide-your-windows-backdoor.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2020-08-28 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-article-text">准备工作</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E9%83%A8%E7%BD%B2%E5%B7%A5%E4%BD%9C"><span class="toc-article-text">部署工作</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E5%A2%9E%E5%8A%A0apache%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-article-text">增加apache配置文件</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E8%AE%BE%E7%BD%AEhttps"><span class="toc-article-text">设置https</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E8%AE%BE%E7%BD%AECloudFront"><span class="toc-article-text">设置CloudFront</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E8%AE%BE%E7%BD%AEProfile"><span class="toc-article-text">设置Profile</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E4%BF%AE%E6%94%B9profile"><span class="toc-article-text">修改profile</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E8%AE%BE%E7%BD%AECS"><span class="toc-article-text">设置CS</span></a></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-article-text">参考资料</span></a></li></ol></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

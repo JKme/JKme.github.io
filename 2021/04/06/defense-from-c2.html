@@ -1,0 +1,407 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>防御性C2玩具尝试 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="背景需求不管一个什么形式的后门：定时任务、dll劫持、开机启动…，当我设置的后门运行的时候，我想掌握后门的启动时间、触发IP等上环境，所以这篇文章是在shellcode分离免杀的基础上做了尝试性扩展
+考虑这样的场景：
+后门被静态分析
+后门被动态分析
+shellcode被提取之后触发
+…
+
+在shellcode分离免杀的基础上扩展还是比较容易的，当客户端请求远程shellcode托管服务器的时候，增加一个机器人，然后发起一个上线通知：If This Then That，这样太简单了，我们再多加点料，比如：
+
+不带合理参数请求shellcode的URL时候，发起警告
+当木马运行在恶意环境的时候，发起警告
+当木马上线IP不在服务端列表
+当木马上线主机的设备指纹不在服务端列表
+
+
+shellcode托管服务随时可以关闭打开
+shellcode托管服务随时可以新增删除木马上线IP或者设备指纹
+
+准备材料
+一台VPS：托管shellcode，通知slack机器人
+一个AWS账号隐藏C2（CloudFront）
+Slack：接收通知，使用Slash commands功能控制shellcode托管服务
+
+托管shellcode流程"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="防御性C2玩具尝试"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 防御性C2玩具尝试</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h3 id="背景需求"><a href="#背景需求" class="headerlink" title="背景需求"></a>背景需求</h3><p>不管一个什么形式的后门：定时任务、dll劫持、开机启动…，当我设置的后门运行的时候，我想掌握后门的启动时间、触发IP等上环境，所以这篇文章是在shellcode分离免杀的基础上做了尝试性扩展</p>
+<h4 id="考虑这样的场景："><a href="#考虑这样的场景：" class="headerlink" title="考虑这样的场景："></a>考虑这样的场景：</h4><ul>
+<li>后门被静态分析</li>
+<li>后门被动态分析</li>
+<li>shellcode被提取之后触发</li>
+<li>…</li>
+</ul>
+<p>在shellcode分离免杀的基础上扩展还是比较容易的，当客户端请求远程shellcode托管服务器的时候，增加一个机器人，然后发起一个上线通知：If This Then That，这样太简单了，我们再多加点料，比如：</p>
+<ol>
+<li>不带合理参数请求shellcode的URL时候，发起警告</li>
+<li>当木马运行在恶意环境的时候，发起警告<ul>
+<li>当木马上线IP不在服务端列表</li>
+<li>当木马上线主机的设备指纹不在服务端列表</li>
+</ul>
+</li>
+<li>shellcode托管服务随时可以关闭打开</li>
+<li>shellcode托管服务随时可以新增删除木马上线IP或者设备指纹</li>
+</ol>
+<h3 id="准备材料"><a href="#准备材料" class="headerlink" title="准备材料"></a>准备材料</h3><ul>
+<li>一台VPS：托管shellcode，通知slack机器人</li>
+<li>一个AWS账号隐藏C2（CloudFront）</li>
+<li>Slack：接收通知，使用<code>Slash commands</code>功能控制shellcode托管服务</li>
+</ul>
+<h5 id="托管shellcode流程"><a href="#托管shellcode流程" class="headerlink" title="托管shellcode流程"></a>托管shellcode流程</h5><p><img src="/2021/04/06/defense-from-c2/18.png"></p>
+<h5 id="Slack通知"><a href="#Slack通知" class="headerlink" title="Slack通知"></a>Slack通知</h5><p><img src="/2021/04/06/defense-from-c2/slack.png"></p>
+<h5 id="Slash-Command"><a href="#Slash-Command" class="headerlink" title="Slash Command"></a>Slash Command</h5><p><img src="/2021/04/06/defense-from-c2/9.png"></p>
+<p>这个点是从TG上社工库跑路得来的思路，当执行任何一个命令的时候，都会发起一个请求到VPS，然后VPS处理请求。<br>在slack里面增加<code>slach commands</code>:</p>
+<ul>
+<li><code>/boot</code> 开启shellcode托管服务</li>
+<li><code>/delete</code> 删除IP白名单，<code>/delete ip 127.0.0.1</code> </li>
+<li><code>/info</code> 获取托管shellcode服务器的状态</li>
+<li><code>/add</code> 增加IP白名单，<code>/add ip 127.0.0.1</code></li>
+<li><code>/shutdown</code> 关闭shellcode托管服务器</li>
+</ul>
+<p>大概流程是这样，IP白名单直接使用redis来存储，可以设置一个IP为<code>*</code>的时候，任何IP都能上线。</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token decorator annotation punctuation">@app<span class="token punctuation">.</span>route</span><span class="token punctuation">(</span><span class="token string">'/curd'</span><span class="token punctuation">,</span> methods<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">'POST'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token decorator annotation punctuation">@verify_check</span>
+<span class="token keyword">def</span> <span class="token function">add</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    command <span class="token operator">=</span> request<span class="token punctuation">.</span>form<span class="token punctuation">[</span><span class="token string">"command"</span><span class="token punctuation">]</span>
+    text <span class="token operator">=</span> request<span class="token punctuation">.</span>form<span class="token punctuation">[</span><span class="token string">"text"</span><span class="token punctuation">]</span>
+    l <span class="token operator">=</span> text<span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">" "</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span>get_switch<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"The Command is &#123;&#125;"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>command<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"The Text is &#123;&#125;"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>text<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"db status &#123;&#125;"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>get_agent_status<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">if</span> command <span class="token operator">==</span> <span class="token string">"/add"</span><span class="token punctuation">:</span>
+        <span class="token keyword">if</span> l<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token string">"ip"</span><span class="token punctuation">:</span>
+            redis<span class="token punctuation">.</span><span class="token builtin">set</span><span class="token punctuation">(</span><span class="token string">"ip_&#123;&#125;"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>l<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span> l<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+            msg <span class="token operator">=</span> set_msg<span class="token punctuation">(</span><span class="token string">"增加 &#123;&#125;成功, 状态: &#123;&#125;\n当前数据库: &#123;&#125;"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>l<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> l<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">,</span> get_agent_status<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+            robot<span class="token punctuation">(</span>msg<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><code>verify_check</code>是验证请求是否从slack发起的，完整代码：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">verify_check</span><span class="token punctuation">(</span>f<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token decorator annotation punctuation">@wraps</span><span class="token punctuation">(</span>f<span class="token punctuation">)</span>
+    <span class="token keyword">def</span> <span class="token function">wrapper</span><span class="token punctuation">(</span><span class="token operator">*</span>args<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">try</span><span class="token punctuation">:</span>
+            <span class="token comment"># https://api.slack.com/authentication/verifying-requests-from-slack</span>
+            <span class="token comment"># https://slack.dev/python-slack-sdk/oauth/index.html#app-installation-flow</span>
+            <span class="token comment"># if request.form and request.form['token'] == "":</span>
+            slack_signing_secret <span class="token operator">=</span> <span class="token string">'secret'</span><span class="token punctuation">.</span>encode<span class="token punctuation">(</span><span class="token string">'utf-8'</span><span class="token punctuation">)</span>
+            timestamp <span class="token operator">=</span> request<span class="token punctuation">.</span>headers<span class="token punctuation">[</span><span class="token string">'X-Slack-Request-Timestamp'</span><span class="token punctuation">]</span>
+            request_body <span class="token operator">=</span> request<span class="token punctuation">.</span>get_data<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>decode<span class="token punctuation">(</span><span class="token string">'utf-8'</span><span class="token punctuation">)</span>
+            <span class="token comment"># print("request data &#123;&#125;".format(request.get_data()))</span>
+            <span class="token comment"># print(request.values)</span>
+            <span class="token comment"># request_body = urlencode(request.values)</span>
+            <span class="token comment"># print("request data is &#123;&#125;".format(request_body))</span>
+            sig_basestring <span class="token operator">=</span> <span class="token string">'v0:'</span> <span class="token operator">+</span> timestamp <span class="token operator">+</span> <span class="token string">':'</span> <span class="token operator">+</span> request_body
+            <span class="token keyword">if</span> <span class="token builtin">abs</span><span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token builtin">float</span><span class="token punctuation">(</span>timestamp<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">60</span> <span class="token operator">*</span> <span class="token number">5</span><span class="token punctuation">:</span>
+                <span class="token keyword">return</span> abort<span class="token punctuation">(</span><span class="token number">404</span><span class="token punctuation">,</span> description<span class="token operator">=</span><span class="token string">"Resource not found"</span><span class="token punctuation">)</span>
+            my_signature <span class="token operator">=</span> <span class="token string">'v0='</span> <span class="token operator">+</span> hmac<span class="token punctuation">.</span>new<span class="token punctuation">(</span>
+                slack_signing_secret<span class="token punctuation">,</span>
+                sig_basestring<span class="token punctuation">.</span>encode<span class="token punctuation">(</span><span class="token string">'utf-8'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+                hashlib<span class="token punctuation">.</span>sha256
+            <span class="token punctuation">)</span><span class="token punctuation">.</span>hexdigest<span class="token punctuation">(</span><span class="token punctuation">)</span>
+            slack_signature <span class="token operator">=</span> request<span class="token punctuation">.</span>headers<span class="token punctuation">[</span><span class="token string">'X-Slack-Signature'</span><span class="token punctuation">]</span>
+            <span class="token keyword">print</span><span class="token punctuation">(</span>request<span class="token punctuation">.</span>headers<span class="token punctuation">)</span>
+            <span class="token keyword">print</span><span class="token punctuation">(</span>my_signature<span class="token punctuation">,</span> slack_signature<span class="token punctuation">)</span>
+            <span class="token keyword">if</span> hmac<span class="token punctuation">.</span>compare_digest<span class="token punctuation">(</span>my_signature<span class="token punctuation">,</span> slack_signature<span class="token punctuation">)</span><span class="token punctuation">:</span>
+                <span class="token keyword">return</span> f<span class="token punctuation">(</span><span class="token operator">*</span>args<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span>
+            <span class="token keyword">else</span><span class="token punctuation">:</span>
+                <span class="token keyword">return</span> abort<span class="token punctuation">(</span><span class="token number">404</span><span class="token punctuation">,</span> description<span class="token operator">=</span><span class="token string">"Resource not found"</span><span class="token punctuation">)</span>
+        <span class="token keyword">except</span> Exception <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+            <span class="token keyword">return</span> abort<span class="token punctuation">(</span><span class="token number">404</span><span class="token punctuation">,</span> description<span class="token operator">=</span><span class="token string">"Resource not found"</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> wrapper<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h4 id="shellcode托管伪代码"><a href="#shellcode托管伪代码" class="headerlink" title="shellcode托管伪代码"></a>shellcode托管伪代码</h4><pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token decorator annotation punctuation">@app<span class="token punctuation">.</span>route</span><span class="token punctuation">(</span><span class="token string">'/i-am-unreachable'</span><span class="token punctuation">,</span> methods<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">"POST"</span><span class="token punctuation">,</span> <span class="token string">"GET"</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token comment"># 静态分析警告</span>
+    <span class="token keyword">if</span> request<span class="token punctuation">.</span>headers<span class="token punctuation">.</span>getlist<span class="token punctuation">(</span><span class="token string">"X-Forwarded-For"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        ip <span class="token operator">=</span> request<span class="token punctuation">.</span>headers<span class="token punctuation">.</span>getlist<span class="token punctuation">(</span><span class="token string">"X-Forwarded-For"</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">','</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        ip <span class="token operator">=</span> request<span class="token punctuation">.</span>remote_addr
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">not</span> post_validate<span class="token punctuation">(</span>v<span class="token punctuation">,</span> key<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">or</span> request_data <span class="token operator">==</span> <span class="token string">""</span><span class="token punctuation">:</span>
+        user_agent <span class="token operator">=</span> request<span class="token punctuation">.</span>headers<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"User-Agent"</span><span class="token punctuation">)</span>
+        method <span class="token operator">=</span> request<span class="token punctuation">.</span>method
+        <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+        <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+    <span class="token keyword">if</span> <span class="token keyword">not</span> get_switch<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>  <span class="token comment"># 开关关闭状态</span>
+        msg_fail<span class="token punctuation">(</span>now<span class="token punctuation">,</span> domain<span class="token punctuation">,</span> user<span class="token punctuation">,</span> ip<span class="token punctuation">,</span> c2_info<span class="token punctuation">,</span> <span class="token string">"服务器托管开关关闭，打开请发送指令: **/boot**"</span><span class="token punctuation">)</span>
+        <span class="token keyword">return</span> not_found<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    ip_str <span class="token operator">=</span> <span class="token string">"ip_&#123;&#125;"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>ip<span class="token punctuation">)</span>
+    <span class="token keyword">if</span> check<span class="token punctuation">(</span>ip_str<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        shell_str <span class="token operator">=</span> <span class="token string">"shell_&#123;&#125;"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>server<span class="token punctuation">)</span>
+        msg_success<span class="token punctuation">(</span>now<span class="token punctuation">,</span> domain<span class="token punctuation">,</span> user<span class="token punctuation">,</span> ip<span class="token punctuation">,</span> c2_info<span class="token punctuation">)</span>
+        encrypt <span class="token operator">=</span> encrypt_shell<span class="token punctuation">(</span>key<span class="token punctuation">,</span> redis<span class="token punctuation">.</span>get<span class="token punctuation">(</span>shell_str<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token keyword">return</span> Response<span class="token punctuation">(</span>encrypt<span class="token punctuation">,</span> mimetype<span class="token operator">=</span><span class="token string">'text/plain'</span><span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="遗留问题"><a href="#遗留问题" class="headerlink" title="遗留问题"></a>遗留问题</h3><ol>
+<li>我直接选择IP作为白名单，当IP在白名单，并且shellcode托管开关打开的时候，发送shellcode。深入一点可以使用Machine Key作为判断决策，比如<code>HKLM\SOFTWARE\Microsoft\Cryptography</code>，在木马初次运行的时候发送Key到服务端，之后每次运行的时候都检测是否在服务端的名单里面。</li>
+<li>dll可以使用socket分离shellcode，思路和上面一样。socket服务器的隐藏可以选择AWS的ELB(<del>有点贵</del>)类似的加速服务</li>
+</ol>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://idiotc4t.com/persistence/zhu-ji-te-zheng-bang-ding-mu-ma">主机特征绑定木马</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/i-saint/scribble/blob/8318bd26adfcb8f26ed8c428e43769d48e75bfbc/MachineGUID.cpp">Github MachineGuid</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/captainwong/jlib/blob/0b41c6deaa2acaf1642d9b54f6ebd2944f114f13/jlib/win32/DeviceUniqueIdentifier.h">Github DeviceUniqueIdentifier</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2021/04/06/defense-from-c2.html" class="leancloud-visitors view" data-flag-title="防御性C2玩具尝试">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2021/05/27/spring-boot-actuator.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2021/04/01/aws-lambda-rce.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2021-04-06 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E8%83%8C%E6%99%AF%E9%9C%80%E6%B1%82"><span class="toc-article-text">背景需求</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E8%80%83%E8%99%91%E8%BF%99%E6%A0%B7%E7%9A%84%E5%9C%BA%E6%99%AF%EF%BC%9A"><span class="toc-article-text">考虑这样的场景：</span></a></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%87%86%E5%A4%87%E6%9D%90%E6%96%99"><span class="toc-article-text">准备材料</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-5"><a class="toc-article-link" href="#%E6%89%98%E7%AE%A1shellcode%E6%B5%81%E7%A8%8B"><span class="toc-article-text">托管shellcode流程</span></a></li><li class="toc-article-item toc-article-level-5"><a class="toc-article-link" href="#Slack%E9%80%9A%E7%9F%A5"><span class="toc-article-text">Slack通知</span></a></li><li class="toc-article-item toc-article-level-5"><a class="toc-article-link" href="#Slash-Command"><span class="toc-article-text">Slash Command</span></a></li></ol></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#shellcode%E6%89%98%E7%AE%A1%E4%BC%AA%E4%BB%A3%E7%A0%81"><span class="toc-article-text">shellcode托管伪代码</span></a></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E9%81%97%E7%95%99%E9%97%AE%E9%A2%98"><span class="toc-article-text">遗留问题</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-article-text">参考资料</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

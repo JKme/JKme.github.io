@@ -1,0 +1,356 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>NTLM端口信息探测 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="SMB（Server Message Block）协议，可用于在计算机间共享文件、打印机、串口等，电脑上的网上邻居就是靠它实现的。SMB使用了NetBIOS的应用程序接口 （Application Program Interface，简称API）。另外，它是一个开放性的协议，允许了协议扩展——使得它变得更大而且复杂；大约有65个最上层的作业，而每个作业都超过120个函数，甚至Windows NT也没有全部支持到，最近微软又把 SMB 改名为 CIFS（Common Internet File System），并且加入了许多新的特色。SMB协议一般端口使用为139，445，CIFS协议有三个版本：SMB、SMB2、SMB3。
+NTLM在type2返回Challenge的过程中，同时返回了操作系统类型，主机名，netbios名等等。这也就意味着如果我们在能跟服务器进行NTLM交流中，给服务器发送一个type1的请求，服务器返回type2的响应，这一步，我们就可以得到很多信息。SMBv1和SMBv2的数据包结构是不同的
+SMBv1使用非攻NTLMINFO探测SMB接口，抓包通过wireshark分析，包含操作系统类型的数据包由SMB Header和Response组成：我们的目的是获取smb数据包的NTLM数据，然后对NTLM数据包解析，NTLM数据包上一层是GSS-API，首先找到GSS-API在整个数据包的偏移量，SMB的数据包结构长度如下：
+SMB Header:  32 byte
+Word Count:  1 byte
+AndXCommand: 1 byte
+Reserved:    1 byte
+AndXOffset:  2 byte
+Action: 	   2 byte
+Security Blob Length: 2 byte (表示Security Blob的长度，这里的hex是 0f 10，小端转换为010f,再转换成10进制就是271，对应Security Blob的长度)
+Byte Count: 2 byte (表示Security Blob加上NativeOS和Native Lan的长度)
+Security Blob: 可变长度，取决于Security Blob Length
+上面的数据包结构的关键数据是Security Blob Length和Byte Content，前者表示GSS-API的整个数据包长度，后者表示GSS-API和Native OS加上Native LM的数据长度：
+GSS-API的长度是271 Byte
+Native OS的长度是42 Byte"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="NTLM端口信息探测"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> NTLM端口信息探测</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>SMB（Server Message Block）协议，可用于在计算机间共享文件、打印机、串口等，电脑上的网上邻居就是靠它实现的。SMB使用了NetBIOS的应用程序接口 （Application Program Interface，简称API）。另外，它是一个开放性的协议，允许了协议扩展——使得它变得更大而且复杂；大约有65个最上层的作业，而每个作业都超过120个函数，甚至Windows NT也没有全部支持到，最近微软又把 SMB 改名为 CIFS（Common Internet File System），并且加入了许多新的特色。SMB协议一般端口使用为139，445，CIFS协议有三个版本：SMB、SMB2、SMB3。</p>
+<h3 id="NTLM"><a href="#NTLM" class="headerlink" title="NTLM"></a>NTLM</h3><p>在type2返回Challenge的过程中，同时返回了操作系统类型，主机名，netbios名等等。这也就意味着如果我们在能跟服务器进行NTLM交流中，给服务器发送一个type1的请求，服务器返回type2的响应，这一步，我们就可以得到很多信息。SMBv1和SMBv2的数据包结构是不同的</p>
+<h3 id="SMBv1"><a href="#SMBv1" class="headerlink" title="SMBv1"></a>SMBv1</h3><p>使用<a target="_blank" rel="noopener" href="https://github.com/FeigongSec/NTLMINFO">非攻NTLMINFO</a>探测SMB接口，抓包通过wireshark分析，包含操作系统类型的数据包由SMB Header和Response组成：<br><img src="/2021/08/06/windows-ntlm-smb-scan/ntlm-1.png"><br>我们的目的是获取smb数据包的NTLM数据，然后对NTLM数据包解析，NTLM数据包上一层是GSS-API，首先找到GSS-API在整个数据包的偏移量，SMB的数据包结构长度如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">SMB Header:  32 byte
+Word Count:  1 byte
+AndXCommand: 1 byte
+Reserved:    1 byte
+AndXOffset:  2 byte
+Action: 	   2 byte
+Security Blob Length: 2 byte (表示Security Blob的长度，这里的hex是 0f 10，小端转换为010f,再转换成10进制就是271，对应Security Blob的长度)
+Byte Count: 2 byte (表示Security Blob加上NativeOS和Native Lan的长度)
+Security Blob: 可变长度，取决于Security Blob Length<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>上面的数据包结构的关键数据是<code>Security Blob Length</code>和<code>Byte Content</code>，前者表示GSS-API的整个数据包长度，后者表示GSS-API和Native OS加上Native LM的数据长度：</p>
+<h6 id="GSS-API的长度是271-Byte"><a href="#GSS-API的长度是271-Byte" class="headerlink" title="GSS-API的长度是271 Byte"></a>GSS-API的长度是271 Byte</h6><p><img src="/2021/08/06/windows-ntlm-smb-scan/ntlm-3.png"></p>
+<h6 id="Native-OS的长度是42-Byte"><a href="#Native-OS的长度是42-Byte" class="headerlink" title="Native OS的长度是42 Byte"></a>Native OS的长度是42 Byte</h6><p><img src="/2021/08/06/windows-ntlm-smb-scan/ntlm-3.1.png"></p>
+<h6 id="Native-LM的长度是38-Byte"><a href="#Native-LM的长度是38-Byte" class="headerlink" title="Native LM的长度是38 Byte"></a>Native LM的长度是38 Byte</h6><p><img src="/2021/08/06/windows-ntlm-smb-scan/ntlm-3.2.png"></p>
+<p>所以数学题来了：<br>Security Blob Length转换成10进制是271 Byte</p>
+<p>Byte Count: 271 + 42 + 38 = 351 Byte<br>我们的目的是获取NTLM的数据和NativeOS和Native LM，回到代码里面去看看，当我们获取到type2的数据，获取到的数据是什么呢？</p>
+<p><img src="/2021/08/06/windows-ntlm-smb-scan/ntlm-4.png"></p>
+<p>NetBIOS Session Service这一层的长度是4 Byte，<code>Security Blob Length</code>的偏移量就出来了: </p>
+<pre class="line-numbers language-none"><code class="language-none">4 + 32 + 1 + 1 + 1 + 2 + 2 &#x3D; 43<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>所以<code>Security Blob Length</code>偏移从43开始，长度是2 Byte， <code>Security Blob</code>跟在后面，偏移从45开始，47结束，go语言伪代码：</p>
+<pre class="line-numbers language-none"><code class="language-none">blob_length :&#x3D; uint16(bytes2Uint(ret[43:45], &#39;&lt;&#39;))
+blob_count :&#x3D; uint16(bytes2Uint(ret[45:47], &#39;&lt;&#39;))
+&#x2F;&#x2F;gss变量表示从Security Blob起始位置到数据包结束，包括了Native OS和Native LM
+gss :&#x3D; ret[47:]
+
+&#x2F;&#x2F;找到NTLMSSP在gss的偏移起始位置
+off_ntlm :&#x3D; bytes.Index(gss, []byte(&quot;NTLMSSP&quot;))
+
+&#x2F;&#x2F;Native OS和Native LM数据，对应上面的图
+native :&#x3D; gss[int(blob_length):blob_count]
+
+&#x2F;&#x2F;bs表示ntlm的数据，以NTLMSSP开头
+bs :&#x3D; gss[off_ntlm:blob_length]<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>接下来主要工作就是解析NTLM的数据，感谢iv4n师傅的<a target="_blank" rel="noopener" href="http://iv4n.cc/ntlmssp/">Windows NTLM协议细节</a>，我fork了一份<a target="_blank" rel="noopener" href="https://github.com/JKme/go-ntlmssp">go-ntlmssp</a>，增加了解析NTLM输出字符串函数，可以直接获取NTLMSSP数据的解析结果：</p>
+<pre class="line-numbers language-none"><code class="language-none">func TestChallengeMsg_String(t *testing.T) &#123;
+	bs, _ :&#x3D; hex.DecodeString(&quot;4e544c4d535350xxxxx&quot;)
+	type2 :&#x3D; ChallengeMsg&#123;&#125;
+	info :&#x3D; type2.String(bs)
+	fmt.Println(info)
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><img src="/2021/08/06/windows-ntlm-smb-scan/ntlm-5.png"></p>
+<p>Windows10默认使用SMBv2协议，没有打开SMBv1开关，<a target="_blank" rel="noopener" href="https://github.com/RowTeam/SharpDetectionNTLMSSP">Rcoll师傅的SharpDetectionNTLMSSP</a>只发送了SMBv1的探测，没有探测SMBv2。<a target="_blank" rel="noopener" href="https://github.com/FeigongSec/NTLMINFO">非攻NTLMINFO</a>师傅就比较完整，先探测SMBv1，失败之后尝试SMBv2。</p>
+<h3 id="SMBv2"><a href="#SMBv2" class="headerlink" title="SMBv2"></a>SMBv2</h3><p>参考<a target="_blank" rel="noopener" href="https://github.com/FeigongSec/NTLMINFO/blob/016e1859b7c0f4cc55c923027bc24174b0586bc7/SmbInfo/SmbInfo/Program.cs#L83">非攻师傅的代码</a>，先发送第一次的探测请求，找到偏移量70的地方，做一次判断是否发送第二个数据包。换成GO代码就比较简单了，这里的偏移70保存的是是SMBv2的<code>Security mode</code>:</p>
+<p><img src="/2021/08/06/windows-ntlm-smb-scan/ntlm-6.png"></p>
+<p>Go语言如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">var NTLMSSPNegotiatev2Data []byte
+if hex.EncodeToString(r2[70:71]) &#x3D;&#x3D; &quot;03&quot; &#123;
+	flags :&#x3D; []byte&#123;0x15, 0x82, 0x08, 0xa0&#125;
+	NTLMSSPNegotiatev2Data &#x3D; getNTLMSSPNegotiateData(flags)
+&#125; else &#123;
+	flags :&#x3D; []byte&#123;0x05, 0x80, 0x08, 0xa0&#125;
+	NTLMSSPNegotiatev2Data &#x3D; getNTLMSSPNegotiateData(flags)
+&#125;
+
+_, err &#x3D; conn2.Write(NegotiateSMBv2Data2)
+if err !&#x3D; nil &#123;
+	return
+&#125;
+readBytes(conn2)
+
+_, err &#x3D; conn2.Write(NTLMSSPNegotiatev2Data)
+ret, _ :&#x3D; readBytes(conn2)
+ntlmOff :&#x3D; bytes.Index(ret, []byte(&quot;NTLMSSP&quot;))<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>成品主要参考非攻师傅的代码，集成到<a target="_blank" rel="noopener" href="https://github.com/JKme/cube">Cube</a>，完成了winrm、wmi、smb、mssql端口的NTLM信息探测。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/FeigongSec/NTLMINFO">非攻NTLMINFO</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/RowTeam/SharpDetectionNTLMSSP">Rcoll师傅的SharpDetectionNTLMSSP</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/zmap/zgrab2/tree/master/lib/smb/smb">An SMB library in Go</a></li>
+<li><a target="_blank" rel="noopener" href="https://daiker.gitbook.io/windows-protocol/ntlm-pian/4">NTLM基础介绍</a></li>
+<li><a target="_blank" rel="noopener" href="http://iv4n.cc/ntlmssp/">Windows NTLM协议细节</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-smb/f210069c-7086-4dc2-885e-861d837df688">Server Message Block (SMB) Protocol</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-smb2/5606ad47-5ee0-437a-817e-70c366052962">Server Message Block (SMB) Protocol Versions 2 and 3</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2021/08/06/windows-ntlm-smb-scan.html" class="leancloud-visitors view" data-flag-title="NTLM端口信息探测">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a type="button" class="btn btn-default disabled"><i class="fa fa-arrow-circle-o-left"></i>Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2021/08/02/siem-on-elk.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2021-08-06 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#NTLM"><span class="toc-article-text">NTLM</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#SMBv1"><span class="toc-article-text">SMBv1</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-6"><a class="toc-article-link" href="#GSS-API%E7%9A%84%E9%95%BF%E5%BA%A6%E6%98%AF271-Byte"><span class="toc-article-text">GSS-API的长度是271 Byte</span></a></li><li class="toc-article-item toc-article-level-6"><a class="toc-article-link" href="#Native-OS%E7%9A%84%E9%95%BF%E5%BA%A6%E6%98%AF42-Byte"><span class="toc-article-text">Native OS的长度是42 Byte</span></a></li><li class="toc-article-item toc-article-level-6"><a class="toc-article-link" href="#Native-LM%E7%9A%84%E9%95%BF%E5%BA%A6%E6%98%AF38-Byte"><span class="toc-article-text">Native LM的长度是38 Byte</span></a></li></ol></li></ol></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#SMBv2"><span class="toc-article-text">SMBv2</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%8F%82%E8%80%83"><span class="toc-article-text">参考</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

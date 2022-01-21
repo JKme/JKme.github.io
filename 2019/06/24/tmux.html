@@ -1,0 +1,574 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>tmux使用 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="组合键:
+:new&amp;lt;回车&amp;gt;  启动新会话s           列出所有会话w           相当于s的时候展开列表，展开windows$           重命名当前会话
+tmux kill-session -t demo # 关闭demo会话
+他有一个session,windows,panes的概念
+一个session可以有N个windows，N个panes
+如果是最大化利用，那么需要找到一种可以跳来跳去的方法，不管是跳windows还是session。
+一般来说是跳windows，因为windows下有几个不同的panes
+所以，怎么跳最快?
+name不管是pane还是windows，是不是只要有name就可以跳过去，不对，应该是windows之间的跳，因为一组windows就是一组任务。
+一个session里面可以最下面的状态栏可以看到有几个windows，windows的名字如何"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="tmux使用"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> tmux使用</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>组合键:</p>
+<p>:new&lt;回车&gt;  启动新会话<br>s           列出所有会话<br>w           相当于s的时候展开列表，展开windows<br>$           重命名当前会话</p>
+<p>tmux kill-session -t demo # 关闭demo会话</p>
+<p>他有一个session,windows,panes的概念</p>
+<p>一个session可以有N个windows，N个panes</p>
+<p>如果是最大化利用，那么需要找到一种可以跳来跳去的方法，不管是跳windows还是session。</p>
+<p>一般来说是跳windows，因为windows下有几个不同的panes</p>
+<p>所以，怎么跳最快?</p>
+<p>name不管是pane还是windows，是不是只要有name就可以跳过去，不对，应该是windows之间的跳，因为一组windows就是一组任务。</p>
+<p>一个session里面可以最下面的状态栏可以看到有几个windows，windows的名字如何</p>
+<p>###windows的操作:</p>
+<pre class="line-numbers language-none"><code class="language-none">p  切换到上一个windows
+n  切换到下一个widnwos
+,  重命名窗口
+.  修改当前窗口编号
+f  根据关键词搜索windows   这个实际测试可用，可以跳session<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>###Pane的操作</p>
+<pre class="line-numbers language-none"><code class="language-none">&#123;  向前置换面板
+&#125;  向后置换面板，这个有意思
+z  最大化当前的面板，再输入一次就变回去了
+Esc+1  横着的面板变成竖立状态<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>###Pane和windows之间的互换<br>比如你当前想把另外一个windows合并到现在的pane里面</p>
+<pre class="line-numbers language-none"><code class="language-none">join-pane -s window01 # 合并名称为window01的窗口的默认（第一个）面板到当前窗口中
+join-pane -s window01.1 # .1显式指定了第一个面板，.2就是第二个面板(我本地将面板编号起始值设置为1，默认是0)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>有另外一种方式，通过karabiner，单独在iterm2里面绑定某个组合键盘，比如cap绑定一个Home键，这样tmux的prefix就是单独按一下cap就可以了。</p>
+<p>所以需要两个地方设置:</p>
+<pre class="line-numbers language-none"><code class="language-none">set -g prefix Home
+unbind C-b
+bind-key Home send-prefix<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>第二个地方需要在karabiner里面针对iterm2单独设置一个规则: 即按下cap等于home键。<br>这个是网上的一个例子，可以照着写</p>
+<pre class="line-numbers language-none"><code class="language-none">?xml version&#x3D;&quot;1.0&quot;?&gt;
+&lt;root&gt;
+  &lt;appdef&gt;
+    &lt;appname&gt;PYCHARM&lt;&#x2F;appname&gt;
+    &lt;equal&gt;com.jetbrains.pycharm&lt;&#x2F;equal&gt;
+  &lt;&#x2F;appdef&gt;
+   &lt;item&gt;
+    &lt;name&gt;custom settings&lt;&#x2F;name&gt;
+    &lt;item&gt;
+      &lt;name&gt;Change Functional Keys to F3...F10 for PyCharm&lt;&#x2F;name&gt;
+      &lt;identifier&gt;remap.app_pycharm_functional2function&lt;&#x2F;identifier&gt;
+      &lt;only&gt;PYCHARM&lt;&#x2F;only&gt;
+      &lt;autogen&gt;__KeyToKey__ KeyCode::EXPOSE_ALL, KeyCode::F3&lt;&#x2F;autogen&gt;
+      &lt;autogen&gt;__KeyToKey__ KeyCode::DASHBOARD, KeyCode::F4&lt;&#x2F;autogen&gt;
+      &lt;autogen&gt;__KeyToKey__ KeyCode::LAUNCHPAD, KeyCode::F4&lt;&#x2F;autogen&gt;
+      &lt;autogen&gt;__KeyToKey__ ConsumerKeyCode::KEYBOARDLIGHT_LOW, KeyCode::F5&lt;&#x2F;autogen&gt;
+      &lt;autogen&gt;__KeyToKey__ ConsumerKeyCode::KEYBOARDLIGHT_HIGH, KeyCode::F6&lt;&#x2F;autogen&gt;
+      &lt;autogen&gt;__KeyToKey__ ConsumerKeyCode::MUSIC_PREV, KeyCode::F7&lt;&#x2F;autogen&gt;
+      &lt;autogen&gt;__KeyToKey__ ConsumerKeyCode::MUSIC_PLAY, KeyCode::F8&lt;&#x2F;autogen&gt;
+      &lt;autogen&gt;__KeyToKey__ ConsumerKeyCode::MUSIC_NEXT, KeyCode::F9&lt;&#x2F;autogen&gt;
+      &lt;autogen&gt;__KeyToKey__ ConsumerKeyCode::VOLUME_MUTE, KeyCode::F10&lt;&#x2F;autogen&gt;
+    &lt;&#x2F;item&gt;
+  &lt;&#x2F;item&gt;
+&lt;&#x2F;root&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>获取程序的<code>budnle identifiers</code>:</p>
+<pre class="line-numbers language-none"><code class="language-none">&gt; osascript -e &#39;id of app &quot;WebStorm&quot;&#39;
+  com.jetbrains.WebStorm
+
+  &gt; osascript -e &#39;id of app &quot;Pycharm&quot;&#39;
+  com.jetbrains.pycharm<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>tmux的最大化利用是远程服务器的时候，在iterm2里面新开一个标签。可以选择每一个vps一个标签，然后在每一个标签里面利用tmux,w</p>
+<p>可以在iterm2里面修改切换tab是<code>cmd + [</code>，和<code>cmd + ]</code>。</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">
+<span class="token comment"># -- general -------------------------------------------------------------------</span>
+
+<span class="token builtin class-name">set</span> -g default-terminal <span class="token string">"screen-256color"</span> <span class="token comment"># colors!</span>
+setw -g xterm-keys on
+<span class="token builtin class-name">set</span> -s escape-time <span class="token number">10</span>                     <span class="token comment"># faster command sequences</span>
+<span class="token builtin class-name">set</span> -sg repeat-time <span class="token number">600</span>                   <span class="token comment"># increase repeat timeout</span>
+<span class="token builtin class-name">set</span> -s focus-events on
+
+<span class="token comment"># Fix Ctrl+Arrow for PuTTY</span>
+<span class="token builtin class-name">set</span> -g terminal-overrides <span class="token string">"xterm*:kLFT5=<span class="token entity" title="\e">\e</span>OD:kRIT5=<span class="token entity" title="\e">\e</span>OC:kUP5=<span class="token entity" title="\e">\e</span>OA:kDN5=<span class="token entity" title="\e">\e</span>OB:smkx@:rmkx@"</span>
+
+<span class="token comment"># remap prefix from 'C-b' to 'C-a'</span>
+unbind C-b
+set-option -g prefix C-d
+bind-key C-d send-prefix
+
+<span class="token builtin class-name">set</span> -g mode-keys <span class="token function">vi</span>
+<span class="token comment"># prefix-C-z causes blankscreen, tmux gets suspended</span>
+unbind C-z
+
+<span class="token builtin class-name">set</span> -q -g status-utf8 on                  <span class="token comment"># expect UTF-8 (tmux &lt; 2.2)</span>
+setw -q -g utf8 on
+
+<span class="token comment"># reload configuration</span>
+<span class="token builtin class-name">bind</span> r source-file ~/.tmux.conf <span class="token punctuation">\</span><span class="token punctuation">;</span> display <span class="token string">'~/.tmux.conf sourced'</span>
+
+
+<span class="token comment"># -- display -------------------------------------------------------------------</span>
+
+<span class="token builtin class-name">set</span> -g base-index <span class="token number">1</span>           <span class="token comment"># start windows numbering at 1</span>
+setw -g pane-base-index <span class="token number">1</span>     <span class="token comment"># make pane numbering consistent with windows</span>
+
+setw -g automatic-rename on   <span class="token comment"># rename window to reflect current program</span>
+<span class="token builtin class-name">set</span> -g renumber-windows on    <span class="token comment"># renumber windows when a window is closed</span>
+
+<span class="token builtin class-name">set</span> -g set-titles on          <span class="token comment"># set terminal title</span>
+
+<span class="token builtin class-name">set</span> -g display-panes-time <span class="token number">800</span> <span class="token comment"># slightly longer pane indicators display time</span>
+<span class="token builtin class-name">set</span> -g display-time <span class="token number">1000</span>      <span class="token comment"># slightly longer status messages display time</span>
+
+<span class="token builtin class-name">set</span> -g status-interval <span class="token number">10</span>     <span class="token comment"># redraw status line every 10 seconds</span>
+
+<span class="token comment"># clear both screen and history</span>
+<span class="token builtin class-name">bind</span> -n C-l send-keys C-l <span class="token punctuation">\</span><span class="token punctuation">;</span> run <span class="token string">'sleep 0.1'</span> <span class="token punctuation">\</span><span class="token punctuation">;</span> clear-history
+
+<span class="token comment"># activity</span>
+<span class="token builtin class-name">set</span> -g monitor-activity on
+<span class="token builtin class-name">set</span> -g visual-activity off
+
+
+<span class="token comment"># -- navigation ----------------------------------------------------------------</span>
+
+<span class="token comment"># create session</span>
+<span class="token builtin class-name">bind</span> C-c new-session
+
+<span class="token comment"># find session</span>
+<span class="token builtin class-name">bind</span> C-f command-prompt -p find-session <span class="token string">'switch-client -t %%'</span>
+
+<span class="token comment"># split current window horizontally</span>
+<span class="token builtin class-name">bind</span> - split-window -v -c <span class="token string">'#&#123;pane_current_path&#125;'</span>
+<span class="token comment"># split current window vertically</span>
+<span class="token builtin class-name">bind</span> <span class="token punctuation">\</span><span class="token punctuation">\</span> split-window -h -c <span class="token string">'#&#123;pane_current_path&#125;'</span>
+
+<span class="token comment"># pane navigation</span>
+<span class="token builtin class-name">bind</span> -r h select-pane -L  <span class="token comment"># move left</span>
+<span class="token builtin class-name">bind</span> -r j select-pane -D  <span class="token comment"># move down</span>
+<span class="token builtin class-name">bind</span> -r k select-pane -U  <span class="token comment"># move up</span>
+<span class="token builtin class-name">bind</span> -r l select-pane -R  <span class="token comment"># move right</span>
+<span class="token builtin class-name">bind</span> <span class="token operator">></span> swap-pane -D       <span class="token comment"># swap current pane with the next one</span>
+<span class="token builtin class-name">bind</span> <span class="token operator">&lt;</span> swap-pane -U       <span class="token comment"># swap current pane with the previous one</span>
+
+<span class="token comment"># pane resizing</span>
+<span class="token builtin class-name">bind</span> -r H resize-pane -L <span class="token number">2</span>
+<span class="token builtin class-name">bind</span> -r J resize-pane -D <span class="token number">2</span>
+<span class="token builtin class-name">bind</span> -r K resize-pane -U <span class="token number">2</span>
+<span class="token builtin class-name">bind</span> -r L resize-pane -R <span class="token number">2</span>
+
+<span class="token comment"># window navigation</span>
+unbind n
+unbind p
+<span class="token builtin class-name">bind</span> -r C-h previous-window <span class="token comment"># select previous window</span>
+<span class="token builtin class-name">bind</span> -r C-l next-window     <span class="token comment"># select next window</span>
+<span class="token builtin class-name">bind</span> Tab last-window        <span class="token comment"># move to last active window</span>
+
+<span class="token comment"># -- list choice (tmux &lt; 2.4) --------------------------------------------------</span>
+
+<span class="token comment"># vi-choice is gone in tmux >= 2.4</span>
+run -b <span class="token string">'tmux bind -t vi-choice h tree-collapse 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -t vi-choice l tree-expand 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -t vi-choice K start-of-list 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -t vi-choice J end-of-list 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -t vi-choice H tree-collapse-all 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -t vi-choice L tree-expand-all 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -t vi-choice Escape cancel 2> /dev/null || true'</span>
+
+
+<span class="token comment"># -- edit mode (tmux &lt; 2.4) ----------------------------------------------------</span>
+
+<span class="token comment"># vi-edit is gone in tmux >= 2.4</span>
+run -b <span class="token string">'tmux bind -ct vi-edit H start-of-line 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -ct vi-edit L end-of-line 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -ct vi-edit q cancel 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -ct vi-edit Escape cancel 1> /dev/null || true'</span>
+
+
+<span class="token comment"># -- copy mode -----------------------------------------------------------------</span>
+
+<span class="token builtin class-name">bind</span> Enter copy-mode <span class="token comment"># enter copy mode</span>
+
+run -b <span class="token string">'tmux bind -t vi-copy v begin-selection 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -T copy-mode-vi v send -X begin-selection 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -t vi-copy C-v rectangle-toggle 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -T copy-mode-vi C-v send -X rectangle-toggle 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -t vi-copy y copy-selection 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -T copy-mode-vi y send -X copy-selection-and-cancel 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -t vi-copy Escape cancel 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -T copy-mode-vi Escape send -X cancel 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -t vi-copy H start-of-line 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -T copy-mode-vi H send -X start-of-line 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -t vi-copy L end-of-line 2> /dev/null || true'</span>
+run -b <span class="token string">'tmux bind -T copy-mode-vi L send -X end-of-line 2> /dev/null || true'</span>
+
+<span class="token comment"># # copy to Mac OSX clipboard</span>
+<span class="token comment"># if -b 'command -v reattach-to-user-namespace > /dev/null 2>&amp;1' 'bind y run -b "tmux save-buffer - | reattach-to-user-namespace pbcopy"'</span>
+<span class="token comment"># # copy to X11 clipboard</span>
+<span class="token comment"># if -b 'command -v xsel > /dev/null 2>&amp;1' 'bind y run -b "tmux save-buffer - | xsel -i -b"'</span>
+<span class="token comment"># # if -b '! command -v xsel > /dev/null 2>&amp;1 &amp;&amp; command -v xclip > /dev/null 2>&amp;1' 'bind y run -b "tmux save-buffer - | xclip -i -selection clipboard >/dev/null 2>&amp;1"'</span>
+<span class="token comment"># # copy to Windows clipboard</span>
+<span class="token comment"># if -b 'command -v clip.exe > /dev/null 2>&amp;1' 'bind y run -b "tmux save-buffer - | clip.exe"'</span>
+<span class="token comment"># if -b '[ -c /dev/clipboard ]' 'bind y run -b "tmux save-buffer - > /dev/clipboard"'</span>
+
+
+<span class="token comment"># -- buffers -------------------------------------------------------------------</span>
+
+<span class="token builtin class-name">bind</span> b list-buffers  <span class="token comment"># list paste buffers</span>
+<span class="token builtin class-name">bind</span> p paste-buffer  <span class="token comment"># paste from the top paste buffer</span>
+<span class="token builtin class-name">bind</span> P choose-buffer <span class="token comment"># choose which buffer to paste from</span>
+
+<span class="token comment"># -- better UX -----------------------------------------------------------------</span>
+
+<span class="token builtin class-name">set</span> -g mouse on
+<span class="token builtin class-name">set</span> -g history-limit <span class="token number">10000</span> <span class="token comment"># same as terminal itself</span>
+<span class="token builtin class-name">set</span> -g pane-active-border-style <span class="token assign-left variable">bg</span><span class="token operator">=</span>default,fg<span class="token operator">=</span>colour4
+
+
+<span class="token comment"># -- status line --------------------------------------------------------------</span>
+<span class="token builtin class-name">set</span> -g status-position bottom
+<span class="token builtin class-name">set</span> -g status-justify left
+<span class="token builtin class-name">set</span> -g status-left-length <span class="token number">200</span>
+<span class="token builtin class-name">set</span> -g status-right-length <span class="token number">200</span>
+
+
+<span class="token builtin class-name">set</span> -g status-left <span class="token string">"#[fg=colour16,bg=colour254,bold] ❐ #S #[fg=colour255,bg=colour24,bold] #(free -m | awk '/Mem/&#123;printf(<span class="token variable">$3</span>)&#125;')M  #[fg=colour232,bg=colour33,bold] #(vmstat -SM 1 2|awk 'END &#123;print 100-<span class="token variable">$15</span>&#125;')% "</span>
+<span class="token builtin class-name">set</span> -g status-right <span class="token string">" #&#123;?client_prefix,C-d,&#125; #[fg=colour255,bg=colour24,bold] #&#123;=21:pane_title&#125; #[fg=colour255,bg=colour8,bold] #(uptime | cut -d ',' -f1 | sed 's/\ \ /\ /g') #[fg=colour232,bg=colour249,bold] #(echo #&#123;pane_current_command&#125;) #(ps -o args -p <span class="token variable"><span class="token variable">`</span>pgrep -P <span class="token comment">#&#123;pane_pid&#125;</span><span class="token variable">`</span></span>|grep ssh|cut -d ' ' -f2-)"</span>
+
+<span class="token builtin class-name">set</span> -g status-style <span class="token assign-left variable">fg</span><span class="token operator">=</span>colour15,bg<span class="token operator">=</span>colour233
+<span class="token comment"># set -g status-left-style fg=colour255,bg=colour233,bold</span>
+<span class="token comment"># set -g status-right-style fg=colour255,bg=colour233,bold</span>
+
+<span class="token comment"># -- window status -------------------------------------------------------------</span>
+
+<span class="token comment"># normal tab</span>
+<span class="token builtin class-name">set</span> -g window-status-format <span class="token string">" #I:#W #F "</span>
+
+<span class="token comment"># current tab</span>
+<span class="token builtin class-name">set</span> -g window-status-current-format <span class="token string">" #I:#W:#F "</span>
+<span class="token builtin class-name">set</span> -g window-status-current-style <span class="token assign-left variable">fg</span><span class="token operator">=</span>colour15,bg<span class="token operator">=</span>colour233,bold
+
+<span class="token comment"># activity in window</span>
+<span class="token builtin class-name">set</span> -g window-status-activity-style <span class="token assign-left variable">fg</span><span class="token operator">=</span>default,underscore
+
+<span class="token comment"># bell</span>
+setw -g window-status-bell-style <span class="token assign-left variable">fg</span><span class="token operator">=</span>colour1,bg<span class="token operator">=</span>colour255,bold
+
+<span class="token comment"># messages</span>
+setw -g message-style <span class="token assign-left variable">fg</span><span class="token operator">=</span>black,bg<span class="token operator">=</span>colour226,bold
+
+
+
+<span class="token builtin class-name">set</span> -g @plugin <span class="token string">'tmux-plugins/tpm'</span>
+<span class="token builtin class-name">set</span> -g @plugin <span class="token string">'tmux-plugins/tmux-sensible'</span>
+
+<span class="token comment"># plugins</span>
+<span class="token builtin class-name">set</span> -g @plugin <span class="token string">'tmux-plugins/tmux-resurrect'</span>
+<span class="token builtin class-name">set</span> -g @plugin <span class="token string">'tmux-plugins/tmux-continuum'</span>
+<span class="token builtin class-name">set</span> -g @continuum-save-interval <span class="token string">'0'</span>
+<span class="token builtin class-name">set</span> -g @continuum-restore <span class="token string">'on'</span>
+run <span class="token string">'~/.tmux/plugins/tpm/tpm'</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>再安装一个tpm插件:</p>
+<pre class="line-numbers language-none"><code class="language-none">mkdir -p ~&#x2F;.tmux&#x2F;plugins&#x2F;
+git clone https:&#x2F;&#x2F;github.com&#x2F;tmux-plugins&#x2F;tpm ~&#x2F;.tmux&#x2F;plugins&#x2F;tpm
+
+Press prefix + I (capital i, as in Install) to fetch the plugin.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p><code>I</code>安装插件，</p>
+<p>saved a session (prefix + ctrl-s) </p>
+<p>最后的最后，如果是本机macosx，远程是vps，当复制远程vps内容的时候，复制的内容是到了远程主机的buffer，这个时候需要clipper来把远程主机复制到本地，我用的tmux版本是2.1。在mac上的ssh配置文件加上端口转发:</p>
+<pre class="line-numbers language-none"><code class="language-none">RemoteForward 8377 localhost:8377<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>配置开机启动:</p>
+<pre class="line-numbers language-none"><code class="language-none">sudo cp clipper &#x2F;usr&#x2F;local&#x2F;bin
+cp contrib&#x2F;darwin&#x2F;tcp-port&#x2F;com.wincent.clipper.plist ~&#x2F;Library&#x2F;LaunchAgents&#x2F;
+launchctl load -w -S Aqua ~&#x2F;Library&#x2F;LaunchAgents&#x2F;com.wincent.clipper.plist<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>然后在远程主机的tmux配置加上这样:</p>
+<pre class="line-numbers language-none"><code class="language-none">bind-key -t vi-copy Enter copy-pipe &quot;nc localhost 8377&quot;
+<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>这样就可以了。</p>
+<p>在使用mosh的情况下，mosh是不支持端口转发的，需要先用ssh端口转发，然后再用mosh链接:</p>
+<pre class="line-numbers language-none"><code class="language-none">Host sandbox
+  ControlMaster no
+  ControlPath none
+  Hostname sandbox.example.com
+
+Host sandbox-clipper
+  ControlMaster no
+  ControlPath none
+  ExitOnForwardFailure yes
+  Hostname sandbox.example.com
+  RemoteForward 8377 localhost:8377
+  
+ssh -N -f sandbox-clipper
+mosh sandbox<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>clipper的文档讲的超级详细，可以看看。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/wincent/clipper">https://github.com/wincent/clipper</a></p>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2019/06/24/tmux.html" class="leancloud-visitors view" data-flag-title="tmux使用">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2019/07/21/rsyslog-backdoor.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2019/06/18/tornado-pentest.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2019-06-24 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Learning/">Learning<span>16</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

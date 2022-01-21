@@ -1,0 +1,464 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>栈溢出学习笔记 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="根据不同的操作系统，一个进程可能被分配到不同内存区域中执行，但是不管什么样的系统，什么样的计算机结构，进程使用的内存可以按照功能分为4个部分：
+
+代码区：可执行指令
+数据区：用于存储全局变量
+堆区：进程可以在堆区动态的请求一定大小内存，并在用完之后归还给堆区。动态分布和回收是堆区的特点
+栈区：用于动态的存储函数之间的调用关系，以保证被调用函数返回时恢复到母函数中继续执行
+
+程序中使用的缓冲区可以在堆区、栈区、数据区，不同地方的缓冲区利用方式不同。
+内存中的栈区指的就是系统栈，由系统自动维护。
+栈时FILO结构，所以栈顶指的是最下方，底部是最上方。
+
+%esp 指向栈的顶部（栈指针寄存器，存放一个指针，永远指向系统栈最上面栈帧的栈顶)
+%ebp 指向栈的底部
+%eip 用来存储即将执行的程序指令的地址
+Frame Pointer(FP) Or Base Pointer(BP), Stack Pointer(SP)
+函数栈帧：ESP和EBP之间内存空间为当前栈帧
+
+32位x86架构下的通用寄存器包括一般寄存器（eax、ebx、ecx、edx），索引寄存器（esi、edi)，以及堆栈指针寄存器(esp,ebp)
+
+eax: 累加寄存器(Accumulator),用以进行算数运算和返回函数结果等。
+ebx: 被称为基址寄存器（Base），在内存寻址的时候用来存放基地址。
+exc: 被称为计数寄存器(Counter)，用以在循环中计数。
+edx: 被称为数据寄存器(Data)，常配合eax一起存放运算结果等数据。
+
+栈操作（在32位下)：
+
+push（压栈） push sth -&amp;gt; [esp]=sth, esp=esp-4
+pop （出栈） pop sth -&amp;gt; sth=[esp], esp=esp+4"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="栈溢出学习笔记"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 栈溢出学习笔记</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>根据不同的操作系统，一个进程可能被分配到不同内存区域中执行，但是不管什么样的系统，什么样的计算机结构，进程使用的内存可以按照功能分为4个部分：</p>
+<ol>
+<li>代码区：可执行指令</li>
+<li>数据区：用于存储全局变量</li>
+<li>堆区：进程可以在堆区动态的请求一定大小内存，并在用完之后归还给堆区。动态分布和回收是堆区的特点</li>
+<li>栈区：用于动态的存储函数之间的调用关系，以保证被调用函数返回时恢复到母函数中继续执行</li>
+</ol>
+<p>程序中使用的缓冲区可以在堆区、栈区、数据区，不同地方的缓冲区利用方式不同。</p>
+<p>内存中的栈区指的就是系统栈，由系统自动维护。</p>
+<p>栈时FILO结构，所以栈顶指的是最下方，底部是最上方。</p>
+<ul>
+<li>%esp 指向栈的顶部（栈指针寄存器，存放一个指针，永远指向系统栈最上面栈帧的栈顶)</li>
+<li>%ebp 指向栈的底部</li>
+<li>%eip 用来存储即将执行的程序指令的地址</li>
+<li>Frame Pointer(FP) Or Base Pointer(BP), Stack Pointer(SP)</li>
+<li>函数栈帧：ESP和EBP之间内存空间为当前栈帧</li>
+</ul>
+<p>32位x86架构下的通用寄存器包括一般寄存器（eax、ebx、ecx、edx），索引寄存器（esi、edi)，以及堆栈指针寄存器(esp,ebp)</p>
+<ul>
+<li>eax: 累加寄存器(Accumulator),用以进行算数运算和返回函数结果等。</li>
+<li>ebx: 被称为基址寄存器（Base），在内存寻址的时候用来存放基地址。</li>
+<li>exc: 被称为计数寄存器(Counter)，用以在循环中计数。</li>
+<li>edx: 被称为数据寄存器(Data)，常配合eax一起存放运算结果等数据。</li>
+</ul>
+<p>栈操作（在32位下)：</p>
+<ul>
+<li>push（压栈） push sth -&gt; [esp]=sth, esp=esp-4</li>
+<li>pop （出栈） pop sth -&gt; sth=[esp], esp=esp+4</li>
+</ul>
+<p>32位x86家狗下的汇编语言有Intel和AT&amp;T两种格式，主要差别如下：</p>
+<p>Intel格式，寄存器和数值前无符号:</p>
+<blockquote>
+<p>指令名称 目标操作数DST, 源操作数SRC</p>
+</blockquote>
+<p>AT&amp;T格式， 寄存器名称前加”%”, 数值前加”$”</p>
+<blockquote>
+<p>指令名称  源操作数SRC， 目标操作数DST</p>
+</blockquote>
+<p>栈内存结构:</p>
+<ul>
+<li>LEA: 取地址指令，将MEM的地址存至REG，格式为</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">lea REG, MEM;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<ul>
+<li>ADD/SUB: 加/减指令， 将运算结果存至DST, 格式</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">ADD&#x2F;SUB DST, SRC;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<ul>
+<li>RET: 返回指令，操作将栈顶数据弹出至eip。将返回地址出栈，并跳转到返回地址.它就是将栈顶保存的数据出栈，然后跳转到这个数字指向的空间。</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">RET;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<ul>
+<li><p>RET: pops the return address off the stack and returns control to that location.</p>
+</li>
+<li><p>CALL: pushes the return address onto the return and transfers control to a procedure.</p>
+</li>
+</ul>
+<blockquote>
+<p>函数调用栈在内存中从高地址向低地址生长，所以栈顶对应的内存地址在压栈时变小，退栈时变大。</p>
+</blockquote>
+<p>函数调用大致包含以下步骤：</p>
+<pre class="line-numbers language-none"><code class="language-none">参数入栈（一般是逆序入栈）: 具体包括：
+压入需要保存的寄存器，通常这些寄存器包括eax，ecx，edx等
+
+返回地址入栈
+代码区跳转
+栈帧调整：具体包括
+保存当前栈帧状态值（push ebp）
+将当前栈帧切换到新栈帧（move ebp,esp）
+给新栈帧分配空间（把ESP减去所需空间大小，抬高栈顶）<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>相关指令：</p>
+<ul>
+<li>Call func -&gt; push pc, jmp func</li>
+<li>Leave -&gt; mov esp,ebp pop ebp</li>
+<li>Ret -&gt; pop pc</li>
+</ul>
+<p>函数返回大致包含如下步骤：</p>
+<pre class="line-numbers language-none"><code class="language-none">保存返回值（通常保存在EAX中）
+弹出当前栈帧，恢复上一个栈帧：具体包括
+在堆栈平衡的基础上给ESP加上栈帧的大小，降低栈顶，回收当前栈空间
+将当前栈帧底部保存的前栈帧EBP值弹入EBP，恢复出上一个栈帧
+将函数返回地址弹给EIP
+跳转
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>Stack is collections of stack frame, each function in program create a new fram in stack and frame pointer keep the current location of frame which is executing</p>
+<h3 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h3><h4 id="0x01-被调用函数参数入栈"><a href="#0x01-被调用函数参数入栈" class="headerlink" title="0x01 被调用函数参数入栈"></a>0x01 被调用函数参数入栈</h4><p>  变化的核心就是将调用函数(caller)的状态保存起来，同时创建被调用函数（callee）的状态。</p>
+<p>  首先将被调用函数（callee）的参数按照逆序依次压入栈内。如果被调用函数（callee）不需要参数，则没有这一步骤。</p>
+<p><img src="/2018/07/05/stack/v2-9125ba203edd2bab1308ad88db2ae197_hd.jpg"></p>
+<h4 id="0x02-调用函数返回地址入栈"><a href="#0x02-调用函数返回地址入栈" class="headerlink" title="0x02 调用函数返回地址入栈"></a>0x02 调用函数返回地址入栈</h4><p> 然后将调用函数（caller）进行调用之后的下一条指令作为返回地址入栈，这样调用函数（caller)的EIP指令信息得以保存。</p>
+<p><img src="/2018/07/05/stack/v2-9ae4f530296d4a8ec7d44443e3e6d37f_hd.jpg"></p>
+<h4 id="0x03-调用函数ebp入栈"><a href="#0x03-调用函数ebp入栈" class="headerlink" title="0x03 调用函数ebp入栈"></a>0x03 调用函数ebp入栈</h4><p>再将当前的ebp寄存器的值（也就是调用函数的基地址）压入栈内，并将当前ebp的值，更新位当前栈顶的位置。这样调用函数（caller）的ebp(基地址）信息得以保存，同时，ebp被更新位被调用函数（callee)的基地址。</p>
+<p><img src="/2018/07/05/stack/v2-c350a4c5e9f5bbe839606486f3100185_hd.jpg"></p>
+<h4 id="0x04-被调用函数（callee）局部变量等入栈"><a href="#0x04-被调用函数（callee）局部变量等入栈" class="headerlink" title="0x04 被调用函数（callee）局部变量等入栈"></a>0x04 被调用函数（callee）局部变量等入栈</h4><p><img src="/2018/07/05/stack/v2-63f07378642e6f38197ddfb817567f6c_hd.jpg"></p>
+<p>在压栈的过程中，esp寄存器的值不断减小，对应栈从内存的高地址向低地址生长），压入栈内的数据包括（调用参数，返回地址，调用函数的基地址以及局部变量）</p>
+<h4 id="0x05-调用结束时候"><a href="#0x05-调用结束时候" class="headerlink" title="0x05 调用结束时候"></a>0x05 调用结束时候</h4><p>首先被调用函数的局部变量会从栈内直接弹出，栈顶指向被调用函数(callee)的基地址：</p>
+<p><img src="/2018/07/05/stack/v2-4340d6c750f59519f4f87dffca03a86a_hd.jpg"></p>
+<p>然后将基地址（ebp）内存储的调用（caller)函数的基地址从栈内弹出，并保存到ebp寄存器内。这样调用函数(caller)的ebp(基地址)信息得以恢复。此时栈顶指向返回地址。</p>
+<p><img src="/2018/07/05/stack/v2-cd8d0fef17eecfff68f29022660a1c85_hd.jpg"></p>
+<p>####0x06  返回地址弹出</p>
+<p>再将返回地址从栈内弹出，并存到eip寄存器内。这样调用函数（caller)的eip(指令)信息得以恢复。</p>
+<p><img src="/2018/07/05/stack/v2-3e7a4c71117d43ac59bcb3bd186a8e9f_hd.jpg"></p>
+<h4 id="0x07-溢出"><a href="#0x07-溢出" class="headerlink" title="0x07 溢出"></a>0x07 溢出</h4><p>在函数正在执行内部指令的过程中，我们无法拿到程序的控制权，只有在发生函数调用或者结束函数调用时，程序的控制权会在函数状态之间发生跳转。控制程序执行指令最关键的寄存器就是eip，所以目标就是让eip载入攻击指令的地址。</p>
+<p>如果要eip指向攻击指令，首先在退栈的过程中，返回地址会被传给eip，我们只需要让溢出数据用攻击指令的地址来覆盖返回地址即可。</p>
+<p><img src="/2018/07/05/stack/v2-e3af4f558ccb439e042e7a169cae2f97_hd.jpg"></p>
+<p>让eip指向攻击指令，有这四种技术:</p>
+<ul>
+<li> 修改返回地址，让其指向溢出数据中的一段指令(shellcode)</li>
+<li> 修改返回地址，让其指向内存中已有的某个函数(return2libc)</li>
+<li> 修改返回地址，让其指向内存中已有的一段指令(ROP)</li>
+<li> 修改某个被调用函数的地址，让其指向另外一个函数(hijack GOT)</li>
+</ul>
+<p>在上面几个流程图里面，可以看到<strong>参数与局部变量的分界线为EBP的值</strong>。</p>
+<p><img src="https://pic4.zhimg.com/80/v2-89a65a58325afb516a7047b63940ee81_hd.jpg"></p>
+<p>在上面方法中，生效的前提是在函数调用栈上的数据(shellcode）要有可执行权限（另外一个前提是上面提到的关闭内存布局随机化）。很多操作系统会关闭函数调用栈的可执行权限，这样shellcode的方法就失效了。不过可以尝试使用内存中已有指令或函数，包括return2libc和ROP两种方法。</p>
+<h3 id="Return2libc"><a href="#Return2libc" class="headerlink" title="Return2libc"></a>Return2libc</h3><p>在内存中确定某个函数的地址，并用其覆盖掉返回地址。用于libc动态库被广泛使用，所以有很大概率在内存中找到该动态库。同时由于该库包含一些系统级的函数(比如system()等)。鉴于要执行的函数可能需要参数，比如调用system()函数打开shell完整形式为system(“/bin/sh”)，所以溢出数据需要包括必要的参数。</p>
+<p>payload: padding1 + address of system() + padding2 + address of “/bin/sh”</p>
+<p><img src="/2018/07/05/stack/v2-4523795fdf150416d91e4e4adc0ef0ae_hd.jpg"></p>
+<p>address of system()是system()在内存中的地址，用来覆盖返回地址。padding2出的数据长度为4（32位机），对应调用system()时的返回地址。因为我们这里只需要打开shell就可以，不关心shell退出之后的行为，所以padding2内容可以随意填充。address of “/bin/sh”时字符串”/bin/sh”在内存中的地址，作为传给system()的参数.</p>
+<h3 id="Shellcode"><a href="#Shellcode" class="headerlink" title="Shellcode"></a>Shellcode</h3><ul>
+<li><p>shellcode中不能包含空格字符(<code>\x10</code>,<code>\x0a</code>,<code>\x0b</code>,<code>\x0c</code>,<code>\x20</code>),否则shellcode会被截断。</p>
+</li>
+<li><p>由于shellcode被加载到栈上的位置不是固定的，因此要求shellcode被加载到任意位置都能执行，也就是说shellcode中尽量使用相对寻址。</p>
+</li>
+</ul>
+<h3 id="ROP-Return-Oriented-Programming"><a href="#ROP-Return-Oriented-Programming" class="headerlink" title="ROP (Return Oriented Programming)"></a>ROP (Return Oriented Programming)</h3><p>有时候目标函数在内存中无法找到，有时候目标操作并没有特定的函数可以完美适配。这时需要在内存中寻找多个指令片段，拼凑一系列操作来达成目的。假如要执行某段指令（我们将其称为”gadget”，小工具），溢出的数据应以下方式构造。如果想执行若干指令，需要每个gadget执行完毕之后交给下一额gadget，所以dadget的最后一步指令应该是RET，这样，程序的控制权(eip)才可以切换。所以这种技术被称为返回导向编程（Return Oriented Programming)。要执行多个gadget，溢出数据应该如下构造：</p>
+<blockquote>
+<p>payload: padding + address of gadget 1 + address of gadget 2 + …… </p>
+</blockquote>
+<ul>
+<li>address of gadget n</li>
+</ul>
+<p>这样的构造下，被调用函数返回会跳转执行gadget 1，执行完毕gadget的RET指令会将此时栈顶的数据（也就是gadget 2的地址）弹出到eip，程序继续执行gadget2，以此类推。</p>
+<p><img src="/2018/07/05/stack/v2-a4964a02ab5a974439a157cf9d5b017c_hd.png"></p>
+<p>栈溢出要实现什么样的效果:</p>
+<p>ROP常见的拼凑效果是实现一次系统调用，Linux系统下对应的汇编指令是int 0x80。执行这条指令时，被调用函数的编号存入eax，调用参数按照顺序依次存入ebx,ecx,edx,esi,edi中。</p>
+<p>用exec系统调用打开一个shell终端需要的参数和指令如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">        mov rax, 0x3b   ; system call number, 0x3b for sys_exec
+        mov rdi, PROG   ; char *prog (program path)
+        mov rsi, 0      ; char **agcv
+        mov rdx, 0      ; char **env
+        syscall
+PROG:   DB &quot;&#x2F;bin&#x2F;sh&quot;, 0<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>rax为系统调用编码，rdi为字符串指针，指向可执行程序的完整路径，rsi和rdx都是字符串指针数组，保存了参数列表和环境变量。</p>
+<h3 id="溢出保护"><a href="#溢出保护" class="headerlink" title="溢出保护"></a>溢出保护</h3><p>第一层是编译器层面，例如gcc的stack protector, vc的gs<br>第二层是操作系统层面的DEP, aslr,safeseh,sehop等</p>
+<h4 id="0x01-金丝雀"><a href="#0x01-金丝雀" class="headerlink" title="0x01 金丝雀"></a>0x01 金丝雀</h4><p>gcc在编译的时候会自动插入一个随机的cookie，也叫做金丝雀值（历史上用金丝雀来检查煤矿中是否含有有毒气体），保存在ebp-8字节的位置，函数每次调用完成将返回地址交给eip之前会检查cookie是否被改写，如果被改写就触发异常，程序停止执行。</p>
+<p>缺点: 开销太大，每个函数都要增加5条指令。另外只能保护函数的返回地址，无法保护jmp、call指令的跳转地址。在gcc4.9版本中默认关闭栈保护机制。</p>
+<h4 id="0x02-NX"><a href="#0x02-NX" class="headerlink" title="0x02 NX"></a>0x02 NX</h4><p>数据执行保护(Data Execution Prevention)，在内存上严格将代码和数据进行区分，防止数据当作代码执行。从sp2开始作为一项安全机制引入，延续到2003、2008、win7。</p>
+<p>DEP会将值暴汗内存数据的区域标记为NX(不可执行),当我们控制程序执行流程跳到shellcode的时候，触发异常。</p>
+<p>可以将shellcode的地址写成第三发dll的导出函数，例如system启动shell</p>
+<p>ROP可以绕过DEP。</p>
+<h4 id="0x03-ASLR"><a href="#0x03-ASLR" class="headerlink" title="0x03 ASLR"></a>0x03 ASLR</h4><p>ASLR(Address space layout randomization)地址空间布局随机化，在vista之后的系统实现。</p>
+<ol>
+<li>用第三方经过aslr的dll</li>
+<li>利用aslr的特性：</li>
+</ol>
+<p>aslr只对高位地址随机，例如0x12345678，每次重启低地址5678是不变的，只有高地址1234会随机为别的数值，在小端机中。低位地址在内存低位，高位地址在内存高位。也就是说，在不溢出缓冲区就能放下shellcode的情况下，将数据覆盖到返回地址的低位地址就可以。</p>
+<p>其他两个先不记录:<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/liuxigu/liuxigu.github.io/master/1.code/2016-03-24-overflow-seh.html">https://raw.githubusercontent.com/liuxigu/liuxigu.github.io/master/1.code/2016-03-24-overflow-seh.html</a></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.geego.com.tw/technical-discussion-forum/tech-tips-buffer-overflow-stack-frame-%E6%95%99%E5%AD%B8-%E7%89%A9%E4%BB%B6/">https://www.geego.com.tw/technical-discussion-forum/tech-tips-buffer-overflow-stack-frame-%E6%95%99%E5%AD%B8-%E7%89%A9%E4%BB%B6/</a></li>
+<li><a target="_blank" rel="noopener" href="http://bestwing.me/2017/03/18/stack-overflow-one/">http://bestwing.me/2017/03/18/stack-overflow-one/</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/25816426">https://zhuanlan.zhihu.com/p/25816426</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/47d484b9227e">https://www.jianshu.com/p/47d484b9227e</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/liuxigu/liuxigu.github.io/blob/master/1.code/2016-03-24-overflow-seh.html">https://github.com/liuxigu/liuxigu.github.io/blob/master/1.code/2016-03-24-overflow-seh.html</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2018/07/05/stack.html" class="leancloud-visitors view" data-flag-title="栈溢出学习笔记">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2018/07/18/lkm-rootkit.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2018/06/13/powershell-pen.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2018-07-05 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/PWN/">PWN<span>2</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-article-text">流程图</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#0x01-%E8%A2%AB%E8%B0%83%E7%94%A8%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E5%85%A5%E6%A0%88"><span class="toc-article-text">0x01 被调用函数参数入栈</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#0x02-%E8%B0%83%E7%94%A8%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%9C%B0%E5%9D%80%E5%85%A5%E6%A0%88"><span class="toc-article-text">0x02 调用函数返回地址入栈</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#0x03-%E8%B0%83%E7%94%A8%E5%87%BD%E6%95%B0ebp%E5%85%A5%E6%A0%88"><span class="toc-article-text">0x03 调用函数ebp入栈</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#0x04-%E8%A2%AB%E8%B0%83%E7%94%A8%E5%87%BD%E6%95%B0%EF%BC%88callee%EF%BC%89%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F%E7%AD%89%E5%85%A5%E6%A0%88"><span class="toc-article-text">0x04 被调用函数（callee）局部变量等入栈</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#0x05-%E8%B0%83%E7%94%A8%E7%BB%93%E6%9D%9F%E6%97%B6%E5%80%99"><span class="toc-article-text">0x05 调用结束时候</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#0x07-%E6%BA%A2%E5%87%BA"><span class="toc-article-text">0x07 溢出</span></a></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Return2libc"><span class="toc-article-text">Return2libc</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Shellcode"><span class="toc-article-text">Shellcode</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#ROP-Return-Oriented-Programming"><span class="toc-article-text">ROP (Return Oriented Programming)</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%BA%A2%E5%87%BA%E4%BF%9D%E6%8A%A4"><span class="toc-article-text">溢出保护</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#0x01-%E9%87%91%E4%B8%9D%E9%9B%80"><span class="toc-article-text">0x01 金丝雀</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#0x02-NX"><span class="toc-article-text">0x02 NX</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#0x03-ASLR"><span class="toc-article-text">0x03 ASLR</span></a></li></ol></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

@@ -1,0 +1,335 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>SQL报错注入 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="注入的方法   sqli-labs的1，2，3，4课都可以使用以下四种来进行注入数据:
+
+Union select
+Error based
+Blind based
+Time blind based
+
+   对应的可以使用sqlmap.py --technique 上面首字母大写来指定相应的注入类型。
+Less-5   第五课首先排除union注入，因为页面无法显示数据，最后我还是看了网页源代码才注入的。
+
+ 我发现sqlmap在每次注入的时候都会先尝试确定当前变量是被那种包含，然后在payload里面闭合，这样可以确保整个语句的完整性。 要么确定当前语句完全闭合，要么注释掉后面的语句，确保闭合。
+
+Less-7   报错和union查询都出不了数据，只能进行盲注。bool blind和time blind。前面闭合可以使用&amp;#39;或者&amp;#39;)。
+Less-8"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="SQL报错注入"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> SQL报错注入</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h2 id="注入的方法"><a href="#注入的方法" class="headerlink" title="注入的方法"></a>注入的方法</h2><p>   <code>sqli-labs</code>的1，2，3，4课都可以使用以下四种来进行注入数据:</p>
+<ul>
+<li>Union select</li>
+<li>Error based</li>
+<li>Blind based</li>
+<li>Time blind based</li>
+</ul>
+<p>   对应的可以使用<code>sqlmap.py --technique </code>上面首字母大写来指定相应的注入类型。</p>
+<h3 id="Less-5"><a href="#Less-5" class="headerlink" title="Less-5"></a>Less-5</h3><p>   第五课首先排除union注入，因为页面无法显示数据，最后我还是看了网页源代码才注入的。</p>
+<blockquote>
+<p> 我发现sqlmap在每次注入的时候都会先尝试确定当前变量是被那种包含，然后在payload里面闭合，这样可以确保整个语句的完整性。 要么确定当前语句完全闭合，要么注释掉后面的语句，确保闭合。</p>
+</blockquote>
+<h3 id="Less-7"><a href="#Less-7" class="headerlink" title="Less-7"></a>Less-7</h3><p>   报错和union查询都出不了数据，只能进行盲注。bool blind和time blind。前面闭合可以使用<code>&#39;</code>或者<code>&#39;)</code>。</p>
+<h3 id="Less-8"><a href="#Less-8" class="headerlink" title="Less-8"></a>Less-8</h3><p>   根据页面返回，只能盲注。那么先判断变量是被什么包含的。当输入<code>&#39;</code>的时候页面会改变，在后面加上<code>-- -</code>页面又正常，暂且判断变量是被单引号包含的。然后再这样<code>id=1&#39; and 1=1 -- -1</code>，页面正常，当<code>and</code>后面为<code>1=0</code>的时候页面不正常，所以这里可以变成布尔盲注或者时间盲注。关键点在分析变量是被神码包含。</p>
+<h3 id="Less-9"><a href="#Less-9" class="headerlink" title="Less-9"></a>Less-9</h3><p>   不小心看到了源代码，只能使用时间盲注，这种不管输入什么页面都是这样，可以尝试时间盲注<code>id=1&#39; and if(mid(version(),1,1)=5,sleep(4),0) -- -</code> 。使用<code>sqlmap.py</code>测试结果可以发现可以使用布尔盲注和时间盲注，看了源代码才发现的确可以使用布尔盲注，但是凭肉眼看不到页面的变化。</p>
+<blockquote>
+<p>那么这里是不是就告诉我们，有时候看到的不一定正确还是要采用统计的方法来比较页面的异同。</p>
+</blockquote>
+<p> 这里有个Paper，是使用哪一种算法来检测布尔盲注，sqlmap采用了在去除动态内容之后计算比率的方法,回头需要看下这里的实现方法。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.blackhat.com/presentations/bh-usa-04/bh-us-04-hotchkies/bh-us-04-hotchkies.pdf">https://www.blackhat.com/presentations/bh-usa-04/bh-us-04-hotchkies/bh-us-04-hotchkies.pdf</a></li>
+<li><a target="_blank" rel="noopener" href="http://zone.wooyun.org/content/26504">http://zone.wooyun.org/content/26504</a></li>
+</ul>
+<h3 id="Less-10"><a href="#Less-10" class="headerlink" title="Less-10"></a>Less-10</h3><p>  在经过less-9被坑了下之后有点慌。到现在基本的测试规则就是先测试被哪种符号闭合，一半来说是这么几个<code>&#39;</code>,<code>&quot;</code>,<code>&#39;)</code>,<code>&quot;)</code>，之后加上测试语句<code>1=1</code>,<code>1=0</code>。看当前页面是否有变化，如果都没有那么就测试时间盲注。</p>
+<p>  Less-10存在时间盲注，使用<code>&quot;</code>闭合，在使用sqlmap之后还存在布尔盲注，果然和less-9一样坑。</p>
+<h3 id="Less-11"><a href="#Less-11" class="headerlink" title="Less-11"></a>Less-11</h3><p>   网页提示报错注入，在用户名和密码那里可以使用burp截获Post数据。变量是被单引号包含，可以使用union,error,time-based这三种注入。其中time-based的时候有以下个问题:</p>
+<pre class="line-numbers language-none"><code class="language-none"> mysql&gt; select 1&#x3D;0 and if(mid(version(),1,1)&#x3D;5,sleep(5),0);
++---------------------------------------------+
+| 1&#x3D;0 and if(mid(version(),1,1)&#x3D;5,sleep(5),0) |
++---------------------------------------------+
+|                                           0 |
++---------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select 1&#x3D;0 and (select*from(select sleep(5))x);
++-----------------------------------------+
+| 1&#x3D;0 and (select*from(select sleep(5))x) |
++-----------------------------------------+
+|                                       0 |
++-----------------------------------------+
+1 row in set (5.00 sec)
+
+mysql&gt; select mid(version(),1,1);
++--------------------+
+| mid(version(),1,1) |
++--------------------+
+| 5                  |
++--------------------+
+1 row in set (0.00 sec)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>当前面条件为假的时候，如果直接使用<code>and if(mid(version(),1,1)=5,sleep(5),0)</code>是不会睡5s。当<code>and</code>替换为<code>xor</code>或者<code>sleep(5)替换为benchmark(1000000,sha1(1))</code>就会发生时间延迟，再或者使用sqlmap的payload：<code>AND (SELECT * FROM (SELECT(SLEEP([SLEEPTIME]-(IF([INFERENCE],0,[SLEEPTIME])))))[RANDSTR])</code></p>
+<h3 id="Less-12"><a href="#Less-12" class="headerlink" title="Less-12"></a>Less-12</h3><p>先判断变量闭合，不管采用<code>&#39; -- -</code>,<code>&quot; -- -</code>,<code>&#39;) -- -</code>,<code>&quot;) -- -</code>，页面都是正常的，后面再加上报错的语句，<code>&quot;)</code>的时候会爆出数据，所以变量是被<code>&quot;)</code>包含的。另外可以使用union,error,time-based这三种。</p>
+<h3 id="Less-13"><a href="#Less-13" class="headerlink" title="Less-13"></a>Less-13</h3><p>同上，使用<code>&#39;)</code>包含</p>
+<h3 id="Less-14"><a href="#Less-14" class="headerlink" title="Less-14"></a>Less-14</h3><p>同上，使用<code>&quot;</code>包含</p>
+<h3 id="Less-15"><a href="#Less-15" class="headerlink" title="Less-15"></a>Less-15</h3><p>只测试了passwd，存在时间盲注，单引号闭合。</p>
+<h3 id="Less-16"><a href="#Less-16" class="headerlink" title="Less-16"></a>Less-16</h3><p>同上，使用<code>&quot;)</code>包含</p>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2016/05/05/sqli-labs-less-16.html" class="leancloud-visitors view" data-flag-title="SQL报错注入">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2016/05/18/docker-remote-exploit.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2016/04/19/sqli-labs-less-1.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2016-05-05 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/SQL/">SQL<span>7</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E6%B3%A8%E5%85%A5%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-article-text">注入的方法</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Less-5"><span class="toc-article-text">Less-5</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Less-7"><span class="toc-article-text">Less-7</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Less-8"><span class="toc-article-text">Less-8</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Less-9"><span class="toc-article-text">Less-9</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Less-10"><span class="toc-article-text">Less-10</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Less-11"><span class="toc-article-text">Less-11</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Less-12"><span class="toc-article-text">Less-12</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Less-13"><span class="toc-article-text">Less-13</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Less-14"><span class="toc-article-text">Less-14</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Less-15"><span class="toc-article-text">Less-15</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Less-16"><span class="toc-article-text">Less-16</span></a></li></ol></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

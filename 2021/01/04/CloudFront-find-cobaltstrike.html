@@ -1,0 +1,344 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>CobaltStrike的Stager特征隐藏 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="背景在github上面出现一个仓库分析CobaltStrike监听端口的特征：https://github.com/Te-k/cobaltstrike。CS在监听Stager端口的时候，会通过URI下载Payload执行，这个URI生成的规则生成：
+
+找到DomainFront根据360的空间测绘，看完之后第一时间想到的是通过fofa这类空间测绘找出特征，然后找出来设置了DomainFront的C2，想看看这些C2的原始域名和设置C2的域名是什么情况，大家都用的什么作为域名前置的 :)
+Quake测绘根据360给出的搜索条件，先找出来一批IP地址:
+response:&amp;quot;HTTP&amp;#x2F;1.1 404 Not Found&amp;quot; AND response:&amp;quot;Content-Type: text&amp;#x2F;plain&amp;quot; AND response:&amp;quot;Content-Length: 0&amp;quot; AND NOT response:&amp;quot;Server: &amp;quot; AND NOT response:&amp;quot;Connection: &amp;quot; AND port: &amp;quot;443&amp;quot;   AND NOT country: &amp;quot;China&amp;quot;
+
+修改脚本修改好之后的脚本和扫描结果:https://github.com/JKme/cobaltstrike。把单线程改为多线程，再增加一个获取IP的https证书域名函数："> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="CobaltStrike的Stager特征隐藏"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> CobaltStrike的Stager特征隐藏</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在github上面出现一个仓库分析<code>CobaltStrike</code>监听端口的特征：<a target="_blank" rel="noopener" href="https://github.com/Te-k/cobaltstrike">https://github.com/Te-k/cobaltstrike</a>。CS在监听Stager端口的时候，会通过URI下载Payload执行，这个URI生成的规则生成：</p>
+<p><img src="/2021/01/04/CloudFront-find-cobaltstrike/360.png"></p>
+<h3 id="找到DomainFront"><a href="#找到DomainFront" class="headerlink" title="找到DomainFront"></a>找到DomainFront</h3><p>根据360的空间测绘，看完之后第一时间想到的是通过fofa这类空间测绘找出特征，然后找出来设置了DomainFront的C2，想看看这些C2<br>的原始域名和设置C2的域名是什么情况，大家都用的什么作为域名前置的 :)</p>
+<h4 id="Quake测绘"><a href="#Quake测绘" class="headerlink" title="Quake测绘"></a>Quake测绘</h4><p>根据360给出的搜索条件，先找出来一批IP地址:</p>
+<pre class="line-numbers language-none"><code class="language-none">response:&quot;HTTP&#x2F;1.1 404 Not Found&quot; AND response:&quot;Content-Type: text&#x2F;plain&quot; AND response:&quot;Content-Length: 0&quot; AND NOT response:&quot;Server: &quot; AND NOT response:&quot;Connection: &quot; AND port: &quot;443&quot;   AND NOT country: &quot;China&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="修改脚本"><a href="#修改脚本" class="headerlink" title="修改脚本"></a>修改脚本</h4><p>修改好之后的脚本和扫描结果:<a target="_blank" rel="noopener" href="https://github.com/JKme/cobaltstrike">https://github.com/JKme/cobaltstrike</a>。把单线程改为多线程，再增加一个获取IP的https证书域名函数：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">get_subject</span><span class="token punctuation">(</span>hostname<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">try</span><span class="token punctuation">:</span>
+        dst <span class="token operator">=</span> <span class="token punctuation">(</span>hostname<span class="token punctuation">,</span> <span class="token number">443</span><span class="token punctuation">)</span>
+        s <span class="token operator">=</span> socket<span class="token punctuation">.</span>socket<span class="token punctuation">(</span>socket<span class="token punctuation">.</span>AF_INET<span class="token punctuation">,</span> socket<span class="token punctuation">.</span>SOCK_STREAM<span class="token punctuation">)</span>
+        s<span class="token punctuation">.</span>connect<span class="token punctuation">(</span>dst<span class="token punctuation">)</span>
+        ctx <span class="token operator">=</span> ssl<span class="token punctuation">.</span>create_default_context<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        ctx<span class="token punctuation">.</span>check_hostname <span class="token operator">=</span> <span class="token boolean">False</span>
+        ctx<span class="token punctuation">.</span>verify_mode <span class="token operator">=</span> ssl<span class="token punctuation">.</span>CERT_NONE
+        s <span class="token operator">=</span> ctx<span class="token punctuation">.</span>wrap_socket<span class="token punctuation">(</span>s<span class="token punctuation">,</span> server_hostname<span class="token operator">=</span>dst<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+        cert_bin <span class="token operator">=</span> s<span class="token punctuation">.</span>getpeercert<span class="token punctuation">(</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+        x509 <span class="token operator">=</span> crypto<span class="token punctuation">.</span>load_certificate<span class="token punctuation">(</span>crypto<span class="token punctuation">.</span>FILETYPE_ASN1<span class="token punctuation">,</span> cert_bin<span class="token punctuation">)</span>
+        val <span class="token operator">=</span> x509<span class="token punctuation">.</span>get_subject<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>CN
+    <span class="token keyword">except</span> Exception <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+        val <span class="token operator">=</span> <span class="token builtin">str</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> val<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="扫描结果"><a href="#扫描结果" class="headerlink" title="扫描结果"></a>扫描结果</h3><ul>
+<li>最多使用的<code>GET URI</code>是<code>submit.php</code></li>
+<li>除了aws的<code>CloudFront</code>作为最多的域前置，还有使用<code>API Gateway</code>，猜测使用了https流量转发或者直接接入到网关。</li>
+<li>还有使用了巨硬家的域名，那这种就是<code>Domain takeover</code>来获取到的</li>
+</ul>
+<h3 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h3><p>如果是使用了AWS家的<code>CloudFront</code>作为域前置，可以设置防火墙规则，只允许属于<code>CloudFront</code>的域名流量，其他IP请求过来的流量丢掉，操作如下:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">0x01:  获取到CloudFront的所有IP
+http http://d7uri8nf7uskq.cloudfront.net/tools/list-cloudfront-ips <span class="token operator">|</span>jq <span class="token string">".[][]"</span> <span class="token operator">|</span> <span class="token function">sed</span> <span class="token string">'s/"//g'</span> <span class="token operator">|</span> <span class="token function">tee</span> /tmp/cloud.txt
+
+0x02: 使用ipset新增IP集合
+ipset create cloudfront hash:net
+<span class="token keyword">while</span> <span class="token builtin class-name">read</span> line<span class="token punctuation">;</span> <span class="token keyword">do</span> ipset <span class="token function">add</span> cloudfront <span class="token variable">$line</span><span class="token punctuation">;</span> <span class="token keyword">done</span> <span class="token operator">&lt;</span> /tmp/cloud.txt
+ipset list cloudfront
+
+0x03: 新增IPtables规则
+iptables -A INPUT -p tcp  --dport <span class="token number">443</span> -j DROP
+iptables -I INPUT -m <span class="token builtin class-name">set</span> --match-set cloudfront  src -p tcp  --dport <span class="token number">443</span> -j ACCEPT
+
+0x04: 同理对teamserver端口进行规则设置
+ipset create teamserver hash:ip
+ipset <span class="token function">add</span> teamserver <span class="token number">1.2</span>.3.4
+iptables -A INPUT -p tcp  --dport <span class="token number">50050</span> -j DROP
+iptables -I INPUT -m <span class="token builtin class-name">set</span> --match-set teamserver src -p tcp --dport <span class="token number">50050</span> -j ACCEPT
+
+上面两个iptables规则可以合并一条：
+iptables -I INPUT -m <span class="token builtin class-name">set</span> <span class="token operator">!</span> --match-set teamserver src -p tcp --dport <span class="token number">50050</span> -j DROP
+
+0x05: ipset常见命令
+ipset del teamserver <span class="token number">1.2</span>.3.4  <span class="token comment">#从teamserver中删除某IP</span>
+ipset list teamserver <span class="token comment"># 查看teamserver集合内容</span>
+ipset flush teamserver <span class="token comment"># 清空teamserver内容</span>
+ipset flush  <span class="token comment"># 清空所有</span>
+ipset destroy teamserver  <span class="token comment"># 销毁teamserver</span>
+ipset destroy <span class="token comment"># 销毁所有</span>
+
+0x06: iptables删除规则
+<span class="token comment"># 显示规则</span>
+iptables -L INPUT --line-numbers 
+
+<span class="token comment"># 删除规则</span>
+iptables -D INPUT <span class="token operator">&lt;</span>num<span class="token operator">></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>当然，也可以直接修改CS的源代码重新打包。</p>
+<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><p>IPSET设置白名单之后，会对CS的设置VPN功能有影响。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/BLM8tM88x9oT4CjSiupE2A">浅析CobaltStrike Beacon Staging Server扫描</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/donot/p/14226788.html">针对CobaltStrike中出现的Stager监听端口特征后门分析</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2021/01/04/CloudFront-find-cobaltstrike.html" class="leancloud-visitors view" data-flag-title="CobaltStrike的Stager特征隐藏">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2021/04/01/aws-lambda-rce.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2020/09/10/redis-windows-hijack.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2021-01-04 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-article-text">背景</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%89%BE%E5%88%B0DomainFront"><span class="toc-article-text">找到DomainFront</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#Quake%E6%B5%8B%E7%BB%98"><span class="toc-article-text">Quake测绘</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E4%BF%AE%E6%94%B9%E8%84%9A%E6%9C%AC"><span class="toc-article-text">修改脚本</span></a></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%89%AB%E6%8F%8F%E7%BB%93%E6%9E%9C"><span class="toc-article-text">扫描结果</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E9%98%B2%E5%BE%A1"><span class="toc-article-text">防御</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%B3%A8%E6%84%8F"><span class="toc-article-text">注意</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%8F%82%E8%80%83"><span class="toc-article-text">参考</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

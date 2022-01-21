@@ -1,0 +1,348 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>xss基础编码 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="html的实体编码，比如十进制编码和十六进制编码，需要放在html标签里面。
+Fun fact Decoding Order:
+1. HTML Decoding
+2. URL Decoding
+3. Javascript Decoding
+
+http:&amp;#x2F;&amp;#x2F;slides.com&amp;#x2F;mscasharjaved&amp;#x2F;deck-13#&amp;#x2F;169
+
+三种编码，对于html来说是(10进制和16进制）
+html尖括号
+十进制：&amp;amp;#60; 
+html十六: &amp;amp;#x3c;
+
+javascript的八进制和16进制以及unicode编码:尖括号－－&amp;gt; 
+
+八进制:\74 
+十六进制: \x3c
+unicode编码: \u003c
+
+url编码及base64编码(&amp;lt;)
+url: %3C 
+base64: PA=="> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="xss基础编码"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> xss基础编码</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>html的实体编码，比如十进制编码和十六进制编码，需要放在html标签里面。</p>
+<pre class="line-numbers language-none"><code class="language-none">Fun fact Decoding Order:
+1. HTML Decoding
+2. URL Decoding
+3. Javascript Decoding
+
+http:&#x2F;&#x2F;slides.com&#x2F;mscasharjaved&#x2F;deck-13#&#x2F;169<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>三种编码，对于html来说是(10进制和16进制）</p>
+<h3 id="html尖括号"><a href="#html尖括号" class="headerlink" title="html尖括号"></a>html尖括号</h3><ul>
+<li>十进制：<code>&amp;#60;</code> </li>
+<li>html十六: <code>&amp;#x3c;</code></li>
+</ul>
+<h3 id="javascript的八进制和16进制以及unicode编码"><a href="#javascript的八进制和16进制以及unicode编码" class="headerlink" title="javascript的八进制和16进制以及unicode编码:"></a>javascript的八进制和16进制以及unicode编码:</h3><p>尖括号－－&gt; </p>
+<ul>
+<li>八进制:<code>\74</code> </li>
+<li>十六进制: <code>\x3c</code></li>
+<li>unicode编码: <code>\u003c</code></li>
+</ul>
+<h3 id="url编码及base64编码-lt"><a href="#url编码及base64编码-lt" class="headerlink" title="url编码及base64编码(&lt;)"></a>url编码及base64编码(&lt;)</h3><ul>
+<li>url: %3C </li>
+<li>base64: PA==</li>
+</ul>
+<h3 id="体编码本身存在的意义"><a href="#体编码本身存在的意义" class="headerlink" title="体编码本身存在的意义"></a>体编码本身存在的意义</h3><p>html实体编码本身存在的意义是防止与HTML本身语义标记的冲突</p>
+<p>举个例子：</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;script&gt;alert(1)&lt;&#x2F;script&gt;
+&lt;script&gt;alert(66)&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>上面保存未html文档之后，用浏览器打开，弹出的是66，查看源代码可以看到两个是一模一样，不同的就是第二个可以执行，第一个只是在页面显示出来。</p>
+<p>那么正常网站的需求是这样的：</p>
+<p>用户输入–&gt;filter–&gt;浏览器显示</p>
+<p>如果filter不能很好的处理转义标签，最终展现的页面就可能会执行用户输入的有害代码。这就是xss</p>
+<p>我们来瞅瞅如下个链接可以得出什么结果：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://wooyun.jozxing.cc/static/drops/tips-689.html">http://wooyun.jozxing.cc/static/drops/tips-689.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/use-location-xss-bypass.html">https://www.leavesongs.com/PENETRATION/use-location-xss-bypass.html</a></li>
+<li><a target="_blank" rel="noopener" href="http://wooyun.jozxing.cc/static/drops/papers-894.html">http://wooyun.jozxing.cc/static/drops/papers-894.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/xss-collect.html">https://www.leavesongs.com/PENETRATION/xss-collect.html</a></li>
+</ul>
+<p>html编码和js编码不可以到处乱用，到处乱用也可以，但是要遵守规则：<br>比如：<br><code>&lt;img src=&quot;x&quot; onerror=&quot;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#49;&amp;#41;&quot;&gt;</code></p>
+<p>上面可以弹，这是html实体编码，为毛不可以js编码呢，因为他在html标签里面啊。</p>
+<p>你说你非要用js，OK，用P神里面的文章可以额这样来实现：<br><code> &lt;img src=&quot;1&quot; onerror=location=&quot;javascript:alert%281%29&quot;&gt;</code></p>
+<p>利用location变形,就可以在后面使用js编码咯：</p>
+<p><code>&lt;img src=&quot;1&quot; onerror=location=&quot;javascript:\u0061\u006c\u0065\u0072\u0074\u0028\u0022\u0036\u0036\u0036\u0022\u0029&quot;&gt;</code></p>
+<h3 id="只有在js中才可以拼接字符串"><a href="#只有在js中才可以拼接字符串" class="headerlink" title="只有在js中才可以拼接字符串"></a>只有在js中才可以拼接字符串</h3><pre class="line-numbers language-none"><code class="language-none">Wrong:
+&lt;img&#x2F;src&#x3D;&#39;x&#39;onerror&#x3D;&#39;al&#39;+&#39;er&#39;+&#39;t(1)&#39;&gt;
+right:
+&lt;img&#x2F;src&#x3D;&#39;x&#39;onerror&#x3D;location&#x3D;&quot;javascr&quot;+&quot;ipt:al&quot;+&quot;ert%28docu&quot;+&quot;ment.co&quot;+&quot;okie%29&quot;&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面的是利用location来变形xss，现在来瞅瞅如下的代码:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;a href&#x3D;&quot;javascript:alert(1)&quot;&gt;this is alert(1)&lt;&#x2F;a&gt;
+&lt;a href&#x3D;&quot;javascript:&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#49;&amp;#50;&amp;#51;&amp;#41;&amp;#10;&quot;&gt;this is html encode&lt;&#x2F;a&gt;
+&lt;a href&#x3D;&quot;javascript:%61%6c%65%72%74%28%32%32%29&quot;&gt;abc&lt;&#x2F;a&gt;
+&lt;img src&#x3D;&quot;1&quot; onerror&#x3D;location&#x3D;&quot;javascr&quot;+&quot;ipt:al&quot;+&quot;ert%28docu&quot;+&quot;ment.co&quot;+&quot;okie%29&quot;&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li>第二个和第四个都用到了url encode，貌似在html标签和js里面都能使用URL encodeing</li>
+<li>其中第四个里面转换为location，location可以加载javascript伪协议，所以这里可以写js编码转换。</li>
+</ul>
+<p>最后我门来欣赏下各路风骚的payload:<br><a target="_blank" rel="noopener" href="http://wooyun.jozxing.cc/static/drops/papers-894.html">http://wooyun.jozxing.cc/static/drops/papers-894.html</a><br>如果链接失效了，请搜索xss 比赛write up第一期</p>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/03/02/xss-encode-decode.html" class="leancloud-visitors view" data-flag-title="xss基础编码">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/03/09/copy-shared-lib.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/02/28/3389-scan.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-03-02 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Learning/">Learning<span>16</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#html%E5%B0%96%E6%8B%AC%E5%8F%B7"><span class="toc-article-text">html尖括号</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#javascript%E7%9A%84%E5%85%AB%E8%BF%9B%E5%88%B6%E5%92%8C16%E8%BF%9B%E5%88%B6%E4%BB%A5%E5%8F%8Aunicode%E7%BC%96%E7%A0%81"><span class="toc-article-text">javascript的八进制和16进制以及unicode编码:</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#url%E7%BC%96%E7%A0%81%E5%8F%8Abase64%E7%BC%96%E7%A0%81-lt"><span class="toc-article-text">url编码及base64编码(&lt;)</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E4%BD%93%E7%BC%96%E7%A0%81%E6%9C%AC%E8%BA%AB%E5%AD%98%E5%9C%A8%E7%9A%84%E6%84%8F%E4%B9%89"><span class="toc-article-text">体编码本身存在的意义</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%8F%AA%E6%9C%89%E5%9C%A8js%E4%B8%AD%E6%89%8D%E5%8F%AF%E4%BB%A5%E6%8B%BC%E6%8E%A5%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-article-text">只有在js中才可以拼接字符串</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

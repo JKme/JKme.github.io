@@ -1,0 +1,339 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>《白帽子讲Web安全》 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="文件包含漏洞（File Inclusion）文件包含可能会出现在JSP、PHP、ASP等语言中，常见的函数如下：PHP: include()、include_once()、require()、require_once()、fopen()、readfile()
+文件包含是PHP的一种常见用法，主要由四个函数组成：
+
+include()
+require()
+include_onec()
+require_once()
+
+当使用这4个函数包含一个新的文件，该文件将作为PHP代码执行，PHP内核并不会在意被包含的文件是什么类型。
+所以如果被包含的是txt文件，图片文件，远程URL等都会作为PHP代码执行。
+能够打开并且包含本地文件的漏洞称为本地文件包含漏洞（Local File Inclusion，LFI）
+PHP语言是由C语言实现的，因此使用了C语言中一些字符串处理函数，在连接字符串的时候，0字节（\x00）讲作为字符串结束符。所以攻击者可以加一个0字节，截断file变量后面的字符串，即../../etc/passwd\0，在get请求的时候进行Urlencode，变成../../etc/passwd%00。
+如果禁用了0字节可以利用操作系统对目录最大长度的限制，可以不需要0字节而达到截断的目的。目录字符串，在windows下256字节，Linux下4096字节会达到最大值，最大值长度之后的字符串将会被丢弃。可以通过如下构造:../../../../../../../../../../../../../../abc
+
+%2e%2e%2f 等同于 ../
+%2e%2e/ 同上
+..%2f 同上
+%2e%2e%5c ..\
+%252%252%255c等同于..\"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="《白帽子讲Web安全》"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 《白帽子讲Web安全》</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h3 id="文件包含漏洞（File-Inclusion）"><a href="#文件包含漏洞（File-Inclusion）" class="headerlink" title="文件包含漏洞（File Inclusion）"></a>文件包含漏洞（File Inclusion）</h3><p>文件包含可能会出现在JSP、PHP、ASP等语言中，常见的函数如下：<br><code>PHP: include()、include_once()、require()、require_once()、fopen()、readfile()</code></p>
+<p>文件包含是PHP的一种常见用法，主要由四个函数组成：</p>
+<ul>
+<li>include()</li>
+<li>require()</li>
+<li>include_onec()</li>
+<li>require_once()</li>
+</ul>
+<p>当使用这4个函数包含一个新的文件，该文件将作为PHP代码执行，PHP内核并不会在意被包含的文件是什么类型。</p>
+<p>所以如果被包含的是txt文件，图片文件，远程URL等都会作为PHP代码执行。</p>
+<p>能够打开并且包含本地文件的漏洞称为本地文件包含漏洞（Local File Inclusion，LFI）</p>
+<p>PHP语言是由C语言实现的，因此使用了C语言中一些字符串处理函数，在连接字符串的时候，0字节（\x00）讲作为字符串结束符。所以攻击者可以加一个0字节，截断file变量后面的字符串，即<br><code>../../etc/passwd\0</code>，在get请求的时候进行Urlencode，变成<code>../../etc/passwd%00</code>。</p>
+<p>如果禁用了0字节可以利用操作系统对目录最大长度的限制，可以不需要0字节而达到截断的目的。目录字符串，在windows下256字节，Linux下4096字节会达到最大值，最大值长度之后的字符串将会被丢弃。可以通过如下构造:<br><code>../../../../../../../../../../../../../../abc</code></p>
+<ul>
+<li>%2e%2e%2f 等同于 ../</li>
+<li>%2e%2e/ 同上</li>
+<li>..%2f 同上</li>
+<li>%2e%2e%5c ..\</li>
+<li>%252%252%255c等同于..\</li>
+</ul>
+<p>open_basedir的作用是跨越目录读取文件的方法，当PHP配置open_basedir讲保护服务器，使得这种攻击无效。</p>
+<p>关于这一点可以搜索P牛的文章，其中有绕过open_basedir。</p>
+<p>如果PHP的配置选项allow_url_include为On的时候，则include/require函数可以加载远程文件，这种漏洞称为远程文件包含漏洞（Remote File Inclusion，RFI)。<br>远程文件包含漏洞可以直接执行任意命令，比如攻击者服务器有以下文件:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+echo system(&quot;ver;&quot;);
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>远程文件包含之所以可以执行命令，因为攻击者可以自定义被包含的文件内容，因此本地文件包含漏洞想要执行命令，需要找到一个攻击者可以控制内容的本地文件。</p>
+<ul>
+<li>用户文件上传</li>
+<li>包含data:// 或php://input等伪协议</li>
+<li>包含Session文件</li>
+<li>包含日志文件</li>
+<li>包含/proc/self/environ文件</li>
+<li>包含上传的临时文件</li>
+<li>包含其它应用创建的文件，比如数据库文件，缓存文件，应用日志等</li>
+</ul>
+<p>包含日志文件是比较通用的技巧，因为服务器一般会往Web Server的access_log记录客户端的请求信息，在error_log记录出错请求。因此攻击者可以间接讲PHP代码写入到日志文件中，在文件包含的时候，包含即可执行。</p>
+<p>如果网站访问量比较大，php可能会僵死，但Web Server往往滚动生成日志，因此在凌晨包含日志文件讲提高攻击的成功性。</p>
+<p>PHP创建的上传临时文件，往往处于PHP允许访问的目录内，包含这个临时文件，PHP会为上传文件创建临时文件，其目录在php.ini的upload_tmp_dir中定义，但该值默认为空，在Linux中会使用/tmp目录，在windows中使用C:\windows\temp目录。这个例子可以查看<code>wooyun-2015-134185 Chroa的文件包含漏洞</code></p>
+<h3 id="变量覆盖漏洞"><a href="#变量覆盖漏洞" class="headerlink" title="变量覆盖漏洞"></a>变量覆盖漏洞</h3><h4 id="全局变量覆盖"><a href="#全局变量覆盖" class="headerlink" title="全局变量覆盖"></a>全局变量覆盖</h4><p>变量如果未被初始化，且能被用户所控制，那么很可能会导致安全问题。</p>
+<ul>
+<li>extract() 变量覆盖</li>
+<li>遍历初始化变量</li>
+<li>import_request_variables变量覆盖</li>
+<li>parse_str()变量覆盖</li>
+</ul>
+<h3 id="代码执行漏洞"><a href="#代码执行漏洞" class="headerlink" title="代码执行漏洞"></a>代码执行漏洞</h3><p>文件包含可以造成代码执行，popen(),system(),passthru(),exec()等可以直接执行系统命令。<br>可以执行代码的函数：<code>eval(),assert(),system(),exec(),shell_exec(),passthru(),escapeshellcmd(),pcntl_exec()</code></p>
+<h3 id="与安全有关的php-ini配置"><a href="#与安全有关的php-ini配置" class="headerlink" title="与安全有关的php.ini配置:"></a>与安全有关的php.ini配置:</h3><h4 id="register-globals"><a href="#register-globals" class="headerlink" title="register_globals"></a>register_globals</h4><p>当register_globals为on的时候，php不知道变量从何而来，容易出现变量覆盖的问题。因此强烈建议设置register_globals = OFF，这个也是新版本中的默认配置。</p>
+<h4 id="open-basedir"><a href="#open-basedir" class="headerlink" title="open_basedir"></a>open_basedir</h4><p>open_basedir限制PHP只能操作指定目录下的文件，在对抗文件包含，目录遍历等攻击的时候非常有用，如果设定的值是一个指定的目录需要在最后加上一个<code>/</code>，否则会认为是该目录的前缀</p>
+<h4 id="allow-url-include"><a href="#allow-url-include" class="headerlink" title="allow_url_include"></a>allow_url_include</h4><p>对抗远程文件包含，同时还有allow_url_fopen, allow_url_include</p>
+<h4 id="magic-quotes-gpc"><a href="#magic-quotes-gpc" class="headerlink" title="magic_quotes_gpc"></a>magic_quotes_gpc</h4><p>推荐关闭，在开启的时候回在特殊字符前加<code>\</code>进行转义</p>
+<h4 id="cgi-fix-pathinfo"><a href="#cgi-fix-pathinfo" class="headerlink" title="cgi.fix_pathinfo"></a>cgi.fix_pathinfo</h4><p>PHP以CGI的方式安装，则需要关闭此项，以避免出现文件解析的问题。</p>
+<h4 id="session-cookie-httponly"><a href="#session-cookie-httponly" class="headerlink" title="session.cookie_httponly"></a>session.cookie_httponly</h4><p>开启HttpOnly</p>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2016/09/25/whitehat-talk-web-security.html" class="leancloud-visitors view" data-flag-title="《白帽子讲Web安全》">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2016/10/08/docker.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2016/08/29/csrf.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2016-09-25 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/CTF/">CTF<span>1</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%88File-Inclusion%EF%BC%89"><span class="toc-article-text">文件包含漏洞（File Inclusion）</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%8F%98%E9%87%8F%E8%A6%86%E7%9B%96%E6%BC%8F%E6%B4%9E"><span class="toc-article-text">变量覆盖漏洞</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E8%A6%86%E7%9B%96"><span class="toc-article-text">全局变量覆盖</span></a></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E"><span class="toc-article-text">代码执行漏洞</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E4%B8%8E%E5%AE%89%E5%85%A8%E6%9C%89%E5%85%B3%E7%9A%84php-ini%E9%85%8D%E7%BD%AE"><span class="toc-article-text">与安全有关的php.ini配置:</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#register-globals"><span class="toc-article-text">register_globals</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#open-basedir"><span class="toc-article-text">open_basedir</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#allow-url-include"><span class="toc-article-text">allow_url_include</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#magic-quotes-gpc"><span class="toc-article-text">magic_quotes_gpc</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#cgi-fix-pathinfo"><span class="toc-article-text">cgi.fix_pathinfo</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#session-cookie-httponly"><span class="toc-article-text">session.cookie_httponly</span></a></li></ol></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

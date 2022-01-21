@@ -1,0 +1,433 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>SIEM On ELK | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="安装参考链接里有详细的安装步骤，测试客户端是Windows，安装了如下软件：
+
+sysmon.exe(配置文件)
+.\sysmon64.exe -accepteula -i c:\windows\config.xml
+
+
+winlogbeat.exe
+.\install-service-winlogbeat.ps1
+.\winlogbeat.exe setup -e
+
+
+ElasticAgent.exe
+.\elastic-agent.exe install  --insecure -f --fleet-server-es=&amp;lt;ES&amp;gt; --fleet-server-service-token=&amp;lt;token&amp;gt;
+
+
+
+规则监测和绕过规则有5种查询，一般使用EQL(Event Query Language)查询类型:SIEM有内置很多规则，默认是关闭状态，这些规则都是ATT&amp;amp;CK框架攻击行为转化而来的，例如windows下的whoami查询规则(正经人谁查whoami啊):
+process where event.type in (&amp;quot;start&amp;quot;, &amp;quot;process_started&amp;quot;) and process.name : &amp;quot;whoami.exe&amp;quot;
+我们拿这条规则做分析，这条规则匹配了当进程开始的时候，进程名为whoami.exe的时候触发，所以我们把whoami.exe复制一下，就可以绕过去了:
+copy C:\Windows\System32\whoami.exe C:\Windows\temp\x.exe
+C:\Windows\temp\x.exe
+是不是把siem想的简单了，这跟通过复制net.exe绕过添加用户一模一样，仔细观察下elk里面的字段，可以发现process.pe.original_file_name仍然保留了whoami.exe，这是PE文件里面固定的，所以我们手动把预警规则修改一下:
+process where event.type in (&amp;quot;start&amp;quot;, &amp;quot;process_started&amp;quot;) and process.pe.original_file_name: &amp;quot;whoami.exe&amp;quot;"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="SIEM On ELK"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> SIEM On ELK</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>参考链接里有详细的安装步骤，测试客户端是Windows，安装了如下软件：</p>
+<ul>
+<li>sysmon.exe(<a target="_blank" rel="noopener" href="https://github.com/SwiftOnSecurity/sysmon-config">配置文件</a>)<ul>
+<li><code>.\sysmon64.exe -accepteula -i c:\windows\config.xml</code></li>
+</ul>
+</li>
+<li>winlogbeat.exe<ul>
+<li><code>.\install-service-winlogbeat.ps1</code></li>
+<li><code>.\winlogbeat.exe setup -e</code></li>
+</ul>
+</li>
+<li>ElasticAgent.exe<ul>
+<li><code>.\elastic-agent.exe install  --insecure -f --fleet-server-es=&lt;ES&gt; --fleet-server-service-token=&lt;token&gt;</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="规则监测和绕过"><a href="#规则监测和绕过" class="headerlink" title="规则监测和绕过"></a>规则监测和绕过</h3><p>规则有5种查询，一般使用EQL(Event Query Language)查询类型:<br><img src="/2021/08/02/siem-on-elk/siem-1.png"><br>SIEM有内置很多规则，默认是关闭状态，这些规则都是ATT&amp;CK框架攻击行为转化而来的，例如windows下的<code>whoami</code>查询规则(<del>正经人谁查whoami啊</del>):</p>
+<pre class="line-numbers language-none"><code class="language-none">process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and process.name : &quot;whoami.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>我们拿这条规则做分析，这条规则匹配了当进程开始的时候，进程名为<code>whoami.exe</code>的时候触发，所以我们把<code>whoami.exe</code>复制一下，就可以绕过去了:</p>
+<pre class="line-numbers language-none"><code class="language-none">copy C:\Windows\System32\whoami.exe C:\Windows\temp\x.exe
+C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>是不是把siem想的简单了，这跟通过复制<code>net.exe</code>绕过添加用户一模一样，仔细观察下elk里面的字段，可以发现<code>process.pe.original_file_name</code>仍然保留了<code>whoami.exe</code>，这是PE文件里面固定的，所以我们手动把预警规则修改一下:</p>
+<pre class="line-numbers language-none"><code class="language-none">process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and process.pe.original_file_name: &quot;whoami.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>此时通过复制绕过就失效了，那么<code>process.pe.original_file_name</code>能不能改呢？可以的，<a target="_blank" rel="noopener" href="https://github.com/electron/rcedit/releases">rcedit</a>:</p>
+<pre class="line-numbers language-none"><code class="language-none">cedit-x64.exe x.exe --set-version-string  OriginalFilename &quot;hello.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="/2021/08/02/siem-on-elk/siem-2.png"></p>
+<p>此时再次执行<code>x.exe</code>，SIEM里面不会有告警信息，所以可以通过这种形式绕过和<code>process.pe.original_file_name</code>相关的规则，所以在实际过程中，要从多个维度思考，比如network、注册表、事件ID</p>
+<h3 id="告警通知"><a href="#告警通知" class="headerlink" title="告警通知"></a>告警通知</h3><p>ELK的基础版没有用户通知的功能，需要开通白金版，可以申请试用30天或者破解，如果想通知钉钉，可以选择webhook的方式，在webhook的时候注意添加一个请求头字段:<code>Content-Type: application/x-wwww-form-data</code>，Action里面增加body格式:</p>
+<pre class="line-numbers language-none"><code class="language-none">&#123;&#123;#context.alerts&#125;&#125;
+timestamp&#x3D;&#123;&#123;@timestamp&#125;&#125;&amp;rule_name&#x3D;&#123;&#123;context.rule.name&#125;&#125;&amp;risk_score&#x3D;&#123;&#123;context.rule.risk_score&#125;&#125;&amp;host_name&#x3D;&#123;&#123;host.name&#125;&#125;&amp;process_parent_name&#x3D;&#123;&#123;process.parent.name&#125;&#125;&amp;process_command_line&#x3D;&#123;&#123;process.command_line&#125;&#125;&amp;process_name&#x3D;&#123;&#123;process.name&#125;&#125;&amp;user_name&#x3D;&#123;&#123;user.name&#125;&#125;&amp;result_link&#x3D;&#123;&#123;&#123;context.results_link&#125;&#125;&#125;
+&#123;&#123;&#x2F;context.alerts&#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>服务端解析body然后通知钉钉：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> requests
+<span class="token keyword">import</span> json
+<span class="token keyword">from</span> flask <span class="token keyword">import</span> Flask<span class="token punctuation">,</span> request<span class="token punctuation">,</span> jsonify
+<span class="token keyword">from</span> datetime <span class="token keyword">import</span> datetime<span class="token punctuation">,</span> timedelta
+app <span class="token operator">=</span> Flask<span class="token punctuation">(</span>__name__<span class="token punctuation">)</span>
+
+
+<span class="token decorator annotation punctuation">@app<span class="token punctuation">.</span>route</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> methods<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">'POST'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">def</span> <span class="token function">handler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    form <span class="token operator">=</span> request<span class="token punctuation">.</span>form
+    <span class="token keyword">print</span><span class="token punctuation">(</span>form<span class="token punctuation">)</span>
+    timestamp <span class="token operator">=</span> date2local<span class="token punctuation">(</span>form<span class="token punctuation">[</span><span class="token string">"timestamp"</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+    rule_name <span class="token operator">=</span> form<span class="token punctuation">[</span><span class="token string">"rule_name"</span><span class="token punctuation">]</span>
+    <span class="token comment"># risk_score = form["risk_score"]</span>
+    host_name <span class="token operator">=</span> form<span class="token punctuation">[</span><span class="token string">"host_name"</span><span class="token punctuation">]</span>
+    process_parent_name <span class="token operator">=</span> form<span class="token punctuation">[</span><span class="token string">"process_parent_name"</span><span class="token punctuation">]</span>
+    process_name <span class="token operator">=</span> form<span class="token punctuation">[</span><span class="token string">"process_name"</span><span class="token punctuation">]</span>
+    process_command_line <span class="token operator">=</span> form<span class="token punctuation">[</span><span class="token string">"process_command_line"</span><span class="token punctuation">]</span>
+    user_name <span class="token operator">=</span> form<span class="token punctuation">[</span><span class="token string">"user_name"</span><span class="token punctuation">]</span>
+    result_link <span class="token operator">=</span> form<span class="token punctuation">[</span><span class="token string">"result_link"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">"\n"</span><span class="token punctuation">,</span> <span class="token string">"%0a"</span><span class="token punctuation">)</span>
+
+    dingTalk_notify<span class="token punctuation">(</span>timestamp<span class="token punctuation">,</span> rule_name<span class="token punctuation">,</span> host_name<span class="token punctuation">,</span> process_parent_name<span class="token punctuation">,</span> process_name<span class="token punctuation">,</span> process_command_line<span class="token punctuation">,</span> user_name<span class="token punctuation">,</span> result_link<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> jsonify<span class="token punctuation">(</span><span class="token punctuation">&#123;</span><span class="token string">"status"</span><span class="token punctuation">:</span> <span class="token string">"OK"</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+
+
+<span class="token keyword">def</span> <span class="token function">date2local</span><span class="token punctuation">(</span>date<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    date <span class="token operator">=</span> datetime<span class="token punctuation">.</span>strptime<span class="token punctuation">(</span>date<span class="token punctuation">,</span> <span class="token string">"%Y-%m-%dT%H:%M:%S.%fZ"</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> <span class="token punctuation">(</span>date <span class="token operator">+</span> timedelta<span class="token punctuation">(</span>hours<span class="token operator">=</span><span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>strftime<span class="token punctuation">(</span><span class="token string">"%Y-%m-%d %H:%M:%S"</span><span class="token punctuation">)</span>
+
+
+<span class="token keyword">def</span> <span class="token function">dingTalk_notify</span><span class="token punctuation">(</span>timestamp<span class="token punctuation">,</span> rule_name<span class="token punctuation">,</span> host_name<span class="token punctuation">,</span> process_parent_name<span class="token punctuation">,</span> process_name<span class="token punctuation">,</span> process_command_line<span class="token punctuation">,</span> user_name<span class="token punctuation">,</span> result_link<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    token <span class="token operator">=</span> <span class="token string">""</span>  
+    ddrobot <span class="token operator">=</span> <span class="token string-interpolation"><span class="token string">f"https://oapi.dingtalk.com/robot/send?access_token=</span><span class="token interpolation"><span class="token punctuation">&#123;</span>token<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span>
+    headers <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+        <span class="token string">'Content-Type'</span><span class="token punctuation">:</span> <span class="token string">'application/json;charset=utf-8'</span>
+    <span class="token punctuation">&#125;</span>
+    json_text <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+        <span class="token string">"msgtype"</span><span class="token punctuation">:</span> <span class="token string">"markdown"</span><span class="token punctuation">,</span>
+        <span class="token string">"markdown"</span><span class="token punctuation">:</span> <span class="token punctuation">&#123;</span>
+            <span class="token string">"title"</span><span class="token punctuation">:</span> <span class="token string-interpolation"><span class="token string">f"SIEM告警"</span></span><span class="token punctuation">,</span>
+            <span class="token string">"text"</span><span class="token punctuation">:</span> <span class="token string-interpolation"><span class="token string">f"### SIEM告警通知\n##### 触发时间: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>timestamp<span class="token punctuation">&#125;</span></span><span class="token string">\n##### 触发规则: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>rule_name<span class="token punctuation">&#125;</span></span><span class="token string">\n##### 触发主机: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>host_name<span class="token punctuation">&#125;</span></span><span class="token string">\n##### 关联父进程: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>process_parent_name<span class="token punctuation">&#125;</span></span><span class="token string">\n##### 当前进程: "</span></span>
+                    <span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">&#123;</span>process_name<span class="token punctuation">&#125;</span></span><span class="token string">\n#### 进程参数：</span><span class="token interpolation"><span class="token punctuation">&#123;</span>process_command_line<span class="token punctuation">&#125;</span></span><span class="token string">\n##### 当前用户: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>user_name<span class="token punctuation">&#125;</span></span><span class="token string">\n##### [告警详情](</span><span class="token interpolation"><span class="token punctuation">&#123;</span>result_link<span class="token punctuation">&#125;</span></span><span class="token string">)"</span></span>
+        <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+        <span class="token string">"at"</span><span class="token punctuation">:</span> <span class="token punctuation">&#123;</span>
+            <span class="token string">"atMobiles"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+            <span class="token string">"isAtAll"</span><span class="token punctuation">:</span> <span class="token string">"false"</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+
+    requests<span class="token punctuation">.</span>post<span class="token punctuation">(</span>ddrobot<span class="token punctuation">,</span> data<span class="token operator">=</span>json<span class="token punctuation">.</span>dumps<span class="token punctuation">(</span>json_text<span class="token punctuation">)</span><span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">)</span><span class="token punctuation">.</span>json<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">"__main__"</span><span class="token punctuation">:</span>
+    app<span class="token punctuation">.</span>run<span class="token punctuation">(</span><span class="token string">'0.0.0.0'</span><span class="token punctuation">,</span> <span class="token number">9999</span><span class="token punctuation">,</span> threaded<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><img src="/2021/08/02/siem-on-elk/siem-3.png"></p>
+<h3 id="规则示例"><a href="#规则示例" class="headerlink" title="规则示例"></a>规则示例</h3><p>SIEM内置的规则有很多，常用的规则打开的有如下几个:<br>规则名称：Conhost Spawned By Suspicious Parent Process<br>规则介绍：Console Window Host (conhost.exe)作为子进程被启动，通常是在代码注入进程的时候出现</p>
+<pre class="line-numbers language-none"><code class="language-none">process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and
+  process.name : &quot;conhost.exe&quot; and
+  process.parent.name : (&quot;svchost.exe&quot;, &quot;lsass.exe&quot;, &quot;services.exe&quot;, &quot;smss.exe&quot;, &quot;winlogon.exe&quot;, &quot;explorer.exe&quot;,
+                         &quot;dllhost.exe&quot;, &quot;rundll32.exe&quot;, &quot;regsvr32.exe&quot;, &quot;userinit.exe&quot;, &quot;wininit.exe&quot;, &quot;spoolsv.exe&quot;,
+                         &quot;wermgr.exe&quot;, &quot;csrss.exe&quot;, &quot;ctfmon.exe&quot;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<hr>
+<p>规则名称：Encoding or Decoding Files via CertUtil<br>规则介绍：通过CertUtil编码解码文件</p>
+<pre class="line-numbers language-none"><code class="language-none">process where event.type &#x3D;&#x3D; &quot;start&quot; and
+  (process.name : &quot;certutil.exe&quot; or process.pe.original_file_name &#x3D;&#x3D; &quot;CertUtil.exe&quot;) and
+  process.args : (&quot;?decode&quot;, &quot;?encode&quot;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<hr>
+<p>规则名称：Unusual Child Processes of RunDLL32<br>规则介绍：不正常的rundll32.exe活动（通常用在启动木马过程中，比如CS的Spawn）</p>
+<pre class="line-numbers language-none"><code class="language-none">sequence with maxspan&#x3D;1h
+  [process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and
+     (process.name : &quot;rundll32.exe&quot; or process.pe.original_file_name &#x3D;&#x3D; &quot;RUNDLL32.EXE&quot;) and
+      process.args_count &#x3D;&#x3D; 1
+  ] by process.entity_id
+  [process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and process.parent.name : &quot;rundll32.exe&quot;
+  ] by process.parent.entity_id<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<hr>
+<p>规则名称：Creation of a Hidden Local User Account<br>规则介绍：添加隐藏账户（用于权限维持）</p>
+<pre class="line-numbers language-none"><code class="language-none">registry where registry.path : &quot;HKLM\\SAM\\SAM\\Domains\\Account\\Users\\Names\\*$\\&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<hr>
+<p>规则名称：Windows Script Executing PowerShell<br>规则介绍：使用wscript或者cscript执行Powershell</p>
+<pre class="line-numbers language-none"><code class="language-none">process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and
+  process.parent.name : (&quot;cscript.exe&quot;, &quot;wscript.exe&quot;) and process.name : &quot;powershell.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<hr>
+<p>规则名称：Windows Suspicious Command<br>规则介绍：Windows可疑命令</p>
+<pre class="line-numbers language-none"><code class="language-none">process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and
+process.pe.original_file_name in (&quot;whoami.exe&quot;, &quot;tasklist.exe&quot;, &quot;ipconfig.exe&quot;, &quot;powershell.exe&quot;, &quot;sctasks.exe&quot;, &quot;bitsadmin.exe&quot;, &quot;netstat.exe&quot;, &quot;systeminfo.exe&quot;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<hr>
+<p>规则名称：Security Software Discovery using WMIC<br>规则介绍：使用wmic查询安全软件</p>
+<pre class="line-numbers language-none"><code class="language-none">process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and
+   (process.name:&quot;wmic.exe&quot; or process.pe.original_file_name:&quot;wmic.exe&quot;) and
+    process.args:&quot;&#x2F;namespace:\\\\root\\SecurityCenter2&quot; and process.args:&quot;Get&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<hr>
+<p>规则名称：Net command via SYSTEM account<br>规则介绍：以SYSTEM权限执行net.exe</p>
+<pre class="line-numbers language-none"><code class="language-none">process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and
+  user.id in (&quot;S-1-5-18&quot;, &quot;S-1-5-19&quot;, &quot;S-1-5-20&quot;) and
+  process.name : &quot;whoami.exe&quot; or
+  (process.name : &quot;net1.exe&quot; and not process.parent.name : &quot;net.exe&quot;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><a target="_blank" rel="noopener" href="https://github.com/SigmaHQ/sigma">sigma</a>(Generic Signature Format for SIEM Systems)，这种描述方式特别像病毒软件的特征码。</p>
+<h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h3><ul>
+<li>绕过的方式应该还有很多，未测试</li>
+<li>安骑士的原理类似，比如碰到过阿里云上执行<code>whoami、systeminfo</code>就告警</li>
+<li>看完<a target="_blank" rel="noopener" href="http://weizn.net/?p=439">通过SYSMON日志检测Cobalt Strike木马</a>我觉得这个才是SIEM的解决方式</li>
+</ul>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://unicornsec.com/home/siem-home-lab-series-part-1">SIEM实验系列-1</a></li>
+<li><a target="_blank" rel="noopener" href="https://unicornsec.com/home/siem-home-lab-series-part-2">SIEM实验系列-2</a></li>
+<li><a target="_blank" rel="noopener" href="https://unicornsec.com/home/siem-home-lab-series-part-3">SIEM实验系列-3</a></li>
+<li><a target="_blank" rel="noopener" href="http://weizn.net/?p=439">通过SYSMON日志检测Cobalt Strike木马</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2021/08/02/siem-on-elk.html" class="leancloud-visitors view" data-flag-title="SIEM On ELK">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2021/08/06/windows-ntlm-smb-scan.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2021/07/29/silverFish.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2021-08-02 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-article-text">安装</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E8%A7%84%E5%88%99%E7%9B%91%E6%B5%8B%E5%92%8C%E7%BB%95%E8%BF%87"><span class="toc-article-text">规则监测和绕过</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5"><span class="toc-article-text">告警通知</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E8%A7%84%E5%88%99%E7%A4%BA%E4%BE%8B"><span class="toc-article-text">规则示例</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%80%9D%E8%80%83"><span class="toc-article-text">思考</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%8F%82%E8%80%83"><span class="toc-article-text">参考</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

