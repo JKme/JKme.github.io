@@ -117,6 +117,96 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/01/03/sql中转.html" >Sqlmap备忘录</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-01-03  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>2017-1-11更新：<br>原来的时候下面这一坨代码用了半个小时写出来，PHP比较渣，变查边写边用burp调试。</p>
+<p>其实需求很简单，就是在sqlmap的每个payload后面写入特定字符，昨天的时候看到这篇文章才发现sqlmap已经有选项了，感觉自己蠢蠢嗒- -</p>
+<p><a target="_blank" rel="noopener" href="http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html">http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html</a></p>
+<blockquote>
+<p>The prefix (–prefix) and suffix (–suffix) options configure the strings that should be included with each SQL injection payload in order to begin, and then terminate, the Injection. </p>
+</blockquote>
+<pre class="line-numbers language-none"><code class="language-none">--prefix --suffix 是每次添加在payload的数据，一个前置，一个后置<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>###在注入测试的时候union查询用的是NULL?</p>
+<blockquote>
+<p>Why use NULL values in the UNION SELECT? NULL is a great value to use in UNIONS when trying to determine the correct number of columns in an injection, as it can sit in place of a number of different field types, such as numbers, strings and dates.</p>
+</blockquote>
+<p>###使用具体的payload<br>如果知道了注入点是在order by，可以添加这样的选项:<code>--test-filter=&#39;ORDER BY&#39;</code></p>
+<p>###<code>--string</code> &amp; <code>--not-string</code><br>Blind injection的时候，有这样的选项：</p>
+<pre class="line-numbers language-none"><code class="language-none">--string
+--not-string
+在true或者false要判断的字符
+
+--regexp 使用的正则表达
+--code 根据HTTP状态来判断
+--text-only 比较回应的文本
+--title 比较回应的title
+
+其中作者说明了使用--string或者--not-string的时候可以使用Python里面的十六进制换行来匹配比如newline(\x0a)和tabs(\x09)
+
+--string&#x3D;&quot;Name\x0a\x09\x09Stephen&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2017/01/03/sql中转.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>2017-1-11更新：<br>原来的时候下面这一坨代码用了半个小时写出来，PHP比较渣，变查边写边用burp调试。</p>
+<p>其实需求很简单，就是在sqlmap的每个payload后面写入特定字符，昨天的时候看到这篇文章才发现sqlmap已经有选项了，感觉自己蠢蠢嗒- -</p>
+<p><a target="_blank" rel="noopener" href="http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html">http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html</a></p>
+<blockquote>
+<p>The prefix (–prefix) and suffix (–suffix) options configure the strings that should be included with each SQL injection payload in order to begin, and then terminate, the Injection. </p>
+</blockquote>
+<pre class="line-numbers language-none"><code class="language-none">--prefix --suffix 是每次添加在payload的数据，一个前置，一个后置<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>###在注入测试的时候union查询用的是NULL?</p>
+<blockquote>
+<p>Why use NULL values in the UNION SELECT? NULL is a great value to use in UNIONS when trying to determine the correct number of columns in an injection, as it can sit in place of a number of different field types, such as numbers, strings and dates.</p>
+</blockquote>
+<p>###使用具体的payload<br>如果知道了注入点是在order by，可以添加这样的选项:<code>--test-filter=&#39;ORDER BY&#39;</code></p>
+<p>###<code>--string</code> &amp; <code>--not-string</code><br>Blind injection的时候，有这样的选项：</p>
+<pre class="line-numbers language-none"><code class="language-none">--string
+--not-string
+在true或者false要判断的字符
+
+--regexp 使用的正则表达
+--code 根据HTTP状态来判断
+--text-only 比较回应的文本
+--title 比较回应的title
+
+其中作者说明了使用--string或者--not-string的时候可以使用Python里面的十六进制换行来匹配比如newline(\x0a)和tabs(\x09)
+
+--string&#x3D;&quot;Name\x0a\x09\x09Stephen&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2017/01/03/sql中转.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2016/12/28/php的zip伪协议.html" >php://input&amp;&amp;php://filter</a>
 		</h3>
 		</div>
@@ -627,84 +717,6 @@ quit
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/09/25/whitehat-talk-web-security.html" >《白帽子讲Web安全》</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-09-25  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="文件包含漏洞（File-Inclusion）"><a href="#文件包含漏洞（File-Inclusion）" class="headerlink" title="文件包含漏洞（File Inclusion）"></a>文件包含漏洞（File Inclusion）</h3><p>文件包含可能会出现在JSP、PHP、ASP等语言中，常见的函数如下：<br><code>PHP: include()、include_once()、require()、require_once()、fopen()、readfile()</code></p>
-<p>文件包含是PHP的一种常见用法，主要由四个函数组成：</p>
-<ul>
-<li>include()</li>
-<li>require()</li>
-<li>include_onec()</li>
-<li>require_once()</li>
-</ul>
-<p>当使用这4个函数包含一个新的文件，该文件将作为PHP代码执行，PHP内核并不会在意被包含的文件是什么类型。</p>
-<p>所以如果被包含的是txt文件，图片文件，远程URL等都会作为PHP代码执行。</p>
-<p>能够打开并且包含本地文件的漏洞称为本地文件包含漏洞（Local File Inclusion，LFI）</p>
-<p>PHP语言是由C语言实现的，因此使用了C语言中一些字符串处理函数，在连接字符串的时候，0字节（\x00）讲作为字符串结束符。所以攻击者可以加一个0字节，截断file变量后面的字符串，即<br><code>../../etc/passwd\0</code>，在get请求的时候进行Urlencode，变成<code>../../etc/passwd%00</code>。</p>
-<p>如果禁用了0字节可以利用操作系统对目录最大长度的限制，可以不需要0字节而达到截断的目的。目录字符串，在windows下256字节，Linux下4096字节会达到最大值，最大值长度之后的字符串将会被丢弃。可以通过如下构造:<br><code>../../../../../../../../../../../../../../abc</code></p>
-<ul>
-<li>%2e%2e%2f 等同于 ../</li>
-<li>%2e%2e/ 同上</li>
-<li>..%2f 同上</li>
-<li>%2e%2e%5c ..\</li>
-<li>%252%252%255c等同于..\</li>
-</ul>
-	
-
-	</div>
-  <a type="button" href="/2016/09/25/whitehat-talk-web-security.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="文件包含漏洞（File-Inclusion）"><a href="#文件包含漏洞（File-Inclusion）" class="headerlink" title="文件包含漏洞（File Inclusion）"></a>文件包含漏洞（File Inclusion）</h3><p>文件包含可能会出现在JSP、PHP、ASP等语言中，常见的函数如下：<br><code>PHP: include()、include_once()、require()、require_once()、fopen()、readfile()</code></p>
-<p>文件包含是PHP的一种常见用法，主要由四个函数组成：</p>
-<ul>
-<li>include()</li>
-<li>require()</li>
-<li>include_onec()</li>
-<li>require_once()</li>
-</ul>
-<p>当使用这4个函数包含一个新的文件，该文件将作为PHP代码执行，PHP内核并不会在意被包含的文件是什么类型。</p>
-<p>所以如果被包含的是txt文件，图片文件，远程URL等都会作为PHP代码执行。</p>
-<p>能够打开并且包含本地文件的漏洞称为本地文件包含漏洞（Local File Inclusion，LFI）</p>
-<p>PHP语言是由C语言实现的，因此使用了C语言中一些字符串处理函数，在连接字符串的时候，0字节（\x00）讲作为字符串结束符。所以攻击者可以加一个0字节，截断file变量后面的字符串，即<br><code>../../etc/passwd\0</code>，在get请求的时候进行Urlencode，变成<code>../../etc/passwd%00</code>。</p>
-<p>如果禁用了0字节可以利用操作系统对目录最大长度的限制，可以不需要0字节而达到截断的目的。目录字符串，在windows下256字节，Linux下4096字节会达到最大值，最大值长度之后的字符串将会被丢弃。可以通过如下构造:<br><code>../../../../../../../../../../../../../../abc</code></p>
-<ul>
-<li>%2e%2e%2f 等同于 ../</li>
-<li>%2e%2e/ 同上</li>
-<li>..%2f 同上</li>
-<li>%2e%2e%5c ..\</li>
-<li>%252%252%255c等同于..\</li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2016/09/25/whitehat-talk-web-security.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -760,7 +772,7 @@ quit
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>43</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -781,6 +793,10 @@ quit
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
+      </li>
+    
+      <li>
         <a href="/2021/08/06/windows-ntlm-smb-scan.html" ><i class="fa fa-file-o"></i>NTLM端口信息探测</a>
       </li>
     
@@ -794,10 +810,6 @@ quit
     
       <li>
         <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
-      </li>
-    
-      <li>
-        <a href="/2021/04/06/defense-from-c2.html" ><i class="fa fa-file-o"></i>防御性C2玩具尝试</a>
       </li>
     
   </ul>

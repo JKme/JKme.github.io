@@ -117,6 +117,92 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2021/04/06/defense-from-c2.html" >防御性C2玩具尝试</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2021-04-06  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="背景需求"><a href="#背景需求" class="headerlink" title="背景需求"></a>背景需求</h3><p>不管一个什么形式的后门：定时任务、dll劫持、开机启动…，当我设置的后门运行的时候，我想掌握后门的启动时间、触发IP等上环境，所以这篇文章是在shellcode分离免杀的基础上做了尝试性扩展</p>
+<h4 id="考虑这样的场景："><a href="#考虑这样的场景：" class="headerlink" title="考虑这样的场景："></a>考虑这样的场景：</h4><ul>
+<li>后门被静态分析</li>
+<li>后门被动态分析</li>
+<li>shellcode被提取之后触发</li>
+<li>…</li>
+</ul>
+<p>在shellcode分离免杀的基础上扩展还是比较容易的，当客户端请求远程shellcode托管服务器的时候，增加一个机器人，然后发起一个上线通知：If This Then That，这样太简单了，我们再多加点料，比如：</p>
+<ol>
+<li>不带合理参数请求shellcode的URL时候，发起警告</li>
+<li>当木马运行在恶意环境的时候，发起警告<ul>
+<li>当木马上线IP不在服务端列表</li>
+<li>当木马上线主机的设备指纹不在服务端列表</li>
+</ul>
+</li>
+<li>shellcode托管服务随时可以关闭打开</li>
+<li>shellcode托管服务随时可以新增删除木马上线IP或者设备指纹</li>
+</ol>
+<h3 id="准备材料"><a href="#准备材料" class="headerlink" title="准备材料"></a>准备材料</h3><ul>
+<li>一台VPS：托管shellcode，通知slack机器人</li>
+<li>一个AWS账号隐藏C2（CloudFront）</li>
+<li>Slack：接收通知，使用<code>Slash commands</code>功能控制shellcode托管服务</li>
+</ul>
+<h5 id="托管shellcode流程"><a href="#托管shellcode流程" class="headerlink" title="托管shellcode流程"></a>托管shellcode流程</h5><p><img src="/2021/04/06/defense-from-c2/18.png"></p>
+	
+
+	</div>
+  <a type="button" href="/2021/04/06/defense-from-c2.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="背景需求"><a href="#背景需求" class="headerlink" title="背景需求"></a>背景需求</h3><p>不管一个什么形式的后门：定时任务、dll劫持、开机启动…，当我设置的后门运行的时候，我想掌握后门的启动时间、触发IP等上环境，所以这篇文章是在shellcode分离免杀的基础上做了尝试性扩展</p>
+<h4 id="考虑这样的场景："><a href="#考虑这样的场景：" class="headerlink" title="考虑这样的场景："></a>考虑这样的场景：</h4><ul>
+<li>后门被静态分析</li>
+<li>后门被动态分析</li>
+<li>shellcode被提取之后触发</li>
+<li>…</li>
+</ul>
+<p>在shellcode分离免杀的基础上扩展还是比较容易的，当客户端请求远程shellcode托管服务器的时候，增加一个机器人，然后发起一个上线通知：If This Then That，这样太简单了，我们再多加点料，比如：</p>
+<ol>
+<li>不带合理参数请求shellcode的URL时候，发起警告</li>
+<li>当木马运行在恶意环境的时候，发起警告<ul>
+<li>当木马上线IP不在服务端列表</li>
+<li>当木马上线主机的设备指纹不在服务端列表</li>
+</ul>
+</li>
+<li>shellcode托管服务随时可以关闭打开</li>
+<li>shellcode托管服务随时可以新增删除木马上线IP或者设备指纹</li>
+</ol>
+<h3 id="准备材料"><a href="#准备材料" class="headerlink" title="准备材料"></a>准备材料</h3><ul>
+<li>一台VPS：托管shellcode，通知slack机器人</li>
+<li>一个AWS账号隐藏C2（CloudFront）</li>
+<li>Slack：接收通知，使用<code>Slash commands</code>功能控制shellcode托管服务</li>
+</ul>
+<h5 id="托管shellcode流程"><a href="#托管shellcode流程" class="headerlink" title="托管shellcode流程"></a>托管shellcode流程</h5><p><img src="/2021/04/06/defense-from-c2/18.png"></p>
+	
+	</div>
+  <a type="button" href="/2021/04/06/defense-from-c2.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2021/04/01/aws-lambda-rce.html" >Lambda远程命令执行测试</a>
 		</h3>
 		</div>
@@ -407,78 +493,6 @@ RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125;
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2020/08/28/hide-your-windows-backdoor.html" >Windows后门隐藏</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2020-08-28  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="后门的构成"><a href="#后门的构成" class="headerlink" title="后门的构成"></a>后门的构成</h3><p>分为三个部分:</p>
-<ol>
-<li>shellcode的分离免杀</li>
-<li>C2服务器的隐藏</li>
-<li>Windows后门的设置</li>
-</ol>
-<h3 id="分离免杀"><a href="#分离免杀" class="headerlink" title="分离免杀"></a>分离免杀</h3><p>shellcode的分离免杀有很多种，这里把每个模块拿出来就是如下的几个:</p>
-<ol>
-<li>通信: <code>socket</code>,<code>http</code></li>
-<li><code>shellcode</code>的执行方式</li>
-<li><code>shellcode</code>的流量</li>
-<li>远程服务器的隐藏</li>
-</ol>
-<p>除去第二种方式有很多种可以执行shellcode的，其他三种最好的解决方案是实用<code>Domain Fronting</code>隐藏服务器，AES动态加密解密运行shellcode。这样子既隐藏了服务器，又避免shellcode的明文流量被探测到。当然上线之后的操作被探测不在被讨论的范围之内。</p>
-<p>在参考资料里面,<code>uknownsec</code>已经把主要的代码放出来了。只需要拿出来拼凑一下就可以食用。</p>
-<p>其中服务端出去python的功能之外，可以给自己加上一个<code>slack</code>机器人的通知，这样子上线的时候就有通知。</p>
-<h4 id="C2服务器的隐藏"><a href="#C2服务器的隐藏" class="headerlink" title="C2服务器的隐藏"></a>C2服务器的隐藏</h4>
-	
-
-	</div>
-  <a type="button" href="/2020/08/28/hide-your-windows-backdoor.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="后门的构成"><a href="#后门的构成" class="headerlink" title="后门的构成"></a>后门的构成</h3><p>分为三个部分:</p>
-<ol>
-<li>shellcode的分离免杀</li>
-<li>C2服务器的隐藏</li>
-<li>Windows后门的设置</li>
-</ol>
-<h3 id="分离免杀"><a href="#分离免杀" class="headerlink" title="分离免杀"></a>分离免杀</h3><p>shellcode的分离免杀有很多种，这里把每个模块拿出来就是如下的几个:</p>
-<ol>
-<li>通信: <code>socket</code>,<code>http</code></li>
-<li><code>shellcode</code>的执行方式</li>
-<li><code>shellcode</code>的流量</li>
-<li>远程服务器的隐藏</li>
-</ol>
-<p>除去第二种方式有很多种可以执行shellcode的，其他三种最好的解决方案是实用<code>Domain Fronting</code>隐藏服务器，AES动态加密解密运行shellcode。这样子既隐藏了服务器，又避免shellcode的明文流量被探测到。当然上线之后的操作被探测不在被讨论的范围之内。</p>
-<p>在参考资料里面,<code>uknownsec</code>已经把主要的代码放出来了。只需要拿出来拼凑一下就可以食用。</p>
-<p>其中服务端出去python的功能之外，可以给自己加上一个<code>slack</code>机器人的通知，这样子上线的时候就有通知。</p>
-<h4 id="C2服务器的隐藏"><a href="#C2服务器的隐藏" class="headerlink" title="C2服务器的隐藏"></a>C2服务器的隐藏</h4>
-	
-	</div>
-  <a type="button" href="/2020/08/28/hide-your-windows-backdoor.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -534,7 +548,7 @@ RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125;
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>43</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -555,6 +569,10 @@ RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125;
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
+      </li>
+    
+      <li>
         <a href="/2021/08/06/windows-ntlm-smb-scan.html" ><i class="fa fa-file-o"></i>NTLM端口信息探测</a>
       </li>
     
@@ -568,10 +586,6 @@ RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125;
     
       <li>
         <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
-      </li>
-    
-      <li>
-        <a href="/2021/04/06/defense-from-c2.html" ><i class="fa fa-file-o"></i>防御性C2玩具尝试</a>
       </li>
     
   </ul>

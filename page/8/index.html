@@ -117,6 +117,64 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2018/03/02/openresty-https.html" >如何截取openresty反向代理服务器数据包</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2018-03-02  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>有一天小明日了一台windows版本nginx的https的反向的代理服务器（这语句不通顺）。。</p>
+<h3 id="攻击背景"><a href="#攻击背景" class="headerlink" title="攻击背景"></a>攻击背景</h3><ul>
+<li>获取https反向代理服务器的数据请求数据 </li>
+<li>Windows平台</li>
+</ul>
+<h3 id="攻击流程"><a href="#攻击流程" class="headerlink" title="攻击流程"></a>攻击流程</h3><p>下载openresty和nginx的windows版本，先本地测试一下。</p>
+<p>如果直接复制openresty里面的nginx.exe到原汁原味nginx解压包里面，提示缺少dll，没毛病。</p>
+<p>把openresty里面的nginx.exe libgcc_s_dw2-1.dll lua51.dll，一起复制到纯天然版本nginx的文件夹里面，启动nginx.exe。</p>
+<p>把本地环境搬到目标服务器测试下，没毛病，目标网站的反代正常工作，唯一不正常的就是http的response的header变成了openresty，可以修改openresty源代码。</p>
+<h3 id="截取POST数据包"><a href="#截取POST数据包" class="headerlink" title="截取POST数据包"></a>截取POST数据包</h3><p>根据P神的文章里面:</p>
+	
+
+	</div>
+  <a type="button" href="/2018/03/02/openresty-https.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>有一天小明日了一台windows版本nginx的https的反向的代理服务器（这语句不通顺）。。</p>
+<h3 id="攻击背景"><a href="#攻击背景" class="headerlink" title="攻击背景"></a>攻击背景</h3><ul>
+<li>获取https反向代理服务器的数据请求数据 </li>
+<li>Windows平台</li>
+</ul>
+<h3 id="攻击流程"><a href="#攻击流程" class="headerlink" title="攻击流程"></a>攻击流程</h3><p>下载openresty和nginx的windows版本，先本地测试一下。</p>
+<p>如果直接复制openresty里面的nginx.exe到原汁原味nginx解压包里面，提示缺少dll，没毛病。</p>
+<p>把openresty里面的nginx.exe libgcc_s_dw2-1.dll lua51.dll，一起复制到纯天然版本nginx的文件夹里面，启动nginx.exe。</p>
+<p>把本地环境搬到目标服务器测试下，没毛病，目标网站的反代正常工作，唯一不正常的就是http的response的header变成了openresty，可以修改openresty源代码。</p>
+<h3 id="截取POST数据包"><a href="#截取POST数据包" class="headerlink" title="截取POST数据包"></a>截取POST数据包</h3><p>根据P神的文章里面:</p>
+	
+	</div>
+  <a type="button" href="/2018/03/02/openresty-https.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2018/02/03/termite-socks.html" >Termite代理工具</a>
 		</h3>
 		</div>
@@ -877,82 +935,6 @@ latest_time &#x3D; res2[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/12/06/dns-rebinding.html" >DNS Rebinding</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-12-06  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>最后的链接是关于dns rebinding的文章，这里主要做一个笔记：</p>
-<p>先盗用ricterz.me的博客一个图<br><img src="http://7d9lm5.com1.z0.glb.clouddn.com/2017-01-18-183643.jpg"></p>
-<p>在ssrf的时候，客户修复过之后。再次判断url的时候，逻辑就是上图这个样子。</p>
-<ol>
-<li>获取请求的地址，如果是域名，通过DNS解析的方式获取真实IP，如果是IP则直接对比是否在指定的IP段内。</li>
-<li>比如获取了test.loli.club请求地址是10.0.0.1，黑名单是10.0.0.0/8，则拒绝访问</li>
-</ol>
-<p>使用DNS Rebinding的会有这样的攻击效果:</p>
-<ol>
-<li>获取test.loli.club的请求地址不是10.0.0.0/8这个黑名单范围里面</li>
-<li>放行之后，然后后端请求这个URL的资源。如果TTL足够小，这个时候会又发生一次DNS解析。如果这个URL可控，我们就可以控制这次的解析IP。</li>
-</ol>
-<p>DNS返回的数据包存在一个TTL(Time-to-Live),也就是域名解析记录在DNS服务器上的缓存时间。如果两次DNS的请求时间大于TTL，就会重新进行一次DNS解析请求。</p>
-<p>所以，第一次发生DNS解析的时候，返回一个不在黑名单的IP地址，第二次服务端URL请求的时候，让服务器返回一次DNS解析，解析到黑名单地址，从而绕过。</p>
-<p>根据goychou大神的脚本，测试以下步骤：</p>
-<ul>
-<li>添加一个A记录，域名是ns.xyz.pw，指向服务器A</li>
-<li>再添加一个ns记录，域名是rebind.xyz.pw，指向ns.xyz.pw</li>
-</ul>
-	
-
-	</div>
-  <a type="button" href="/2017/12/06/dns-rebinding.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>最后的链接是关于dns rebinding的文章，这里主要做一个笔记：</p>
-<p>先盗用ricterz.me的博客一个图<br><img src="http://7d9lm5.com1.z0.glb.clouddn.com/2017-01-18-183643.jpg"></p>
-<p>在ssrf的时候，客户修复过之后。再次判断url的时候，逻辑就是上图这个样子。</p>
-<ol>
-<li>获取请求的地址，如果是域名，通过DNS解析的方式获取真实IP，如果是IP则直接对比是否在指定的IP段内。</li>
-<li>比如获取了test.loli.club请求地址是10.0.0.1，黑名单是10.0.0.0/8，则拒绝访问</li>
-</ol>
-<p>使用DNS Rebinding的会有这样的攻击效果:</p>
-<ol>
-<li>获取test.loli.club的请求地址不是10.0.0.0/8这个黑名单范围里面</li>
-<li>放行之后，然后后端请求这个URL的资源。如果TTL足够小，这个时候会又发生一次DNS解析。如果这个URL可控，我们就可以控制这次的解析IP。</li>
-</ol>
-<p>DNS返回的数据包存在一个TTL(Time-to-Live),也就是域名解析记录在DNS服务器上的缓存时间。如果两次DNS的请求时间大于TTL，就会重新进行一次DNS解析请求。</p>
-<p>所以，第一次发生DNS解析的时候，返回一个不在黑名单的IP地址，第二次服务端URL请求的时候，让服务器返回一次DNS解析，解析到黑名单地址，从而绕过。</p>
-<p>根据goychou大神的脚本，测试以下步骤：</p>
-<ul>
-<li>添加一个A记录，域名是ns.xyz.pw，指向服务器A</li>
-<li>再添加一个ns记录，域名是rebind.xyz.pw，指向ns.xyz.pw</li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2017/12/06/dns-rebinding.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -1008,7 +990,7 @@ latest_time &#x3D; res2[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>42</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>43</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -1029,6 +1011,10 @@ latest_time &#x3D; res2[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
+      </li>
+    
+      <li>
         <a href="/2021/08/06/windows-ntlm-smb-scan.html" ><i class="fa fa-file-o"></i>NTLM端口信息探测</a>
       </li>
     
@@ -1042,10 +1028,6 @@ latest_time &#x3D; res2[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#
     
       <li>
         <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
-      </li>
-    
-      <li>
-        <a href="/2021/04/06/defense-from-c2.html" ><i class="fa fa-file-o"></i>防御性C2玩具尝试</a>
       </li>
     
   </ul>
