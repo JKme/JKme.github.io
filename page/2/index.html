@@ -117,6 +117,198 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2021/05/27/spring-boot-actuator.html" >Spring Boot Actuator漏洞复现</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2021-05-27  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="0x01-基本知识"><a href="#0x01-基本知识" class="headerlink" title="0x01. 基本知识"></a>0x01. 基本知识</h3><ol>
+<li>在pom.xml里面有这样的配置</li>
+</ol>
+<pre class="line-numbers language-none"><code class="language-none">
+&lt;dependency&gt;
+   &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;
+   &lt;artifactId&gt;spring-boot-starter-actuator&lt;&#x2F;artifactId&gt;
+   &lt;exclusions&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ol start="2">
+<li>没有开启安全设置</li>
+</ol>
+<pre class="line-numbers language-none"><code class="language-none">management:
+  security:
+    enabled: false
+  health:
+    elasticsearch:
+      enabled: false
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+      jmx:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: &#39;*&#39;
+      base-path: &#x2F;auto<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>服务端可以通过修改配置文件来改变Actuator的根路径：<code>management.endpoints.web.base-path=/monitor</code></p>
+<p>  搜索github的源代码，可以看到类似的设置：</p>
+<h3 id="0x02-漏洞利用"><a href="#0x02-漏洞利用" class="headerlink" title="0x02 漏洞利用"></a>0x02 漏洞利用</h3><p>在配置不当的时候，可能暴露以下路由:</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;actuator
+&#x2F;auditevents
+&#x2F;autoconfig
+&#x2F;beans
+&#x2F;caches
+&#x2F;conditions
+&#x2F;configprops
+&#x2F;docs
+&#x2F;dump
+&#x2F;env
+&#x2F;flyway
+&#x2F;health
+&#x2F;heapdump
+&#x2F;httptrace
+&#x2F;info
+&#x2F;intergrationgraph
+&#x2F;jolokia
+&#x2F;logfile
+&#x2F;loggers
+&#x2F;liquibase
+&#x2F;metrics
+&#x2F;mappings
+&#x2F;prometheus
+&#x2F;refresh
+&#x2F;scheduledtasks
+&#x2F;sessions
+&#x2F;shutdown
+&#x2F;trace
+&#x2F;threaddump
+&#x2F;actuator&#x2F;auditevents
+&#x2F;actuator&#x2F;beans
+&#x2F;actuator&#x2F;health
+&#x2F;actuator&#x2F;conditions
+&#x2F;actuator&#x2F;configprops
+&#x2F;actuator&#x2F;env
+&#x2F;actuator&#x2F;info
+&#x2F;actuator&#x2F;loggers
+&#x2F;actuator&#x2F;heapdump
+&#x2F;actuator&#x2F;threaddump
+&#x2F;actuator&#x2F;metrics
+&#x2F;actuator&#x2F;scheduledtasks
+&#x2F;actuator&#x2F;httptrace
+&#x2F;actuator&#x2F;mappings
+&#x2F;actuator&#x2F;jolokia
+&#x2F;actuator&#x2F;hystrix.stream<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2021/05/27/spring-boot-actuator.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="0x01-基本知识"><a href="#0x01-基本知识" class="headerlink" title="0x01. 基本知识"></a>0x01. 基本知识</h3><ol>
+<li>在pom.xml里面有这样的配置</li>
+</ol>
+<pre class="line-numbers language-none"><code class="language-none">
+&lt;dependency&gt;
+   &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;
+   &lt;artifactId&gt;spring-boot-starter-actuator&lt;&#x2F;artifactId&gt;
+   &lt;exclusions&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ol start="2">
+<li>没有开启安全设置</li>
+</ol>
+<pre class="line-numbers language-none"><code class="language-none">management:
+  security:
+    enabled: false
+  health:
+    elasticsearch:
+      enabled: false
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+      jmx:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: &#39;*&#39;
+      base-path: &#x2F;auto<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>服务端可以通过修改配置文件来改变Actuator的根路径：<code>management.endpoints.web.base-path=/monitor</code></p>
+<p>  搜索github的源代码，可以看到类似的设置：</p>
+<h3 id="0x02-漏洞利用"><a href="#0x02-漏洞利用" class="headerlink" title="0x02 漏洞利用"></a>0x02 漏洞利用</h3><p>在配置不当的时候，可能暴露以下路由:</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;actuator
+&#x2F;auditevents
+&#x2F;autoconfig
+&#x2F;beans
+&#x2F;caches
+&#x2F;conditions
+&#x2F;configprops
+&#x2F;docs
+&#x2F;dump
+&#x2F;env
+&#x2F;flyway
+&#x2F;health
+&#x2F;heapdump
+&#x2F;httptrace
+&#x2F;info
+&#x2F;intergrationgraph
+&#x2F;jolokia
+&#x2F;logfile
+&#x2F;loggers
+&#x2F;liquibase
+&#x2F;metrics
+&#x2F;mappings
+&#x2F;prometheus
+&#x2F;refresh
+&#x2F;scheduledtasks
+&#x2F;sessions
+&#x2F;shutdown
+&#x2F;trace
+&#x2F;threaddump
+&#x2F;actuator&#x2F;auditevents
+&#x2F;actuator&#x2F;beans
+&#x2F;actuator&#x2F;health
+&#x2F;actuator&#x2F;conditions
+&#x2F;actuator&#x2F;configprops
+&#x2F;actuator&#x2F;env
+&#x2F;actuator&#x2F;info
+&#x2F;actuator&#x2F;loggers
+&#x2F;actuator&#x2F;heapdump
+&#x2F;actuator&#x2F;threaddump
+&#x2F;actuator&#x2F;metrics
+&#x2F;actuator&#x2F;scheduledtasks
+&#x2F;actuator&#x2F;httptrace
+&#x2F;actuator&#x2F;mappings
+&#x2F;actuator&#x2F;jolokia
+&#x2F;actuator&#x2F;hystrix.stream<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2021/05/27/spring-boot-actuator.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2021/04/06/defense-from-c2.html" >防御性C2玩具尝试</a>
 		</h3>
 		</div>
@@ -405,94 +597,6 @@ C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2020/08/28/CloudFront-Https.html" >Domain Fronting隐藏HTTPS</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2020-08-28  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>记录一下当使用<code>Domain Fronting</code>中使用<code>https</code>来上线时候的坑，因为查了半圈没有找到类似的资料，为啥非要https呢，因为<code>node32</code>对http的流量很敏感。</p>
-<p>###目标</p>
-<ol>
-<li>使用<code>Windows/beacon_https/reverse_https</code>作为上线的payload</li>
-<li>AWS的<code>Cloudfront</code>作为前置域名</li>
-</ol>
-<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><pre class="line-numbers language-none"><code class="language-none">域名: example.com
-VPS(Centos)
-cloudflare(只作域名解析,不添加任何其他功能，不加CDN，不加HTTPS)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
-
-<h2 id="部署工作"><a href="#部署工作" class="headerlink" title="部署工作"></a>部署工作</h2><p>安装的apache是测试连通性，除此之外没有任何用处。</p>
-<pre class="line-numbers language-none"><code class="language-none">yum install httpd
-systemctl start httpd<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<h4 id="增加apache配置文件"><a href="#增加apache配置文件" class="headerlink" title="增加apache配置文件"></a>增加apache配置文件</h4><pre class="line-numbers language-none"><code class="language-none">#&#x2F;etc&#x2F;httpd&#x2F;conf.d&#x2F;vhost.conf
-&lt;VirtualHost *:80&gt;
-   DocumentRoot &#x2F;var&#x2F;www&#x2F;html
-   ServerName example.com
-
-
-RewriteEngine on
-RewriteCond %&#123;SERVER_NAME&#125; &#x3D;example.com
-RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125; [END,NE,R&#x3D;permanent]
-&lt;&#x2F;VirtualHost&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2020/08/28/CloudFront-Https.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>记录一下当使用<code>Domain Fronting</code>中使用<code>https</code>来上线时候的坑，因为查了半圈没有找到类似的资料，为啥非要https呢，因为<code>node32</code>对http的流量很敏感。</p>
-<p>###目标</p>
-<ol>
-<li>使用<code>Windows/beacon_https/reverse_https</code>作为上线的payload</li>
-<li>AWS的<code>Cloudfront</code>作为前置域名</li>
-</ol>
-<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><pre class="line-numbers language-none"><code class="language-none">域名: example.com
-VPS(Centos)
-cloudflare(只作域名解析,不添加任何其他功能，不加CDN，不加HTTPS)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
-
-<h2 id="部署工作"><a href="#部署工作" class="headerlink" title="部署工作"></a>部署工作</h2><p>安装的apache是测试连通性，除此之外没有任何用处。</p>
-<pre class="line-numbers language-none"><code class="language-none">yum install httpd
-systemctl start httpd<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<h4 id="增加apache配置文件"><a href="#增加apache配置文件" class="headerlink" title="增加apache配置文件"></a>增加apache配置文件</h4><pre class="line-numbers language-none"><code class="language-none">#&#x2F;etc&#x2F;httpd&#x2F;conf.d&#x2F;vhost.conf
-&lt;VirtualHost *:80&gt;
-   DocumentRoot &#x2F;var&#x2F;www&#x2F;html
-   ServerName example.com
-
-
-RewriteEngine on
-RewriteCond %&#123;SERVER_NAME&#125; &#x3D;example.com
-RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125; [END,NE,R&#x3D;permanent]
-&lt;&#x2F;VirtualHost&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2020/08/28/CloudFront-Https.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -548,7 +652,7 @@ RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125;
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>43</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>44</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -569,6 +673,10 @@ RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125;
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/21/jndi-exec-by-mvel.html" ><i class="fa fa-file-o"></i>JNDI Bypass - MVEL</a>
+      </li>
+    
+      <li>
         <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
       </li>
     
@@ -582,10 +690,6 @@ RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125;
     
       <li>
         <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
-      </li>
-    
-      <li>
-        <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
       </li>
     
   </ul>

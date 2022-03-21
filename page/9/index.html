@@ -117,6 +117,434 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/12/11/producer-consumer.html" >生产者消费者模型</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-12-11  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>代码捉急,先看例子:</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token operator">&lt;</span>http<span class="token punctuation">:</span><span class="token operator">//</span>www<span class="token punctuation">.</span>jianshu<span class="token punctuation">.</span>com<span class="token operator">/</span>p<span class="token operator">/</span>d85a4329d0c2<span class="token operator">></span>
+<span class="token comment">#!/usr/bin/env python</span>
+<span class="token comment"># -*- coding: utf-8 -*-</span>
+
+<span class="token keyword">import</span> threading
+<span class="token keyword">import</span> Queue
+<span class="token keyword">import</span> random
+<span class="token keyword">import</span> time
+
+
+<span class="token keyword">class</span> <span class="token class-name">Producter</span><span class="token punctuation">(</span>threading<span class="token punctuation">.</span>Thread<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""生产者线程"""</span>
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> t_name<span class="token punctuation">,</span> queue<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>queue <span class="token operator">=</span> queue
+        threading<span class="token punctuation">.</span>Thread<span class="token punctuation">.</span>__init__<span class="token punctuation">(</span>self<span class="token punctuation">,</span> name<span class="token operator">=</span>t_name<span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">run</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+            randomnum <span class="token operator">=</span> random<span class="token punctuation">.</span>randint<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">99</span><span class="token punctuation">)</span>
+            self<span class="token punctuation">.</span>queue<span class="token punctuation">.</span>put<span class="token punctuation">(</span>randomnum<span class="token punctuation">)</span>
+            <span class="token keyword">print</span> <span class="token string">'put num in Queue %s'</span> <span class="token operator">%</span>  randomnum
+            time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+
+        <span class="token keyword">print</span> <span class="token string">'put queue done'</span>
+
+
+<span class="token keyword">class</span> <span class="token class-name">ConsumeEven</span><span class="token punctuation">(</span>threading<span class="token punctuation">.</span>Thread<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""奇数消费线程"""</span>
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> t_name<span class="token punctuation">,</span> queue<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>queue <span class="token operator">=</span> queue
+        threading<span class="token punctuation">.</span>Thread<span class="token punctuation">.</span>__init__<span class="token punctuation">(</span>self<span class="token punctuation">,</span> name<span class="token operator">=</span>t_name<span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">run</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">while</span> <span class="token boolean">True</span><span class="token punctuation">:</span>
+            <span class="token keyword">try</span><span class="token punctuation">:</span>
+                queue_val <span class="token operator">=</span> self<span class="token punctuation">.</span>queue<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">)</span>
+            <span class="token keyword">except</span> Exception<span class="token punctuation">,</span> e<span class="token punctuation">:</span>
+                <span class="token keyword">print</span> e
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+
+            <span class="token keyword">if</span> queue_val <span class="token operator">%</span> <span class="token number">2</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">:</span>
+                <span class="token keyword">print</span> <span class="token string">'Get Even Num %s '</span> <span class="token operator">%</span> queue_val
+            <span class="token keyword">else</span><span class="token punctuation">:</span>
+                self<span class="token punctuation">.</span>queue<span class="token punctuation">.</span>put<span class="token punctuation">(</span>queue_val<span class="token punctuation">)</span>
+
+
+q <span class="token operator">=</span> Queue<span class="token punctuation">.</span>Queue<span class="token punctuation">(</span><span class="token punctuation">)</span>
+pt <span class="token operator">=</span> Producter<span class="token punctuation">(</span><span class="token string">'producter'</span><span class="token punctuation">,</span> q<span class="token punctuation">)</span>
+ce <span class="token operator">=</span> ConsumeEven<span class="token punctuation">(</span><span class="token string">'consumeeven'</span><span class="token punctuation">,</span> q<span class="token punctuation">)</span>
+ce<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span>
+pt<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span>
+pt<span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token punctuation">)</span>
+ce<span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>照着写:</p>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
+# coding: utf-8
+
+from elasticsearch import Elasticsearch
+import requests
+from Queue import Queue
+import time
+import threading
+import datetime
+
+es &#x3D; Elasticsearch(&#39;xxxxxx:9200&#39;, http_auth&#x3D;(&#39;user&#39;, &#39;password&#39;))
+
+
+class Producter(threading.Thread):
+	def __init__(self, queue):
+		threading.Thread.__init__(self)
+		self.queue &#x3D; queue
+		self.initime &#x3D; datetime.datetime.now().strftime(&#39;%Y.%m.%d&#39;)
+
+
+	def initsearch(self):
+		dsl_query &#x3D; &#123;
+		  &quot;query&quot;: &#123;
+		    &quot;match&quot;: &#123;
+		      &quot;method&quot;: &#123;
+		        &quot;query&quot;: &quot;GET&quot;,
+		        &quot;type&quot;: &quot;phrase&quot;
+		      &#125;
+		    &#125;
+		  &#125;,
+			&quot;size&quot;: 100,
+		&quot;sort&quot;: [&#123;&quot;@timestamp&quot;: &#123;&quot;order&quot;: &quot;desc&quot;&#125;&#125;]
+		&#125;
+		res &#x3D; es.search(index&#x3D;&quot;packetbeat-&quot; + self.initime, body&#x3D;dsl_query)
+		latest_time &#x3D; res[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#39;@timestamp&#39;]
+		return latest_time
+
+
+	def run(self):
+		latest_time &#x3D; self.initsearch()
+		while 1:
+			lastindex &#x3D; latest_time.split(&#39;T&#39;)[0].replace(&#39;-&#39;, &#39;.&#39;)  # 获取最新的index
+			dsl_query2 &#x3D; &#123;
+				&quot;query&quot;: &#123;
+					&quot;bool&quot;: &#123;
+						&quot;must&quot;: &#123;
+							&quot;match&quot;: &#123;
+								&quot;method&quot;: &quot;GET&quot;
+							&#125;
+						&#125;,
+						&quot;filter&quot;: &#123;
+							&quot;range&quot;: &#123;
+								&quot;@timestamp&quot;: &#123;
+									&quot;gte&quot;: latest_time
+								&#125;
+							&#125;
+						&#125;
+					&#125;
+				&#125;,
+				&quot;sort&quot;: [&#123;&quot;@timestamp&quot;: &#123;&quot;order&quot;: &quot;desc&quot;&#125;&#125;],
+				&quot;size&quot;: 1000
+			&#125;
+			time.sleep(10)
+			res2 &#x3D; es.search(index&#x3D;&quot;packetbeat-&quot; + lastindex, body&#x3D;dsl_query2)
+			for hit in res2[&#39;hits&#39;][&#39;hits&#39;]:
+				# print hit[&#39;_source&#39;][&#39;@timestamp&#39;], hit[&#39;_id&#39;], hit[&#39;_source&#39;][&#39;path&#39;]
+				self.queue.put([hit[&#39;_source&#39;][&#39;path&#39;], hit[&#39;_source&#39;][&#39;http&#39;][&#39;request&#39;][&#39;params&#39;], hit[&#39;_source&#39;][&#39;method&#39;]])
+				print &quot;Put %s&quot; % hit[&#39;_id&#39;]
+				print hit[&#39;_source&#39;][&#39;@timestamp&#39;]
+			latest_time &#x3D; res2[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#39;@timestamp&#39;]
+
+
+class Consumer(threading.Thread):
+	def __init__(self, queue):
+		threading.Thread.__init__(self)
+		self.queue &#x3D; queue
+
+	#
+	# def http_curl(self):
+	# 	# http_client &#x3D; AsyncHTTPClient()
+	# 	path &#x3D; self.request[0]
+	# 	param &#x3D; self.request[1]
+	# 	method &#x3D; self.request[2]
+	# 	if method &#x3D;&#x3D; &quot;GET&quot;:
+	# 		##判断get的param是否是空
+	# 		if not param:
+	# 			pass
+	# 		else:
+	# 			rep &#x3D; requests.get(&quot;http:&#x2F;&#x2F;xxxxxx:9999&quot; + path + &#39;?&#39; + param + &quot;union select&quot;)
+	# 			print &quot;Curl %s&quot; % self.request
+	# 			print rep.status_code
+	# 	else:
+	# 		#留着写POST请求判断
+	# 		pass
+
+
+	def run(self):
+		while 1:
+			try:
+				request &#x3D; self.queue.get()
+				path &#x3D; request[0]
+				param &#x3D; request[1]
+				method &#x3D; request[2]
+				if method &#x3D;&#x3D; &#39;GET&#39;:
+					if not param:
+						pass
+					else:
+						rep &#x3D; requests.get(&quot;http:&#x2F;&#x2F;xxxxx:9999&quot; + path + &#39;?&#39; + param + &quot;union select&quot;)
+				#else  写POST
+				print &quot;Get %s&quot; % request
+				print rep.status_code
+			except Exception as e:
+				raise e
+
+q &#x3D; Queue()
+pt &#x3D; Producter(q)
+ce &#x3D; Consumer(q)
+ce.start()
+pt.start()
+pt.join()
+ce.join()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>代码应该还有点问题，先记录下大概的流程：</p>
+<p>使用: <code>packetbeat</code>在A服务器抓包，格式化之后把数据发送到B服务器，存储在elk里面，然后B服务器画图对这些请求进行分析，比如某个接口报警之类的。</p>
+<p>这个时候在B服务器设置一个naxsi防火墙代理，然后把es里面的输出取出来，再发送一遍给B。经过测试，虽然这样子请求大部分都是404，但是如果请求中存在恶意payload，防火墙会记录日志。（所以这里的规则要设置的特别严格，严格到每个请求都不放过）</p>
+<p>上面的脚本就是在B防火墙的转发脚本demo，测试为GET请求，因为POST请求的body没有存储到es里面，脚本的大概思路是这样的：</p>
+<pre class="line-numbers language-none"><code class="language-none">因为es里面存储的数据包是这样的格式: packet-[year]-[days]
+所以先得到今天的日期，随便选100条，记录最新的时间戳，此时初始化完成。
+
+下面的请求都是基于这个时间戳来的，每隔10s，在这个时间戳的基础上，轮询请求一次es，然后组装起来发送到B服务器。
+记录下每次请求的最新日期，然后请求这个index，因为packet的格式: packet-[year]-[days],所以记录下每次请求的最新时间，格式化抓取最新的时间:
+
+latest_time &#x3D; res2[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#39;@timestamp&#39;]
+
+当es的存储数据按照大于某个时间点去筛选的时候，只会出现匹配的时间条数，所以可以把请求的size设置得大一点
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>暂时的问题：</p>
+	
+
+	</div>
+  <a type="button" href="/2017/12/11/producer-consumer.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>代码捉急,先看例子:</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token operator">&lt;</span>http<span class="token punctuation">:</span><span class="token operator">//</span>www<span class="token punctuation">.</span>jianshu<span class="token punctuation">.</span>com<span class="token operator">/</span>p<span class="token operator">/</span>d85a4329d0c2<span class="token operator">></span>
+<span class="token comment">#!/usr/bin/env python</span>
+<span class="token comment"># -*- coding: utf-8 -*-</span>
+
+<span class="token keyword">import</span> threading
+<span class="token keyword">import</span> Queue
+<span class="token keyword">import</span> random
+<span class="token keyword">import</span> time
+
+
+<span class="token keyword">class</span> <span class="token class-name">Producter</span><span class="token punctuation">(</span>threading<span class="token punctuation">.</span>Thread<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""生产者线程"""</span>
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> t_name<span class="token punctuation">,</span> queue<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>queue <span class="token operator">=</span> queue
+        threading<span class="token punctuation">.</span>Thread<span class="token punctuation">.</span>__init__<span class="token punctuation">(</span>self<span class="token punctuation">,</span> name<span class="token operator">=</span>t_name<span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">run</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+            randomnum <span class="token operator">=</span> random<span class="token punctuation">.</span>randint<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">99</span><span class="token punctuation">)</span>
+            self<span class="token punctuation">.</span>queue<span class="token punctuation">.</span>put<span class="token punctuation">(</span>randomnum<span class="token punctuation">)</span>
+            <span class="token keyword">print</span> <span class="token string">'put num in Queue %s'</span> <span class="token operator">%</span>  randomnum
+            time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+
+        <span class="token keyword">print</span> <span class="token string">'put queue done'</span>
+
+
+<span class="token keyword">class</span> <span class="token class-name">ConsumeEven</span><span class="token punctuation">(</span>threading<span class="token punctuation">.</span>Thread<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""奇数消费线程"""</span>
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> t_name<span class="token punctuation">,</span> queue<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>queue <span class="token operator">=</span> queue
+        threading<span class="token punctuation">.</span>Thread<span class="token punctuation">.</span>__init__<span class="token punctuation">(</span>self<span class="token punctuation">,</span> name<span class="token operator">=</span>t_name<span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">run</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">while</span> <span class="token boolean">True</span><span class="token punctuation">:</span>
+            <span class="token keyword">try</span><span class="token punctuation">:</span>
+                queue_val <span class="token operator">=</span> self<span class="token punctuation">.</span>queue<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">)</span>
+            <span class="token keyword">except</span> Exception<span class="token punctuation">,</span> e<span class="token punctuation">:</span>
+                <span class="token keyword">print</span> e
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+
+            <span class="token keyword">if</span> queue_val <span class="token operator">%</span> <span class="token number">2</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">:</span>
+                <span class="token keyword">print</span> <span class="token string">'Get Even Num %s '</span> <span class="token operator">%</span> queue_val
+            <span class="token keyword">else</span><span class="token punctuation">:</span>
+                self<span class="token punctuation">.</span>queue<span class="token punctuation">.</span>put<span class="token punctuation">(</span>queue_val<span class="token punctuation">)</span>
+
+
+q <span class="token operator">=</span> Queue<span class="token punctuation">.</span>Queue<span class="token punctuation">(</span><span class="token punctuation">)</span>
+pt <span class="token operator">=</span> Producter<span class="token punctuation">(</span><span class="token string">'producter'</span><span class="token punctuation">,</span> q<span class="token punctuation">)</span>
+ce <span class="token operator">=</span> ConsumeEven<span class="token punctuation">(</span><span class="token string">'consumeeven'</span><span class="token punctuation">,</span> q<span class="token punctuation">)</span>
+ce<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span>
+pt<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span>
+pt<span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token punctuation">)</span>
+ce<span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>照着写:</p>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
+# coding: utf-8
+
+from elasticsearch import Elasticsearch
+import requests
+from Queue import Queue
+import time
+import threading
+import datetime
+
+es &#x3D; Elasticsearch(&#39;xxxxxx:9200&#39;, http_auth&#x3D;(&#39;user&#39;, &#39;password&#39;))
+
+
+class Producter(threading.Thread):
+	def __init__(self, queue):
+		threading.Thread.__init__(self)
+		self.queue &#x3D; queue
+		self.initime &#x3D; datetime.datetime.now().strftime(&#39;%Y.%m.%d&#39;)
+
+
+	def initsearch(self):
+		dsl_query &#x3D; &#123;
+		  &quot;query&quot;: &#123;
+		    &quot;match&quot;: &#123;
+		      &quot;method&quot;: &#123;
+		        &quot;query&quot;: &quot;GET&quot;,
+		        &quot;type&quot;: &quot;phrase&quot;
+		      &#125;
+		    &#125;
+		  &#125;,
+			&quot;size&quot;: 100,
+		&quot;sort&quot;: [&#123;&quot;@timestamp&quot;: &#123;&quot;order&quot;: &quot;desc&quot;&#125;&#125;]
+		&#125;
+		res &#x3D; es.search(index&#x3D;&quot;packetbeat-&quot; + self.initime, body&#x3D;dsl_query)
+		latest_time &#x3D; res[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#39;@timestamp&#39;]
+		return latest_time
+
+
+	def run(self):
+		latest_time &#x3D; self.initsearch()
+		while 1:
+			lastindex &#x3D; latest_time.split(&#39;T&#39;)[0].replace(&#39;-&#39;, &#39;.&#39;)  # 获取最新的index
+			dsl_query2 &#x3D; &#123;
+				&quot;query&quot;: &#123;
+					&quot;bool&quot;: &#123;
+						&quot;must&quot;: &#123;
+							&quot;match&quot;: &#123;
+								&quot;method&quot;: &quot;GET&quot;
+							&#125;
+						&#125;,
+						&quot;filter&quot;: &#123;
+							&quot;range&quot;: &#123;
+								&quot;@timestamp&quot;: &#123;
+									&quot;gte&quot;: latest_time
+								&#125;
+							&#125;
+						&#125;
+					&#125;
+				&#125;,
+				&quot;sort&quot;: [&#123;&quot;@timestamp&quot;: &#123;&quot;order&quot;: &quot;desc&quot;&#125;&#125;],
+				&quot;size&quot;: 1000
+			&#125;
+			time.sleep(10)
+			res2 &#x3D; es.search(index&#x3D;&quot;packetbeat-&quot; + lastindex, body&#x3D;dsl_query2)
+			for hit in res2[&#39;hits&#39;][&#39;hits&#39;]:
+				# print hit[&#39;_source&#39;][&#39;@timestamp&#39;], hit[&#39;_id&#39;], hit[&#39;_source&#39;][&#39;path&#39;]
+				self.queue.put([hit[&#39;_source&#39;][&#39;path&#39;], hit[&#39;_source&#39;][&#39;http&#39;][&#39;request&#39;][&#39;params&#39;], hit[&#39;_source&#39;][&#39;method&#39;]])
+				print &quot;Put %s&quot; % hit[&#39;_id&#39;]
+				print hit[&#39;_source&#39;][&#39;@timestamp&#39;]
+			latest_time &#x3D; res2[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#39;@timestamp&#39;]
+
+
+class Consumer(threading.Thread):
+	def __init__(self, queue):
+		threading.Thread.__init__(self)
+		self.queue &#x3D; queue
+
+	#
+	# def http_curl(self):
+	# 	# http_client &#x3D; AsyncHTTPClient()
+	# 	path &#x3D; self.request[0]
+	# 	param &#x3D; self.request[1]
+	# 	method &#x3D; self.request[2]
+	# 	if method &#x3D;&#x3D; &quot;GET&quot;:
+	# 		##判断get的param是否是空
+	# 		if not param:
+	# 			pass
+	# 		else:
+	# 			rep &#x3D; requests.get(&quot;http:&#x2F;&#x2F;xxxxxx:9999&quot; + path + &#39;?&#39; + param + &quot;union select&quot;)
+	# 			print &quot;Curl %s&quot; % self.request
+	# 			print rep.status_code
+	# 	else:
+	# 		#留着写POST请求判断
+	# 		pass
+
+
+	def run(self):
+		while 1:
+			try:
+				request &#x3D; self.queue.get()
+				path &#x3D; request[0]
+				param &#x3D; request[1]
+				method &#x3D; request[2]
+				if method &#x3D;&#x3D; &#39;GET&#39;:
+					if not param:
+						pass
+					else:
+						rep &#x3D; requests.get(&quot;http:&#x2F;&#x2F;xxxxx:9999&quot; + path + &#39;?&#39; + param + &quot;union select&quot;)
+				#else  写POST
+				print &quot;Get %s&quot; % request
+				print rep.status_code
+			except Exception as e:
+				raise e
+
+q &#x3D; Queue()
+pt &#x3D; Producter(q)
+ce &#x3D; Consumer(q)
+ce.start()
+pt.start()
+pt.join()
+ce.join()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>代码应该还有点问题，先记录下大概的流程：</p>
+<p>使用: <code>packetbeat</code>在A服务器抓包，格式化之后把数据发送到B服务器，存储在elk里面，然后B服务器画图对这些请求进行分析，比如某个接口报警之类的。</p>
+<p>这个时候在B服务器设置一个naxsi防火墙代理，然后把es里面的输出取出来，再发送一遍给B。经过测试，虽然这样子请求大部分都是404，但是如果请求中存在恶意payload，防火墙会记录日志。（所以这里的规则要设置的特别严格，严格到每个请求都不放过）</p>
+<p>上面的脚本就是在B防火墙的转发脚本demo，测试为GET请求，因为POST请求的body没有存储到es里面，脚本的大概思路是这样的：</p>
+<pre class="line-numbers language-none"><code class="language-none">因为es里面存储的数据包是这样的格式: packet-[year]-[days]
+所以先得到今天的日期，随便选100条，记录最新的时间戳，此时初始化完成。
+
+下面的请求都是基于这个时间戳来的，每隔10s，在这个时间戳的基础上，轮询请求一次es，然后组装起来发送到B服务器。
+记录下每次请求的最新日期，然后请求这个index，因为packet的格式: packet-[year]-[days],所以记录下每次请求的最新时间，格式化抓取最新的时间:
+
+latest_time &#x3D; res2[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#39;@timestamp&#39;]
+
+当es的存储数据按照大于某个时间点去筛选的时候，只会出现匹配的时间条数，所以可以把请求的size设置得大一点
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>暂时的问题：</p>
+	
+	</div>
+  <a type="button" href="/2017/12/11/producer-consumer.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/12/06/dns-rebinding.html" >DNS Rebinding</a>
 		</h3>
 		</div>
@@ -641,76 +1069,6 @@ select * from admin where username&#x3D;&#39;&#39;-&#39;&#39;<span aria-hidden="
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/11/02/naxsi.html" >naxsi的规则</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-11-02  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<ul>
-<li>MainRule: 定义检测的规则和分数</li>
-<li>BasicRule: 定义MainRule的白名单</li>
-<li>CheckRule: 定义当分值达到阈值采取的动作</li>
-</ul>
-<h3 id="Checkrules"><a href="#Checkrules" class="headerlink" title="Checkrules"></a>Checkrules</h3><p>Checkrules指令有四种动作：</p>
-<pre class="line-numbers language-none"><code class="language-none">LOG, BLOCK, DROP, ALLOW<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>何时执行这四种动作？根据制定的得分(score)</p>
-<p>####Basic Usage</p>
-<pre class="line-numbers language-none"><code class="language-none">CheckRule &quot;$SQL &gt;&#x3D; 8&quot; BLOCK;
-<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>如果<code>$SQL</code>大于等于8，则<code>BLOCK</code>掉这个请求。（前提是打开防火墙的过滤模式，而不是learning模式）</p>
-<p>####Other Usages<br>看看另外的一种用法，白名单和黑名单一起用的时候，比如有这样的规则:</p>
-<pre class="line-numbers language-none"><code class="language-none">CheckRule &quot;$UWA &gt;&#x3D; 4&quot; DROP;
-CheckRule &quot;$XSS &gt;&#x3D; 8&quot; BLOCK;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2017/11/02/naxsi.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<ul>
-<li>MainRule: 定义检测的规则和分数</li>
-<li>BasicRule: 定义MainRule的白名单</li>
-<li>CheckRule: 定义当分值达到阈值采取的动作</li>
-</ul>
-<h3 id="Checkrules"><a href="#Checkrules" class="headerlink" title="Checkrules"></a>Checkrules</h3><p>Checkrules指令有四种动作：</p>
-<pre class="line-numbers language-none"><code class="language-none">LOG, BLOCK, DROP, ALLOW<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>何时执行这四种动作？根据制定的得分(score)</p>
-<p>####Basic Usage</p>
-<pre class="line-numbers language-none"><code class="language-none">CheckRule &quot;$SQL &gt;&#x3D; 8&quot; BLOCK;
-<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>如果<code>$SQL</code>大于等于8，则<code>BLOCK</code>掉这个请求。（前提是打开防火墙的过滤模式，而不是learning模式）</p>
-<p>####Other Usages<br>看看另外的一种用法，白名单和黑名单一起用的时候，比如有这样的规则:</p>
-<pre class="line-numbers language-none"><code class="language-none">CheckRule &quot;$UWA &gt;&#x3D; 4&quot; DROP;
-CheckRule &quot;$XSS &gt;&#x3D; 8&quot; BLOCK;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2017/11/02/naxsi.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -766,7 +1124,7 @@ CheckRule &quot;$XSS &gt;&#x3D; 8&quot; BLOCK;<span aria-hidden="true" class="li
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>43</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>44</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -787,6 +1145,10 @@ CheckRule &quot;$XSS &gt;&#x3D; 8&quot; BLOCK;<span aria-hidden="true" class="li
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/21/jndi-exec-by-mvel.html" ><i class="fa fa-file-o"></i>JNDI Bypass - MVEL</a>
+      </li>
+    
+      <li>
         <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
       </li>
     
@@ -800,10 +1162,6 @@ CheckRule &quot;$XSS &gt;&#x3D; 8&quot; BLOCK;<span aria-hidden="true" class="li
     
       <li>
         <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
-      </li>
-    
-      <li>
-        <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
       </li>
     
   </ul>

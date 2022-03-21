@@ -117,6 +117,76 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/11/02/naxsi.html" >naxsi的规则</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-11-02  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<ul>
+<li>MainRule: 定义检测的规则和分数</li>
+<li>BasicRule: 定义MainRule的白名单</li>
+<li>CheckRule: 定义当分值达到阈值采取的动作</li>
+</ul>
+<h3 id="Checkrules"><a href="#Checkrules" class="headerlink" title="Checkrules"></a>Checkrules</h3><p>Checkrules指令有四种动作：</p>
+<pre class="line-numbers language-none"><code class="language-none">LOG, BLOCK, DROP, ALLOW<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>何时执行这四种动作？根据制定的得分(score)</p>
+<p>####Basic Usage</p>
+<pre class="line-numbers language-none"><code class="language-none">CheckRule &quot;$SQL &gt;&#x3D; 8&quot; BLOCK;
+<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>如果<code>$SQL</code>大于等于8，则<code>BLOCK</code>掉这个请求。（前提是打开防火墙的过滤模式，而不是learning模式）</p>
+<p>####Other Usages<br>看看另外的一种用法，白名单和黑名单一起用的时候，比如有这样的规则:</p>
+<pre class="line-numbers language-none"><code class="language-none">CheckRule &quot;$UWA &gt;&#x3D; 4&quot; DROP;
+CheckRule &quot;$XSS &gt;&#x3D; 8&quot; BLOCK;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2017/11/02/naxsi.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<ul>
+<li>MainRule: 定义检测的规则和分数</li>
+<li>BasicRule: 定义MainRule的白名单</li>
+<li>CheckRule: 定义当分值达到阈值采取的动作</li>
+</ul>
+<h3 id="Checkrules"><a href="#Checkrules" class="headerlink" title="Checkrules"></a>Checkrules</h3><p>Checkrules指令有四种动作：</p>
+<pre class="line-numbers language-none"><code class="language-none">LOG, BLOCK, DROP, ALLOW<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>何时执行这四种动作？根据制定的得分(score)</p>
+<p>####Basic Usage</p>
+<pre class="line-numbers language-none"><code class="language-none">CheckRule &quot;$SQL &gt;&#x3D; 8&quot; BLOCK;
+<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>如果<code>$SQL</code>大于等于8，则<code>BLOCK</code>掉这个请求。（前提是打开防火墙的过滤模式，而不是learning模式）</p>
+<p>####Other Usages<br>看看另外的一种用法，白名单和黑名单一起用的时候，比如有这样的规则:</p>
+<pre class="line-numbers language-none"><code class="language-none">CheckRule &quot;$UWA &gt;&#x3D; 4&quot; DROP;
+CheckRule &quot;$XSS &gt;&#x3D; 8&quot; BLOCK;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2017/11/02/naxsi.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/10/30/bypass-sql-firewall.html" >bypass firewall</a>
 		</h3>
 		</div>
@@ -1225,100 +1295,6 @@ int main(int argc, char *argv[])
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/08/15/elk_basic.html" >elk操作相关</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-08-15  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p> kibana里面开始添加index的时候，先查看es的索引:</p>
-<p> <code>curl &#39;localhost:9200/_cat/indices?v&#39;</code></p>
-<p> 然后添加的时候直接写索引名字就行了。</p>
-<p> 在kibana里面添加filter:</p>
-<h3 id="搜索近三天的数据"><a href="#搜索近三天的数据" class="headerlink" title="搜索近三天的数据:"></a>搜索近三天的数据:</h3><pre class="line-numbers language-none"><code class="language-none"> 
- &#123;
-  &quot;query&quot;: &#123;
-    &quot;range&quot;: &#123;
-      &quot;@timestamp&quot;: &#123;
-        &quot;gt&quot;: &quot;now-3d&quot;
-      &#125;
-    &#125;
-  &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="搜索某一天的数据"><a href="#搜索某一天的数据" class="headerlink" title="搜索某一天的数据:"></a>搜索某一天的数据:</h3><pre class="line-numbers language-none"><code class="language-none"> 
-&#123;
-  &quot;query&quot;: &#123;
-    &quot;range&quot;: &#123;
-      &quot;@timestamp&quot;: &#123;
-        &quot;gt&quot;: &quot;2017-08-15T01:00:00.900&quot;,
-        &quot;lt&quot;: &quot;2017-08-15T23:59:00.900&quot;
-      &#125;
-    &#125;
-  &#125;
-&#125;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p> 在kibana里面的Dev Tools可以直接操作es数据库:</p>
-<h3 id="查询数据库某一天的数据"><a href="#查询数据库某一天的数据" class="headerlink" title="查询数据库某一天的数据:"></a>查询数据库某一天的数据:</h3>
-	
-
-	</div>
-  <a type="button" href="/2017/08/15/elk_basic.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p> kibana里面开始添加index的时候，先查看es的索引:</p>
-<p> <code>curl &#39;localhost:9200/_cat/indices?v&#39;</code></p>
-<p> 然后添加的时候直接写索引名字就行了。</p>
-<p> 在kibana里面添加filter:</p>
-<h3 id="搜索近三天的数据"><a href="#搜索近三天的数据" class="headerlink" title="搜索近三天的数据:"></a>搜索近三天的数据:</h3><pre class="line-numbers language-none"><code class="language-none"> 
- &#123;
-  &quot;query&quot;: &#123;
-    &quot;range&quot;: &#123;
-      &quot;@timestamp&quot;: &#123;
-        &quot;gt&quot;: &quot;now-3d&quot;
-      &#125;
-    &#125;
-  &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="搜索某一天的数据"><a href="#搜索某一天的数据" class="headerlink" title="搜索某一天的数据:"></a>搜索某一天的数据:</h3><pre class="line-numbers language-none"><code class="language-none"> 
-&#123;
-  &quot;query&quot;: &#123;
-    &quot;range&quot;: &#123;
-      &quot;@timestamp&quot;: &#123;
-        &quot;gt&quot;: &quot;2017-08-15T01:00:00.900&quot;,
-        &quot;lt&quot;: &quot;2017-08-15T23:59:00.900&quot;
-      &#125;
-    &#125;
-  &#125;
-&#125;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p> 在kibana里面的Dev Tools可以直接操作es数据库:</p>
-<h3 id="查询数据库某一天的数据"><a href="#查询数据库某一天的数据" class="headerlink" title="查询数据库某一天的数据:"></a>查询数据库某一天的数据:</h3>
-	
-	</div>
-  <a type="button" href="/2017/08/15/elk_basic.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -1374,7 +1350,7 @@ int main(int argc, char *argv[])
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>43</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>44</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -1395,6 +1371,10 @@ int main(int argc, char *argv[])
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/21/jndi-exec-by-mvel.html" ><i class="fa fa-file-o"></i>JNDI Bypass - MVEL</a>
+      </li>
+    
+      <li>
         <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
       </li>
     
@@ -1408,10 +1388,6 @@ int main(int argc, char *argv[])
     
       <li>
         <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
-      </li>
-    
-      <li>
-        <a href="/2021/05/27/spring-boot-actuator.html" ><i class="fa fa-file-o"></i>Spring Boot Actuator漏洞复现</a>
       </li>
     
   </ul>
