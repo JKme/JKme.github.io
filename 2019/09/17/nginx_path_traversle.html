@@ -131,16 +131,10 @@ curl vuln.com&amp;#x2F;static..&amp;#x2F;requirements.pip
 <p>上面如果是两个路径最后都没有带<code>/</code>或者都带<code>/</code>则该漏洞不存在。</p>
 <p>代理末尾添加/之后，nginx会先对uri进行normalized处理，使用../读取文件会失败，当没有添加/的时候，nginx会把原请求直接转发给后端服务器，所以可以读取成功。</p>
 
-	  <div class="article-footer-copyright">
-
-    本博客采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议(CC BY-NC-SA 4.0) 发布.</a>
-</div>
-
 	</div>
 
 	
 	<span id="/2019/09/17/nginx_path_traversle.html" class="leancloud-visitors view" data-flag-title="nginx的目录穿越">
-		<em class="post-meta-item-text"> Page View </em> <i class="leancloud-visitors-count"></i>
 	</span>
 	
 	<div>

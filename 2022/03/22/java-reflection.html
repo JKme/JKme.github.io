@@ -1,0 +1,393 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Java安全笔记(1)-反射机制 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="0x1. 类加载器: ClassLoaderJava是一个依赖于JVM（Java虚拟机)实现的跨平台的开发语言，Java会先通过编译器将源代码转换为Java二进制字节码，一般是保存在.class文件中，之后通过JVM解释器执行这段代码。字节码文件会包含很多Class信息，在JVM解释器运行的过程中，ClassLoader就是用来加载类的，它会将Java字节码中的Class加载到内存中，而每个Class对象内部都有一个ClassLoader属性标识由哪个ClassLoader加载。
+常见的ClassLoader一切的Java类都必须经过JVM加载之后才可以运行，最常见的ClassLoader： BootstrapClassLoader、ExtensionClassLoader、AppClassLoader、URLClassLoader、ContextClassLoader
+BootstrapClassLoaderJVM内置的默认classLoader,负责加载JVM运行时的核心类，位于JAVA_HOME/lib/rt.jar/文件夹中，由C代码实现，Bootstrap ClassLoader类加载器所加载的类的ClassLoader时候都会返回null
+ExtClassLoader扩展类加载器，负责加载 JVM 扩展类，扩展 jar 包位于 JAVA_HOME/lib/ext/*.jar 中，库名通常以 javax 开头
+AppClassLoader应用类加载器/系统类加载器，直接提供给用户使用的ClassLoader，它会加载ClASSPATH环境变量或者java.class.path属性里定义的路径中的jar包和目录，我们自己编写和使用的第三方Jar包通常都是由它来加载"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Java安全笔记(1)-反射机制"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> Java安全笔记(1)-反射机制</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h2 id="0x1-类加载器-ClassLoader"><a href="#0x1-类加载器-ClassLoader" class="headerlink" title="0x1. 类加载器: ClassLoader"></a>0x1. 类加载器: ClassLoader</h2><p>Java是一个依赖于<code>JVM（Java虚拟机)</code>实现的跨平台的开发语言，<code>Java</code>会先通过编译器将源代码转换为Java二进制字节码，一般是保存在<code>.class</code>文件中，之后通过<code>JVM</code>解释器执行这段代码。字节码文件会包含很多Class信息，在JVM解释器运行的过程中，<code>ClassLoader</code>就是用来加载类的，它会将Java字节码中的Class加载到内存中，而每个<code>Class</code>对象内部都有一个<code>ClassLoader</code>属性标识由哪个<code>ClassLoader</code>加载。</p>
+<h3 id="常见的ClassLoader"><a href="#常见的ClassLoader" class="headerlink" title="常见的ClassLoader"></a>常见的ClassLoader</h3><p>一切的<code>Java</code>类都必须经过JVM加载之后才可以运行，最常见的<code>ClassLoader</code>： <code>BootstrapClassLoader</code>、<code>ExtensionClassLoader</code>、<code>AppClassLoader</code>、<code>URLClassLoader</code>、<code>ContextClassLoader</code></p>
+<h4 id="BootstrapClassLoader"><a href="#BootstrapClassLoader" class="headerlink" title="BootstrapClassLoader"></a>BootstrapClassLoader</h4><p>JVM内置的默认<code>classLoader</code>,负责加载JVM运行时的核心类，位于<code>JAVA_HOME/lib/rt.jar/</code>文件夹中，由C代码实现，<code>Bootstrap ClassLoader</code>类加载器所加载的类的ClassLoader时候都会返回null</p>
+<h4 id="ExtClassLoader"><a href="#ExtClassLoader" class="headerlink" title="ExtClassLoader"></a>ExtClassLoader</h4><p>扩展类加载器，负责加载 JVM 扩展类，扩展 jar 包位于 <code>JAVA_HOME/lib/ext/*.jar</code> 中，库名通常以 javax 开头</p>
+<h4 id="AppClassLoader"><a href="#AppClassLoader" class="headerlink" title="AppClassLoader"></a>AppClassLoader</h4><p>应用类加载器/系统类加载器，直接提供给用户使用的ClassLoader，它会加载<code>ClASSPATH</code>环境变量或者<code>java.class.path</code>属性里定义的路径中的jar包和目录，我们自己编写和使用的第三方Jar包通常都是由它来加载</p>
+<h4 id="URLClassLoader"><a href="#URLClassLoader" class="headerlink" title="URLClassLoader"></a>URLClassLoader</h4><p>ClassLoader抽象类的一种实现，它可以根据URL搜索类或资源，并进行远程加载。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">demo1</span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">JavaClassLoader</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">ClassLoader</span> classLoader <span class="token operator">=</span> <span class="token class-name">ClassLoader</span><span class="token punctuation">.</span><span class="token function">getSystemClassLoader</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">ClassLoader</span> extensionClassLoader <span class="token operator">=</span> classLoader<span class="token punctuation">.</span><span class="token function">getParent</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"App Classloader: "</span> <span class="token operator">+</span> classLoader<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"parent Classloader: "</span> <span class="token operator">+</span> extensionClassLoader<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"The parent of parent Classloader: "</span> <span class="token operator">+</span> extensionClassLoader<span class="token punctuation">.</span><span class="token function">getParent</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行结果:</p>
+<pre class="line-numbers language-none"><code class="language-none">App Classloader: sun.misc.Launcher$AppClassLoader@18b4aac2
+parent Classloader: sun.misc.Launcher$ExtClassLoader@5cad8086
+The parent of parent Classloader: null<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+<p><code>ClassLoader</code>类有如下常见的方法:</p>
+<ul>
+<li><code>loadClass</code>:参数为需要加载的全限定类名，该方法会先查看目标类是否已经被加载，查看父级加载器并递归调用<code>loadClass()</code>，如果都没找到则调用<code>findClass()</code>。这种寻找类的方式称为<a target="_blank" rel="noopener" href="https://www.cnblogs.com/JonaLin/p/12674114.html">双亲委派机制(delegation model)</a>,主要是为了安全性，避免用户自己编写的类动态替换Java的一些核心类，同时也避免了重复加载。<br><img src="/2022/03/22/java-reflection/1.png"><br>双亲委派：<br><img src="/2022/03/22/java-reflection/2.png"></li>
+<li><code>findClass</code>: 搜索类的位置，一般会根据名称或位置加载.class字节码文件，获取字节码数组，然后调用defineClass()。</li>
+<li><code>findloadedClass</code>: 查找JVM已经加载过的类</li>
+<li><code>defineClass</code>: 将字节码转换为JVM的<code>java.lang.Class</code>对象</li>
+</ul>
+<p>代码中关于<code>defineClass</code>还是比较值得一看，<code>loadClass</code>的作用是加载Class文件，转换为字节码，当class不是在文件里面，而是从其它来源的时候，比如网络请求，这个时候就轮到<code>defineClass</code>上场了，<code>defineClass</code>负责把byte[]直接转换为Class，也就是说<code>defineClass</code>是对类加载方式的扩展: </p>
+<blockquote>
+<p> However, some classes may not originate from a file; they may originate
+from other sources, such as the network, or they could be constructed by an
+application.  The method {@link #defineClass(String, byte[], int, int)
+<tt>defineClass</tt>} converts an array of bytes into an instance of class
+<tt>Class</tt>. Instances of this newly defined class can be created using
+{@link Class#newInstance <tt>Class.newInstance</tt>}.
+</p></blockquote>
+<h2 id="Java反射"><a href="#Java反射" class="headerlink" title="Java反射"></a>Java反射</h2><h4 id="获取Class对象的四种方法"><a href="#获取Class对象的四种方法" class="headerlink" title="获取Class对象的四种方法"></a>获取Class对象的四种方法</h4><p>反射的主要作用是通过Class对象来对类的属性和方法进行获取和调用，包括类的私有方法（protected和private），一般来说有两种方法可以获取类：</p>
+<ol>
+<li><code>obj.getClass()</code>: 如果上下⽂中存在某个类的实例 obj ，那么我们可以直接通过<code>obj.getClass()</code>来获取它的类 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name"><span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span></span>Runtime</span> obj <span class="token operator">=</span> <span class="token class-name"><span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span></span>Runtime</span><span class="token punctuation">.</span><span class="token function">getRuntime</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token class-name">Class</span> c <span class="token operator">=</span> obj<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></li>
+<li><code>Class.forName</code>:  <code>Class c= Class.forName(&quot;java.lang.Runtime&quot;);</code></li>
+<li><code>ClassLoader</code>: <code>Class clazz = Classloader.getSystemClassLoader().loadClass(&quot;java.lang.Runtime&quot;);</code></li>
+<li>原生类.class: <code>Class clazz  = java.lang.Runtime.class;</code></li>
+</ol>
+<p><code>forName</code>有两个函数重载：</p>
+<ul>
+<li><code>Class&lt;?&gt; forName(String name)</code></li>
+<li><code>Class&lt;?&gt; forName(String name, **boolean** initialize, ClassLoader loader)</code><br>第⼀个就是我们最常⻅的获取class的⽅式，其实可以理解为第⼆种⽅式的⼀个封装：<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span>className<span class="token punctuation">)</span>
+<span class="token comment">// 等于</span>
+<span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span>className<span class="token punctuation">,</span> <span class="token boolean">true</span><span class="token punctuation">,</span> currentLoader<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<img src="/2022/03/22/java-reflection/6.png"><br>默认情况下，<code>forName</code>的第⼀个参数是类名；第⼆个参数表示是否初始化；第三个参数就是<code>ClassLoader</code>。</li>
+</ul>
+<h2 id="反射调用函数"><a href="#反射调用函数" class="headerlink" title="反射调用函数"></a>反射调用函数</h2><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">student</span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Student</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">int</span> age<span class="token punctuation">;</span>
+    <span class="token class-name">String</span> name<span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token class-name">Student</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>age <span class="token operator">=</span> <span class="token number">18</span><span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>name <span class="token operator">=</span> <span class="token string">"D"</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">sayHello</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"My name is "</span> <span class="token operator">+</span> name <span class="token operator">+</span> <span class="token string">", My Age is "</span> <span class="token operator">+</span> age<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">class</span> <span class="token class-name">Test1</span><span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">Student</span> student <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Student</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        student<span class="token punctuation">.</span><span class="token function">sayHello</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>student<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getClassLoader</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">//反射调用Student</span>
+
+        <span class="token class-name">String</span> class_name <span class="token operator">=</span> <span class="token string">"student.Student"</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> func <span class="token operator">=</span> <span class="token string">"sayHello"</span><span class="token punctuation">;</span>
+        <span class="token class-name">Class</span> stu_class <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span>class_name<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Student</span> stu2 <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">Student</span><span class="token punctuation">)</span> stu_class<span class="token punctuation">.</span><span class="token function">newInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span>class_name<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getMethod</span><span class="token punctuation">(</span>func<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>stu2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<ul>
+<li><code>getDeclaredMethod()</code>: Returns a Method object that reflects the specified declared method of the class or interface represented by this Class object.</li>
+<li><code>getMethod()</code>:         returns a Method object that reflects the specified public member method of the class or interface represented by this Class object.</li>
+</ul>
+<p><code>getDeclaredMethod()</code>可以获取类里面任何方法，<code>getMethod()</code>只可以获取<code>public</code>属性的方法。另外几个比较用的多是是:</p>
+<ul>
+<li><code>getField(String name)</code>: 根据字段名获取对应的字段，只能获取public类型的字段，可以获取父类的字段。</li>
+<li><code>getFields()</code>: 获取类所有的字段，只能获取public类型的字段，可以获取父类的字段。</li>
+<li><code>getDeclaredField(String name)</code>: 根据字段名获取对应的字段，可以获取public、protected和private类型的字段，不能获取父类的字段。</li>
+<li><code>getDeclaredFields()</code>: 获取类所有的字段，包括public、protected和private。不能获取父类的字段。</li>
+</ul>
+<h4 id="通过反射获取修改私有变量"><a href="#通过反射获取修改私有变量" class="headerlink" title="通过反射获取修改私有变量"></a>通过反射获取修改私有变量</h4><p><img src="/2022/03/22/java-reflection/7.png"></p>
+<p><strong>如果字段是staic修饰的时候，在获取和修改字段的时候，可以使用null代替具体对象的stu</strong></p>
+<h4 id="通过反射调用私有方法"><a href="#通过反射调用私有方法" class="headerlink" title="通过反射调用私有方法"></a>通过反射调用私有方法</h4><p><img src="/2022/03/22/java-reflection/8.png"></p>
+<p>如果调用的方法有多个参数，需要以数组的形式传入：<br><img src="/2022/03/22/java-reflection/9.png"></p>
+<ul>
+<li>使用<code>getDeclaredMethod</code>获取多个参数的方法，第二个参数为new Class[]{}类型的数组，数组中每一个值对应参数的class对象。这是一种标准的传参方式，建议即使方法没有参数或者只有一个参数也按照这种方式传参</li>
+<li>使用<code>method.invoke</code>方法对方法进行调用，传递的第二个参数表示实际调用时传递的参数值，类型是Object数组。<br>对于static类型的方法，与字段的使用方法相似，在执行方法时，同样可以把obj对象换成null</li>
+</ul>
+<h4 id="反射获取构造函数"><a href="#反射获取构造函数" class="headerlink" title="反射获取构造函数"></a>反射获取构造函数</h4><p>构造函数是一种特殊的方法，很多情况下需要通过反射获取构造函数，然后通过构造函数生成类的实例。</p>
+<ul>
+<li><code>getConstructor(Class... parameterTypes)</code> 根据参数类型获取对应的构造函数，只能获取public类型的构造函数，不能获取父类的构造函数。</li>
+<li><code>getConstructors()</code> 获取类所有的构造函数，只能获取public类型的字段，不能获取父类的构造函数。</li>
+<li><code>getDeclaredConstructor (Class... parameterTypes)</code> 根据参数类型获取对应的构造函数，可以获取public、protected和private类型的构造函数，不能获取父类的构造函数。</li>
+<li><code>getDeclaredConstructors()</code> 获取类所有的构造函数，包括public、protected和private。不能获取父类的构造函数。</li>
+</ul>
+<p>在获取到构造函数之后，需要通过newInstance函数来生成类对象。关于newInstance的使用如下所示：</p>
+<ul>
+<li><code>newInstance(Object ... initargs)</code>: newInstance函数接受可变的参数个数，构造函数实际有几个传输，这里就传递几个参数值。newInstance返回的数据类型是Object，一般需要强制转换类型。</li>
+</ul>
+<p><img src="/2022/03/22/java-reflection/10.png"></p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://javasec.org/javase/Reflection/Reflection.html">javasec.org</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/308460.html">Java代码审计之反射</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/phith0n/JavaThings">Java安全漫谈</a></li>
+<li><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/9002">JAVA安全基础</a></li>
+<li><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/7029/">JAVA反序列化 - 反射机制</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzkzNjMxNDM0Mg==&mid=2247483830&idx=1&sn=39c08c61cbab36ace4ac691e0756948b&chksm=c2a1d53ff5d65c29f9b8310c324c67568fe27e61720baffff8af19ef9cb94f5096d73df0c69f">告别脚本小子系列丨JAVA安全(3)——JAVA反射机制</a></li>
+</ul>
+
+	</div>
+
+	
+	<span id="/2022/03/22/java-reflection.html" class="leancloud-visitors view" data-flag-title="Java安全笔记(1)-反射机制">
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2022/03/22/java-reflection-shell.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2022/03/21/jndi-exec-by-mvel.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2022-03-22 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Java/">Java<span>3</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#0x1-%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8-ClassLoader"><span class="toc-article-text">0x1. 类加载器: ClassLoader</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84ClassLoader"><span class="toc-article-text">常见的ClassLoader</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#BootstrapClassLoader"><span class="toc-article-text">BootstrapClassLoader</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#ExtClassLoader"><span class="toc-article-text">ExtClassLoader</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#AppClassLoader"><span class="toc-article-text">AppClassLoader</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#URLClassLoader"><span class="toc-article-text">URLClassLoader</span></a></li></ol></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#Java%E5%8F%8D%E5%B0%84"><span class="toc-article-text">Java反射</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E8%8E%B7%E5%8F%96Class%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%9B%9B%E7%A7%8D%E6%96%B9%E6%B3%95"><span class="toc-article-text">获取Class对象的四种方法</span></a></li></ol></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E5%8F%8D%E5%B0%84%E8%B0%83%E7%94%A8%E5%87%BD%E6%95%B0"><span class="toc-article-text">反射调用函数</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E9%80%9A%E8%BF%87%E5%8F%8D%E5%B0%84%E8%8E%B7%E5%8F%96%E4%BF%AE%E6%94%B9%E7%A7%81%E6%9C%89%E5%8F%98%E9%87%8F"><span class="toc-article-text">通过反射获取修改私有变量</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E9%80%9A%E8%BF%87%E5%8F%8D%E5%B0%84%E8%B0%83%E7%94%A8%E7%A7%81%E6%9C%89%E6%96%B9%E6%B3%95"><span class="toc-article-text">通过反射调用私有方法</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E5%8F%8D%E5%B0%84%E8%8E%B7%E5%8F%96%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0"><span class="toc-article-text">反射获取构造函数</span></a></li></ol></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="toc-article-text">参考链接</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

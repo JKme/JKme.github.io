@@ -289,7 +289,7 @@ video {
 
 .slogan {
     font-size: 1.2em;
-    color: #fff;
+    color: #000000;
     display: block;
     margin-bottom: 1.2em
 }
@@ -387,12 +387,12 @@ h6 {
     text-rendering: optimizelegibility;
     font-weight: bold;
     line-height: 1.2em;
-    font-family: DOS, SimHei, Monaco, Menlo, Consolas, 'Courier New', monospace;
-    color: #fff
+    font-family: SimHei, Monaco, Menlo, Consolas, 'Courier New', monospace;
+    color: #000000
 }
 
 h2 {
-    color: #fff;
+    color: #000000;
     padding-top: 40px;
     margin: -25px 0 .83em
 }
@@ -434,7 +434,7 @@ em{
     font-size: 1.5em;
     line-height: 1.3em;
     font-weight: bold;
-    font-family: DOS, SimHei, Monaco, Menlo, Consolas, 'Courier New', monospace
+    font-family: SimHei, Monaco, Menlo, Consolas, 'Courier New', monospace
 }
 
 .page h3.title div.article-title {
@@ -461,7 +461,7 @@ em{
     font-size: 10pt;
     width: auto;
     padding: 10px;
-    background: #000
+    background: #ffffff
 }
 
 .toc .toc-title {
@@ -546,7 +546,7 @@ hr {
     font-size: .8em
 }
 
-.logo {
+/*.logo {
     background: url("../favicon.png") no-repeat left top;
     background-size: 5em
 }
@@ -555,7 +555,7 @@ hr {
     padding-left: 3em;
     font-size: 1.5em;
     line-height: 2.0em
-}
+}*/
 
 .fa-heart:before {
     color: #f00

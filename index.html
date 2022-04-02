@@ -117,6 +117,416 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" >低版本Java运行高版的Class</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2022-03-30  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x1-背景介绍"><a href="#0x1-背景介绍" class="headerlink" title="0x1. 背景介绍"></a>0x1. 背景介绍</h2><p>比如<code>fastjson</code>、<code>log4j</code>中需要远程加载恶意class文件的时候，如果恶意Class文件的版本高于目标版本，比如托管在服务器的Class是1.8编译的，但是目标版本是1.7，会导致利用失败。出现类似这样的错误：<code>java.lang.UnsupportedClassVersionError: Unsupported major.minor version</code></p>
+<h2 id="0x2-解决方法"><a href="#0x2-解决方法" class="headerlink" title="0x2. 解决方法"></a>0x2. 解决方法</h2><p>用低版本的Java，比如1.6去编译Class文件，就可以全版本通用。</p>
+<p>还有另外一种方法，手动修改Class文件。当Java版本不同的时候，编译出来的Class文件也会不一样，其中Class文件里面会带上编译的Java版本号：<br><img src="/2022/03/30/Load_Class_In_Multi_JavaVersion/1.png"></p>
+<ul>
+<li>45 = Java 1.1</li>
+<li>46 = Java 1.2</li>
+<li>47 = Java 1.3</li>
+<li>48 = Java 1.4</li>
+<li>49 = Java 5</li>
+<li>50 = Java 6</li>
+<li>51 = Java 7</li>
+<li>52 = Java 8</li>
+<li>53 = Java 9</li>
+<li>54 = Java 10</li>
+<li>55 = Java 11</li>
+<li>56 = Java 12</li>
+<li>57 = Java 13</li>
+<li>58 = Java 14</li>
+<li>59 = Java 15</li>
+</ul>
+<p>所以，尝试手动修改一下这个版本号试试？</p>
+<ol>
+<li>切换到<code>java</code>的15版本，编译运行正常</li>
+<li>使用<code>vim -b Calc.class</code>，然后<code>:%!xxd</code>修改版本号为<code>32</code>(50的16进制，也就是Java6)，然后保存:<code>:%!xxd -r</code></li>
+<li>切换java版本到1.7，运行Class正常<br><img src="/2022/03/30/Load_Class_In_Multi_JavaVersion/2.png"><br><img src="/2022/03/30/Load_Class_In_Multi_JavaVersion/3.png"></li>
+</ol>
+
+	
+
+	</div>
+  <a type="button" href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x1-背景介绍"><a href="#0x1-背景介绍" class="headerlink" title="0x1. 背景介绍"></a>0x1. 背景介绍</h2><p>比如<code>fastjson</code>、<code>log4j</code>中需要远程加载恶意class文件的时候，如果恶意Class文件的版本高于目标版本，比如托管在服务器的Class是1.8编译的，但是目标版本是1.7，会导致利用失败。出现类似这样的错误：<code>java.lang.UnsupportedClassVersionError: Unsupported major.minor version</code></p>
+<h2 id="0x2-解决方法"><a href="#0x2-解决方法" class="headerlink" title="0x2. 解决方法"></a>0x2. 解决方法</h2><p>用低版本的Java，比如1.6去编译Class文件，就可以全版本通用。</p>
+<p>还有另外一种方法，手动修改Class文件。当Java版本不同的时候，编译出来的Class文件也会不一样，其中Class文件里面会带上编译的Java版本号：<br><img src="/2022/03/30/Load_Class_In_Multi_JavaVersion/1.png"></p>
+<ul>
+<li>45 = Java 1.1</li>
+<li>46 = Java 1.2</li>
+<li>47 = Java 1.3</li>
+<li>48 = Java 1.4</li>
+<li>49 = Java 5</li>
+<li>50 = Java 6</li>
+<li>51 = Java 7</li>
+<li>52 = Java 8</li>
+<li>53 = Java 9</li>
+<li>54 = Java 10</li>
+<li>55 = Java 11</li>
+<li>56 = Java 12</li>
+<li>57 = Java 13</li>
+<li>58 = Java 14</li>
+<li>59 = Java 15</li>
+</ul>
+<p>所以，尝试手动修改一下这个版本号试试？</p>
+<ol>
+<li>切换到<code>java</code>的15版本，编译运行正常</li>
+<li>使用<code>vim -b Calc.class</code>，然后<code>:%!xxd</code>修改版本号为<code>32</code>(50的16进制，也就是Java6)，然后保存:<code>:%!xxd -r</code></li>
+<li>切换java版本到1.7，运行Class正常<br><img src="/2022/03/30/Load_Class_In_Multi_JavaVersion/2.png"><br><img src="/2022/03/30/Load_Class_In_Multi_JavaVersion/3.png"></li>
+</ol>
+
+	
+	</div>
+  <a type="button" href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2022/03/22/java-reflection-shell.html" >Java安全笔记(2)-反射执行系统命令</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2022-03-22  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="Runtime"><a href="#Runtime" class="headerlink" title="Runtime"></a>Runtime</h2><p>Runtime中可以获取到<code>Runtime</code>实例有三种方法:</p>
+<ol>
+<li><code>private static Runtime currentRuntime = new Runtime();</code></li>
+<li><code>public static Runtime getRuntime()</code></li>
+<li><code>private Runtime() &#123;&#125;</code></li>
+</ol>
+<p><img src="/2022/03/22/java-reflection-shell/2.png"></p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">relfectDemo</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Constructor</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Field</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Method</span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ReflectRuntime</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> cmd <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token string">"sh"</span><span class="token punctuation">,</span> <span class="token string">"-c"</span><span class="token punctuation">,</span> <span class="token string">"open /System/Applications/Calculator.app"</span><span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token class-name">Runtime0</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
+        <span class="token comment">//利用私有变量生成实例 private static Runtime currentRuntime = new Runtime();</span>
+        <span class="token class-name">Class</span> clazz <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"java.lang.Runtime"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Field</span> field <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getDeclaredField</span><span class="token punctuation">(</span><span class="token string">"currentRuntime"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        field<span class="token punctuation">.</span><span class="token function">setAccessible</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Runtime</span> runtime <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">Runtime</span><span class="token punctuation">)</span> field<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">"Runtime"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Method</span> method <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getDeclaredMethod</span><span class="token punctuation">(</span><span class="token string">"exec"</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        method<span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>runtime<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token keyword">this</span><span class="token punctuation">.</span>cmd<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token class-name">Runtime1</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
+        <span class="token comment">//利用     public static Runtime getRuntime() &#123;</span>
+        <span class="token comment">//        return currentRuntime;</span>
+        <span class="token comment">//    &#125;</span>
+        <span class="token class-name">Class</span> clazz <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"java.lang.Runtime"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Method</span> method <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getDeclaredMethod</span><span class="token punctuation">(</span><span class="token string">"getRuntime"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Runtime</span> runtime <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">Runtime</span><span class="token punctuation">)</span> method<span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token class-name">Method</span> method1 <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getDeclaredMethod</span><span class="token punctuation">(</span><span class="token string">"exec"</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        method1<span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>runtime<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token keyword">this</span><span class="token punctuation">.</span>cmd<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token class-name">Runtime2</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
+        <span class="token comment">// 利用构造函数 private Runtime() &#123;&#125;</span>
+        <span class="token class-name">Class</span> clazz <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"java.lang.Runtime"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Constructor</span> constructor <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getDeclaredConstructor</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        constructor<span class="token punctuation">.</span><span class="token function">setAccessible</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Runtime</span> runtime <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">Runtime</span><span class="token punctuation">)</span> constructor<span class="token punctuation">.</span><span class="token function">newInstance</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Method</span> method <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getDeclaredMethod</span><span class="token punctuation">(</span><span class="token string">"exec"</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        method<span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>runtime<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token keyword">this</span><span class="token punctuation">.</span>cmd<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="ProcessBuilder"><a href="#ProcessBuilder" class="headerlink" title="ProcessBuilder"></a>ProcessBuilder</h2><p>使用<code>constructor</code>初始化对象的时候，接收的参数是一个Object数组，所以需要<code>new Object[]</code>强制转换: </p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">relfectDemo</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Constructor</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Method</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">Arrays</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">List</span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ReflectProcessBuilder</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> cmd <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token string">"sh"</span><span class="token punctuation">,</span> <span class="token string">"-c"</span><span class="token punctuation">,</span> <span class="token string">"open /System/Applications/Calculator.app"</span><span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token class-name">ReflectPB0</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">Class</span> clazz <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"java.lang.ProcessBuilder"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Constructor</span> constructor <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getConstructor</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">//newInstance接收的是一个Object数组，需要转化一下</span>
+        <span class="token class-name">ProcessBuilder</span> pb <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">ProcessBuilder</span><span class="token punctuation">)</span> constructor<span class="token punctuation">.</span><span class="token function">newInstance</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token keyword">this</span><span class="token punctuation">.</span>cmd<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token class-name">Method</span> method1 <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getDeclaredMethod</span><span class="token punctuation">(</span><span class="token string">"start"</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        method1<span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>pb<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token class-name">ReflectPB1</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">Class</span> clazz <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"java.lang.ProcessBuilder"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Constructor</span> constructor <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getConstructor</span><span class="token punctuation">(</span><span class="token class-name">List</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">//当使用List类型的构造参数</span>
+
+        <span class="token comment">//newInstance接收的是一个Object数组，需要转化一下</span>
+        <span class="token class-name">ProcessBuilder</span> pb <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">ProcessBuilder</span><span class="token punctuation">)</span> constructor<span class="token punctuation">.</span><span class="token function">newInstance</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token class-name">Arrays</span><span class="token punctuation">.</span><span class="token function">asList</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>cmd<span class="token punctuation">)</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token class-name">Method</span> method1 <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getDeclaredMethod</span><span class="token punctuation">(</span><span class="token string">"start"</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        method1<span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>pb<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">ReflectProcessBuilder</span> reflectProcessBuilder <span class="token operator">=</span>  <span class="token keyword">new</span> <span class="token class-name">ReflectProcessBuilder</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">//        reflectProcessBuilder.ReflectPB0();</span>
+        <span class="token class-name"><span class="token namespace">reflectProcessBuilder<span class="token punctuation">.</span></span>ReflectPB1</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="ProcessImpl"><a href="#ProcessImpl" class="headerlink" title="ProcessImpl"></a>ProcessImpl</h2><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">relfectDemo</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Constructor</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Method</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">HashMap</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">Map</span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ReflectProcessImpl</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> cmd <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token string">"sh"</span><span class="token punctuation">,</span> <span class="token string">"-c"</span><span class="token punctuation">,</span> <span class="token string">"open /System/Applications/Calculator.app"</span><span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token class-name">ReflectPI0</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">Class</span> clazz <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"java.lang.ProcessImpl"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Method</span> method <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getDeclaredMethod</span><span class="token punctuation">(</span><span class="token string">"start"</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span> <span class="token class-name">Map</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span> <span class="token class-name">ProcessBuilder<span class="token punctuation">.</span>Redirect</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span> <span class="token keyword">boolean</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        method<span class="token punctuation">.</span><span class="token function">setAccessible</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Map</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">></span></span> map <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+        <span class="token class-name">ProcessBuilder<span class="token punctuation">.</span>Redirect</span><span class="token punctuation">[</span><span class="token punctuation">]</span> redirect <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> dir <span class="token operator">=</span> <span class="token string">"."</span><span class="token punctuation">;</span>
+        <span class="token comment">//第四个参数dir不能为空，为空会失败，表示在哪个路径下执行命令</span>
+        method<span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>cmd<span class="token punctuation">,</span> map<span class="token punctuation">,</span> dir<span class="token punctuation">,</span> redirect<span class="token punctuation">,</span> <span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">ReflectProcessImpl</span> reflectProcess <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ReflectProcessImpl</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name"><span class="token namespace">reflectProcess<span class="token punctuation">.</span></span>ReflectPI0</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2022/03/22/java-reflection-shell.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="Runtime"><a href="#Runtime" class="headerlink" title="Runtime"></a>Runtime</h2><p>Runtime中可以获取到<code>Runtime</code>实例有三种方法:</p>
+<ol>
+<li><code>private static Runtime currentRuntime = new Runtime();</code></li>
+<li><code>public static Runtime getRuntime()</code></li>
+<li><code>private Runtime() &#123;&#125;</code></li>
+</ol>
+<p><img src="/2022/03/22/java-reflection-shell/2.png"></p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">relfectDemo</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Constructor</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Field</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Method</span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ReflectRuntime</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> cmd <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token string">"sh"</span><span class="token punctuation">,</span> <span class="token string">"-c"</span><span class="token punctuation">,</span> <span class="token string">"open /System/Applications/Calculator.app"</span><span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token class-name">Runtime0</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
+        <span class="token comment">//利用私有变量生成实例 private static Runtime currentRuntime = new Runtime();</span>
+        <span class="token class-name">Class</span> clazz <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"java.lang.Runtime"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Field</span> field <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getDeclaredField</span><span class="token punctuation">(</span><span class="token string">"currentRuntime"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        field<span class="token punctuation">.</span><span class="token function">setAccessible</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Runtime</span> runtime <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">Runtime</span><span class="token punctuation">)</span> field<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">"Runtime"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Method</span> method <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getDeclaredMethod</span><span class="token punctuation">(</span><span class="token string">"exec"</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        method<span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>runtime<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token keyword">this</span><span class="token punctuation">.</span>cmd<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token class-name">Runtime1</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
+        <span class="token comment">//利用     public static Runtime getRuntime() &#123;</span>
+        <span class="token comment">//        return currentRuntime;</span>
+        <span class="token comment">//    &#125;</span>
+        <span class="token class-name">Class</span> clazz <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"java.lang.Runtime"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Method</span> method <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getDeclaredMethod</span><span class="token punctuation">(</span><span class="token string">"getRuntime"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Runtime</span> runtime <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">Runtime</span><span class="token punctuation">)</span> method<span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token class-name">Method</span> method1 <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getDeclaredMethod</span><span class="token punctuation">(</span><span class="token string">"exec"</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        method1<span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>runtime<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token keyword">this</span><span class="token punctuation">.</span>cmd<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token class-name">Runtime2</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
+        <span class="token comment">// 利用构造函数 private Runtime() &#123;&#125;</span>
+        <span class="token class-name">Class</span> clazz <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"java.lang.Runtime"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Constructor</span> constructor <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getDeclaredConstructor</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        constructor<span class="token punctuation">.</span><span class="token function">setAccessible</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Runtime</span> runtime <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">Runtime</span><span class="token punctuation">)</span> constructor<span class="token punctuation">.</span><span class="token function">newInstance</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Method</span> method <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getDeclaredMethod</span><span class="token punctuation">(</span><span class="token string">"exec"</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        method<span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>runtime<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token keyword">this</span><span class="token punctuation">.</span>cmd<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="ProcessBuilder"><a href="#ProcessBuilder" class="headerlink" title="ProcessBuilder"></a>ProcessBuilder</h2><p>使用<code>constructor</code>初始化对象的时候，接收的参数是一个Object数组，所以需要<code>new Object[]</code>强制转换: </p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">relfectDemo</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Constructor</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Method</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">Arrays</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">List</span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ReflectProcessBuilder</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> cmd <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token string">"sh"</span><span class="token punctuation">,</span> <span class="token string">"-c"</span><span class="token punctuation">,</span> <span class="token string">"open /System/Applications/Calculator.app"</span><span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token class-name">ReflectPB0</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">Class</span> clazz <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"java.lang.ProcessBuilder"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Constructor</span> constructor <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getConstructor</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">//newInstance接收的是一个Object数组，需要转化一下</span>
+        <span class="token class-name">ProcessBuilder</span> pb <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">ProcessBuilder</span><span class="token punctuation">)</span> constructor<span class="token punctuation">.</span><span class="token function">newInstance</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token keyword">this</span><span class="token punctuation">.</span>cmd<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token class-name">Method</span> method1 <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getDeclaredMethod</span><span class="token punctuation">(</span><span class="token string">"start"</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        method1<span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>pb<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token class-name">ReflectPB1</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">Class</span> clazz <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"java.lang.ProcessBuilder"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Constructor</span> constructor <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getConstructor</span><span class="token punctuation">(</span><span class="token class-name">List</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">//当使用List类型的构造参数</span>
+
+        <span class="token comment">//newInstance接收的是一个Object数组，需要转化一下</span>
+        <span class="token class-name">ProcessBuilder</span> pb <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">ProcessBuilder</span><span class="token punctuation">)</span> constructor<span class="token punctuation">.</span><span class="token function">newInstance</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token class-name">Arrays</span><span class="token punctuation">.</span><span class="token function">asList</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>cmd<span class="token punctuation">)</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token class-name">Method</span> method1 <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getDeclaredMethod</span><span class="token punctuation">(</span><span class="token string">"start"</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        method1<span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>pb<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">ReflectProcessBuilder</span> reflectProcessBuilder <span class="token operator">=</span>  <span class="token keyword">new</span> <span class="token class-name">ReflectProcessBuilder</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">//        reflectProcessBuilder.ReflectPB0();</span>
+        <span class="token class-name"><span class="token namespace">reflectProcessBuilder<span class="token punctuation">.</span></span>ReflectPB1</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="ProcessImpl"><a href="#ProcessImpl" class="headerlink" title="ProcessImpl"></a>ProcessImpl</h2><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">relfectDemo</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Constructor</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Method</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">HashMap</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">Map</span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ReflectProcessImpl</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> cmd <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token string">"sh"</span><span class="token punctuation">,</span> <span class="token string">"-c"</span><span class="token punctuation">,</span> <span class="token string">"open /System/Applications/Calculator.app"</span><span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token class-name">ReflectPI0</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">Class</span> clazz <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"java.lang.ProcessImpl"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Method</span> method <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getDeclaredMethod</span><span class="token punctuation">(</span><span class="token string">"start"</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span> <span class="token class-name">Map</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span> <span class="token class-name">ProcessBuilder<span class="token punctuation">.</span>Redirect</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span> <span class="token keyword">boolean</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        method<span class="token punctuation">.</span><span class="token function">setAccessible</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Map</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">></span></span> map <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+        <span class="token class-name">ProcessBuilder<span class="token punctuation">.</span>Redirect</span><span class="token punctuation">[</span><span class="token punctuation">]</span> redirect <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> dir <span class="token operator">=</span> <span class="token string">"."</span><span class="token punctuation">;</span>
+        <span class="token comment">//第四个参数dir不能为空，为空会失败，表示在哪个路径下执行命令</span>
+        method<span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>cmd<span class="token punctuation">,</span> map<span class="token punctuation">,</span> dir<span class="token punctuation">,</span> redirect<span class="token punctuation">,</span> <span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">ReflectProcessImpl</span> reflectProcess <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ReflectProcessImpl</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name"><span class="token namespace">reflectProcess<span class="token punctuation">.</span></span>ReflectPI0</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2022/03/22/java-reflection-shell.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2022/03/22/java-reflection.html" >Java安全笔记(1)-反射机制</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2022-03-22  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x1-类加载器-ClassLoader"><a href="#0x1-类加载器-ClassLoader" class="headerlink" title="0x1. 类加载器: ClassLoader"></a>0x1. 类加载器: ClassLoader</h2><p>Java是一个依赖于<code>JVM（Java虚拟机)</code>实现的跨平台的开发语言，<code>Java</code>会先通过编译器将源代码转换为Java二进制字节码，一般是保存在<code>.class</code>文件中，之后通过<code>JVM</code>解释器执行这段代码。字节码文件会包含很多Class信息，在JVM解释器运行的过程中，<code>ClassLoader</code>就是用来加载类的，它会将Java字节码中的Class加载到内存中，而每个<code>Class</code>对象内部都有一个<code>ClassLoader</code>属性标识由哪个<code>ClassLoader</code>加载。</p>
+<h3 id="常见的ClassLoader"><a href="#常见的ClassLoader" class="headerlink" title="常见的ClassLoader"></a>常见的ClassLoader</h3><p>一切的<code>Java</code>类都必须经过JVM加载之后才可以运行，最常见的<code>ClassLoader</code>： <code>BootstrapClassLoader</code>、<code>ExtensionClassLoader</code>、<code>AppClassLoader</code>、<code>URLClassLoader</code>、<code>ContextClassLoader</code></p>
+<h4 id="BootstrapClassLoader"><a href="#BootstrapClassLoader" class="headerlink" title="BootstrapClassLoader"></a>BootstrapClassLoader</h4><p>JVM内置的默认<code>classLoader</code>,负责加载JVM运行时的核心类，位于<code>JAVA_HOME/lib/rt.jar/</code>文件夹中，由C代码实现，<code>Bootstrap ClassLoader</code>类加载器所加载的类的ClassLoader时候都会返回null</p>
+<h4 id="ExtClassLoader"><a href="#ExtClassLoader" class="headerlink" title="ExtClassLoader"></a>ExtClassLoader</h4><p>扩展类加载器，负责加载 JVM 扩展类，扩展 jar 包位于 <code>JAVA_HOME/lib/ext/*.jar</code> 中，库名通常以 javax 开头</p>
+<h4 id="AppClassLoader"><a href="#AppClassLoader" class="headerlink" title="AppClassLoader"></a>AppClassLoader</h4><p>应用类加载器/系统类加载器，直接提供给用户使用的ClassLoader，它会加载<code>ClASSPATH</code>环境变量或者<code>java.class.path</code>属性里定义的路径中的jar包和目录，我们自己编写和使用的第三方Jar包通常都是由它来加载</p>
+	
+
+	</div>
+  <a type="button" href="/2022/03/22/java-reflection.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x1-类加载器-ClassLoader"><a href="#0x1-类加载器-ClassLoader" class="headerlink" title="0x1. 类加载器: ClassLoader"></a>0x1. 类加载器: ClassLoader</h2><p>Java是一个依赖于<code>JVM（Java虚拟机)</code>实现的跨平台的开发语言，<code>Java</code>会先通过编译器将源代码转换为Java二进制字节码，一般是保存在<code>.class</code>文件中，之后通过<code>JVM</code>解释器执行这段代码。字节码文件会包含很多Class信息，在JVM解释器运行的过程中，<code>ClassLoader</code>就是用来加载类的，它会将Java字节码中的Class加载到内存中，而每个<code>Class</code>对象内部都有一个<code>ClassLoader</code>属性标识由哪个<code>ClassLoader</code>加载。</p>
+<h3 id="常见的ClassLoader"><a href="#常见的ClassLoader" class="headerlink" title="常见的ClassLoader"></a>常见的ClassLoader</h3><p>一切的<code>Java</code>类都必须经过JVM加载之后才可以运行，最常见的<code>ClassLoader</code>： <code>BootstrapClassLoader</code>、<code>ExtensionClassLoader</code>、<code>AppClassLoader</code>、<code>URLClassLoader</code>、<code>ContextClassLoader</code></p>
+<h4 id="BootstrapClassLoader"><a href="#BootstrapClassLoader" class="headerlink" title="BootstrapClassLoader"></a>BootstrapClassLoader</h4><p>JVM内置的默认<code>classLoader</code>,负责加载JVM运行时的核心类，位于<code>JAVA_HOME/lib/rt.jar/</code>文件夹中，由C代码实现，<code>Bootstrap ClassLoader</code>类加载器所加载的类的ClassLoader时候都会返回null</p>
+<h4 id="ExtClassLoader"><a href="#ExtClassLoader" class="headerlink" title="ExtClassLoader"></a>ExtClassLoader</h4><p>扩展类加载器，负责加载 JVM 扩展类，扩展 jar 包位于 <code>JAVA_HOME/lib/ext/*.jar</code> 中，库名通常以 javax 开头</p>
+<h4 id="AppClassLoader"><a href="#AppClassLoader" class="headerlink" title="AppClassLoader"></a>AppClassLoader</h4><p>应用类加载器/系统类加载器，直接提供给用户使用的ClassLoader，它会加载<code>ClASSPATH</code>环境变量或者<code>java.class.path</code>属性里定义的路径中的jar包和目录，我们自己编写和使用的第三方Jar包通常都是由它来加载</p>
+	
+	</div>
+  <a type="button" href="/2022/03/22/java-reflection.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2022/03/21/jndi-exec-by-mvel.html" >JNDI Bypass - MVEL</a>
 		</h3>
 		</div>
@@ -301,256 +711,6 @@
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2021/08/06/windows-ntlm-smb-scan.html" >NTLM端口信息探测</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2021-08-06  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>SMB（Server Message Block）协议，可用于在计算机间共享文件、打印机、串口等，电脑上的网上邻居就是靠它实现的。SMB使用了NetBIOS的应用程序接口 （Application Program Interface，简称API）。另外，它是一个开放性的协议，允许了协议扩展——使得它变得更大而且复杂；大约有65个最上层的作业，而每个作业都超过120个函数，甚至Windows NT也没有全部支持到，最近微软又把 SMB 改名为 CIFS（Common Internet File System），并且加入了许多新的特色。SMB协议一般端口使用为139，445，CIFS协议有三个版本：SMB、SMB2、SMB3。</p>
-<h3 id="NTLM"><a href="#NTLM" class="headerlink" title="NTLM"></a>NTLM</h3><p>在type2返回Challenge的过程中，同时返回了操作系统类型，主机名，netbios名等等。这也就意味着如果我们在能跟服务器进行NTLM交流中，给服务器发送一个type1的请求，服务器返回type2的响应，这一步，我们就可以得到很多信息。SMBv1和SMBv2的数据包结构是不同的</p>
-<h3 id="SMBv1"><a href="#SMBv1" class="headerlink" title="SMBv1"></a>SMBv1</h3><p>使用<a target="_blank" rel="noopener" href="https://github.com/FeigongSec/NTLMINFO">非攻NTLMINFO</a>探测SMB接口，抓包通过wireshark分析，包含操作系统类型的数据包由SMB Header和Response组成：<br><img src="/2021/08/06/windows-ntlm-smb-scan/ntlm-1.png"><br>我们的目的是获取smb数据包的NTLM数据，然后对NTLM数据包解析，NTLM数据包上一层是GSS-API，首先找到GSS-API在整个数据包的偏移量，SMB的数据包结构长度如下：</p>
-<pre class="line-numbers language-none"><code class="language-none">SMB Header:  32 byte
-Word Count:  1 byte
-AndXCommand: 1 byte
-Reserved:    1 byte
-AndXOffset:  2 byte
-Action: 	   2 byte
-Security Blob Length: 2 byte (表示Security Blob的长度，这里的hex是 0f 10，小端转换为010f,再转换成10进制就是271，对应Security Blob的长度)
-Byte Count: 2 byte (表示Security Blob加上NativeOS和Native Lan的长度)
-Security Blob: 可变长度，取决于Security Blob Length<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>上面的数据包结构的关键数据是<code>Security Blob Length</code>和<code>Byte Content</code>，前者表示GSS-API的整个数据包长度，后者表示GSS-API和Native OS加上Native LM的数据长度：</p>
-<h6 id="GSS-API的长度是271-Byte"><a href="#GSS-API的长度是271-Byte" class="headerlink" title="GSS-API的长度是271 Byte"></a>GSS-API的长度是271 Byte</h6><p><img src="/2021/08/06/windows-ntlm-smb-scan/ntlm-3.png"></p>
-<h6 id="Native-OS的长度是42-Byte"><a href="#Native-OS的长度是42-Byte" class="headerlink" title="Native OS的长度是42 Byte"></a>Native OS的长度是42 Byte</h6>
-	
-
-	</div>
-  <a type="button" href="/2021/08/06/windows-ntlm-smb-scan.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>SMB（Server Message Block）协议，可用于在计算机间共享文件、打印机、串口等，电脑上的网上邻居就是靠它实现的。SMB使用了NetBIOS的应用程序接口 （Application Program Interface，简称API）。另外，它是一个开放性的协议，允许了协议扩展——使得它变得更大而且复杂；大约有65个最上层的作业，而每个作业都超过120个函数，甚至Windows NT也没有全部支持到，最近微软又把 SMB 改名为 CIFS（Common Internet File System），并且加入了许多新的特色。SMB协议一般端口使用为139，445，CIFS协议有三个版本：SMB、SMB2、SMB3。</p>
-<h3 id="NTLM"><a href="#NTLM" class="headerlink" title="NTLM"></a>NTLM</h3><p>在type2返回Challenge的过程中，同时返回了操作系统类型，主机名，netbios名等等。这也就意味着如果我们在能跟服务器进行NTLM交流中，给服务器发送一个type1的请求，服务器返回type2的响应，这一步，我们就可以得到很多信息。SMBv1和SMBv2的数据包结构是不同的</p>
-<h3 id="SMBv1"><a href="#SMBv1" class="headerlink" title="SMBv1"></a>SMBv1</h3><p>使用<a target="_blank" rel="noopener" href="https://github.com/FeigongSec/NTLMINFO">非攻NTLMINFO</a>探测SMB接口，抓包通过wireshark分析，包含操作系统类型的数据包由SMB Header和Response组成：<br><img src="/2021/08/06/windows-ntlm-smb-scan/ntlm-1.png"><br>我们的目的是获取smb数据包的NTLM数据，然后对NTLM数据包解析，NTLM数据包上一层是GSS-API，首先找到GSS-API在整个数据包的偏移量，SMB的数据包结构长度如下：</p>
-<pre class="line-numbers language-none"><code class="language-none">SMB Header:  32 byte
-Word Count:  1 byte
-AndXCommand: 1 byte
-Reserved:    1 byte
-AndXOffset:  2 byte
-Action: 	   2 byte
-Security Blob Length: 2 byte (表示Security Blob的长度，这里的hex是 0f 10，小端转换为010f,再转换成10进制就是271，对应Security Blob的长度)
-Byte Count: 2 byte (表示Security Blob加上NativeOS和Native Lan的长度)
-Security Blob: 可变长度，取决于Security Blob Length<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>上面的数据包结构的关键数据是<code>Security Blob Length</code>和<code>Byte Content</code>，前者表示GSS-API的整个数据包长度，后者表示GSS-API和Native OS加上Native LM的数据长度：</p>
-<h6 id="GSS-API的长度是271-Byte"><a href="#GSS-API的长度是271-Byte" class="headerlink" title="GSS-API的长度是271 Byte"></a>GSS-API的长度是271 Byte</h6><p><img src="/2021/08/06/windows-ntlm-smb-scan/ntlm-3.png"></p>
-<h6 id="Native-OS的长度是42-Byte"><a href="#Native-OS的长度是42-Byte" class="headerlink" title="Native OS的长度是42 Byte"></a>Native OS的长度是42 Byte</h6>
-	
-	</div>
-  <a type="button" href="/2021/08/06/windows-ntlm-smb-scan.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2021/08/02/siem-on-elk.html" >SIEM On ELK</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2021-08-02  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>参考链接里有详细的安装步骤，测试客户端是Windows，安装了如下软件：</p>
-<ul>
-<li>sysmon.exe(<a target="_blank" rel="noopener" href="https://github.com/SwiftOnSecurity/sysmon-config">配置文件</a>)<ul>
-<li><code>.\sysmon64.exe -accepteula -i c:\windows\config.xml</code></li>
-</ul>
-</li>
-<li>winlogbeat.exe<ul>
-<li><code>.\install-service-winlogbeat.ps1</code></li>
-<li><code>.\winlogbeat.exe setup -e</code></li>
-</ul>
-</li>
-<li>ElasticAgent.exe<ul>
-<li><code>.\elastic-agent.exe install  --insecure -f --fleet-server-es=&lt;ES&gt; --fleet-server-service-token=&lt;token&gt;</code></li>
-</ul>
-</li>
-</ul>
-<h3 id="规则监测和绕过"><a href="#规则监测和绕过" class="headerlink" title="规则监测和绕过"></a>规则监测和绕过</h3><p>规则有5种查询，一般使用EQL(Event Query Language)查询类型:<br><img src="/2021/08/02/siem-on-elk/siem-1.png"><br>SIEM有内置很多规则，默认是关闭状态，这些规则都是ATT&amp;CK框架攻击行为转化而来的，例如windows下的<code>whoami</code>查询规则(<del>正经人谁查whoami啊</del>):</p>
-<pre class="line-numbers language-none"><code class="language-none">process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and process.name : &quot;whoami.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>我们拿这条规则做分析，这条规则匹配了当进程开始的时候，进程名为<code>whoami.exe</code>的时候触发，所以我们把<code>whoami.exe</code>复制一下，就可以绕过去了:</p>
-<pre class="line-numbers language-none"><code class="language-none">copy C:\Windows\System32\whoami.exe C:\Windows\temp\x.exe
-C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>是不是把siem想的简单了，这跟通过复制<code>net.exe</code>绕过添加用户一模一样，仔细观察下elk里面的字段，可以发现<code>process.pe.original_file_name</code>仍然保留了<code>whoami.exe</code>，这是PE文件里面固定的，所以我们手动把预警规则修改一下:</p>
-<pre class="line-numbers language-none"><code class="language-none">process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and process.pe.original_file_name: &quot;whoami.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2021/08/02/siem-on-elk.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>参考链接里有详细的安装步骤，测试客户端是Windows，安装了如下软件：</p>
-<ul>
-<li>sysmon.exe(<a target="_blank" rel="noopener" href="https://github.com/SwiftOnSecurity/sysmon-config">配置文件</a>)<ul>
-<li><code>.\sysmon64.exe -accepteula -i c:\windows\config.xml</code></li>
-</ul>
-</li>
-<li>winlogbeat.exe<ul>
-<li><code>.\install-service-winlogbeat.ps1</code></li>
-<li><code>.\winlogbeat.exe setup -e</code></li>
-</ul>
-</li>
-<li>ElasticAgent.exe<ul>
-<li><code>.\elastic-agent.exe install  --insecure -f --fleet-server-es=&lt;ES&gt; --fleet-server-service-token=&lt;token&gt;</code></li>
-</ul>
-</li>
-</ul>
-<h3 id="规则监测和绕过"><a href="#规则监测和绕过" class="headerlink" title="规则监测和绕过"></a>规则监测和绕过</h3><p>规则有5种查询，一般使用EQL(Event Query Language)查询类型:<br><img src="/2021/08/02/siem-on-elk/siem-1.png"><br>SIEM有内置很多规则，默认是关闭状态，这些规则都是ATT&amp;CK框架攻击行为转化而来的，例如windows下的<code>whoami</code>查询规则(<del>正经人谁查whoami啊</del>):</p>
-<pre class="line-numbers language-none"><code class="language-none">process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and process.name : &quot;whoami.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>我们拿这条规则做分析，这条规则匹配了当进程开始的时候，进程名为<code>whoami.exe</code>的时候触发，所以我们把<code>whoami.exe</code>复制一下，就可以绕过去了:</p>
-<pre class="line-numbers language-none"><code class="language-none">copy C:\Windows\System32\whoami.exe C:\Windows\temp\x.exe
-C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>是不是把siem想的简单了，这跟通过复制<code>net.exe</code>绕过添加用户一模一样，仔细观察下elk里面的字段，可以发现<code>process.pe.original_file_name</code>仍然保留了<code>whoami.exe</code>，这是PE文件里面固定的，所以我们手动把预警规则修改一下:</p>
-<pre class="line-numbers language-none"><code class="language-none">process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and process.pe.original_file_name: &quot;whoami.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2021/08/02/siem-on-elk.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2021/07/29/silverFish.html" >Silver调查报告</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2021-07-29  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p><a target="_blank" rel="noopener" href="https://www.prodaft.com/m/reports/SilverFish_TLPWHITE_v2.pdf">SilverFish_TLPWHITE</a></p>
-</blockquote>
-<h1 id="起点"><a href="#起点" class="headerlink" title="起点"></a>起点</h1><p>根据FireEye发布的IOC，有一个域名是databasegalore.com，这个域名下的IP在2304端口起了PowerMTA服务，web目录扫描之后发现example.php。PTI团队根据这两个网页的设备指纹和PowerMTA服务，扫描了全网的IPv4地址，发现一个IP地址: <code>81.4.122.203</code>，然后PTI团队对IP下的C段进行渗透测试，发现<code>81.4.122.101</code>存在一个C2服务器。</p>
-<h3 id="C2分析"><a href="#C2分析" class="headerlink" title="C2分析"></a>C2分析</h3><p><img src="/2021/07/29/silverFish/silver_C2.png"></p>
-<p>收集信息如下：</p>
-<ul>
-<li>ID</li>
-<li>UUID</li>
-<li>Instance</li>
-<li>IP</li>
-<li>Country</li>
-<li>Domain\User@Computer</li>
-<li>OS</li>
-<li>Build</li>
-<li>Architecture</li>
-<li>Antivirus</li>
-<li>Is Admin</li>
-<li>Integrity Level</li>
-<li>UAC Setting</li>
-<li>ConsentPromptBehaviorAdmin • PromptOnSecureDesktop</li>
-<li>First visit</li>
-</ul>
-<p>每个受害者页面都可以发送攻击指令，有如下：<br><img src="/2021/07/29/silverFish/silver_command.png"></p>
-<p>看了下是命令执行和UAC绕过比较多，C2服务器的防护措施有如下：</p>
-<ul>
-<li>使用AppArmor隔离环境</li>
-<li>关闭访问日志（web日志、SSH登录日志、命令行日志）</li>
-<li>使用IPTABLES只允许白名单IP访问</li>
-</ul>
-	
-
-	</div>
-  <a type="button" href="/2021/07/29/silverFish.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p><a target="_blank" rel="noopener" href="https://www.prodaft.com/m/reports/SilverFish_TLPWHITE_v2.pdf">SilverFish_TLPWHITE</a></p>
-</blockquote>
-<h1 id="起点"><a href="#起点" class="headerlink" title="起点"></a>起点</h1><p>根据FireEye发布的IOC，有一个域名是databasegalore.com，这个域名下的IP在2304端口起了PowerMTA服务，web目录扫描之后发现example.php。PTI团队根据这两个网页的设备指纹和PowerMTA服务，扫描了全网的IPv4地址，发现一个IP地址: <code>81.4.122.203</code>，然后PTI团队对IP下的C段进行渗透测试，发现<code>81.4.122.101</code>存在一个C2服务器。</p>
-<h3 id="C2分析"><a href="#C2分析" class="headerlink" title="C2分析"></a>C2分析</h3><p><img src="/2021/07/29/silverFish/silver_C2.png"></p>
-<p>收集信息如下：</p>
-<ul>
-<li>ID</li>
-<li>UUID</li>
-<li>Instance</li>
-<li>IP</li>
-<li>Country</li>
-<li>Domain\User@Computer</li>
-<li>OS</li>
-<li>Build</li>
-<li>Architecture</li>
-<li>Antivirus</li>
-<li>Is Admin</li>
-<li>Integrity Level</li>
-<li>UAC Setting</li>
-<li>ConsentPromptBehaviorAdmin • PromptOnSecureDesktop</li>
-<li>First visit</li>
-</ul>
-<p>每个受害者页面都可以发送攻击指令，有如下：<br><img src="/2021/07/29/silverFish/silver_command.png"></p>
-<p>看了下是命令执行和UAC绕过比较多，C2服务器的防护措施有如下：</p>
-<ul>
-<li>使用AppArmor隔离环境</li>
-<li>关闭访问日志（web日志、SSH登录日志、命令行日志）</li>
-<li>使用IPTABLES只允许白名单IP访问</li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2021/07/29/silverFish.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -602,6 +762,8 @@ C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
+			<li><a href="/categories/Java/">Java<span>3</span></a></li>
+		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
@@ -627,23 +789,23 @@ C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
+      </li>
+    
+      <li>
+        <a href="/2022/03/22/java-reflection-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(2)-反射执行系统命令</a>
+      </li>
+    
+      <li>
+        <a href="/2022/03/22/java-reflection.html" ><i class="fa fa-file-o"></i>Java安全笔记(1)-反射机制</a>
+      </li>
+    
+      <li>
         <a href="/2022/03/21/jndi-exec-by-mvel.html" ><i class="fa fa-file-o"></i>JNDI Bypass - MVEL</a>
       </li>
     
       <li>
         <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
-      </li>
-    
-      <li>
-        <a href="/2021/08/06/windows-ntlm-smb-scan.html" ><i class="fa fa-file-o"></i>NTLM端口信息探测</a>
-      </li>
-    
-      <li>
-        <a href="/2021/08/02/siem-on-elk.html" ><i class="fa fa-file-o"></i>SIEM On ELK</a>
-      </li>
-    
-      <li>
-        <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
       </li>
     
   </ul>

