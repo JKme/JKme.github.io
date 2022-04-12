@@ -117,6 +117,120 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2019/10/23/winrm.html" >winRM端口复用</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-10-23  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>基本原理是利用windows的远程管理服务WinRM,在Windows 2003 Server加入了内核级驱动程序(http.sys),用于监听http流量并根据URL进行处理，允许任意用户进程共享用于HTTP流量的TCP端口。通过http.sys,多个进程可以同时监听同一端口的HTTP流量</p>
+<p>系统默认有10个DACl，可以通过<code>netsh http show urlacl</code>看到具体内容，其中5985是http端口，5986是https，在我的Windows Server 2012上面默认没有开启，只开启了一个5985端口。</p>
+<h3 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h3><p>Windows 2008默认不开启该服务，windows 2012以及以上默认开启该服务。</p>
+<h3 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h3><p>本地机器需要连接远程WinRM服务的时候，本地也需要开启WinRM服务，然后设置信任连接的主机，执行命令:</p>
+<pre class="line-numbers language-none"><code class="language-none">winrm quickconfig -q
+winrm set winrm&#x2F;config&#x2F;Client @&#123;TrustedHosts&#x3D;&quot;*&quot;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>连接(默认端口是5985，需要加上去):</p>
+<pre class="line-numbers language-none"><code class="language-none">winrs -r:http:&#x2F;&#x2F;&lt;ip&gt;:&lt;port&gt; -u:&lt;user&gt; -p:&lt;pass&gt; &lt;command&gt; <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2019/10/23/winrm.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>基本原理是利用windows的远程管理服务WinRM,在Windows 2003 Server加入了内核级驱动程序(http.sys),用于监听http流量并根据URL进行处理，允许任意用户进程共享用于HTTP流量的TCP端口。通过http.sys,多个进程可以同时监听同一端口的HTTP流量</p>
+<p>系统默认有10个DACl，可以通过<code>netsh http show urlacl</code>看到具体内容，其中5985是http端口，5986是https，在我的Windows Server 2012上面默认没有开启，只开启了一个5985端口。</p>
+<h3 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h3><p>Windows 2008默认不开启该服务，windows 2012以及以上默认开启该服务。</p>
+<h3 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h3><p>本地机器需要连接远程WinRM服务的时候，本地也需要开启WinRM服务，然后设置信任连接的主机，执行命令:</p>
+<pre class="line-numbers language-none"><code class="language-none">winrm quickconfig -q
+winrm set winrm&#x2F;config&#x2F;Client @&#123;TrustedHosts&#x3D;&quot;*&quot;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>连接(默认端口是5985，需要加上去):</p>
+<pre class="line-numbers language-none"><code class="language-none">winrs -r:http:&#x2F;&#x2F;&lt;ip&gt;:&lt;port&gt; -u:&lt;user&gt; -p:&lt;pass&gt; &lt;command&gt; <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2019/10/23/winrm.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2019/09/17/nginx_path_traversle.html" >nginx的目录穿越</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-09-17  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>nginx在使用proxy_pass的时候，需要处理静态文件有时候会这样做:</p>
+<pre class="line-numbers language-none"><code class="language-none">location &#x2F;static &#123;
+               alias &#x2F;home&#x2F;uploads&#x2F;static&#x2F;;
+       &#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>payload:</p>
+<pre class="line-numbers language-none"><code class="language-none">curl vuln.com&#x2F;static..&#x2F;requirements.pip<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>上面如果是两个路径最后都没有带<code>/</code>或者都带<code>/</code>则该漏洞不存在。</p>
+<p>代理末尾添加/之后，nginx会先对uri进行normalized处理，使用../读取文件会失败，当没有添加/的时候，nginx会把原请求直接转发给后端服务器，所以可以读取成功。</p>
+
+	
+
+	</div>
+  <a type="button" href="/2019/09/17/nginx_path_traversle.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>nginx在使用proxy_pass的时候，需要处理静态文件有时候会这样做:</p>
+<pre class="line-numbers language-none"><code class="language-none">location &#x2F;static &#123;
+               alias &#x2F;home&#x2F;uploads&#x2F;static&#x2F;;
+       &#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>payload:</p>
+<pre class="line-numbers language-none"><code class="language-none">curl vuln.com&#x2F;static..&#x2F;requirements.pip<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>上面如果是两个路径最后都没有带<code>/</code>或者都带<code>/</code>则该漏洞不存在。</p>
+<p>代理末尾添加/之后，nginx会先对uri进行normalized处理，使用../读取文件会失败，当没有添加/的时候，nginx会把原请求直接转发给后端服务器，所以可以读取成功。</p>
+
+	
+	</div>
+  <a type="button" href="/2019/09/17/nginx_path_traversle.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2019/07/22/fastjson-rce.html" >fastjson被动扫描Burp插件</a>
 		</h3>
 		</div>
@@ -407,132 +521,6 @@ kill -9 $$ <span aria-hidden="true" class="line-numbers-rows"><span></span><span
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2019/06/18/tornado-pentest.html" >记一次测试Tornado</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2019-06-18  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>常见越权测试完了之后，有一个上传文件的地方，上传的文件名存在反射xss，主要记录下任意文件读取和远程命令执行。</p>
-<h3 id="任意文件读取"><a href="#任意文件读取" class="headerlink" title="任意文件读取"></a>任意文件读取</h3><ol>
-<li><p>刚开始测试任意文件读取的时候，找不到要读取的文件，问了开发目录结构才读出来，好蠢。实际可以通过<code>/proc/self/cmdline</code> 查看当前程序的运行参数，可以获取到源代码文件名。</p>
-</li>
-<li><p>一般python开发的时候，根目录可能存在文件: <code>README.md</code>,<code>requirements.txt</code>,<code>app.py</code>,<code>.git/config</code>之类的文件</p>
-</li>
-</ol>
-<h3 id="远程命令执行"><a href="#远程命令执行" class="headerlink" title="远程命令执行"></a>远程命令执行</h3><p>读取到源代码之后，中间有不一部分的代码是这样的，接收请求传过来的参数，然后列目录:</p>
-<pre class="line-numbers language-none"><code class="language-none">res &#x3D; exec_cmd4(&quot;ls -l %s|awk &#39;&#123;print $5&#125;&#39;&quot; % abs_file_name)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>exec_cmd4是开发自己写的函数，通过任意文件读取可以找到函数定义:</p>
-<pre class="line-numbers language-none"><code class="language-none">def exec_cmd4(cmd, no_print&#x3D;False):    
-	if not no_print:        
-		logger.debug(cmd)    
-		p &#x3D; subprocess.Popen(cmd, executable&#x3D;\&quot;&#x2F;bin&#x2F;bash\&quot;, shell&#x3D;True, stderr&#x3D;subprocess.PIPE, stdout&#x3D;subprocess.PIPE)    
-		return p.communicate();<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>这里存在命令注入漏洞，链接: <a target="_blank" rel="noopener" href="https://strcpy.me/index.php/archives/787/">https://strcpy.me/index.php/archives/787/</a></p>
-<p>抄一下demo代码:</p>
-	
-
-	</div>
-  <a type="button" href="/2019/06/18/tornado-pentest.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>常见越权测试完了之后，有一个上传文件的地方，上传的文件名存在反射xss，主要记录下任意文件读取和远程命令执行。</p>
-<h3 id="任意文件读取"><a href="#任意文件读取" class="headerlink" title="任意文件读取"></a>任意文件读取</h3><ol>
-<li><p>刚开始测试任意文件读取的时候，找不到要读取的文件，问了开发目录结构才读出来，好蠢。实际可以通过<code>/proc/self/cmdline</code> 查看当前程序的运行参数，可以获取到源代码文件名。</p>
-</li>
-<li><p>一般python开发的时候，根目录可能存在文件: <code>README.md</code>,<code>requirements.txt</code>,<code>app.py</code>,<code>.git/config</code>之类的文件</p>
-</li>
-</ol>
-<h3 id="远程命令执行"><a href="#远程命令执行" class="headerlink" title="远程命令执行"></a>远程命令执行</h3><p>读取到源代码之后，中间有不一部分的代码是这样的，接收请求传过来的参数，然后列目录:</p>
-<pre class="line-numbers language-none"><code class="language-none">res &#x3D; exec_cmd4(&quot;ls -l %s|awk &#39;&#123;print $5&#125;&#39;&quot; % abs_file_name)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>exec_cmd4是开发自己写的函数，通过任意文件读取可以找到函数定义:</p>
-<pre class="line-numbers language-none"><code class="language-none">def exec_cmd4(cmd, no_print&#x3D;False):    
-	if not no_print:        
-		logger.debug(cmd)    
-		p &#x3D; subprocess.Popen(cmd, executable&#x3D;\&quot;&#x2F;bin&#x2F;bash\&quot;, shell&#x3D;True, stderr&#x3D;subprocess.PIPE, stdout&#x3D;subprocess.PIPE)    
-		return p.communicate();<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>这里存在命令注入漏洞，链接: <a target="_blank" rel="noopener" href="https://strcpy.me/index.php/archives/787/">https://strcpy.me/index.php/archives/787/</a></p>
-<p>抄一下demo代码:</p>
-	
-	</div>
-  <a type="button" href="/2019/06/18/tornado-pentest.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2019/05/27/web-url-hacking.html" >Web的URL Hacking</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2019-05-27  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>碰到一个任意URL跳转漏洞，第一次测的时候居然没有测出来，记录下笔记，以下是绕过的方式:</p>
-<h3 id="0x01-小老鼠跳转绕过"><a href="#0x01-小老鼠跳转绕过" class="headerlink" title="0x01: 小老鼠跳转绕过"></a>0x01: 小老鼠跳转绕过</h3><p><img src="/2019/05/27/web-url-hacking/15589534351266.jpg"></p>
-<h3 id="0x02-跳转绕过"><a href="#0x02-跳转绕过" class="headerlink" title="0x02: ?跳转绕过"></a>0x02: ?跳转绕过</h3><p><img src="/2019/05/27/web-url-hacking/15589535373195.jpg"></p>
-<h3 id="0x03-绕过"><a href="#0x03-绕过" class="headerlink" title="0x03: #绕过"></a>0x03: #绕过</h3><p><img src="/2019/05/27/web-url-hacking/15589537014838.jpg"></p>
-<h3 id="0x04-绕过"><a href="#0x04-绕过" class="headerlink" title="0x04: /绕过"></a>0x04: /绕过</h3><p><img src="/2019/05/27/web-url-hacking/15589537987606.jpg"></p>
-<h3 id="0x05-绕过"><a href="#0x05-绕过" class="headerlink" title="0x05: \绕过"></a>0x05: \绕过</h3>
-	
-
-	</div>
-  <a type="button" href="/2019/05/27/web-url-hacking.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>碰到一个任意URL跳转漏洞，第一次测的时候居然没有测出来，记录下笔记，以下是绕过的方式:</p>
-<h3 id="0x01-小老鼠跳转绕过"><a href="#0x01-小老鼠跳转绕过" class="headerlink" title="0x01: 小老鼠跳转绕过"></a>0x01: 小老鼠跳转绕过</h3><p><img src="/2019/05/27/web-url-hacking/15589534351266.jpg"></p>
-<h3 id="0x02-跳转绕过"><a href="#0x02-跳转绕过" class="headerlink" title="0x02: ?跳转绕过"></a>0x02: ?跳转绕过</h3><p><img src="/2019/05/27/web-url-hacking/15589535373195.jpg"></p>
-<h3 id="0x03-绕过"><a href="#0x03-绕过" class="headerlink" title="0x03: #绕过"></a>0x03: #绕过</h3><p><img src="/2019/05/27/web-url-hacking/15589537014838.jpg"></p>
-<h3 id="0x04-绕过"><a href="#0x04-绕过" class="headerlink" title="0x04: /绕过"></a>0x04: /绕过</h3><p><img src="/2019/05/27/web-url-hacking/15589537987606.jpg"></p>
-<h3 id="0x05-绕过"><a href="#0x05-绕过" class="headerlink" title="0x05: \绕过"></a>0x05: \绕过</h3>
-	
-	</div>
-  <a type="button" href="/2019/05/27/web-url-hacking.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -584,7 +572,7 @@ kill -9 $$ <span aria-hidden="true" class="line-numbers-rows"><span></span><span
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>3</span></a></li>
+			<li><a href="/categories/Java/">Java<span>5</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
@@ -611,6 +599,14 @@ kill -9 $$ <span aria-hidden="true" class="line-numbers-rows"><span></span><span
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
+      </li>
+    
+      <li>
+        <a href="/2022/04/06/CVE-2022-22965.html" ><i class="fa fa-file-o"></i>CVE-2022-22965漏洞记录</a>
+      </li>
+    
+      <li>
         <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
       </li>
     
@@ -620,14 +616,6 @@ kill -9 $$ <span aria-hidden="true" class="line-numbers-rows"><span></span><span
     
       <li>
         <a href="/2022/03/22/java-reflection.html" ><i class="fa fa-file-o"></i>Java安全笔记(1)-反射机制</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/21/jndi-exec-by-mvel.html" ><i class="fa fa-file-o"></i>JNDI Bypass - MVEL</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
       </li>
     
   </ul>

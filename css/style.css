@@ -258,7 +258,7 @@ a.inline-ref:hover {
 blockquote {
     border-left: 5px solid #ccc;
     font-size: .9em;
-    background-color: #3a3a3a
+   /* background-color: #3a3a3a4c;*/
 }
 
 blockquote p,
@@ -266,7 +266,7 @@ blockquote ol,
 blockquote ul,
 blockquote li,
 .slogan {
-    font-family: DOS, SimHei, Monaco, Menlo, Consolas, 'Courier New', monospace
+    font-family: Monaco, Menlo, Consolas, 'Courier New', monospace
 }
 
 img,

@@ -117,6 +117,166 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2020/08/28/CloudFront-Https.html" >Domain Fronting隐藏HTTPS</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-08-28  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>记录一下当使用<code>Domain Fronting</code>中使用<code>https</code>来上线时候的坑，因为查了半圈没有找到类似的资料，为啥非要https呢，因为<code>node32</code>对http的流量很敏感。</p>
+<p>###目标</p>
+<ol>
+<li>使用<code>Windows/beacon_https/reverse_https</code>作为上线的payload</li>
+<li>AWS的<code>Cloudfront</code>作为前置域名</li>
+</ol>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><pre class="line-numbers language-none"><code class="language-none">域名: example.com
+VPS(Centos)
+cloudflare(只作域名解析,不添加任何其他功能，不加CDN，不加HTTPS)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+<h2 id="部署工作"><a href="#部署工作" class="headerlink" title="部署工作"></a>部署工作</h2><p>安装的apache是测试连通性，除此之外没有任何用处。</p>
+<pre class="line-numbers language-none"><code class="language-none">yum install httpd
+systemctl start httpd<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h4 id="增加apache配置文件"><a href="#增加apache配置文件" class="headerlink" title="增加apache配置文件"></a>增加apache配置文件</h4><pre class="line-numbers language-none"><code class="language-none">#&#x2F;etc&#x2F;httpd&#x2F;conf.d&#x2F;vhost.conf
+&lt;VirtualHost *:80&gt;
+   DocumentRoot &#x2F;var&#x2F;www&#x2F;html
+   ServerName example.com
+
+
+RewriteEngine on
+RewriteCond %&#123;SERVER_NAME&#125; &#x3D;example.com
+RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125; [END,NE,R&#x3D;permanent]
+&lt;&#x2F;VirtualHost&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2020/08/28/CloudFront-Https.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>记录一下当使用<code>Domain Fronting</code>中使用<code>https</code>来上线时候的坑，因为查了半圈没有找到类似的资料，为啥非要https呢，因为<code>node32</code>对http的流量很敏感。</p>
+<p>###目标</p>
+<ol>
+<li>使用<code>Windows/beacon_https/reverse_https</code>作为上线的payload</li>
+<li>AWS的<code>Cloudfront</code>作为前置域名</li>
+</ol>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><pre class="line-numbers language-none"><code class="language-none">域名: example.com
+VPS(Centos)
+cloudflare(只作域名解析,不添加任何其他功能，不加CDN，不加HTTPS)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+<h2 id="部署工作"><a href="#部署工作" class="headerlink" title="部署工作"></a>部署工作</h2><p>安装的apache是测试连通性，除此之外没有任何用处。</p>
+<pre class="line-numbers language-none"><code class="language-none">yum install httpd
+systemctl start httpd<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h4 id="增加apache配置文件"><a href="#增加apache配置文件" class="headerlink" title="增加apache配置文件"></a>增加apache配置文件</h4><pre class="line-numbers language-none"><code class="language-none">#&#x2F;etc&#x2F;httpd&#x2F;conf.d&#x2F;vhost.conf
+&lt;VirtualHost *:80&gt;
+   DocumentRoot &#x2F;var&#x2F;www&#x2F;html
+   ServerName example.com
+
+
+RewriteEngine on
+RewriteCond %&#123;SERVER_NAME&#125; &#x3D;example.com
+RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125; [END,NE,R&#x3D;permanent]
+&lt;&#x2F;VirtualHost&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2020/08/28/CloudFront-Https.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2020/08/28/hide-your-windows-backdoor.html" >Windows后门隐藏</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-08-28  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="后门的构成"><a href="#后门的构成" class="headerlink" title="后门的构成"></a>后门的构成</h3><p>分为三个部分:</p>
+<ol>
+<li>shellcode的分离免杀</li>
+<li>C2服务器的隐藏</li>
+<li>Windows后门的设置</li>
+</ol>
+<h3 id="分离免杀"><a href="#分离免杀" class="headerlink" title="分离免杀"></a>分离免杀</h3><p>shellcode的分离免杀有很多种，这里把每个模块拿出来就是如下的几个:</p>
+<ol>
+<li>通信: <code>socket</code>,<code>http</code></li>
+<li><code>shellcode</code>的执行方式</li>
+<li><code>shellcode</code>的流量</li>
+<li>远程服务器的隐藏</li>
+</ol>
+<p>除去第二种方式有很多种可以执行shellcode的，其他三种最好的解决方案是实用<code>Domain Fronting</code>隐藏服务器，AES动态加密解密运行shellcode。这样子既隐藏了服务器，又避免shellcode的明文流量被探测到。当然上线之后的操作被探测不在被讨论的范围之内。</p>
+<p>在参考资料里面,<code>uknownsec</code>已经把主要的代码放出来了。只需要拿出来拼凑一下就可以食用。</p>
+<p>其中服务端出去python的功能之外，可以给自己加上一个<code>slack</code>机器人的通知，这样子上线的时候就有通知。</p>
+<h4 id="C2服务器的隐藏"><a href="#C2服务器的隐藏" class="headerlink" title="C2服务器的隐藏"></a>C2服务器的隐藏</h4>
+	
+
+	</div>
+  <a type="button" href="/2020/08/28/hide-your-windows-backdoor.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="后门的构成"><a href="#后门的构成" class="headerlink" title="后门的构成"></a>后门的构成</h3><p>分为三个部分:</p>
+<ol>
+<li>shellcode的分离免杀</li>
+<li>C2服务器的隐藏</li>
+<li>Windows后门的设置</li>
+</ol>
+<h3 id="分离免杀"><a href="#分离免杀" class="headerlink" title="分离免杀"></a>分离免杀</h3><p>shellcode的分离免杀有很多种，这里把每个模块拿出来就是如下的几个:</p>
+<ol>
+<li>通信: <code>socket</code>,<code>http</code></li>
+<li><code>shellcode</code>的执行方式</li>
+<li><code>shellcode</code>的流量</li>
+<li>远程服务器的隐藏</li>
+</ol>
+<p>除去第二种方式有很多种可以执行shellcode的，其他三种最好的解决方案是实用<code>Domain Fronting</code>隐藏服务器，AES动态加密解密运行shellcode。这样子既隐藏了服务器，又避免shellcode的明文流量被探测到。当然上线之后的操作被探测不在被讨论的范围之内。</p>
+<p>在参考资料里面,<code>uknownsec</code>已经把主要的代码放出来了。只需要拿出来拼凑一下就可以食用。</p>
+<p>其中服务端出去python的功能之外，可以给自己加上一个<code>slack</code>机器人的通知，这样子上线的时候就有通知。</p>
+<h4 id="C2服务器的隐藏"><a href="#C2服务器的隐藏" class="headerlink" title="C2服务器的隐藏"></a>C2服务器的隐藏</h4>
+	
+	</div>
+  <a type="button" href="/2020/08/28/hide-your-windows-backdoor.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2020/07/29/mysql-UDF.html" >MySql UDF提权注意事项</a>
 		</h3>
 		</div>
@@ -427,182 +587,6 @@ hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2020/05/06/python-elk.html" >Python处理xlsx到ELK</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2020-05-06  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>需要把数据从xlsx读到elk，再做数据分析，遇到一个问题是把当在elk里面处理日期类的数据的时候，需要把数据转换为Date类型:</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">float2utc</span><span class="token punctuation">(</span>num<span class="token punctuation">)</span><span class="token punctuation">:</span>
-	date <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">(</span><span class="token operator">*</span>xldate_as_tuple<span class="token punctuation">(</span>num<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-
-	local <span class="token operator">=</span> pytz<span class="token punctuation">.</span>timezone<span class="token punctuation">(</span><span class="token string">"Asia/Shanghai"</span><span class="token punctuation">)</span>
-	local_dt <span class="token operator">=</span> local<span class="token punctuation">.</span>localize<span class="token punctuation">(</span>date<span class="token punctuation">,</span> is_dst<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span>
-	utc_dt <span class="token operator">=</span> local_dt<span class="token punctuation">.</span>astimezone<span class="token punctuation">(</span>pytz<span class="token punctuation">.</span>utc<span class="token punctuation">)</span>
-	timeStr <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">.</span>strftime<span class="token punctuation">(</span>utc_dt<span class="token punctuation">,</span> <span class="token string">"%Y-%m-%dT%H:%M:%S.%f"</span><span class="token punctuation">)</span>
-	timeStr <span class="token operator">=</span> timeStr<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token operator">-</span><span class="token number">3</span><span class="token punctuation">]</span>
-	<span class="token comment">#cell = date.strftime('%Y/%m/%d %H:%M')</span>
-	<span class="token keyword">return</span> timeStr <span class="token operator">+</span> <span class="token string">"Z"</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<ul>
-<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon">https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon</a></li>
-</ul>
-
-	
-
-	</div>
-  <a type="button" href="/2020/05/06/python-elk.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>需要把数据从xlsx读到elk，再做数据分析，遇到一个问题是把当在elk里面处理日期类的数据的时候，需要把数据转换为Date类型:</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">float2utc</span><span class="token punctuation">(</span>num<span class="token punctuation">)</span><span class="token punctuation">:</span>
-	date <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">(</span><span class="token operator">*</span>xldate_as_tuple<span class="token punctuation">(</span>num<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-
-	local <span class="token operator">=</span> pytz<span class="token punctuation">.</span>timezone<span class="token punctuation">(</span><span class="token string">"Asia/Shanghai"</span><span class="token punctuation">)</span>
-	local_dt <span class="token operator">=</span> local<span class="token punctuation">.</span>localize<span class="token punctuation">(</span>date<span class="token punctuation">,</span> is_dst<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span>
-	utc_dt <span class="token operator">=</span> local_dt<span class="token punctuation">.</span>astimezone<span class="token punctuation">(</span>pytz<span class="token punctuation">.</span>utc<span class="token punctuation">)</span>
-	timeStr <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">.</span>strftime<span class="token punctuation">(</span>utc_dt<span class="token punctuation">,</span> <span class="token string">"%Y-%m-%dT%H:%M:%S.%f"</span><span class="token punctuation">)</span>
-	timeStr <span class="token operator">=</span> timeStr<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token operator">-</span><span class="token number">3</span><span class="token punctuation">]</span>
-	<span class="token comment">#cell = date.strftime('%Y/%m/%d %H:%M')</span>
-	<span class="token keyword">return</span> timeStr <span class="token operator">+</span> <span class="token string">"Z"</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<ul>
-<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon">https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon</a></li>
-</ul>
-
-	
-	</div>
-  <a type="button" href="/2020/05/06/python-elk.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2020/04/22/how-to-hack-bank.html" >How to Hack Bank</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2020-04-22  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>[Thread-Phineas-Phisher-Hack-Back-Bank]<a target="_blank" rel="noopener" href="https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank">https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank</a></p>
-</blockquote>
-<h3 id="从浏览器dump登陆Cookie"><a href="#从浏览器dump登陆Cookie" class="headerlink" title="从浏览器dump登陆Cookie"></a>从浏览器dump登陆Cookie</h3><pre class="line-numbers language-none"><code class="language-none">procdump64 &#x2F;accepteula -r -ma PID_of_browser
-strings64 &#x2F;accepteula * .dmp | findstr PHPSESSID 2&gt; nul
-findstr PHPSESSID * .dmp&gt; tmp
-strings64 &#x2F;accepteula tmp | findstr PHPSESSID 2&gt; nul<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="准备后路"><a href="#准备后路" class="headerlink" title="准备后路"></a>准备后路</h3><ol>
-<li>常用的操作用一个后门</li>
-<li>留一个备用的后门，第一个失效之后启用</li>
-</ol>
-<h3 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h3><p>用到一下模块:</p>
-<pre class="line-numbers language-none"><code class="language-none">MSF每5s截屏:
-post&#x2F;windows&#x2F;gather&#x2F;screen_spy
-
-再加上一个键盘记录器，通过这两个东西收集信息，了解大概的工作流程。
-
-
-使用Windows自带的PSR截屏：
-psr.exe &#x2F;start &#x2F;gui 0 &#x2F;output C:\Users\Dan\Desktop\cool.zip;
-Start-Sleep -s 20;
-psr.exe &#x2F;stop;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<h3 id="END"><a href="#END" class="headerlink" title="END"></a>END</h3><pre class="line-numbers language-none"><code class="language-none">Hacking has made me feel alive. It started as a way to self-medicate depression. Later I
-realized that, in reality, I could do something positive. I don&#39;t regret the way I grew up at 
-all, it brought several beautiful experiences to my life. But I knew I couldn&#39;t continue 
-living that way. So I began to spend more time away from my computer, with other people, 
-learning to open myself to the world, to feel my emotions, to connect with others, to accept 
-risks and be vulnerable. Things much harder than hacking, but at the mere hour the reward is 
-more worth it. It is still an effort, but even if it is slow and wobbly, I feel that I am on 
-my way.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2020/04/22/how-to-hack-bank.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>[Thread-Phineas-Phisher-Hack-Back-Bank]<a target="_blank" rel="noopener" href="https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank">https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank</a></p>
-</blockquote>
-<h3 id="从浏览器dump登陆Cookie"><a href="#从浏览器dump登陆Cookie" class="headerlink" title="从浏览器dump登陆Cookie"></a>从浏览器dump登陆Cookie</h3><pre class="line-numbers language-none"><code class="language-none">procdump64 &#x2F;accepteula -r -ma PID_of_browser
-strings64 &#x2F;accepteula * .dmp | findstr PHPSESSID 2&gt; nul
-findstr PHPSESSID * .dmp&gt; tmp
-strings64 &#x2F;accepteula tmp | findstr PHPSESSID 2&gt; nul<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="准备后路"><a href="#准备后路" class="headerlink" title="准备后路"></a>准备后路</h3><ol>
-<li>常用的操作用一个后门</li>
-<li>留一个备用的后门，第一个失效之后启用</li>
-</ol>
-<h3 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h3><p>用到一下模块:</p>
-<pre class="line-numbers language-none"><code class="language-none">MSF每5s截屏:
-post&#x2F;windows&#x2F;gather&#x2F;screen_spy
-
-再加上一个键盘记录器，通过这两个东西收集信息，了解大概的工作流程。
-
-
-使用Windows自带的PSR截屏：
-psr.exe &#x2F;start &#x2F;gui 0 &#x2F;output C:\Users\Dan\Desktop\cool.zip;
-Start-Sleep -s 20;
-psr.exe &#x2F;stop;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<h3 id="END"><a href="#END" class="headerlink" title="END"></a>END</h3><pre class="line-numbers language-none"><code class="language-none">Hacking has made me feel alive. It started as a way to self-medicate depression. Later I
-realized that, in reality, I could do something positive. I don&#39;t regret the way I grew up at 
-all, it brought several beautiful experiences to my life. But I knew I couldn&#39;t continue 
-living that way. So I began to spend more time away from my computer, with other people, 
-learning to open myself to the world, to feel my emotions, to connect with others, to accept 
-risks and be vulnerable. Things much harder than hacking, but at the mere hour the reward is 
-more worth it. It is still an effort, but even if it is slow and wobbly, I feel that I am on 
-my way.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2020/04/22/how-to-hack-bank.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -654,7 +638,7 @@ my way.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></s
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>3</span></a></li>
+			<li><a href="/categories/Java/">Java<span>5</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
@@ -681,6 +665,14 @@ my way.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></s
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
+      </li>
+    
+      <li>
+        <a href="/2022/04/06/CVE-2022-22965.html" ><i class="fa fa-file-o"></i>CVE-2022-22965漏洞记录</a>
+      </li>
+    
+      <li>
         <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
       </li>
     
@@ -690,14 +682,6 @@ my way.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></s
     
       <li>
         <a href="/2022/03/22/java-reflection.html" ><i class="fa fa-file-o"></i>Java安全笔记(1)-反射机制</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/21/jndi-exec-by-mvel.html" ><i class="fa fa-file-o"></i>JNDI Bypass - MVEL</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
       </li>
     
   </ul>

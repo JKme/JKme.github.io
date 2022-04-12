@@ -1,0 +1,349 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>BurpSuite插件开发注意事项 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="0x1. Base64的坑在JDK8版本里面，Java自带的java.util.Base64是根据RFC4648和RFC2045实现的，但是JDK7里面的sun.misc.BASE64Encoder，是RFC1521实现的。这会导致java.util.Base64解码JDK7版本的Base64发生错误：Illegal base64 character。
+可以使用shiro的Base64解决，增加maven依赖:
+&amp;lt;dependency&gt;
+    &amp;lt;groupId&gt;org.apache.shiro&amp;lt;/groupId&gt;
+    &amp;lt;artifactId&gt;shiro-core&amp;lt;/artifactId&gt;
+    &amp;lt;version&gt;1.6.0&amp;lt;/version&gt;
+&amp;lt;/dependency&gt;
+
+PS: chybeta师傅在漏洞百出里面提出过，Shiro在Base64解码的时候会丢弃非Base64字符串，所以可以利用这一点绕过WAF防火墙，比如填充垃圾字符串。
+0x2. RSA公私钥Python加解密的时候，使用的是PKCS#1格式的公私钥：
+# 公钥
+-----BEGIN RSA PUBLIC KEY-----
+-----END RSA PUBLIC KEY-----
+  
+# 私钥
+-----BEGIN RSA PRIVATE KEY-----
+-----END RSA PRIVATE KEY-----
+
+但是在Java里面需要使用PKCS#8格式:
+# 公钥
+-----BEGIN PUBLIC KEY-----
+-----END PUBLIC KEY-----
+  
+# 私钥
+-----BEGIN PRIVATE KEY-----
+-----END PRIVATE KEY-----"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="BurpSuite插件开发注意事项"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> BurpSuite插件开发注意事项</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h2 id="0x1-Base64的坑"><a href="#0x1-Base64的坑" class="headerlink" title="0x1. Base64的坑"></a>0x1. Base64的坑</h2><p>在JDK8版本里面，Java自带的<code>java.util.Base64</code>是根据RFC4648和RFC2045实现的，但是JDK7里面的<code>sun.misc.BASE64Encoder</code>，是RFC1521实现的。<br>这会导致<code>java.util.Base64</code>解码JDK7版本的Base64发生错误：<code>Illegal base64 character</code>。</p>
+<p>可以使用shiro的Base64解决，增加maven依赖:</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token generics"><span class="token punctuation">&lt;</span>dependency<span class="token punctuation">></span></span>
+    <span class="token generics"><span class="token punctuation">&lt;</span>groupId<span class="token punctuation">></span></span>org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>shiro<span class="token operator">&lt;</span><span class="token operator">/</span>groupId<span class="token operator">></span>
+    <span class="token generics"><span class="token punctuation">&lt;</span>artifactId<span class="token punctuation">></span></span>shiro<span class="token operator">-</span>core<span class="token operator">&lt;</span><span class="token operator">/</span>artifactId<span class="token operator">></span>
+    <span class="token generics"><span class="token punctuation">&lt;</span>version<span class="token punctuation">></span></span><span class="token number">1.6</span><span class="token number">.0</span><span class="token operator">&lt;</span><span class="token operator">/</span>version<span class="token operator">></span>
+<span class="token operator">&lt;</span><span class="token operator">/</span>dependency<span class="token operator">></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>PS: chybeta师傅在漏洞百出里面提出过，Shiro在Base64解码的时候会丢弃非Base64字符串，所以可以利用这一点绕过WAF防火墙，比如填充垃圾字符串。</p>
+<h2 id="0x2-RSA公私钥"><a href="#0x2-RSA公私钥" class="headerlink" title="0x2. RSA公私钥"></a>0x2. RSA公私钥</h2><p>Python加解密的时候，使用的是PKCS#1格式的公私钥：</p>
+<pre class="line-numbers language-none"><code class="language-none"># 公钥
+-----BEGIN RSA PUBLIC KEY-----
+-----END RSA PUBLIC KEY-----
+  
+# 私钥
+-----BEGIN RSA PRIVATE KEY-----
+-----END RSA PRIVATE KEY-----<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>但是在Java里面需要使用PKCS#8格式:</p>
+<pre class="line-numbers language-none"><code class="language-none"># 公钥
+-----BEGIN PUBLIC KEY-----
+-----END PUBLIC KEY-----
+  
+# 私钥
+-----BEGIN PRIVATE KEY-----
+-----END PRIVATE KEY-----<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>PKCS#1私钥转换为PKCS#8格式: <code>openssl pkcs8 -topk8 -inform PEM -in rsa_private.pem -outform pem -nocrypt -out pkcs8.pem</code></p>
+<p>RSA根据PKCS#8私钥生成公钥:  <code>openssl rsa -in pkcs8.pem -out rsa_public.pem -pubout</code></p>
+<h2 id="0x3-插件打包"><a href="#0x3-插件打包" class="headerlink" title="0x3. 插件打包"></a>0x3. 插件打包</h2><p>在插件开发完成之后，如果依赖有第三方的Jar包，需要把第三方的依赖也打包进去，修改pom.xml文件的build模块，加入maven的插件配置:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;build&gt;
+       &lt;plugins&gt;
+           &lt;plugin&gt;
+               &lt;groupId&gt;org.apache.maven.plugins&lt;&#x2F;groupId&gt;
+               &lt;artifactId&gt;maven-compiler-plugin&lt;&#x2F;artifactId&gt;
+               &lt;configuration&gt;
+                   &lt;source&gt;8&lt;&#x2F;source&gt;
+                   &lt;target&gt;8&lt;&#x2F;target&gt;
+               &lt;&#x2F;configuration&gt;
+           &lt;&#x2F;plugin&gt;
+           &lt;plugin&gt;
+               &lt;artifactId&gt;maven-assembly-plugin&lt;&#x2F;artifactId&gt;
+               &lt;configuration&gt;
+                   &lt;archive&gt;
+                       &lt;manifest&gt;
+                           &lt;mainClass&gt;burp.BurpExtender&lt;&#x2F;mainClass&gt;
+                       &lt;&#x2F;manifest&gt;
+                   &lt;&#x2F;archive&gt;
+                   &lt;descriptorRefs&gt;
+                       &lt;descriptorRef&gt;jar-with-dependencies&lt;&#x2F;descriptorRef&gt;
+                   &lt;&#x2F;descriptorRefs&gt;
+               &lt;&#x2F;configuration&gt;
+           &lt;&#x2F;plugin&gt;
+       &lt;&#x2F;plugins&gt;
+   &lt;&#x2F;build&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>然后打包插件:</p>
+<pre class="line-numbers language-none"><code class="language-none">mvn clean 
+mvn clean compile assembly:single  <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h2 id="0x4-插件调试"><a href="#0x4-插件调试" class="headerlink" title="0x4. 插件调试"></a>0x4. 插件调试</h2><p>在开发插件的时候，如果需要对插件实时调试，可以选择先在官网下载安装社区版本的BurpSuite，然后启动Burpsuite:</p>
+<pre class="line-numbers language-none"><code class="language-none">java -agentlib:jdwp&#x3D;transport&#x3D;dt_socket,server&#x3D;y,suspend&#x3D;n,address&#x3D;5005 -jar burpsuite_community.jar
+<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>然后新增远程调试:<br><img src="/2022/04/11/burpsuite-ext-dev/1.png"></p>
+
+	</div>
+
+	
+	<span id="/2022/04/11/burpsuite-ext-dev.html" class="leancloud-visitors view" data-flag-title="BurpSuite插件开发注意事项">
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a type="button" class="btn btn-default disabled"><i class="fa fa-arrow-circle-o-left"></i>Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2022/04/06/CVE-2022-22965.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2022-04-11 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Java/">Java<span>5</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#0x1-Base64%E7%9A%84%E5%9D%91"><span class="toc-article-text">0x1. Base64的坑</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#0x2-RSA%E5%85%AC%E7%A7%81%E9%92%A5"><span class="toc-article-text">0x2. RSA公私钥</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#0x3-%E6%8F%92%E4%BB%B6%E6%89%93%E5%8C%85"><span class="toc-article-text">0x3. 插件打包</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#0x4-%E6%8F%92%E4%BB%B6%E8%B0%83%E8%AF%95"><span class="toc-article-text">0x4. 插件调试</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>
