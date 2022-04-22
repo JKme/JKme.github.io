@@ -117,6 +117,56 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2022/04/14/memory-shell-1.html" >Java安全笔记(3)-内存马之Filter型</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2022-04-14  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h2><p><img src="/2022/04/14/memory-shell-1/Servlet.png"></p>
+<p>当处理请求的时候：请求 → Listener → Filter → Servlet</p>
+<h4 id="Listener"><a href="#Listener" class="headerlink" title="Listener"></a>Listener</h4><p>Listener也称之为监听器，可以监听Application、Session和Request对象的创建、销毁事件，以及监听对其中添加、修改、删除属性事件，并自动执行自定义的功能。</p>
+<h4 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h4><p>Filter也称之为过滤器，可以动态地修改HttpServletRequest，HttpServletResponse中的头和数据。</p>
+<h4 id="Servlet-1"><a href="#Servlet-1" class="headerlink" title="Servlet"></a>Servlet</h4><p>Servlet是运行在 Web 服务器或应用服务器上的程序，它是作为来自 HTTP 客户端的请求和 HTTP 服务器上的数据库或应用程序之间的中间层。它负责处理用户的请求，并根据请求生成相应的返回信息提供给用户。Servlet 可以理解为某一个路径后续的业务处理逻辑。</p>
+<p>Tomcat是http服务器+servlet容器，当Tomcat作为Servlet容器的时候，讲http请求文本解析之后封装成<code>HttpServletRequest</code>类型的request对象，传递给Servlet，同时讲相应的信息封装为<code>HttpServletResponse</code>类型的response对象，将response对象交给tomcat，tomcat格式化之后返回给浏览器</p>
+	
+
+	</div>
+  <a type="button" href="/2022/04/14/memory-shell-1.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h2><p><img src="/2022/04/14/memory-shell-1/Servlet.png"></p>
+<p>当处理请求的时候：请求 → Listener → Filter → Servlet</p>
+<h4 id="Listener"><a href="#Listener" class="headerlink" title="Listener"></a>Listener</h4><p>Listener也称之为监听器，可以监听Application、Session和Request对象的创建、销毁事件，以及监听对其中添加、修改、删除属性事件，并自动执行自定义的功能。</p>
+<h4 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h4><p>Filter也称之为过滤器，可以动态地修改HttpServletRequest，HttpServletResponse中的头和数据。</p>
+<h4 id="Servlet-1"><a href="#Servlet-1" class="headerlink" title="Servlet"></a>Servlet</h4><p>Servlet是运行在 Web 服务器或应用服务器上的程序，它是作为来自 HTTP 客户端的请求和 HTTP 服务器上的数据库或应用程序之间的中间层。它负责处理用户的请求，并根据请求生成相应的返回信息提供给用户。Servlet 可以理解为某一个路径后续的业务处理逻辑。</p>
+<p>Tomcat是http服务器+servlet容器，当Tomcat作为Servlet容器的时候，讲http请求文本解析之后封装成<code>HttpServletRequest</code>类型的request对象，传递给Servlet，同时讲相应的信息封装为<code>HttpServletResponse</code>类型的response对象，将response对象交给tomcat，tomcat格式化之后返回给浏览器</p>
+	
+	</div>
+  <a type="button" href="/2022/04/14/memory-shell-1.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2022/04/11/burpsuite-ext-dev.html" >BurpSuite插件开发注意事项</a>
 		</h3>
 		</div>
@@ -681,54 +731,6 @@
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2022/03/22/java-reflection.html" >Java安全笔记(1)-反射机制</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2022-03-22  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="0x1-类加载器-ClassLoader"><a href="#0x1-类加载器-ClassLoader" class="headerlink" title="0x1. 类加载器: ClassLoader"></a>0x1. 类加载器: ClassLoader</h2><p>Java是一个依赖于<code>JVM（Java虚拟机)</code>实现的跨平台的开发语言，<code>Java</code>会先通过编译器将源代码转换为Java二进制字节码，一般是保存在<code>.class</code>文件中，之后通过<code>JVM</code>解释器执行这段代码。字节码文件会包含很多Class信息，在JVM解释器运行的过程中，<code>ClassLoader</code>就是用来加载类的，它会将Java字节码中的Class加载到内存中，而每个<code>Class</code>对象内部都有一个<code>ClassLoader</code>属性标识由哪个<code>ClassLoader</code>加载。</p>
-<h3 id="常见的ClassLoader"><a href="#常见的ClassLoader" class="headerlink" title="常见的ClassLoader"></a>常见的ClassLoader</h3><p>一切的<code>Java</code>类都必须经过JVM加载之后才可以运行，最常见的<code>ClassLoader</code>： <code>BootstrapClassLoader</code>、<code>ExtensionClassLoader</code>、<code>AppClassLoader</code>、<code>URLClassLoader</code>、<code>ContextClassLoader</code></p>
-<h4 id="BootstrapClassLoader"><a href="#BootstrapClassLoader" class="headerlink" title="BootstrapClassLoader"></a>BootstrapClassLoader</h4><p>JVM内置的默认<code>classLoader</code>,负责加载JVM运行时的核心类，位于<code>JAVA_HOME/lib/rt.jar/</code>文件夹中，由C代码实现，<code>Bootstrap ClassLoader</code>类加载器所加载的类的ClassLoader时候都会返回null</p>
-<h4 id="ExtClassLoader"><a href="#ExtClassLoader" class="headerlink" title="ExtClassLoader"></a>ExtClassLoader</h4><p>扩展类加载器，负责加载 JVM 扩展类，扩展 jar 包位于 <code>JAVA_HOME/lib/ext/*.jar</code> 中，库名通常以 javax 开头</p>
-<h4 id="AppClassLoader"><a href="#AppClassLoader" class="headerlink" title="AppClassLoader"></a>AppClassLoader</h4><p>应用类加载器/系统类加载器，直接提供给用户使用的ClassLoader，它会加载<code>ClASSPATH</code>环境变量或者<code>java.class.path</code>属性里定义的路径中的jar包和目录，我们自己编写和使用的第三方Jar包通常都是由它来加载</p>
-	
-
-	</div>
-  <a type="button" href="/2022/03/22/java-reflection.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="0x1-类加载器-ClassLoader"><a href="#0x1-类加载器-ClassLoader" class="headerlink" title="0x1. 类加载器: ClassLoader"></a>0x1. 类加载器: ClassLoader</h2><p>Java是一个依赖于<code>JVM（Java虚拟机)</code>实现的跨平台的开发语言，<code>Java</code>会先通过编译器将源代码转换为Java二进制字节码，一般是保存在<code>.class</code>文件中，之后通过<code>JVM</code>解释器执行这段代码。字节码文件会包含很多Class信息，在JVM解释器运行的过程中，<code>ClassLoader</code>就是用来加载类的，它会将Java字节码中的Class加载到内存中，而每个<code>Class</code>对象内部都有一个<code>ClassLoader</code>属性标识由哪个<code>ClassLoader</code>加载。</p>
-<h3 id="常见的ClassLoader"><a href="#常见的ClassLoader" class="headerlink" title="常见的ClassLoader"></a>常见的ClassLoader</h3><p>一切的<code>Java</code>类都必须经过JVM加载之后才可以运行，最常见的<code>ClassLoader</code>： <code>BootstrapClassLoader</code>、<code>ExtensionClassLoader</code>、<code>AppClassLoader</code>、<code>URLClassLoader</code>、<code>ContextClassLoader</code></p>
-<h4 id="BootstrapClassLoader"><a href="#BootstrapClassLoader" class="headerlink" title="BootstrapClassLoader"></a>BootstrapClassLoader</h4><p>JVM内置的默认<code>classLoader</code>,负责加载JVM运行时的核心类，位于<code>JAVA_HOME/lib/rt.jar/</code>文件夹中，由C代码实现，<code>Bootstrap ClassLoader</code>类加载器所加载的类的ClassLoader时候都会返回null</p>
-<h4 id="ExtClassLoader"><a href="#ExtClassLoader" class="headerlink" title="ExtClassLoader"></a>ExtClassLoader</h4><p>扩展类加载器，负责加载 JVM 扩展类，扩展 jar 包位于 <code>JAVA_HOME/lib/ext/*.jar</code> 中，库名通常以 javax 开头</p>
-<h4 id="AppClassLoader"><a href="#AppClassLoader" class="headerlink" title="AppClassLoader"></a>AppClassLoader</h4><p>应用类加载器/系统类加载器，直接提供给用户使用的ClassLoader，它会加载<code>ClASSPATH</code>环境变量或者<code>java.class.path</code>属性里定义的路径中的jar包和目录，我们自己编写和使用的第三方Jar包通常都是由它来加载</p>
-	
-	</div>
-  <a type="button" href="/2022/03/22/java-reflection.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -780,7 +782,7 @@
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>5</span></a></li>
+			<li><a href="/categories/Java/">Java<span>6</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
@@ -807,6 +809,10 @@
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
+      </li>
+    
+      <li>
         <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
       </li>
     
@@ -820,10 +826,6 @@
     
       <li>
         <a href="/2022/03/22/java-reflection-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(2)-反射执行系统命令</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/22/java-reflection.html" ><i class="fa fa-file-o"></i>Java安全笔记(1)-反射机制</a>
       </li>
     
   </ul>

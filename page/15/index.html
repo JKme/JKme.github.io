@@ -117,6 +117,78 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/01/05/SQL隐形转换绕过waf.html" >SQL隐形弱类型转换绕过</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-01-05  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p><a target="_blank" rel="noopener" href="https://tom.vg/2013/04/mysql-implicit-type-conversion/">https://tom.vg/2013/04/mysql-implicit-type-conversion/</a><br><a target="_blank" rel="noopener" href="https://www.t00ls.net/articles-24308.html">https://www.t00ls.net/articles-24308.html</a></p>
+<p>如果PHP语句中存在这样的登录漏洞比如：</p>
+<p><code>$sql=&quot;select * from users where id=&#39;&quot;.$user.&quot;&#39; and password=&#39;&quot;.md5($pass).&quot;&#39;;</code></p>
+<p>但是在登录框处限制了用户名长度</p>
+<pre class="line-numbers language-none"><code class="language-none">if (strlen($user)&gt;4)&#123;
+print &quot;用户名不能超过4个字符串&quot;;
+echo $user;
+echo strlen($user);
+die();
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>如果未做限制的情况下可以构造这样的语句<br><code>select * from users where userid = 1 or 1=1</code></p>
+<p>在限制的情况下可以利用sql隐形转换这样子：<br><code>select * from users where userid=&#39;&#39;=0#</code></p>
+<p>这个就全部选择出来了，然后重要的点在后面<code>userid=&#39;&#39;=0#</code>，闭合前面单引号，于是整个数值就恒等于了，也可以这么写</p>
+<p><code>userid=&#39;&#39;=false#</code>,<code>userid=&#39;&#39;=(1-1)</code>,<code>userid=&#39;a&#39;=0</code></p>
+<p>基本原理就是上面文章提到的：</p>
+	
+
+	</div>
+  <a type="button" href="/2017/01/05/SQL隐形转换绕过waf.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p><a target="_blank" rel="noopener" href="https://tom.vg/2013/04/mysql-implicit-type-conversion/">https://tom.vg/2013/04/mysql-implicit-type-conversion/</a><br><a target="_blank" rel="noopener" href="https://www.t00ls.net/articles-24308.html">https://www.t00ls.net/articles-24308.html</a></p>
+<p>如果PHP语句中存在这样的登录漏洞比如：</p>
+<p><code>$sql=&quot;select * from users where id=&#39;&quot;.$user.&quot;&#39; and password=&#39;&quot;.md5($pass).&quot;&#39;;</code></p>
+<p>但是在登录框处限制了用户名长度</p>
+<pre class="line-numbers language-none"><code class="language-none">if (strlen($user)&gt;4)&#123;
+print &quot;用户名不能超过4个字符串&quot;;
+echo $user;
+echo strlen($user);
+die();
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>如果未做限制的情况下可以构造这样的语句<br><code>select * from users where userid = 1 or 1=1</code></p>
+<p>在限制的情况下可以利用sql隐形转换这样子：<br><code>select * from users where userid=&#39;&#39;=0#</code></p>
+<p>这个就全部选择出来了，然后重要的点在后面<code>userid=&#39;&#39;=0#</code>，闭合前面单引号，于是整个数值就恒等于了，也可以这么写</p>
+<p><code>userid=&#39;&#39;=false#</code>,<code>userid=&#39;&#39;=(1-1)</code>,<code>userid=&#39;a&#39;=0</code></p>
+<p>基本原理就是上面文章提到的：</p>
+	
+	</div>
+  <a type="button" href="/2017/01/05/SQL隐形转换绕过waf.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/01/04/加密webshell流量.html" >加密webshell流量</a>
 		</h3>
 		</div>
@@ -611,76 +683,6 @@ headers <span class="token operator">=</span> <span class="token punctuation">&#
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/10/25/cve-2016-6802.html" >CVE-2016-6802</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-10-25  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>Apache Shiro before 1.3.2 allows attackers to bypass intended servlet filters and gain access by leveraging use of a non-root servlet context path. </p>
-</blockquote>
-<p>描述比较简单，官方修改的时候对于最新版本做了简单的修改：</p>
-<pre class="line-numbers language-none"><code class="language-none">
-WebUtils.java
-+ contextPath &#x3D; normalize(decodedRequestString(request, contextPath));
-if (&quot;&#x2F;&quot;.equeal(contextPath)) &#123;
-    contextPath &#x3D; &quot;&quot;;
- &#125;
- return contextPath;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>主要添加了上面一行，在请求处理之前先decoded，然后恢复正常。所以最后的exp很简单：</p>
-<p>比如作为一个普通账户的时候，知道admin路径，在访问的时候访问admin路径，然后burp截断，在请求路径后面添加<code>%2f</code>，即可绕过shiro路径控制。</p>
-
-	
-
-	</div>
-  <a type="button" href="/2016/10/25/cve-2016-6802.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>Apache Shiro before 1.3.2 allows attackers to bypass intended servlet filters and gain access by leveraging use of a non-root servlet context path. </p>
-</blockquote>
-<p>描述比较简单，官方修改的时候对于最新版本做了简单的修改：</p>
-<pre class="line-numbers language-none"><code class="language-none">
-WebUtils.java
-+ contextPath &#x3D; normalize(decodedRequestString(request, contextPath));
-if (&quot;&#x2F;&quot;.equeal(contextPath)) &#123;
-    contextPath &#x3D; &quot;&quot;;
- &#125;
- return contextPath;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>主要添加了上面一行，在请求处理之前先decoded，然后恢复正常。所以最后的exp很简单：</p>
-<p>比如作为一个普通账户的时候，知道admin路径，在访问的时候访问admin路径，然后burp截断，在请求路径后面添加<code>%2f</code>，即可绕过shiro路径控制。</p>
-
-	
-	</div>
-  <a type="button" href="/2016/10/25/cve-2016-6802.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -732,7 +734,7 @@ if (&quot;&#x2F;&quot;.equeal(contextPath)) &#123;
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>5</span></a></li>
+			<li><a href="/categories/Java/">Java<span>6</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
@@ -759,6 +761,10 @@ if (&quot;&#x2F;&quot;.equeal(contextPath)) &#123;
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
+      </li>
+    
+      <li>
         <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
       </li>
     
@@ -772,10 +778,6 @@ if (&quot;&#x2F;&quot;.equeal(contextPath)) &#123;
     
       <li>
         <a href="/2022/03/22/java-reflection-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(2)-反射执行系统命令</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/22/java-reflection.html" ><i class="fa fa-file-o"></i>Java安全笔记(1)-反射机制</a>
       </li>
     
   </ul>

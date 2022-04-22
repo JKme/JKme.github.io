@@ -117,6 +117,54 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2022/03/22/java-reflection.html" >Java安全笔记(1)-反射机制</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2022-03-22  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x1-类加载器-ClassLoader"><a href="#0x1-类加载器-ClassLoader" class="headerlink" title="0x1. 类加载器: ClassLoader"></a>0x1. 类加载器: ClassLoader</h2><p>Java是一个依赖于<code>JVM（Java虚拟机)</code>实现的跨平台的开发语言，<code>Java</code>会先通过编译器将源代码转换为Java二进制字节码，一般是保存在<code>.class</code>文件中，之后通过<code>JVM</code>解释器执行这段代码。字节码文件会包含很多Class信息，在JVM解释器运行的过程中，<code>ClassLoader</code>就是用来加载类的，它会将Java字节码中的Class加载到内存中，而每个<code>Class</code>对象内部都有一个<code>ClassLoader</code>属性标识由哪个<code>ClassLoader</code>加载。</p>
+<h3 id="常见的ClassLoader"><a href="#常见的ClassLoader" class="headerlink" title="常见的ClassLoader"></a>常见的ClassLoader</h3><p>一切的<code>Java</code>类都必须经过JVM加载之后才可以运行，最常见的<code>ClassLoader</code>： <code>BootstrapClassLoader</code>、<code>ExtensionClassLoader</code>、<code>AppClassLoader</code>、<code>URLClassLoader</code>、<code>ContextClassLoader</code></p>
+<h4 id="BootstrapClassLoader"><a href="#BootstrapClassLoader" class="headerlink" title="BootstrapClassLoader"></a>BootstrapClassLoader</h4><p>JVM内置的默认<code>classLoader</code>,负责加载JVM运行时的核心类，位于<code>JAVA_HOME/lib/rt.jar/</code>文件夹中，由C代码实现，<code>Bootstrap ClassLoader</code>类加载器所加载的类的ClassLoader时候都会返回null</p>
+<h4 id="ExtClassLoader"><a href="#ExtClassLoader" class="headerlink" title="ExtClassLoader"></a>ExtClassLoader</h4><p>扩展类加载器，负责加载 JVM 扩展类，扩展 jar 包位于 <code>JAVA_HOME/lib/ext/*.jar</code> 中，库名通常以 javax 开头</p>
+<h4 id="AppClassLoader"><a href="#AppClassLoader" class="headerlink" title="AppClassLoader"></a>AppClassLoader</h4><p>应用类加载器/系统类加载器，直接提供给用户使用的ClassLoader，它会加载<code>ClASSPATH</code>环境变量或者<code>java.class.path</code>属性里定义的路径中的jar包和目录，我们自己编写和使用的第三方Jar包通常都是由它来加载</p>
+	
+
+	</div>
+  <a type="button" href="/2022/03/22/java-reflection.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x1-类加载器-ClassLoader"><a href="#0x1-类加载器-ClassLoader" class="headerlink" title="0x1. 类加载器: ClassLoader"></a>0x1. 类加载器: ClassLoader</h2><p>Java是一个依赖于<code>JVM（Java虚拟机)</code>实现的跨平台的开发语言，<code>Java</code>会先通过编译器将源代码转换为Java二进制字节码，一般是保存在<code>.class</code>文件中，之后通过<code>JVM</code>解释器执行这段代码。字节码文件会包含很多Class信息，在JVM解释器运行的过程中，<code>ClassLoader</code>就是用来加载类的，它会将Java字节码中的Class加载到内存中，而每个<code>Class</code>对象内部都有一个<code>ClassLoader</code>属性标识由哪个<code>ClassLoader</code>加载。</p>
+<h3 id="常见的ClassLoader"><a href="#常见的ClassLoader" class="headerlink" title="常见的ClassLoader"></a>常见的ClassLoader</h3><p>一切的<code>Java</code>类都必须经过JVM加载之后才可以运行，最常见的<code>ClassLoader</code>： <code>BootstrapClassLoader</code>、<code>ExtensionClassLoader</code>、<code>AppClassLoader</code>、<code>URLClassLoader</code>、<code>ContextClassLoader</code></p>
+<h4 id="BootstrapClassLoader"><a href="#BootstrapClassLoader" class="headerlink" title="BootstrapClassLoader"></a>BootstrapClassLoader</h4><p>JVM内置的默认<code>classLoader</code>,负责加载JVM运行时的核心类，位于<code>JAVA_HOME/lib/rt.jar/</code>文件夹中，由C代码实现，<code>Bootstrap ClassLoader</code>类加载器所加载的类的ClassLoader时候都会返回null</p>
+<h4 id="ExtClassLoader"><a href="#ExtClassLoader" class="headerlink" title="ExtClassLoader"></a>ExtClassLoader</h4><p>扩展类加载器，负责加载 JVM 扩展类，扩展 jar 包位于 <code>JAVA_HOME/lib/ext/*.jar</code> 中，库名通常以 javax 开头</p>
+<h4 id="AppClassLoader"><a href="#AppClassLoader" class="headerlink" title="AppClassLoader"></a>AppClassLoader</h4><p>应用类加载器/系统类加载器，直接提供给用户使用的ClassLoader，它会加载<code>ClASSPATH</code>环境变量或者<code>java.class.path</code>属性里定义的路径中的jar包和目录，我们自己编写和使用的第三方Jar包通常都是由它来加载</p>
+	
+	</div>
+  <a type="button" href="/2022/03/22/java-reflection.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2022/03/21/jndi-exec-by-mvel.html" >JNDI Bypass - MVEL</a>
 		</h3>
 		</div>
@@ -453,104 +501,6 @@ C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2021/07/29/silverFish.html" >Silver调查报告</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2021-07-29  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p><a target="_blank" rel="noopener" href="https://www.prodaft.com/m/reports/SilverFish_TLPWHITE_v2.pdf">SilverFish_TLPWHITE</a></p>
-</blockquote>
-<h1 id="起点"><a href="#起点" class="headerlink" title="起点"></a>起点</h1><p>根据FireEye发布的IOC，有一个域名是databasegalore.com，这个域名下的IP在2304端口起了PowerMTA服务，web目录扫描之后发现example.php。PTI团队根据这两个网页的设备指纹和PowerMTA服务，扫描了全网的IPv4地址，发现一个IP地址: <code>81.4.122.203</code>，然后PTI团队对IP下的C段进行渗透测试，发现<code>81.4.122.101</code>存在一个C2服务器。</p>
-<h3 id="C2分析"><a href="#C2分析" class="headerlink" title="C2分析"></a>C2分析</h3><p><img src="/2021/07/29/silverFish/silver_C2.png"></p>
-<p>收集信息如下：</p>
-<ul>
-<li>ID</li>
-<li>UUID</li>
-<li>Instance</li>
-<li>IP</li>
-<li>Country</li>
-<li>Domain\User@Computer</li>
-<li>OS</li>
-<li>Build</li>
-<li>Architecture</li>
-<li>Antivirus</li>
-<li>Is Admin</li>
-<li>Integrity Level</li>
-<li>UAC Setting</li>
-<li>ConsentPromptBehaviorAdmin • PromptOnSecureDesktop</li>
-<li>First visit</li>
-</ul>
-<p>每个受害者页面都可以发送攻击指令，有如下：<br><img src="/2021/07/29/silverFish/silver_command.png"></p>
-<p>看了下是命令执行和UAC绕过比较多，C2服务器的防护措施有如下：</p>
-<ul>
-<li>使用AppArmor隔离环境</li>
-<li>关闭访问日志（web日志、SSH登录日志、命令行日志）</li>
-<li>使用IPTABLES只允许白名单IP访问</li>
-</ul>
-	
-
-	</div>
-  <a type="button" href="/2021/07/29/silverFish.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p><a target="_blank" rel="noopener" href="https://www.prodaft.com/m/reports/SilverFish_TLPWHITE_v2.pdf">SilverFish_TLPWHITE</a></p>
-</blockquote>
-<h1 id="起点"><a href="#起点" class="headerlink" title="起点"></a>起点</h1><p>根据FireEye发布的IOC，有一个域名是databasegalore.com，这个域名下的IP在2304端口起了PowerMTA服务，web目录扫描之后发现example.php。PTI团队根据这两个网页的设备指纹和PowerMTA服务，扫描了全网的IPv4地址，发现一个IP地址: <code>81.4.122.203</code>，然后PTI团队对IP下的C段进行渗透测试，发现<code>81.4.122.101</code>存在一个C2服务器。</p>
-<h3 id="C2分析"><a href="#C2分析" class="headerlink" title="C2分析"></a>C2分析</h3><p><img src="/2021/07/29/silverFish/silver_C2.png"></p>
-<p>收集信息如下：</p>
-<ul>
-<li>ID</li>
-<li>UUID</li>
-<li>Instance</li>
-<li>IP</li>
-<li>Country</li>
-<li>Domain\User@Computer</li>
-<li>OS</li>
-<li>Build</li>
-<li>Architecture</li>
-<li>Antivirus</li>
-<li>Is Admin</li>
-<li>Integrity Level</li>
-<li>UAC Setting</li>
-<li>ConsentPromptBehaviorAdmin • PromptOnSecureDesktop</li>
-<li>First visit</li>
-</ul>
-<p>每个受害者页面都可以发送攻击指令，有如下：<br><img src="/2021/07/29/silverFish/silver_command.png"></p>
-<p>看了下是命令执行和UAC绕过比较多，C2服务器的防护措施有如下：</p>
-<ul>
-<li>使用AppArmor隔离环境</li>
-<li>关闭访问日志（web日志、SSH登录日志、命令行日志）</li>
-<li>使用IPTABLES只允许白名单IP访问</li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2021/07/29/silverFish.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -602,7 +552,7 @@ C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>5</span></a></li>
+			<li><a href="/categories/Java/">Java<span>6</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
@@ -629,6 +579,10 @@ C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
+      </li>
+    
+      <li>
         <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
       </li>
     
@@ -642,10 +596,6 @@ C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></
     
       <li>
         <a href="/2022/03/22/java-reflection-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(2)-反射执行系统命令</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/22/java-reflection.html" ><i class="fa fa-file-o"></i>Java安全笔记(1)-反射机制</a>
       </li>
     
   </ul>
