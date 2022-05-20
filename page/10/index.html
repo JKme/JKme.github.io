@@ -117,6 +117,138 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2018/02/02/xxe.html" >XXE学习笔记</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2018-02-02  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>XML基础：</p>
+<p>XML文档结构：</p>
+<pre class="line-numbers language-none"><code class="language-none">XML声明
+&lt;?xml version&#x3D;&quot;1.0&quot;?&gt;
+
+DTD文档类型定义
+&lt;!DOCTYPE note [  &lt;!--定义此文档是 note 类型的文档--&gt;
+&lt;!ELEMENT note (to,from,heading,body)&gt;  &lt;!--定义note元素有四个元素--&gt;
+&lt;!ELEMENT to (#PCDATA)&gt;     &lt;!--定义to元素为”#PCDATA”类型--&gt;
+&lt;!ELEMENT from (#PCDATA)&gt;   &lt;!--定义from元素为”#PCDATA”类型--&gt;
+&lt;!ELEMENT head (#PCDATA)&gt;   &lt;!--定义head元素为”#PCDATA”类型--&gt;
+&lt;!ELEMENT body (#PCDATA)&gt;   &lt;!--定义body元素为”#PCDATA”类型--&gt;
+]]]
+
+
+文档元素
+&lt;note&gt;
+&lt;to&gt;Dave&lt;&#x2F;to&gt;
+&lt;from&gt;Tom&lt;&#x2F;from&gt;
+&lt;head&gt;Reminder&lt;&#x2F;head&gt;
+&lt;body&gt;You are a good man&lt;&#x2F;body&gt;
+&lt;&#x2F;note&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>DTD(document type definitions)可以定义一个合法的XML文档构建模块，可以被成行声明于XML文档中，也可以作为一个外部引用。</p>
+<pre class="line-numbers language-none"><code class="language-none">内部声明DTD：
+
+&lt;!DOCTYPE 跟元素 [元素声明］&gt;
+
+引用外部DTD:
+
+&lt;!DOCTYPE 根元素  SYSTEM &quot;文件名&quot;&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>DTD文档中很多关键字如下: </p>
+<ul>
+<li>DOCTYPE(DTD的声明）</li>
+<li>ENTITY （实体的声明）</li>
+<li>SYSTEM、PUBLIC （外部资源申请） </li>
+</ul>
+<p>###实体</p>
+<p>实体可以理解为变量，必须在DTD定义声明，可以在文档中的其它位置引用该变量的值。<br>实体按类型主要分以下四种:</p>
+<ul>
+<li>内置实体（Built-in entities)</li>
+<li>字符实体（Character entities)</li>
+<li>通用实体（General entities）</li>
+<li>参数实体 (Parameter entities）</li>
+</ul>
+	
+
+	</div>
+  <a type="button" href="/2018/02/02/xxe.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>XML基础：</p>
+<p>XML文档结构：</p>
+<pre class="line-numbers language-none"><code class="language-none">XML声明
+&lt;?xml version&#x3D;&quot;1.0&quot;?&gt;
+
+DTD文档类型定义
+&lt;!DOCTYPE note [  &lt;!--定义此文档是 note 类型的文档--&gt;
+&lt;!ELEMENT note (to,from,heading,body)&gt;  &lt;!--定义note元素有四个元素--&gt;
+&lt;!ELEMENT to (#PCDATA)&gt;     &lt;!--定义to元素为”#PCDATA”类型--&gt;
+&lt;!ELEMENT from (#PCDATA)&gt;   &lt;!--定义from元素为”#PCDATA”类型--&gt;
+&lt;!ELEMENT head (#PCDATA)&gt;   &lt;!--定义head元素为”#PCDATA”类型--&gt;
+&lt;!ELEMENT body (#PCDATA)&gt;   &lt;!--定义body元素为”#PCDATA”类型--&gt;
+]]]
+
+
+文档元素
+&lt;note&gt;
+&lt;to&gt;Dave&lt;&#x2F;to&gt;
+&lt;from&gt;Tom&lt;&#x2F;from&gt;
+&lt;head&gt;Reminder&lt;&#x2F;head&gt;
+&lt;body&gt;You are a good man&lt;&#x2F;body&gt;
+&lt;&#x2F;note&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>DTD(document type definitions)可以定义一个合法的XML文档构建模块，可以被成行声明于XML文档中，也可以作为一个外部引用。</p>
+<pre class="line-numbers language-none"><code class="language-none">内部声明DTD：
+
+&lt;!DOCTYPE 跟元素 [元素声明］&gt;
+
+引用外部DTD:
+
+&lt;!DOCTYPE 根元素  SYSTEM &quot;文件名&quot;&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>DTD文档中很多关键字如下: </p>
+<ul>
+<li>DOCTYPE(DTD的声明）</li>
+<li>ENTITY （实体的声明）</li>
+<li>SYSTEM、PUBLIC （外部资源申请） </li>
+</ul>
+<p>###实体</p>
+<p>实体可以理解为变量，必须在DTD定义声明，可以在文档中的其它位置引用该变量的值。<br>实体按类型主要分以下四种:</p>
+<ul>
+<li>内置实体（Built-in entities)</li>
+<li>字符实体（Character entities)</li>
+<li>通用实体（General entities）</li>
+<li>参数实体 (Parameter entities）</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2018/02/02/xxe.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/12/12/bypass-disabled-functions.html" >bypass disable functions</a>
 		</h3>
 		</div>
@@ -897,164 +1029,6 @@ save\r<span aria-hidden="true" class="line-numbers-rows"><span></span><span></sp
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/11/28/sql-bypass-unknown.html" >SQL注入绕过未知字段名的技巧</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-11-28  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="http://blog.7ell.me/2017/05/30/2017-DDCTF-SQL%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%BF%87%E6%BB%A4%E5%88%97%E5%90%8Dget%E6%95%B0%E6%8D%AE/">http://blog.7ell.me/2017/05/30/2017-DDCTF-SQL注入之过滤列名get数据/</a> </p>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c<span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">---+---+---+</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span> <span class="token operator">|</span> <span class="token number">3</span> <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">---+---+---+</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span> <span class="token operator">|</span> <span class="token number">3</span> <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">---+---+---+</span>
-<span class="token number">1</span> <span class="token keyword">row</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">---+--------+----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span>      <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">---+--------+----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span>      <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> admin  <span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">2</span> <span class="token operator">|</span> admin2 <span class="token operator">|</span> <span class="token number">7195</span>ca99696b5a896d067a0fa9dc61a6 <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">3</span> <span class="token operator">|</span> admin3 <span class="token operator">|</span> <span class="token number">7195</span>C                            <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">---+--------+----------------------------------+</span>
-<span class="token number">4</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> e<span class="token punctuation">.</span><span class="token number">3</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">)</span>e<span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">7195</span>ca99696b5a896d067a0fa9dc61a6 <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">7195</span>C                            <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">----------------------------------+</span>
-<span class="token number">4</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> e<span class="token punctuation">.</span><span class="token number">3</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">)</span>e <span class="token keyword">limit</span> <span class="token number">1</span> <span class="token keyword">offset</span> <span class="token number">3</span><span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">-------+</span>
-<span class="token operator">|</span> <span class="token number">3</span>     <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">-------+</span>
-<span class="token operator">|</span> <span class="token number">7195</span>C <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">-------+</span>
-<span class="token number">1</span> <span class="token keyword">row</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin <span class="token keyword">where</span> id<span class="token operator">=</span><span class="token number">1</span> <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">----+----------+----------------------------------+</span>
-<span class="token operator">|</span> id <span class="token operator">|</span> username <span class="token operator">|</span> password                         <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">----+----------+----------------------------------+</span>
-<span class="token operator">|</span>  <span class="token number">1</span> <span class="token operator">|</span> admin    <span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
-<span class="token operator">|</span>  <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span>        <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">----+----------+----------------------------------+</span>
-<span class="token number">2</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.01</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin <span class="token keyword">where</span> id<span class="token operator">=</span><span class="token number">1</span> <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token punctuation">(</span><span class="token keyword">select</span> e<span class="token punctuation">.</span><span class="token number">3</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">)</span>e <span class="token keyword">limit</span> <span class="token number">1</span> <span class="token keyword">offset</span> <span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">-------+----------+----------------------------------+</span>
-<span class="token operator">|</span> id    <span class="token operator">|</span> username <span class="token operator">|</span> password                         <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">-------+----------+----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">1</span>     <span class="token operator">|</span> admin    <span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">7195</span>C <span class="token operator">|</span> <span class="token number">2</span>        <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">-------+----------+----------------------------------+</span>
-<span class="token number">2</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-
-
-	
-
-	</div>
-  <a type="button" href="/2017/11/28/sql-bypass-unknown.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="http://blog.7ell.me/2017/05/30/2017-DDCTF-SQL%E6%B3%A8%E5%85%A5%E4%B9%8B%E8%BF%87%E6%BB%A4%E5%88%97%E5%90%8Dget%E6%95%B0%E6%8D%AE/">http://blog.7ell.me/2017/05/30/2017-DDCTF-SQL注入之过滤列名get数据/</a> </p>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c<span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">---+---+---+</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span> <span class="token operator">|</span> <span class="token number">3</span> <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">---+---+---+</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span> <span class="token operator">|</span> <span class="token number">3</span> <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">---+---+---+</span>
-<span class="token number">1</span> <span class="token keyword">row</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">---+--------+----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span>      <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">---+--------+----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span>      <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">1</span> <span class="token operator">|</span> admin  <span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">2</span> <span class="token operator">|</span> admin2 <span class="token operator">|</span> <span class="token number">7195</span>ca99696b5a896d067a0fa9dc61a6 <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">3</span> <span class="token operator">|</span> admin3 <span class="token operator">|</span> <span class="token number">7195</span>C                            <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">---+--------+----------------------------------+</span>
-<span class="token number">4</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> e<span class="token punctuation">.</span><span class="token number">3</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">)</span>e<span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">7195</span>ca99696b5a896d067a0fa9dc61a6 <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">7195</span>C                            <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">----------------------------------+</span>
-<span class="token number">4</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> e<span class="token punctuation">.</span><span class="token number">3</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">)</span>e <span class="token keyword">limit</span> <span class="token number">1</span> <span class="token keyword">offset</span> <span class="token number">3</span><span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">-------+</span>
-<span class="token operator">|</span> <span class="token number">3</span>     <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">-------+</span>
-<span class="token operator">|</span> <span class="token number">7195</span>C <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">-------+</span>
-<span class="token number">1</span> <span class="token keyword">row</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin <span class="token keyword">where</span> id<span class="token operator">=</span><span class="token number">1</span> <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">----+----------+----------------------------------+</span>
-<span class="token operator">|</span> id <span class="token operator">|</span> username <span class="token operator">|</span> password                         <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">----+----------+----------------------------------+</span>
-<span class="token operator">|</span>  <span class="token number">1</span> <span class="token operator">|</span> admin    <span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
-<span class="token operator">|</span>  <span class="token number">1</span> <span class="token operator">|</span> <span class="token number">2</span>        <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">----+----------+----------------------------------+</span>
-<span class="token number">2</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.01</span> sec<span class="token punctuation">)</span>
-
-mysql<span class="token operator">></span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin <span class="token keyword">where</span> id<span class="token operator">=</span><span class="token number">1</span> <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token punctuation">(</span><span class="token keyword">select</span> e<span class="token punctuation">.</span><span class="token number">3</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">1</span><span class="token punctuation">)</span>a<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">2</span><span class="token punctuation">)</span>b<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">select</span> <span class="token number">3</span><span class="token punctuation">)</span>c <span class="token keyword">union</span> <span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> admin<span class="token punctuation">)</span>e <span class="token keyword">limit</span> <span class="token number">1</span> <span class="token keyword">offset</span> <span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">;</span>
-<span class="token operator">+</span><span class="token comment">-------+----------+----------------------------------+</span>
-<span class="token operator">|</span> id    <span class="token operator">|</span> username <span class="token operator">|</span> password                         <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">-------+----------+----------------------------------+</span>
-<span class="token operator">|</span> <span class="token number">1</span>     <span class="token operator">|</span> admin    <span class="token operator">|</span> e10adc3949ba59abbe56e057f20f883e <span class="token operator">|</span>
-<span class="token operator">|</span> <span class="token number">7195</span>C <span class="token operator">|</span> <span class="token number">2</span>        <span class="token operator">|</span> <span class="token number">3</span>                                <span class="token operator">|</span>
-<span class="token operator">+</span><span class="token comment">-------+----------+----------------------------------+</span>
-<span class="token number">2</span> <span class="token keyword">rows</span> <span class="token operator">in</span> <span class="token keyword">set</span> <span class="token punctuation">(</span><span class="token number">0.00</span> sec<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-
-
-	
-	</div>
-  <a type="button" href="/2017/11/28/sql-bypass-unknown.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -1106,7 +1080,7 @@ mysql<span class="token operator">></span> <span class="token keyword">select</s
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>6</span></a></li>
+			<li><a href="/categories/Java/">Java<span>7</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
@@ -1133,6 +1107,10 @@ mysql<span class="token operator">></span> <span class="token keyword">select</s
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
+      </li>
+    
+      <li>
         <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
       </li>
     
@@ -1146,10 +1124,6 @@ mysql<span class="token operator">></span> <span class="token keyword">select</s
     
       <li>
         <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/22/java-reflection-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(2)-反射执行系统命令</a>
       </li>
     
   </ul>

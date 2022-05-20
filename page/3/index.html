@@ -117,6 +117,90 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2021/08/02/siem-on-elk.html" >SIEM On ELK</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2021-08-02  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>参考链接里有详细的安装步骤，测试客户端是Windows，安装了如下软件：</p>
+<ul>
+<li>sysmon.exe(<a target="_blank" rel="noopener" href="https://github.com/SwiftOnSecurity/sysmon-config">配置文件</a>)<ul>
+<li><code>.\sysmon64.exe -accepteula -i c:\windows\config.xml</code></li>
+</ul>
+</li>
+<li>winlogbeat.exe<ul>
+<li><code>.\install-service-winlogbeat.ps1</code></li>
+<li><code>.\winlogbeat.exe setup -e</code></li>
+</ul>
+</li>
+<li>ElasticAgent.exe<ul>
+<li><code>.\elastic-agent.exe install  --insecure -f --fleet-server-es=&lt;ES&gt; --fleet-server-service-token=&lt;token&gt;</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="规则监测和绕过"><a href="#规则监测和绕过" class="headerlink" title="规则监测和绕过"></a>规则监测和绕过</h3><p>规则有5种查询，一般使用EQL(Event Query Language)查询类型:<br><img src="/2021/08/02/siem-on-elk/siem-1.png"><br>SIEM有内置很多规则，默认是关闭状态，这些规则都是ATT&amp;CK框架攻击行为转化而来的，例如windows下的<code>whoami</code>查询规则(<del>正经人谁查whoami啊</del>):</p>
+<pre class="line-numbers language-none"><code class="language-none">process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and process.name : &quot;whoami.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>我们拿这条规则做分析，这条规则匹配了当进程开始的时候，进程名为<code>whoami.exe</code>的时候触发，所以我们把<code>whoami.exe</code>复制一下，就可以绕过去了:</p>
+<pre class="line-numbers language-none"><code class="language-none">copy C:\Windows\System32\whoami.exe C:\Windows\temp\x.exe
+C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>是不是把siem想的简单了，这跟通过复制<code>net.exe</code>绕过添加用户一模一样，仔细观察下elk里面的字段，可以发现<code>process.pe.original_file_name</code>仍然保留了<code>whoami.exe</code>，这是PE文件里面固定的，所以我们手动把预警规则修改一下:</p>
+<pre class="line-numbers language-none"><code class="language-none">process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and process.pe.original_file_name: &quot;whoami.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2021/08/02/siem-on-elk.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>参考链接里有详细的安装步骤，测试客户端是Windows，安装了如下软件：</p>
+<ul>
+<li>sysmon.exe(<a target="_blank" rel="noopener" href="https://github.com/SwiftOnSecurity/sysmon-config">配置文件</a>)<ul>
+<li><code>.\sysmon64.exe -accepteula -i c:\windows\config.xml</code></li>
+</ul>
+</li>
+<li>winlogbeat.exe<ul>
+<li><code>.\install-service-winlogbeat.ps1</code></li>
+<li><code>.\winlogbeat.exe setup -e</code></li>
+</ul>
+</li>
+<li>ElasticAgent.exe<ul>
+<li><code>.\elastic-agent.exe install  --insecure -f --fleet-server-es=&lt;ES&gt; --fleet-server-service-token=&lt;token&gt;</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="规则监测和绕过"><a href="#规则监测和绕过" class="headerlink" title="规则监测和绕过"></a>规则监测和绕过</h3><p>规则有5种查询，一般使用EQL(Event Query Language)查询类型:<br><img src="/2021/08/02/siem-on-elk/siem-1.png"><br>SIEM有内置很多规则，默认是关闭状态，这些规则都是ATT&amp;CK框架攻击行为转化而来的，例如windows下的<code>whoami</code>查询规则(<del>正经人谁查whoami啊</del>):</p>
+<pre class="line-numbers language-none"><code class="language-none">process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and process.name : &quot;whoami.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>我们拿这条规则做分析，这条规则匹配了当进程开始的时候，进程名为<code>whoami.exe</code>的时候触发，所以我们把<code>whoami.exe</code>复制一下，就可以绕过去了:</p>
+<pre class="line-numbers language-none"><code class="language-none">copy C:\Windows\System32\whoami.exe C:\Windows\temp\x.exe
+C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>是不是把siem想的简单了，这跟通过复制<code>net.exe</code>绕过添加用户一模一样，仔细观察下elk里面的字段，可以发现<code>process.pe.original_file_name</code>仍然保留了<code>whoami.exe</code>，这是PE文件里面固定的，所以我们手动把预警规则修改一下:</p>
+<pre class="line-numbers language-none"><code class="language-none">process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and process.pe.original_file_name: &quot;whoami.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2021/08/02/siem-on-elk.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2021/07/29/silverFish.html" >Silver调查报告</a>
 		</h3>
 		</div>
@@ -561,58 +645,6 @@ cp <span class="token operator">=</span> subprocess<span class="token punctuatio
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2021/01/04/CloudFront-find-cobaltstrike.html" >CobaltStrike的Stager特征隐藏</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2021-01-04  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在github上面出现一个仓库分析<code>CobaltStrike</code>监听端口的特征：<a target="_blank" rel="noopener" href="https://github.com/Te-k/cobaltstrike">https://github.com/Te-k/cobaltstrike</a>。CS在监听Stager端口的时候，会通过URI下载Payload执行，这个URI生成的规则生成：</p>
-<p><img src="/2021/01/04/CloudFront-find-cobaltstrike/360.png"></p>
-<h3 id="找到DomainFront"><a href="#找到DomainFront" class="headerlink" title="找到DomainFront"></a>找到DomainFront</h3><p>根据360的空间测绘，看完之后第一时间想到的是通过fofa这类空间测绘找出特征，然后找出来设置了DomainFront的C2，想看看这些C2<br>的原始域名和设置C2的域名是什么情况，大家都用的什么作为域名前置的 :)</p>
-<h4 id="Quake测绘"><a href="#Quake测绘" class="headerlink" title="Quake测绘"></a>Quake测绘</h4><p>根据360给出的搜索条件，先找出来一批IP地址:</p>
-<pre class="line-numbers language-none"><code class="language-none">response:&quot;HTTP&#x2F;1.1 404 Not Found&quot; AND response:&quot;Content-Type: text&#x2F;plain&quot; AND response:&quot;Content-Length: 0&quot; AND NOT response:&quot;Server: &quot; AND NOT response:&quot;Connection: &quot; AND port: &quot;443&quot;   AND NOT country: &quot;China&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h4 id="修改脚本"><a href="#修改脚本" class="headerlink" title="修改脚本"></a>修改脚本</h4><p>修改好之后的脚本和扫描结果:<a target="_blank" rel="noopener" href="https://github.com/JKme/cobaltstrike">https://github.com/JKme/cobaltstrike</a>。把单线程改为多线程，再增加一个获取IP的https证书域名函数：</p>
-	
-
-	</div>
-  <a type="button" href="/2021/01/04/CloudFront-find-cobaltstrike.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在github上面出现一个仓库分析<code>CobaltStrike</code>监听端口的特征：<a target="_blank" rel="noopener" href="https://github.com/Te-k/cobaltstrike">https://github.com/Te-k/cobaltstrike</a>。CS在监听Stager端口的时候，会通过URI下载Payload执行，这个URI生成的规则生成：</p>
-<p><img src="/2021/01/04/CloudFront-find-cobaltstrike/360.png"></p>
-<h3 id="找到DomainFront"><a href="#找到DomainFront" class="headerlink" title="找到DomainFront"></a>找到DomainFront</h3><p>根据360的空间测绘，看完之后第一时间想到的是通过fofa这类空间测绘找出特征，然后找出来设置了DomainFront的C2，想看看这些C2<br>的原始域名和设置C2的域名是什么情况，大家都用的什么作为域名前置的 :)</p>
-<h4 id="Quake测绘"><a href="#Quake测绘" class="headerlink" title="Quake测绘"></a>Quake测绘</h4><p>根据360给出的搜索条件，先找出来一批IP地址:</p>
-<pre class="line-numbers language-none"><code class="language-none">response:&quot;HTTP&#x2F;1.1 404 Not Found&quot; AND response:&quot;Content-Type: text&#x2F;plain&quot; AND response:&quot;Content-Length: 0&quot; AND NOT response:&quot;Server: &quot; AND NOT response:&quot;Connection: &quot; AND port: &quot;443&quot;   AND NOT country: &quot;China&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h4 id="修改脚本"><a href="#修改脚本" class="headerlink" title="修改脚本"></a>修改脚本</h4><p>修改好之后的脚本和扫描结果:<a target="_blank" rel="noopener" href="https://github.com/JKme/cobaltstrike">https://github.com/JKme/cobaltstrike</a>。把单线程改为多线程，再增加一个获取IP的https证书域名函数：</p>
-	
-	</div>
-  <a type="button" href="/2021/01/04/CloudFront-find-cobaltstrike.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -664,7 +696,7 @@ cp <span class="token operator">=</span> subprocess<span class="token punctuatio
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>6</span></a></li>
+			<li><a href="/categories/Java/">Java<span>7</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
@@ -691,6 +723,10 @@ cp <span class="token operator">=</span> subprocess<span class="token punctuatio
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
+      </li>
+    
+      <li>
         <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
       </li>
     
@@ -704,10 +740,6 @@ cp <span class="token operator">=</span> subprocess<span class="token punctuatio
     
       <li>
         <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/22/java-reflection-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(2)-反射执行系统命令</a>
       </li>
     
   </ul>
