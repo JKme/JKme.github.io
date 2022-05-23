@@ -429,7 +429,7 @@ public class HelloServlet extends HttpServlet &amp;#123;
  <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>然后进入<code>this.handlePayloadContext()</code>利用<code>payload.class</code>里面定义好的反射函数，获取<code>servletRequest</code>, <code>servletContext</code>, <code>httpSession</code>对象，然后填充给payload变量：<br><code>this.servletRequest</code>、<code>this.servletContext</code>、<code>this.httpSession</code>。</p>
 <p>继续跟进判断<code>this.servletRequest</code>不为空的时候，尝试获取<code>servletRequest</code>里面的<code>parameters</code>对象，经过判断之后赋给<code>this.requestData</code>。<br><img src="/2022/05/17/godzilla/13.png"></p>
-<p>这里之所以又填充一次<code>this.requestData</code>变量，是为了兼容性考虑，比如在Spring里面直接写servlet，经过第二次的<code>equals()</code>就填充了<code>this.requestData</code>对象，但是在JSP里面，是利用<br><code>request.setAttribute(&quot;parameters&quot;, data);</code>来走到上面这一步填充<code>this.requestData</code>对象。</p>
+<p>这里之所以又填充一次<code>this.requestData</code>变量，是为了兼容性考虑，比如在Spring里面直接写servlet，经过第二次的<code>equals()</code>就填充了<code>this.requestData</code>对象，但是在JSP里面，是利用<br><code>request.setAttribute(&quot;parameters&quot;, data);</code>来走到上面这一步填充<code>this.requestData</code>对象，这也是哥斯拉对servlet没有依赖的主要原因。</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">  <span class="token annotation punctuation">@Override</span>
     <span class="token keyword">protected</span> <span class="token keyword">void</span> <span class="token function">doPost</span><span class="token punctuation">(</span><span class="token class-name">HttpServletRequest</span> req<span class="token punctuation">,</span> <span class="token class-name">HttpServletResponse</span> resp<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">ServletException</span><span class="token punctuation">,</span> <span class="token class-name">IOException</span> <span class="token punctuation">&#123;</span>
         <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
@@ -471,6 +471,13 @@ public class HelloServlet extends HttpServlet &amp;#123;
 <h4 id="f-toString"><a href="#f-toString" class="headerlink" title="f.toString()"></a><code>f.toString()</code></h4><p>从<code>this.paramterMap</code>里面获取要执行的模块参数等变量，然后进入<code>this.run()</code>执行<code>payload.class</code>定义好的shell功能：<br><img src="/2022/05/17/godzilla/7.png"></p>
 <p>第三次请求是调用了<code>methodNameClose</code>函数，不再分析。整个流程分析下来会发现哥斯拉一开始就把一个大马的功能实现发送到了服务端，之后的功能都是通过调用大马实现好的功能完成的。</p>
 <p>至此Y4er师傅的文章算是看懂了：<a target="_blank" rel="noopener" href="https://y4er.com/post/solve-the-problem-of-godzilla-memory-shell-pagecontext/">解决哥斯拉内存马pagecontext的问题</a></p>
+<p>在Spring里面的三个<code>equeals</code>:</p>
+<ul>
+<li>f.equals(arrOut) 必须的，使用ByteArrayOutputStream返回执行的结果</li>
+<li>f.equals(data)   必须的，接收客户端传过来的参数</li>
+<li>f.equals(req)    非必要，对于Spring的Servlet是非必要的，用于隐藏日志。</li>
+</ul>
+<p>所以在Spring里面的Servlet，第三个<code>equals</code>去掉不影响正常shell功能。</p>
 <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
 <li><a target="_blank" rel="noopener" href="https://y4er.com/post/solve-the-problem-of-godzilla-memory-shell-pagecontext/">解决哥斯拉内存马pagecontext的问题</a></li>
 <li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/lmL6XyWKClEmYgiVUspYYw">哥斯拉源码分析(二)jsp shell分析</a></li>
