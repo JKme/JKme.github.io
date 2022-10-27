@@ -117,6 +117,176 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2016/09/25/whitehat-talk-web-security.html" >《白帽子讲Web安全》</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-09-25  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="文件包含漏洞（File-Inclusion）"><a href="#文件包含漏洞（File-Inclusion）" class="headerlink" title="文件包含漏洞（File Inclusion）"></a>文件包含漏洞（File Inclusion）</h3><p>文件包含可能会出现在JSP、PHP、ASP等语言中，常见的函数如下：<br><code>PHP: include()、include_once()、require()、require_once()、fopen()、readfile()</code></p>
+<p>文件包含是PHP的一种常见用法，主要由四个函数组成：</p>
+<ul>
+<li>include()</li>
+<li>require()</li>
+<li>include_onec()</li>
+<li>require_once()</li>
+</ul>
+<p>当使用这4个函数包含一个新的文件，该文件将作为PHP代码执行，PHP内核并不会在意被包含的文件是什么类型。</p>
+<p>所以如果被包含的是txt文件，图片文件，远程URL等都会作为PHP代码执行。</p>
+<p>能够打开并且包含本地文件的漏洞称为本地文件包含漏洞（Local File Inclusion，LFI）</p>
+<p>PHP语言是由C语言实现的，因此使用了C语言中一些字符串处理函数，在连接字符串的时候，0字节（\x00）讲作为字符串结束符。所以攻击者可以加一个0字节，截断file变量后面的字符串，即<br><code>../../etc/passwd\0</code>，在get请求的时候进行Urlencode，变成<code>../../etc/passwd%00</code>。</p>
+<p>如果禁用了0字节可以利用操作系统对目录最大长度的限制，可以不需要0字节而达到截断的目的。目录字符串，在windows下256字节，Linux下4096字节会达到最大值，最大值长度之后的字符串将会被丢弃。可以通过如下构造:<br><code>../../../../../../../../../../../../../../abc</code></p>
+<ul>
+<li>%2e%2e%2f 等同于 ../</li>
+<li>%2e%2e/ 同上</li>
+<li>..%2f 同上</li>
+<li>%2e%2e%5c ..\</li>
+<li>%252%252%255c等同于..\</li>
+</ul>
+	
+
+	</div>
+  <a type="button" href="/2016/09/25/whitehat-talk-web-security.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="文件包含漏洞（File-Inclusion）"><a href="#文件包含漏洞（File-Inclusion）" class="headerlink" title="文件包含漏洞（File Inclusion）"></a>文件包含漏洞（File Inclusion）</h3><p>文件包含可能会出现在JSP、PHP、ASP等语言中，常见的函数如下：<br><code>PHP: include()、include_once()、require()、require_once()、fopen()、readfile()</code></p>
+<p>文件包含是PHP的一种常见用法，主要由四个函数组成：</p>
+<ul>
+<li>include()</li>
+<li>require()</li>
+<li>include_onec()</li>
+<li>require_once()</li>
+</ul>
+<p>当使用这4个函数包含一个新的文件，该文件将作为PHP代码执行，PHP内核并不会在意被包含的文件是什么类型。</p>
+<p>所以如果被包含的是txt文件，图片文件，远程URL等都会作为PHP代码执行。</p>
+<p>能够打开并且包含本地文件的漏洞称为本地文件包含漏洞（Local File Inclusion，LFI）</p>
+<p>PHP语言是由C语言实现的，因此使用了C语言中一些字符串处理函数，在连接字符串的时候，0字节（\x00）讲作为字符串结束符。所以攻击者可以加一个0字节，截断file变量后面的字符串，即<br><code>../../etc/passwd\0</code>，在get请求的时候进行Urlencode，变成<code>../../etc/passwd%00</code>。</p>
+<p>如果禁用了0字节可以利用操作系统对目录最大长度的限制，可以不需要0字节而达到截断的目的。目录字符串，在windows下256字节，Linux下4096字节会达到最大值，最大值长度之后的字符串将会被丢弃。可以通过如下构造:<br><code>../../../../../../../../../../../../../../abc</code></p>
+<ul>
+<li>%2e%2e%2f 等同于 ../</li>
+<li>%2e%2e/ 同上</li>
+<li>..%2f 同上</li>
+<li>%2e%2e%5c ..\</li>
+<li>%252%252%255c等同于..\</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2016/09/25/whitehat-talk-web-security.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2016/08/29/csrf.html" >CSRF</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-08-29  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="同源策略"><a href="#同源策略" class="headerlink" title="同源策略"></a>同源策略</h2><p>同源策略(Same Origin policy, SOP)，也称为单源策略(Single Origin policy)，用于Web浏览器编程语言的安全措施，用以保护信息的保密性和安全性。同源策略防止网站脚本访问其他站点使用脚本，也组织它与其他站点交互。<br>只要<strong>协议</strong>、<strong>端口</strong>、<strong>主机</strong>三个有一个不匹配，就是跨域请求。</p>
+<p>如果要跨域请求，有下面的限制：</p>
+<ul>
+<li>仅允许GET、HEAD、POST请求</li>
+<li>仅允许手动设置Accept、Accept-Language、Content-Language和Content-Type头</li>
+<li>Content-Type头仅允许使用application/x-www-form-urlencoded,multipart/form-data和text/plain这三种值。</li>
+</ul>
+<p>满足以上三个请求的，称为simple request<br>当上门的simple request不能满足使用场景的时候，有以下的请求解决跨域限制，都是以<code>Access-Control-</code>开头，比较重要的有：</p>
+<ul>
+<li>Access-Control-Allow-Origin：限制这个请求能从哪些URI访问。</li>
+</ul>
+<blockquote>
+<p>在使用这个请求，使用AJAX时，被调用方需要输出这个头，指名可以从哪个网站 访问，如果未输出这个头，只允许同域名的访问。</p>
+</blockquote>
+<ul>
+<li>Access-Control-Allow-Credentials: 允许这个请求使用cookie。</li>
+</ul>
+<blockquote>
+<p>一般跨域情况下，AJAX不会附带用户的Cookie，也不允许设置用户的Cookie，要使用这个的话，首先C在构造这个XMLHTTPRequest对象时，需要设置withCredentials属性。</p>
+</blockquote>
+<pre class="line-numbers language-none"><code class="language-none">XMLHttpRequest:
+
+var xhr &#x3D; new XMLHttpRequest();
+xhr.open(&#39;GET&#39;, url, true);
+xhr.withCredentials &#x3D; true;
+xhr.onreadystatechange &#x3D; handler;
+xhr.send()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2016/08/29/csrf.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="同源策略"><a href="#同源策略" class="headerlink" title="同源策略"></a>同源策略</h2><p>同源策略(Same Origin policy, SOP)，也称为单源策略(Single Origin policy)，用于Web浏览器编程语言的安全措施，用以保护信息的保密性和安全性。同源策略防止网站脚本访问其他站点使用脚本，也组织它与其他站点交互。<br>只要<strong>协议</strong>、<strong>端口</strong>、<strong>主机</strong>三个有一个不匹配，就是跨域请求。</p>
+<p>如果要跨域请求，有下面的限制：</p>
+<ul>
+<li>仅允许GET、HEAD、POST请求</li>
+<li>仅允许手动设置Accept、Accept-Language、Content-Language和Content-Type头</li>
+<li>Content-Type头仅允许使用application/x-www-form-urlencoded,multipart/form-data和text/plain这三种值。</li>
+</ul>
+<p>满足以上三个请求的，称为simple request<br>当上门的simple request不能满足使用场景的时候，有以下的请求解决跨域限制，都是以<code>Access-Control-</code>开头，比较重要的有：</p>
+<ul>
+<li>Access-Control-Allow-Origin：限制这个请求能从哪些URI访问。</li>
+</ul>
+<blockquote>
+<p>在使用这个请求，使用AJAX时，被调用方需要输出这个头，指名可以从哪个网站 访问，如果未输出这个头，只允许同域名的访问。</p>
+</blockquote>
+<ul>
+<li>Access-Control-Allow-Credentials: 允许这个请求使用cookie。</li>
+</ul>
+<blockquote>
+<p>一般跨域情况下，AJAX不会附带用户的Cookie，也不允许设置用户的Cookie，要使用这个的话，首先C在构造这个XMLHTTPRequest对象时，需要设置withCredentials属性。</p>
+</blockquote>
+<pre class="line-numbers language-none"><code class="language-none">XMLHttpRequest:
+
+var xhr &#x3D; new XMLHttpRequest();
+xhr.open(&#39;GET&#39;, url, true);
+xhr.withCredentials &#x3D; true;
+xhr.onreadystatechange &#x3D; handler;
+xhr.send()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2016/08/29/csrf.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2016/07/26/python-cpickle-shell.html" >Python cPickle 反序列化shell</a>
 		</h3>
 		</div>
@@ -347,132 +517,6 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/05/05/sqli-labs-less-16.html" >SQL报错注入</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-05-05  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="注入的方法"><a href="#注入的方法" class="headerlink" title="注入的方法"></a>注入的方法</h2><p>   <code>sqli-labs</code>的1，2，3，4课都可以使用以下四种来进行注入数据:</p>
-<ul>
-<li>Union select</li>
-<li>Error based</li>
-<li>Blind based</li>
-<li>Time blind based</li>
-</ul>
-<p>   对应的可以使用<code>sqlmap.py --technique </code>上面首字母大写来指定相应的注入类型。</p>
-<h3 id="Less-5"><a href="#Less-5" class="headerlink" title="Less-5"></a>Less-5</h3><p>   第五课首先排除union注入，因为页面无法显示数据，最后我还是看了网页源代码才注入的。</p>
-<blockquote>
-<p> 我发现sqlmap在每次注入的时候都会先尝试确定当前变量是被那种包含，然后在payload里面闭合，这样可以确保整个语句的完整性。 要么确定当前语句完全闭合，要么注释掉后面的语句，确保闭合。</p>
-</blockquote>
-<h3 id="Less-7"><a href="#Less-7" class="headerlink" title="Less-7"></a>Less-7</h3><p>   报错和union查询都出不了数据，只能进行盲注。bool blind和time blind。前面闭合可以使用<code>&#39;</code>或者<code>&#39;)</code>。</p>
-<h3 id="Less-8"><a href="#Less-8" class="headerlink" title="Less-8"></a>Less-8</h3>
-	
-
-	</div>
-  <a type="button" href="/2016/05/05/sqli-labs-less-16.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="注入的方法"><a href="#注入的方法" class="headerlink" title="注入的方法"></a>注入的方法</h2><p>   <code>sqli-labs</code>的1，2，3，4课都可以使用以下四种来进行注入数据:</p>
-<ul>
-<li>Union select</li>
-<li>Error based</li>
-<li>Blind based</li>
-<li>Time blind based</li>
-</ul>
-<p>   对应的可以使用<code>sqlmap.py --technique </code>上面首字母大写来指定相应的注入类型。</p>
-<h3 id="Less-5"><a href="#Less-5" class="headerlink" title="Less-5"></a>Less-5</h3><p>   第五课首先排除union注入，因为页面无法显示数据，最后我还是看了网页源代码才注入的。</p>
-<blockquote>
-<p> 我发现sqlmap在每次注入的时候都会先尝试确定当前变量是被那种包含，然后在payload里面闭合，这样可以确保整个语句的完整性。 要么确定当前语句完全闭合，要么注释掉后面的语句，确保闭合。</p>
-</blockquote>
-<h3 id="Less-7"><a href="#Less-7" class="headerlink" title="Less-7"></a>Less-7</h3><p>   报错和union查询都出不了数据，只能进行盲注。bool blind和time blind。前面闭合可以使用<code>&#39;</code>或者<code>&#39;)</code>。</p>
-<h3 id="Less-8"><a href="#Less-8" class="headerlink" title="Less-8"></a>Less-8</h3>
-	
-	</div>
-  <a type="button" href="/2016/05/05/sqli-labs-less-16.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/04/19/sqli-labs-less-1.html" >sqli-labs-Less-1</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-04-19  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>  网上关于这个的比较多，第一节课程是单引号注入，一般讲的都比较简单，加一个单引号闭合就行了，但是怎么注入数据呐。因为刚刚开始学，所以我翻了下源代码和数据库，注入出来的payload是这样的：<br><code>2&#39; union select group_concat(id,user()),group_concat(username,@@version),group_concat(password, (select hex(password) from mysql.user limit 1)) from users where id=3 order by id desc -- -</code></p>
-<p>简化一下语句是这样的select * from users where id=2 union select 1,2,3,mid((select password from mysql.user limit 1),N,1) order by id</p>
-<p>union前后的字段数必须一样，union后面的数据可以自己发挥，如何让页面显示注入之后数据可以使用 order by，因为php语句是只显示sql里面第一行结果，所以要让我们注入出来的在第一行显示。 </p>
-<h2 id="Error-based"><a href="#Error-based" class="headerlink" title="Error based"></a>Error based</h2><blockquote>
-<p>首先报错注入要注意闭合语句，比如<code>id=1</code>，如果在PHP里面是这样的<code>select * from users where id=&#39;$id&#39;</code>，其中变量是被单引号包围，在使用报错注入的时候一定要闭合单引号,同理其他符号也是。</p>
-</blockquote>
-<h3 id="BIGINT溢出错误"><a href="#BIGINT溢出错误" class="headerlink" title="BIGINT溢出错误"></a>BIGINT溢出错误</h3><p>上面是union的注入情况，然后是报错注入如下：<br><code>select * from users where id=1 and !(select*from(select user())x)+~0</code><br>地址栏输入这样的语句<br><code>2&#39; and !(select*from(select+user())x)%2b~0</code>(注意单引号闭合，如果没有闭合还是出现正常的结果。</p>
-<pre><code>本文的攻击之所以得逞，是因为mysql_error()会向我们返回错误消息，只要这样，我们才能够利用它来进行注入。 这一功能，是在5.5.5及其以上版本提供的。
-</code></pre>
-<p>source:<a target="_blank" rel="noopener" href="http://drops.wooyun.org/web/8024">http://drops.wooyun.org/web/8024</a></p>
-<h3 id="EXP溢出错误"><a href="#EXP溢出错误" class="headerlink" title="EXP溢出错误"></a>EXP溢出错误</h3>
-	
-
-	</div>
-  <a type="button" href="/2016/04/19/sqli-labs-less-1.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>  网上关于这个的比较多，第一节课程是单引号注入，一般讲的都比较简单，加一个单引号闭合就行了，但是怎么注入数据呐。因为刚刚开始学，所以我翻了下源代码和数据库，注入出来的payload是这样的：<br><code>2&#39; union select group_concat(id,user()),group_concat(username,@@version),group_concat(password, (select hex(password) from mysql.user limit 1)) from users where id=3 order by id desc -- -</code></p>
-<p>简化一下语句是这样的select * from users where id=2 union select 1,2,3,mid((select password from mysql.user limit 1),N,1) order by id</p>
-<p>union前后的字段数必须一样，union后面的数据可以自己发挥，如何让页面显示注入之后数据可以使用 order by，因为php语句是只显示sql里面第一行结果，所以要让我们注入出来的在第一行显示。 </p>
-<h2 id="Error-based"><a href="#Error-based" class="headerlink" title="Error based"></a>Error based</h2><blockquote>
-<p>首先报错注入要注意闭合语句，比如<code>id=1</code>，如果在PHP里面是这样的<code>select * from users where id=&#39;$id&#39;</code>，其中变量是被单引号包围，在使用报错注入的时候一定要闭合单引号,同理其他符号也是。</p>
-</blockquote>
-<h3 id="BIGINT溢出错误"><a href="#BIGINT溢出错误" class="headerlink" title="BIGINT溢出错误"></a>BIGINT溢出错误</h3><p>上面是union的注入情况，然后是报错注入如下：<br><code>select * from users where id=1 and !(select*from(select user())x)+~0</code><br>地址栏输入这样的语句<br><code>2&#39; and !(select*from(select+user())x)%2b~0</code>(注意单引号闭合，如果没有闭合还是出现正常的结果。</p>
-<pre><code>本文的攻击之所以得逞，是因为mysql_error()会向我们返回错误消息，只要这样，我们才能够利用它来进行注入。 这一功能，是在5.5.5及其以上版本提供的。
-</code></pre>
-<p>source:<a target="_blank" rel="noopener" href="http://drops.wooyun.org/web/8024">http://drops.wooyun.org/web/8024</a></p>
-<h3 id="EXP溢出错误"><a href="#EXP溢出错误" class="headerlink" title="EXP溢出错误"></a>EXP溢出错误</h3>
-	
-	</div>
-  <a type="button" href="/2016/04/19/sqli-labs-less-1.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -524,13 +568,13 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>7</span></a></li>
+			<li><a href="/categories/Java/">Java<span>8</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>44</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>45</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -551,6 +595,14 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/10/27/clickhouse-sql-inject.html" ><i class="fa fa-file-o"></i>ClickHouse注入测试记录</a>
+      </li>
+    
+      <li>
+        <a href="/2022/06/23/java-agent-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(4)-Java Agent</a>
+      </li>
+    
+      <li>
         <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
       </li>
     
@@ -560,14 +612,6 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
     
       <li>
         <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
-      </li>
-    
-      <li>
-        <a href="/2022/04/06/CVE-2022-22965.html" ><i class="fa fa-file-o"></i>CVE-2022-22965漏洞记录</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
       </li>
     
   </ul>

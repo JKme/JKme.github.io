@@ -117,6 +117,132 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2016/05/05/sqli-labs-less-16.html" >SQL报错注入</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-05-05  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="注入的方法"><a href="#注入的方法" class="headerlink" title="注入的方法"></a>注入的方法</h2><p>   <code>sqli-labs</code>的1，2，3，4课都可以使用以下四种来进行注入数据:</p>
+<ul>
+<li>Union select</li>
+<li>Error based</li>
+<li>Blind based</li>
+<li>Time blind based</li>
+</ul>
+<p>   对应的可以使用<code>sqlmap.py --technique </code>上面首字母大写来指定相应的注入类型。</p>
+<h3 id="Less-5"><a href="#Less-5" class="headerlink" title="Less-5"></a>Less-5</h3><p>   第五课首先排除union注入，因为页面无法显示数据，最后我还是看了网页源代码才注入的。</p>
+<blockquote>
+<p> 我发现sqlmap在每次注入的时候都会先尝试确定当前变量是被那种包含，然后在payload里面闭合，这样可以确保整个语句的完整性。 要么确定当前语句完全闭合，要么注释掉后面的语句，确保闭合。</p>
+</blockquote>
+<h3 id="Less-7"><a href="#Less-7" class="headerlink" title="Less-7"></a>Less-7</h3><p>   报错和union查询都出不了数据，只能进行盲注。bool blind和time blind。前面闭合可以使用<code>&#39;</code>或者<code>&#39;)</code>。</p>
+<h3 id="Less-8"><a href="#Less-8" class="headerlink" title="Less-8"></a>Less-8</h3>
+	
+
+	</div>
+  <a type="button" href="/2016/05/05/sqli-labs-less-16.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="注入的方法"><a href="#注入的方法" class="headerlink" title="注入的方法"></a>注入的方法</h2><p>   <code>sqli-labs</code>的1，2，3，4课都可以使用以下四种来进行注入数据:</p>
+<ul>
+<li>Union select</li>
+<li>Error based</li>
+<li>Blind based</li>
+<li>Time blind based</li>
+</ul>
+<p>   对应的可以使用<code>sqlmap.py --technique </code>上面首字母大写来指定相应的注入类型。</p>
+<h3 id="Less-5"><a href="#Less-5" class="headerlink" title="Less-5"></a>Less-5</h3><p>   第五课首先排除union注入，因为页面无法显示数据，最后我还是看了网页源代码才注入的。</p>
+<blockquote>
+<p> 我发现sqlmap在每次注入的时候都会先尝试确定当前变量是被那种包含，然后在payload里面闭合，这样可以确保整个语句的完整性。 要么确定当前语句完全闭合，要么注释掉后面的语句，确保闭合。</p>
+</blockquote>
+<h3 id="Less-7"><a href="#Less-7" class="headerlink" title="Less-7"></a>Less-7</h3><p>   报错和union查询都出不了数据，只能进行盲注。bool blind和time blind。前面闭合可以使用<code>&#39;</code>或者<code>&#39;)</code>。</p>
+<h3 id="Less-8"><a href="#Less-8" class="headerlink" title="Less-8"></a>Less-8</h3>
+	
+	</div>
+  <a type="button" href="/2016/05/05/sqli-labs-less-16.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2016/04/19/sqli-labs-less-1.html" >sqli-labs-Less-1</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-04-19  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>  网上关于这个的比较多，第一节课程是单引号注入，一般讲的都比较简单，加一个单引号闭合就行了，但是怎么注入数据呐。因为刚刚开始学，所以我翻了下源代码和数据库，注入出来的payload是这样的：<br><code>2&#39; union select group_concat(id,user()),group_concat(username,@@version),group_concat(password, (select hex(password) from mysql.user limit 1)) from users where id=3 order by id desc -- -</code></p>
+<p>简化一下语句是这样的select * from users where id=2 union select 1,2,3,mid((select password from mysql.user limit 1),N,1) order by id</p>
+<p>union前后的字段数必须一样，union后面的数据可以自己发挥，如何让页面显示注入之后数据可以使用 order by，因为php语句是只显示sql里面第一行结果，所以要让我们注入出来的在第一行显示。 </p>
+<h2 id="Error-based"><a href="#Error-based" class="headerlink" title="Error based"></a>Error based</h2><blockquote>
+<p>首先报错注入要注意闭合语句，比如<code>id=1</code>，如果在PHP里面是这样的<code>select * from users where id=&#39;$id&#39;</code>，其中变量是被单引号包围，在使用报错注入的时候一定要闭合单引号,同理其他符号也是。</p>
+</blockquote>
+<h3 id="BIGINT溢出错误"><a href="#BIGINT溢出错误" class="headerlink" title="BIGINT溢出错误"></a>BIGINT溢出错误</h3><p>上面是union的注入情况，然后是报错注入如下：<br><code>select * from users where id=1 and !(select*from(select user())x)+~0</code><br>地址栏输入这样的语句<br><code>2&#39; and !(select*from(select+user())x)%2b~0</code>(注意单引号闭合，如果没有闭合还是出现正常的结果。</p>
+<pre><code>本文的攻击之所以得逞，是因为mysql_error()会向我们返回错误消息，只要这样，我们才能够利用它来进行注入。 这一功能，是在5.5.5及其以上版本提供的。
+</code></pre>
+<p>source:<a target="_blank" rel="noopener" href="http://drops.wooyun.org/web/8024">http://drops.wooyun.org/web/8024</a></p>
+<h3 id="EXP溢出错误"><a href="#EXP溢出错误" class="headerlink" title="EXP溢出错误"></a>EXP溢出错误</h3>
+	
+
+	</div>
+  <a type="button" href="/2016/04/19/sqli-labs-less-1.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>  网上关于这个的比较多，第一节课程是单引号注入，一般讲的都比较简单，加一个单引号闭合就行了，但是怎么注入数据呐。因为刚刚开始学，所以我翻了下源代码和数据库，注入出来的payload是这样的：<br><code>2&#39; union select group_concat(id,user()),group_concat(username,@@version),group_concat(password, (select hex(password) from mysql.user limit 1)) from users where id=3 order by id desc -- -</code></p>
+<p>简化一下语句是这样的select * from users where id=2 union select 1,2,3,mid((select password from mysql.user limit 1),N,1) order by id</p>
+<p>union前后的字段数必须一样，union后面的数据可以自己发挥，如何让页面显示注入之后数据可以使用 order by，因为php语句是只显示sql里面第一行结果，所以要让我们注入出来的在第一行显示。 </p>
+<h2 id="Error-based"><a href="#Error-based" class="headerlink" title="Error based"></a>Error based</h2><blockquote>
+<p>首先报错注入要注意闭合语句，比如<code>id=1</code>，如果在PHP里面是这样的<code>select * from users where id=&#39;$id&#39;</code>，其中变量是被单引号包围，在使用报错注入的时候一定要闭合单引号,同理其他符号也是。</p>
+</blockquote>
+<h3 id="BIGINT溢出错误"><a href="#BIGINT溢出错误" class="headerlink" title="BIGINT溢出错误"></a>BIGINT溢出错误</h3><p>上面是union的注入情况，然后是报错注入如下：<br><code>select * from users where id=1 and !(select*from(select user())x)+~0</code><br>地址栏输入这样的语句<br><code>2&#39; and !(select*from(select+user())x)%2b~0</code>(注意单引号闭合，如果没有闭合还是出现正常的结果。</p>
+<pre><code>本文的攻击之所以得逞，是因为mysql_error()会向我们返回错误消息，只要这样，我们才能够利用它来进行注入。 这一功能，是在5.5.5及其以上版本提供的。
+</code></pre>
+<p>source:<a target="_blank" rel="noopener" href="http://drops.wooyun.org/web/8024">http://drops.wooyun.org/web/8024</a></p>
+<h3 id="EXP溢出错误"><a href="#EXP溢出错误" class="headerlink" title="EXP溢出错误"></a>EXP溢出错误</h3>
+	
+	</div>
+  <a type="button" href="/2016/04/19/sqli-labs-less-1.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2016/04/15/svn-scan.html" >SVN匿名扫描</a>
 		</h3>
 		</div>
@@ -806,13 +932,13 @@ XTMP_STRUCT_SIZE <span class="token operator">=</span> struct<span class="token 
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>7</span></a></li>
+			<li><a href="/categories/Java/">Java<span>8</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>44</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>45</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -833,6 +959,14 @@ XTMP_STRUCT_SIZE <span class="token operator">=</span> struct<span class="token 
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/10/27/clickhouse-sql-inject.html" ><i class="fa fa-file-o"></i>ClickHouse注入测试记录</a>
+      </li>
+    
+      <li>
+        <a href="/2022/06/23/java-agent-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(4)-Java Agent</a>
+      </li>
+    
+      <li>
         <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
       </li>
     
@@ -842,14 +976,6 @@ XTMP_STRUCT_SIZE <span class="token operator">=</span> struct<span class="token 
     
       <li>
         <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
-      </li>
-    
-      <li>
-        <a href="/2022/04/06/CVE-2022-22965.html" ><i class="fa fa-file-o"></i>CVE-2022-22965漏洞记录</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
       </li>
     
   </ul>

