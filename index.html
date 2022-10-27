@@ -140,12 +140,13 @@
 </ul>
 <p>虽然Sqlmap不支持ClickHouse，但是我还是不死心的跑了一下，<del>可能这就是脚本小子吧</del></p>
 <p>经过我不懈努力，终于让Sqlmap跑出来了可注入点:</p>
-<pre class="line-numbers language-none"><code class="language-none">.&#x2F;sqlmap.py -r ~&#x2F;Desktop&#x2F;sql.txt -v --technique&#x3D;T --level 3 -v 3 --dbms MySQL --time-sec 3 --prefix &quot;&#39;)&quot; --suffix &quot;and (&#39;&quot; --tamper lowercase --proxy http:&#x2F;&#x2F;127.0.0.1:8080<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>![1.png]</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">./sqlmap.py -r ~/Desktop/sql.txt -v --technique<span class="token operator">=</span>T --level <span class="token number">3</span> -v <span class="token number">3</span> --dbms MySQL --time-sec <span class="token number">3</span> --prefix <span class="token string">"')"</span> --suffix <span class="token string">"and ('"</span> --tamper lowercase --proxy http://127.0.0.1:8080<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="/2022/10/27/clickhouse-sql-inject/1.png"></p>
 <p>为了让Sqlmap跑出来这个注入点，一言难尽。因为sqlmap里面的<code>SLEEP(5)</code>是自带的payload，就算是加了<code>--tamper lowercase</code>也不会改变这个关键payload的大小写，始终是大写。所以我当时有两个选择：</p>
 <ol>
 <li>写个Burp插件转变成小写–费时费力</li>
-<li>修改Sqlmap的源代码 –  这个简单</li>
+<li>修改Sqlmap的源代码–这个简单</li>
 </ol>
 <p>于是乎，我直接编辑sqlmap目录下的<code>data/xml/payloads/time_blind.xml</code>，直接把<code>SLEEP</code>替换为<code>sleep</code>，然后发现会影响<code>SLEEPTIME</code>这个变量，再替换一次<code>sleepTime</code>为<code>SLEEPTIME</code>。</p>
 	
@@ -167,12 +168,13 @@
 </ul>
 <p>虽然Sqlmap不支持ClickHouse，但是我还是不死心的跑了一下，<del>可能这就是脚本小子吧</del></p>
 <p>经过我不懈努力，终于让Sqlmap跑出来了可注入点:</p>
-<pre class="line-numbers language-none"><code class="language-none">.&#x2F;sqlmap.py -r ~&#x2F;Desktop&#x2F;sql.txt -v --technique&#x3D;T --level 3 -v 3 --dbms MySQL --time-sec 3 --prefix &quot;&#39;)&quot; --suffix &quot;and (&#39;&quot; --tamper lowercase --proxy http:&#x2F;&#x2F;127.0.0.1:8080<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>![1.png]</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">./sqlmap.py -r ~/Desktop/sql.txt -v --technique<span class="token operator">=</span>T --level <span class="token number">3</span> -v <span class="token number">3</span> --dbms MySQL --time-sec <span class="token number">3</span> --prefix <span class="token string">"')"</span> --suffix <span class="token string">"and ('"</span> --tamper lowercase --proxy http://127.0.0.1:8080<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="/2022/10/27/clickhouse-sql-inject/1.png"></p>
 <p>为了让Sqlmap跑出来这个注入点，一言难尽。因为sqlmap里面的<code>SLEEP(5)</code>是自带的payload，就算是加了<code>--tamper lowercase</code>也不会改变这个关键payload的大小写，始终是大写。所以我当时有两个选择：</p>
 <ol>
 <li>写个Burp插件转变成小写–费时费力</li>
-<li>修改Sqlmap的源代码 –  这个简单</li>
+<li>修改Sqlmap的源代码–这个简单</li>
 </ol>
 <p>于是乎，我直接编辑sqlmap目录下的<code>data/xml/payloads/time_blind.xml</code>，直接把<code>SLEEP</code>替换为<code>sleep</code>，然后发现会影响<code>SLEEPTIME</code>这个变量，再替换一次<code>sleepTime</code>为<code>SLEEPTIME</code>。</p>
 	
