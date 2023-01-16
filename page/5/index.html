@@ -117,6 +117,176 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2020/09/10/redis-windows-hijack.html" >Redis On Windows -- Dll Hijack</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-09-10  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>本文测试了Redis在Windows平台下的dll劫持，主要参考文章是先知的秋水师傅: <a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/8153">Redis on Windows 出网利用探索</a></p>
+<h3 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h3><pre class="line-numbers language-none"><code class="language-none">Redis-x64-3.2.100
+Win10<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="可劫持的DLL"><a href="#可劫持的DLL" class="headerlink" title="可劫持的DLL"></a>可劫持的DLL</h3><p>按照文章中使用<code>Process Monitor</code>，在使用<code>redis-cli</code>操作的时候，观察缺失的DLL。在<code>Process Monitor Filter</code>里面设置<code>Image Path</code>的值为<code>redis-server.exe</code>的路径，比如我的是<code>C:\Program Files\Redis\redis-server.exe</code>，<code>Path</code>设置为<code>ends with dll</code>。设置好之后，使用<code>redis-cli</code>连接，执行<code>bgsave</code>命令，然后观察缺失的dll，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
+C:\Program Files\Redis\dbghelp.dll
+C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>当<code>redis-server.exe</code>启动的时候，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll
+C:\Program Files\Redis\CRYPTBASE.DLL<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+<p>执行<code>BGREWRITEAOF</code>的时候，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
+C:\Program Files\Redis\dbghelp.dll
+C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2020/09/10/redis-windows-hijack.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>本文测试了Redis在Windows平台下的dll劫持，主要参考文章是先知的秋水师傅: <a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/8153">Redis on Windows 出网利用探索</a></p>
+<h3 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h3><pre class="line-numbers language-none"><code class="language-none">Redis-x64-3.2.100
+Win10<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="可劫持的DLL"><a href="#可劫持的DLL" class="headerlink" title="可劫持的DLL"></a>可劫持的DLL</h3><p>按照文章中使用<code>Process Monitor</code>，在使用<code>redis-cli</code>操作的时候，观察缺失的DLL。在<code>Process Monitor Filter</code>里面设置<code>Image Path</code>的值为<code>redis-server.exe</code>的路径，比如我的是<code>C:\Program Files\Redis\redis-server.exe</code>，<code>Path</code>设置为<code>ends with dll</code>。设置好之后，使用<code>redis-cli</code>连接，执行<code>bgsave</code>命令，然后观察缺失的dll，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
+C:\Program Files\Redis\dbghelp.dll
+C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>当<code>redis-server.exe</code>启动的时候，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll
+C:\Program Files\Redis\CRYPTBASE.DLL<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+<p>执行<code>BGREWRITEAOF</code>的时候，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
+C:\Program Files\Redis\dbghelp.dll
+C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2020/09/10/redis-windows-hijack.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2020/08/28/CloudFront-Https.html" >Domain Fronting隐藏HTTPS</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-08-28  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>记录一下当使用<code>Domain Fronting</code>中使用<code>https</code>来上线时候的坑，因为查了半圈没有找到类似的资料，为啥非要https呢，因为<code>node32</code>对http的流量很敏感。</p>
+<p>###目标</p>
+<ol>
+<li>使用<code>Windows/beacon_https/reverse_https</code>作为上线的payload</li>
+<li>AWS的<code>Cloudfront</code>作为前置域名</li>
+</ol>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><pre class="line-numbers language-none"><code class="language-none">域名: example.com
+VPS(Centos)
+cloudflare(只作域名解析,不添加任何其他功能，不加CDN，不加HTTPS)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+<h2 id="部署工作"><a href="#部署工作" class="headerlink" title="部署工作"></a>部署工作</h2><p>安装的apache是测试连通性，除此之外没有任何用处。</p>
+<pre class="line-numbers language-none"><code class="language-none">yum install httpd
+systemctl start httpd<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h4 id="增加apache配置文件"><a href="#增加apache配置文件" class="headerlink" title="增加apache配置文件"></a>增加apache配置文件</h4><pre class="line-numbers language-none"><code class="language-none">#&#x2F;etc&#x2F;httpd&#x2F;conf.d&#x2F;vhost.conf
+&lt;VirtualHost *:80&gt;
+   DocumentRoot &#x2F;var&#x2F;www&#x2F;html
+   ServerName example.com
+
+
+RewriteEngine on
+RewriteCond %&#123;SERVER_NAME&#125; &#x3D;example.com
+RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125; [END,NE,R&#x3D;permanent]
+&lt;&#x2F;VirtualHost&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2020/08/28/CloudFront-Https.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>记录一下当使用<code>Domain Fronting</code>中使用<code>https</code>来上线时候的坑，因为查了半圈没有找到类似的资料，为啥非要https呢，因为<code>node32</code>对http的流量很敏感。</p>
+<p>###目标</p>
+<ol>
+<li>使用<code>Windows/beacon_https/reverse_https</code>作为上线的payload</li>
+<li>AWS的<code>Cloudfront</code>作为前置域名</li>
+</ol>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><pre class="line-numbers language-none"><code class="language-none">域名: example.com
+VPS(Centos)
+cloudflare(只作域名解析,不添加任何其他功能，不加CDN，不加HTTPS)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+<h2 id="部署工作"><a href="#部署工作" class="headerlink" title="部署工作"></a>部署工作</h2><p>安装的apache是测试连通性，除此之外没有任何用处。</p>
+<pre class="line-numbers language-none"><code class="language-none">yum install httpd
+systemctl start httpd<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h4 id="增加apache配置文件"><a href="#增加apache配置文件" class="headerlink" title="增加apache配置文件"></a>增加apache配置文件</h4><pre class="line-numbers language-none"><code class="language-none">#&#x2F;etc&#x2F;httpd&#x2F;conf.d&#x2F;vhost.conf
+&lt;VirtualHost *:80&gt;
+   DocumentRoot &#x2F;var&#x2F;www&#x2F;html
+   ServerName example.com
+
+
+RewriteEngine on
+RewriteCond %&#123;SERVER_NAME&#125; &#x3D;example.com
+RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125; [END,NE,R&#x3D;permanent]
+&lt;&#x2F;VirtualHost&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2020/08/28/CloudFront-Https.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2020/08/28/hide-your-windows-backdoor.html" >Windows后门隐藏</a>
 		</h3>
 		</div>
@@ -419,160 +589,6 @@ function Convert-Date &#123;
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2020/05/14/workgroup-pentest2.html" >内网渗透流水账</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2020-05-14  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="0x01-环境"><a href="#0x01-环境" class="headerlink" title="0x01 环境"></a>0x01 环境</h2><ol>
-<li>Linux主机www权限</li>
-<li>主机无法出外网</li>
-<li>正向代理无法使用</li>
-<li>B段内网</li>
-</ol>
-<h2 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h2><p>#####F-Scrack.py</p>
-<pre class="line-numbers language-none"><code class="language-none">获取Redis, ES等
-PS: Scrack.py的mssql模块爆破不准确，可以自己写一个简单的
-
-python Scrack.py -h 10.111.1.1-10.111.2.254 -p 3306,5432 -m 200 -t 6<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-
-<h3 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h3><p>key较多的时候不要使用<code>keys *</code></p>
-<pre class="line-numbers language-none"><code class="language-none">查看基本信息: master，数量，版本号
-使用scan查看keys: scan 0 match * count 100 
-查看类型: type &lt;key&gt;
-hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h3 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h3><p>windows下可以先测试是否可写入插件目录:</p>
-	
-
-	</div>
-  <a type="button" href="/2020/05/14/workgroup-pentest2.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="0x01-环境"><a href="#0x01-环境" class="headerlink" title="0x01 环境"></a>0x01 环境</h2><ol>
-<li>Linux主机www权限</li>
-<li>主机无法出外网</li>
-<li>正向代理无法使用</li>
-<li>B段内网</li>
-</ol>
-<h2 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h2><p>#####F-Scrack.py</p>
-<pre class="line-numbers language-none"><code class="language-none">获取Redis, ES等
-PS: Scrack.py的mssql模块爆破不准确，可以自己写一个简单的
-
-python Scrack.py -h 10.111.1.1-10.111.2.254 -p 3306,5432 -m 200 -t 6<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-
-<h3 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h3><p>key较多的时候不要使用<code>keys *</code></p>
-<pre class="line-numbers language-none"><code class="language-none">查看基本信息: master，数量，版本号
-使用scan查看keys: scan 0 match * count 100 
-查看类型: type &lt;key&gt;
-hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h3 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h3><p>windows下可以先测试是否可写入插件目录:</p>
-	
-	</div>
-  <a type="button" href="/2020/05/14/workgroup-pentest2.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2020/05/06/python-elk.html" >Python处理xlsx到ELK</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2020-05-06  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>需要把数据从xlsx读到elk，再做数据分析，遇到一个问题是把当在elk里面处理日期类的数据的时候，需要把数据转换为Date类型:</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">float2utc</span><span class="token punctuation">(</span>num<span class="token punctuation">)</span><span class="token punctuation">:</span>
-	date <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">(</span><span class="token operator">*</span>xldate_as_tuple<span class="token punctuation">(</span>num<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-
-	local <span class="token operator">=</span> pytz<span class="token punctuation">.</span>timezone<span class="token punctuation">(</span><span class="token string">"Asia/Shanghai"</span><span class="token punctuation">)</span>
-	local_dt <span class="token operator">=</span> local<span class="token punctuation">.</span>localize<span class="token punctuation">(</span>date<span class="token punctuation">,</span> is_dst<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span>
-	utc_dt <span class="token operator">=</span> local_dt<span class="token punctuation">.</span>astimezone<span class="token punctuation">(</span>pytz<span class="token punctuation">.</span>utc<span class="token punctuation">)</span>
-	timeStr <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">.</span>strftime<span class="token punctuation">(</span>utc_dt<span class="token punctuation">,</span> <span class="token string">"%Y-%m-%dT%H:%M:%S.%f"</span><span class="token punctuation">)</span>
-	timeStr <span class="token operator">=</span> timeStr<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token operator">-</span><span class="token number">3</span><span class="token punctuation">]</span>
-	<span class="token comment">#cell = date.strftime('%Y/%m/%d %H:%M')</span>
-	<span class="token keyword">return</span> timeStr <span class="token operator">+</span> <span class="token string">"Z"</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<ul>
-<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon">https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon</a></li>
-</ul>
-
-	
-
-	</div>
-  <a type="button" href="/2020/05/06/python-elk.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>需要把数据从xlsx读到elk，再做数据分析，遇到一个问题是把当在elk里面处理日期类的数据的时候，需要把数据转换为Date类型:</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">float2utc</span><span class="token punctuation">(</span>num<span class="token punctuation">)</span><span class="token punctuation">:</span>
-	date <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">(</span><span class="token operator">*</span>xldate_as_tuple<span class="token punctuation">(</span>num<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-
-	local <span class="token operator">=</span> pytz<span class="token punctuation">.</span>timezone<span class="token punctuation">(</span><span class="token string">"Asia/Shanghai"</span><span class="token punctuation">)</span>
-	local_dt <span class="token operator">=</span> local<span class="token punctuation">.</span>localize<span class="token punctuation">(</span>date<span class="token punctuation">,</span> is_dst<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span>
-	utc_dt <span class="token operator">=</span> local_dt<span class="token punctuation">.</span>astimezone<span class="token punctuation">(</span>pytz<span class="token punctuation">.</span>utc<span class="token punctuation">)</span>
-	timeStr <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">.</span>strftime<span class="token punctuation">(</span>utc_dt<span class="token punctuation">,</span> <span class="token string">"%Y-%m-%dT%H:%M:%S.%f"</span><span class="token punctuation">)</span>
-	timeStr <span class="token operator">=</span> timeStr<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token operator">-</span><span class="token number">3</span><span class="token punctuation">]</span>
-	<span class="token comment">#cell = date.strftime('%Y/%m/%d %H:%M')</span>
-	<span class="token keyword">return</span> timeStr <span class="token operator">+</span> <span class="token string">"Z"</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<ul>
-<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon">https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon</a></li>
-</ul>
-
-	
-	</div>
-  <a type="button" href="/2020/05/06/python-elk.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -622,7 +638,7 @@ hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows
 		
 			<li><a href="/categories/CTF/">CTF<span>1</span></a></li>
 		
-			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
+			<li><a href="/categories/Fun/">Fun<span>4</span></a></li>
 		
 			<li><a href="/categories/Java/">Java<span>8</span></a></li>
 		
@@ -630,7 +646,7 @@ hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>45</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>46</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -651,6 +667,14 @@ hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
+      </li>
+    
+      <li>
+        <a href="/2022/11/08/pve_homelab.html" ><i class="fa fa-file-o"></i>PVE使用注意事项</a>
+      </li>
+    
+      <li>
         <a href="/2022/10/27/clickhouse-sql-inject.html" ><i class="fa fa-file-o"></i>ClickHouse注入测试记录</a>
       </li>
     
@@ -660,14 +684,6 @@ hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows
     
       <li>
         <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
-      </li>
-    
-      <li>
-        <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
-      </li>
-    
-      <li>
-        <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
       </li>
     
   </ul>
@@ -685,7 +701,7 @@ hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows
   <div class="container-narrow">
   <footer> <p>
   
-  &copy; 2022 JKme's Blog
+  &copy; 2023 JKme's Blog
   
       powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
 </p>

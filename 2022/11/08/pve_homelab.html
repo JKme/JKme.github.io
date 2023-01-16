@@ -1,0 +1,330 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>PVE使用注意事项 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="组建的PVE使用的是这个方案: PVE+TrueNAS+ZFS+10G内网方案
+虚拟机磁盘选择使用的时候创建的Windows虚拟机特别慢，打开管理器一看磁盘最高只有5M/S的写入速度，发现是选择的磁盘类型不同，在创建虚拟机的时候最好选择SCSI的磁盘格式
+比如在新建Windows虚拟机的时候，一般需要以下步骤：
+
+下载VirtIO驱动镜像
+将镜像文件上传到 PVE 的 ISO镜像中
+按照常规流程创建虚拟机，不启动
+在虚拟机的 “硬件” 选项卡内添加 “CD/DVD驱动器”
+挂载 win10 系统镜像和 VirtIO 驱动镜像 (CD1: win10.iso，CD2: virtio-win.iso)
+检查虚拟机的 “选项” 选项卡内的 “引导顺序
+启动虚拟机 &amp;gt; “加载驱动程序” &amp;gt; “浏览” D:\amd64\win10 &amp;gt; “下一步”，安装驱动程序
+驱动安装后在磁盘列表就会检测到硬盘，继续后续系统安装步骤
+
+但是我现在已经装好了虚拟机，需要把IDE类型的磁盘转换为SCSI：
+
+已有的虚拟机插入两个ISO设备，一个是Win10镜像，一个是Virto镜像
+开机启动进入Win10镜像，然后SHIFT+F10调出cmd
+确定C盘的盘符和Virto的盘符，输入命令dism /image:C:\ /add-driver /driver:E:\vioscsi\w10\amd64
+随后关机: wpeutil shutdown -s
+在PVE虚拟机界面分离磁盘，把磁盘类型改为SCSI，随后重启即可
+
+
+改完之后的写入速度在40M/S～50M/S左右
+数据的备份和关机顺序"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="PVE使用注意事项"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> PVE使用注意事项</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <p>组建的PVE使用的是这个方案: <a target="_blank" rel="noopener" href="https://foxi.buduanwang.vip/virtualization/1183.html/">PVE+TrueNAS+ZFS+10G内网方案</a></p>
+<h2 id="虚拟机磁盘选择"><a href="#虚拟机磁盘选择" class="headerlink" title="虚拟机磁盘选择"></a>虚拟机磁盘选择</h2><p>使用的时候创建的Windows虚拟机特别慢，打开管理器一看磁盘最高只有5M/S的写入速度，发现是选择的磁盘类型不同，在创建虚拟机的时候最好选择<a target="_blank" rel="noopener" href="https://foxi.buduanwang.vip/virtualization/pve/1214.html/">SCSI的磁盘格式</a></p>
+<p>比如在新建Windows虚拟机的时候，一般需要以下<a target="_blank" rel="noopener" href="https://www.dudr.top/index.php/archives/121/">步骤</a>：</p>
+<ol>
+<li>下载<a target="_blank" rel="noopener" href="https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/latest-virtio/virtio-win.iso">VirtIO驱动镜像</a></li>
+<li>将镜像文件上传到 PVE 的 ISO镜像中</li>
+<li>按照常规流程创建虚拟机，不启动</li>
+<li>在虚拟机的 “硬件” 选项卡内添加 “CD/DVD驱动器”</li>
+<li>挂载 win10 系统镜像和 VirtIO 驱动镜像 (CD1: win10.iso，CD2: virtio-win.iso)</li>
+<li>检查虚拟机的 “选项” 选项卡内的 “引导顺序</li>
+<li>启动虚拟机 &gt; “加载驱动程序” &gt; “浏览” D:\amd64\win10 &gt; “下一步”，安装驱动程序</li>
+<li>驱动安装后在磁盘列表就会检测到硬盘，继续后续系统安装步骤</li>
+</ol>
+<p>但是我现在已经装好了虚拟机，需要把IDE类型的磁盘转换为SCSI：</p>
+<ol>
+<li>已有的虚拟机插入两个ISO设备，一个是Win10镜像，一个是Virto镜像</li>
+<li>开机启动进入Win10镜像，然后<code>SHIFT+F10</code>调出cmd</li>
+<li>确定C盘的盘符和Virto的盘符，输入命令<code>dism /image:C:\ /add-driver /driver:E:\vioscsi\w10\amd64</code></li>
+<li>随后关机: <code>wpeutil shutdown -s</code></li>
+<li>在PVE虚拟机界面分离磁盘，把磁盘类型改为SCSI，随后重启即可</li>
+</ol>
+<p><img src="/2022/11/08/pve_homelab/1.png"></p>
+<p>改完之后的写入速度在40M/S～50M/S左右</p>
+<h2 id="数据的备份和关机顺序"><a href="#数据的备份和关机顺序" class="headerlink" title="数据的备份和关机顺序"></a>数据的备份和关机顺序</h2><h3 id="Windows备份"><a href="#Windows备份" class="headerlink" title="Windows备份"></a>Windows备份</h3><p>假如需要在Windows里面增量备份A目录到共享文件夹，可以选择新增计划任务，每5分钟备份一次：</p>
+<ol>
+<li>计划任务: <code>robocopy C:\Users\Administrator\source\repos \\truenas\source /mir</code></li>
+<li>修改计划任务的触发器和运行的脚本</li>
+</ol>
+<h3 id="PVE关机顺序"><a href="#PVE关机顺序" class="headerlink" title="PVE关机顺序"></a>PVE关机顺序</h3><p>背景是开了好几个虚拟机，然后直接在PVE系统里面直接shutdown，当有其他虚拟机运行的时候，可能会数据丢失。我的truenas虚拟机ID是100，新建一个脚本<code>pve_shutdown</code>，在每次关机的时候顺序关闭虚拟机，最后关闭truenas，同时新增一个快照备份:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token shebang important">#!/bin/bash</span>
+<span class="token assign-left variable">RUNNING_PVE</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span>qm list <span class="token operator">|</span><span class="token function">grep</span> running <span class="token operator">|</span><span class="token function">awk</span> <span class="token string">'&#123;print $1&#125;'</span><span class="token variable">)</span></span>
+<span class="token keyword">for</span> <span class="token for-or-select variable">pve</span> <span class="token keyword">in</span> <span class="token variable">$RUNNING_PVE</span>
+<span class="token keyword">do</span>
+    <span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token variable">$pve</span> <span class="token operator">!=</span> <span class="token number">100</span> <span class="token punctuation">]</span><span class="token punctuation">;</span><span class="token keyword">then</span>
+    qm snapshot <span class="token variable">$pve</span> <span class="token string">"date-<span class="token variable"><span class="token variable">$(</span><span class="token function">date</span> +%Y%m%d<span class="token variable">)</span></span>"</span>
+    <span class="token function">rm</span> -rf /run/lock/qemu-server/lock-<span class="token variable">$pve</span>.conf
+    qm unlock <span class="token variable">$pve</span>
+    qm <span class="token function">shutdown</span> <span class="token variable">$pve</span>
+    <span class="token keyword">fi</span>
+<span class="token keyword">done</span>
+qm snapshot <span class="token number">100</span> <span class="token string">"date-<span class="token variable"><span class="token variable">$(</span><span class="token function">date</span> +%Y%m%d<span class="token variable">)</span></span>"</span>
+qm -rf /run/lock/qemu-server/lock-100.conf
+qm unlock <span class="token number">100</span>
+qm <span class="token function">shutdown</span> <span class="token number">100</span>
+<span class="token function">shutdown</span> now<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>将上面脚本保存为<code>pve_shutdown</code>，放在环境变量里面，然后使用快捷指令的运行SSH脚本，这样在手机上就可以关机了。</p>
+
+	</div>
+
+	
+	<span id="/2022/11/08/pve_homelab.html" class="leancloud-visitors view" data-flag-title="PVE使用注意事项">
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2023/01/16/pay_vuln.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2022/10/27/clickhouse-sql-inject.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2022-11-08 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Fun/">Fun<span>4</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%A3%81%E7%9B%98%E9%80%89%E6%8B%A9"><span class="toc-article-text">虚拟机磁盘选择</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E6%95%B0%E6%8D%AE%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E5%85%B3%E6%9C%BA%E9%A1%BA%E5%BA%8F"><span class="toc-article-text">数据的备份和关机顺序</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Windows%E5%A4%87%E4%BB%BD"><span class="toc-article-text">Windows备份</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#PVE%E5%85%B3%E6%9C%BA%E9%A1%BA%E5%BA%8F"><span class="toc-article-text">PVE关机顺序</span></a></li></ol></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2023 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

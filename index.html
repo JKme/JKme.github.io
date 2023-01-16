@@ -117,6 +117,144 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2023/01/16/pay_vuln.html" >支付接口安全测试记录</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2023-01-16  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="0x1-低价值替换高价值SKU"><a href="#0x1-低价值替换高价值SKU" class="headerlink" title="0x1. 低价值替换高价值SKU"></a>0x1. 低价值替换高价值SKU</h3><p>在IOS平台上面支付完成之后，立刻杀掉进程，然后重新开启APP抓包，此时触发补单操作，拦截包之后，修改sku字段为高价值商品，尝试是否可以成功。</p>
+<p>或者在Burp抓支付包的时候，因为apple服务接口验证了证书，可以在burp的<code>TLS Pass Through</code>配置绕过apple的域名，不对其进行抓包。</p>
+<h3 id="0x2-替换订单号"><a href="#0x2-替换订单号" class="headerlink" title="0x2. 替换订单号"></a>0x2. 替换订单号</h3><p>首先产生一个未支付的高价值的订单号，其次正常购买低价值商品，打断后端返回的response，替换response里面的订单号为高价值订单号，然后尝试支付成功之后商品的数量。一般适用于Google支付。</p>
+<h3 id="0x3-利用Google机制自动退款"><a href="#0x3-利用Google机制自动退款" class="headerlink" title="0x3. 利用Google机制自动退款"></a>0x3. 利用Google机制自动退款</h3><p>Google的SDK支付成功之后，客户端会发起一个接口请求: <a target="_blank" rel="noopener" href="https://play-fe.googleapis.com/fdfe/consumePurchase">https://play-fe.googleapis.com/fdfe/consumePurchase</a> </p>
+<p>Google Play结算服务官方文档中关于处理购买交易的描述：在三天内未确认购买交易，则用户会自动收到退款，并且Google Play会撤消该购买交易，可以利用此规则进行退款。这种攻击一般针对一次性消耗品，当然重复的也可以。在支付完成之后，拦截上面的请求之后丢弃，如果服务端未做正确处理，则三天之后Google会自动退款。</p>
+<p>修复方式：后端手动调用确认接口进行二次确认<a target="_blank" rel="noopener" href="https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.products/acknowledge">acknowledge</a>，一般400可以视为已确认，409的时候需要查询一次状态，已确认状态可以放行，否则掉单处理。</p>
+<h3 id="测试注意点"><a href="#测试注意点" class="headerlink" title="测试注意点"></a>测试注意点</h3>
+	
+
+	</div>
+  <a type="button" href="/2023/01/16/pay_vuln.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="0x1-低价值替换高价值SKU"><a href="#0x1-低价值替换高价值SKU" class="headerlink" title="0x1. 低价值替换高价值SKU"></a>0x1. 低价值替换高价值SKU</h3><p>在IOS平台上面支付完成之后，立刻杀掉进程，然后重新开启APP抓包，此时触发补单操作，拦截包之后，修改sku字段为高价值商品，尝试是否可以成功。</p>
+<p>或者在Burp抓支付包的时候，因为apple服务接口验证了证书，可以在burp的<code>TLS Pass Through</code>配置绕过apple的域名，不对其进行抓包。</p>
+<h3 id="0x2-替换订单号"><a href="#0x2-替换订单号" class="headerlink" title="0x2. 替换订单号"></a>0x2. 替换订单号</h3><p>首先产生一个未支付的高价值的订单号，其次正常购买低价值商品，打断后端返回的response，替换response里面的订单号为高价值订单号，然后尝试支付成功之后商品的数量。一般适用于Google支付。</p>
+<h3 id="0x3-利用Google机制自动退款"><a href="#0x3-利用Google机制自动退款" class="headerlink" title="0x3. 利用Google机制自动退款"></a>0x3. 利用Google机制自动退款</h3><p>Google的SDK支付成功之后，客户端会发起一个接口请求: <a target="_blank" rel="noopener" href="https://play-fe.googleapis.com/fdfe/consumePurchase">https://play-fe.googleapis.com/fdfe/consumePurchase</a> </p>
+<p>Google Play结算服务官方文档中关于处理购买交易的描述：在三天内未确认购买交易，则用户会自动收到退款，并且Google Play会撤消该购买交易，可以利用此规则进行退款。这种攻击一般针对一次性消耗品，当然重复的也可以。在支付完成之后，拦截上面的请求之后丢弃，如果服务端未做正确处理，则三天之后Google会自动退款。</p>
+<p>修复方式：后端手动调用确认接口进行二次确认<a target="_blank" rel="noopener" href="https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.products/acknowledge">acknowledge</a>，一般400可以视为已确认，409的时候需要查询一次状态，已确认状态可以放行，否则掉单处理。</p>
+<h3 id="测试注意点"><a href="#测试注意点" class="headerlink" title="测试注意点"></a>测试注意点</h3>
+	
+	</div>
+  <a type="button" href="/2023/01/16/pay_vuln.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2022/11/08/pve_homelab.html" >PVE使用注意事项</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2022-11-08  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>组建的PVE使用的是这个方案: <a target="_blank" rel="noopener" href="https://foxi.buduanwang.vip/virtualization/1183.html/">PVE+TrueNAS+ZFS+10G内网方案</a></p>
+<h2 id="虚拟机磁盘选择"><a href="#虚拟机磁盘选择" class="headerlink" title="虚拟机磁盘选择"></a>虚拟机磁盘选择</h2><p>使用的时候创建的Windows虚拟机特别慢，打开管理器一看磁盘最高只有5M/S的写入速度，发现是选择的磁盘类型不同，在创建虚拟机的时候最好选择<a target="_blank" rel="noopener" href="https://foxi.buduanwang.vip/virtualization/pve/1214.html/">SCSI的磁盘格式</a></p>
+<p>比如在新建Windows虚拟机的时候，一般需要以下<a target="_blank" rel="noopener" href="https://www.dudr.top/index.php/archives/121/">步骤</a>：</p>
+<ol>
+<li>下载<a target="_blank" rel="noopener" href="https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/latest-virtio/virtio-win.iso">VirtIO驱动镜像</a></li>
+<li>将镜像文件上传到 PVE 的 ISO镜像中</li>
+<li>按照常规流程创建虚拟机，不启动</li>
+<li>在虚拟机的 “硬件” 选项卡内添加 “CD/DVD驱动器”</li>
+<li>挂载 win10 系统镜像和 VirtIO 驱动镜像 (CD1: win10.iso，CD2: virtio-win.iso)</li>
+<li>检查虚拟机的 “选项” 选项卡内的 “引导顺序</li>
+<li>启动虚拟机 &gt; “加载驱动程序” &gt; “浏览” D:\amd64\win10 &gt; “下一步”，安装驱动程序</li>
+<li>驱动安装后在磁盘列表就会检测到硬盘，继续后续系统安装步骤</li>
+</ol>
+<p>但是我现在已经装好了虚拟机，需要把IDE类型的磁盘转换为SCSI：</p>
+<ol>
+<li>已有的虚拟机插入两个ISO设备，一个是Win10镜像，一个是Virto镜像</li>
+<li>开机启动进入Win10镜像，然后<code>SHIFT+F10</code>调出cmd</li>
+<li>确定C盘的盘符和Virto的盘符，输入命令<code>dism /image:C:\ /add-driver /driver:E:\vioscsi\w10\amd64</code></li>
+<li>随后关机: <code>wpeutil shutdown -s</code></li>
+<li>在PVE虚拟机界面分离磁盘，把磁盘类型改为SCSI，随后重启即可</li>
+</ol>
+<p><img src="/2022/11/08/pve_homelab/1.png"></p>
+<p>改完之后的写入速度在40M/S～50M/S左右</p>
+<h2 id="数据的备份和关机顺序"><a href="#数据的备份和关机顺序" class="headerlink" title="数据的备份和关机顺序"></a>数据的备份和关机顺序</h2>
+	
+
+	</div>
+  <a type="button" href="/2022/11/08/pve_homelab.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>组建的PVE使用的是这个方案: <a target="_blank" rel="noopener" href="https://foxi.buduanwang.vip/virtualization/1183.html/">PVE+TrueNAS+ZFS+10G内网方案</a></p>
+<h2 id="虚拟机磁盘选择"><a href="#虚拟机磁盘选择" class="headerlink" title="虚拟机磁盘选择"></a>虚拟机磁盘选择</h2><p>使用的时候创建的Windows虚拟机特别慢，打开管理器一看磁盘最高只有5M/S的写入速度，发现是选择的磁盘类型不同，在创建虚拟机的时候最好选择<a target="_blank" rel="noopener" href="https://foxi.buduanwang.vip/virtualization/pve/1214.html/">SCSI的磁盘格式</a></p>
+<p>比如在新建Windows虚拟机的时候，一般需要以下<a target="_blank" rel="noopener" href="https://www.dudr.top/index.php/archives/121/">步骤</a>：</p>
+<ol>
+<li>下载<a target="_blank" rel="noopener" href="https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/latest-virtio/virtio-win.iso">VirtIO驱动镜像</a></li>
+<li>将镜像文件上传到 PVE 的 ISO镜像中</li>
+<li>按照常规流程创建虚拟机，不启动</li>
+<li>在虚拟机的 “硬件” 选项卡内添加 “CD/DVD驱动器”</li>
+<li>挂载 win10 系统镜像和 VirtIO 驱动镜像 (CD1: win10.iso，CD2: virtio-win.iso)</li>
+<li>检查虚拟机的 “选项” 选项卡内的 “引导顺序</li>
+<li>启动虚拟机 &gt; “加载驱动程序” &gt; “浏览” D:\amd64\win10 &gt; “下一步”，安装驱动程序</li>
+<li>驱动安装后在磁盘列表就会检测到硬盘，继续后续系统安装步骤</li>
+</ol>
+<p>但是我现在已经装好了虚拟机，需要把IDE类型的磁盘转换为SCSI：</p>
+<ol>
+<li>已有的虚拟机插入两个ISO设备，一个是Win10镜像，一个是Virto镜像</li>
+<li>开机启动进入Win10镜像，然后<code>SHIFT+F10</code>调出cmd</li>
+<li>确定C盘的盘符和Virto的盘符，输入命令<code>dism /image:C:\ /add-driver /driver:E:\vioscsi\w10\amd64</code></li>
+<li>随后关机: <code>wpeutil shutdown -s</code></li>
+<li>在PVE虚拟机界面分离磁盘，把磁盘类型改为SCSI，随后重启即可</li>
+</ol>
+<p><img src="/2022/11/08/pve_homelab/1.png"></p>
+<p>改完之后的写入速度在40M/S～50M/S左右</p>
+<h2 id="数据的备份和关机顺序"><a href="#数据的备份和关机顺序" class="headerlink" title="数据的备份和关机顺序"></a>数据的备份和关机顺序</h2>
+	
+	</div>
+  <a type="button" href="/2022/11/08/pve_homelab.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2022/10/27/clickhouse-sql-inject.html" >ClickHouse注入测试记录</a>
 		</h3>
 		</div>
@@ -529,146 +667,6 @@
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2022/04/14/memory-shell-1.html" >Java安全笔记(3)-内存马之Filter型</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2022-04-14  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h2><p><img src="/2022/04/14/memory-shell-1/Servlet.png"></p>
-<p>当处理请求的时候：请求 → Listener → Filter → Servlet</p>
-<h4 id="Listener"><a href="#Listener" class="headerlink" title="Listener"></a>Listener</h4><p>Listener也称之为监听器，可以监听Application、Session和Request对象的创建、销毁事件，以及监听对其中添加、修改、删除属性事件，并自动执行自定义的功能。</p>
-<h4 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h4><p>Filter也称之为过滤器，可以动态地修改HttpServletRequest，HttpServletResponse中的头和数据。</p>
-<h4 id="Servlet-1"><a href="#Servlet-1" class="headerlink" title="Servlet"></a>Servlet</h4><p>Servlet是运行在 Web 服务器或应用服务器上的程序，它是作为来自 HTTP 客户端的请求和 HTTP 服务器上的数据库或应用程序之间的中间层。它负责处理用户的请求，并根据请求生成相应的返回信息提供给用户。Servlet 可以理解为某一个路径后续的业务处理逻辑。</p>
-<p>Tomcat是http服务器+servlet容器，当Tomcat作为Servlet容器的时候，讲http请求文本解析之后封装成<code>HttpServletRequest</code>类型的request对象，传递给Servlet，同时讲相应的信息封装为<code>HttpServletResponse</code>类型的response对象，将response对象交给tomcat，tomcat格式化之后返回给浏览器</p>
-	
-
-	</div>
-  <a type="button" href="/2022/04/14/memory-shell-1.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h2><p><img src="/2022/04/14/memory-shell-1/Servlet.png"></p>
-<p>当处理请求的时候：请求 → Listener → Filter → Servlet</p>
-<h4 id="Listener"><a href="#Listener" class="headerlink" title="Listener"></a>Listener</h4><p>Listener也称之为监听器，可以监听Application、Session和Request对象的创建、销毁事件，以及监听对其中添加、修改、删除属性事件，并自动执行自定义的功能。</p>
-<h4 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h4><p>Filter也称之为过滤器，可以动态地修改HttpServletRequest，HttpServletResponse中的头和数据。</p>
-<h4 id="Servlet-1"><a href="#Servlet-1" class="headerlink" title="Servlet"></a>Servlet</h4><p>Servlet是运行在 Web 服务器或应用服务器上的程序，它是作为来自 HTTP 客户端的请求和 HTTP 服务器上的数据库或应用程序之间的中间层。它负责处理用户的请求，并根据请求生成相应的返回信息提供给用户。Servlet 可以理解为某一个路径后续的业务处理逻辑。</p>
-<p>Tomcat是http服务器+servlet容器，当Tomcat作为Servlet容器的时候，讲http请求文本解析之后封装成<code>HttpServletRequest</code>类型的request对象，传递给Servlet，同时讲相应的信息封装为<code>HttpServletResponse</code>类型的response对象，将response对象交给tomcat，tomcat格式化之后返回给浏览器</p>
-	
-	</div>
-  <a type="button" href="/2022/04/14/memory-shell-1.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2022/04/11/burpsuite-ext-dev.html" >BurpSuite插件开发注意事项</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2022-04-11  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="0x1-Base64的坑"><a href="#0x1-Base64的坑" class="headerlink" title="0x1. Base64的坑"></a>0x1. Base64的坑</h2><p>在JDK8版本里面，Java自带的<code>java.util.Base64</code>是根据RFC4648和RFC2045实现的，但是JDK7里面的<code>sun.misc.BASE64Encoder</code>，是RFC1521实现的。<br>这会导致<code>java.util.Base64</code>解码JDK7版本的Base64发生错误：<code>Illegal base64 character</code>。</p>
-<p>可以使用shiro的Base64解决，增加maven依赖:</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token generics"><span class="token punctuation">&lt;</span>dependency<span class="token punctuation">></span></span>
-    <span class="token generics"><span class="token punctuation">&lt;</span>groupId<span class="token punctuation">></span></span>org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>shiro<span class="token operator">&lt;</span><span class="token operator">/</span>groupId<span class="token operator">></span>
-    <span class="token generics"><span class="token punctuation">&lt;</span>artifactId<span class="token punctuation">></span></span>shiro<span class="token operator">-</span>core<span class="token operator">&lt;</span><span class="token operator">/</span>artifactId<span class="token operator">></span>
-    <span class="token generics"><span class="token punctuation">&lt;</span>version<span class="token punctuation">></span></span><span class="token number">1.6</span><span class="token number">.0</span><span class="token operator">&lt;</span><span class="token operator">/</span>version<span class="token operator">></span>
-<span class="token operator">&lt;</span><span class="token operator">/</span>dependency<span class="token operator">></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>PS: chybeta师傅在漏洞百出里面提出过，Shiro在Base64解码的时候会丢弃非Base64字符串，所以可以利用这一点绕过WAF防火墙，比如填充垃圾字符串。</p>
-<h2 id="0x2-RSA公私钥"><a href="#0x2-RSA公私钥" class="headerlink" title="0x2. RSA公私钥"></a>0x2. RSA公私钥</h2><p>Python加解密的时候，使用的是PKCS#1格式的公私钥：</p>
-<pre class="line-numbers language-none"><code class="language-none"># 公钥
------BEGIN RSA PUBLIC KEY-----
------END RSA PUBLIC KEY-----
-  
-# 私钥
------BEGIN RSA PRIVATE KEY-----
------END RSA PRIVATE KEY-----<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>但是在Java里面需要使用PKCS#8格式:</p>
-<pre class="line-numbers language-none"><code class="language-none"># 公钥
------BEGIN PUBLIC KEY-----
------END PUBLIC KEY-----
-  
-# 私钥
------BEGIN PRIVATE KEY-----
------END PRIVATE KEY-----<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2022/04/11/burpsuite-ext-dev.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="0x1-Base64的坑"><a href="#0x1-Base64的坑" class="headerlink" title="0x1. Base64的坑"></a>0x1. Base64的坑</h2><p>在JDK8版本里面，Java自带的<code>java.util.Base64</code>是根据RFC4648和RFC2045实现的，但是JDK7里面的<code>sun.misc.BASE64Encoder</code>，是RFC1521实现的。<br>这会导致<code>java.util.Base64</code>解码JDK7版本的Base64发生错误：<code>Illegal base64 character</code>。</p>
-<p>可以使用shiro的Base64解决，增加maven依赖:</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token generics"><span class="token punctuation">&lt;</span>dependency<span class="token punctuation">></span></span>
-    <span class="token generics"><span class="token punctuation">&lt;</span>groupId<span class="token punctuation">></span></span>org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>shiro<span class="token operator">&lt;</span><span class="token operator">/</span>groupId<span class="token operator">></span>
-    <span class="token generics"><span class="token punctuation">&lt;</span>artifactId<span class="token punctuation">></span></span>shiro<span class="token operator">-</span>core<span class="token operator">&lt;</span><span class="token operator">/</span>artifactId<span class="token operator">></span>
-    <span class="token generics"><span class="token punctuation">&lt;</span>version<span class="token punctuation">></span></span><span class="token number">1.6</span><span class="token number">.0</span><span class="token operator">&lt;</span><span class="token operator">/</span>version<span class="token operator">></span>
-<span class="token operator">&lt;</span><span class="token operator">/</span>dependency<span class="token operator">></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>PS: chybeta师傅在漏洞百出里面提出过，Shiro在Base64解码的时候会丢弃非Base64字符串，所以可以利用这一点绕过WAF防火墙，比如填充垃圾字符串。</p>
-<h2 id="0x2-RSA公私钥"><a href="#0x2-RSA公私钥" class="headerlink" title="0x2. RSA公私钥"></a>0x2. RSA公私钥</h2><p>Python加解密的时候，使用的是PKCS#1格式的公私钥：</p>
-<pre class="line-numbers language-none"><code class="language-none"># 公钥
------BEGIN RSA PUBLIC KEY-----
------END RSA PUBLIC KEY-----
-  
-# 私钥
------BEGIN RSA PRIVATE KEY-----
------END RSA PRIVATE KEY-----<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>但是在Java里面需要使用PKCS#8格式:</p>
-<pre class="line-numbers language-none"><code class="language-none"># 公钥
------BEGIN PUBLIC KEY-----
------END PUBLIC KEY-----
-  
-# 私钥
------BEGIN PRIVATE KEY-----
------END PRIVATE KEY-----<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2022/04/11/burpsuite-ext-dev.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -718,7 +716,7 @@
 		
 			<li><a href="/categories/CTF/">CTF<span>1</span></a></li>
 		
-			<li><a href="/categories/Fun/">Fun<span>3</span></a></li>
+			<li><a href="/categories/Fun/">Fun<span>4</span></a></li>
 		
 			<li><a href="/categories/Java/">Java<span>8</span></a></li>
 		
@@ -726,7 +724,7 @@
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>45</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>46</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -747,6 +745,14 @@
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
+      </li>
+    
+      <li>
+        <a href="/2022/11/08/pve_homelab.html" ><i class="fa fa-file-o"></i>PVE使用注意事项</a>
+      </li>
+    
+      <li>
         <a href="/2022/10/27/clickhouse-sql-inject.html" ><i class="fa fa-file-o"></i>ClickHouse注入测试记录</a>
       </li>
     
@@ -756,14 +762,6 @@
     
       <li>
         <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
-      </li>
-    
-      <li>
-        <a href="/2022/04/14/memory-shell-1.html" ><i class="fa fa-file-o"></i>Java安全笔记(3)-内存马之Filter型</a>
-      </li>
-    
-      <li>
-        <a href="/2022/04/11/burpsuite-ext-dev.html" ><i class="fa fa-file-o"></i>BurpSuite插件开发注意事项</a>
       </li>
     
   </ul>
@@ -781,7 +779,7 @@
   <div class="container-narrow">
   <footer> <p>
   
-  &copy; 2022 JKme's Blog
+  &copy; 2023 JKme's Blog
   
       powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
 </p>
