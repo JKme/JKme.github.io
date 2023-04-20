@@ -117,6 +117,104 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2021/07/29/silverFish.html" >Silver调查报告</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2021-07-29  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.prodaft.com/m/reports/SilverFish_TLPWHITE_v2.pdf">SilverFish_TLPWHITE</a></p>
+</blockquote>
+<h1 id="起点"><a href="#起点" class="headerlink" title="起点"></a>起点</h1><p>根据FireEye发布的IOC，有一个域名是databasegalore.com，这个域名下的IP在2304端口起了PowerMTA服务，web目录扫描之后发现example.php。PTI团队根据这两个网页的设备指纹和PowerMTA服务，扫描了全网的IPv4地址，发现一个IP地址: <code>81.4.122.203</code>，然后PTI团队对IP下的C段进行渗透测试，发现<code>81.4.122.101</code>存在一个C2服务器。</p>
+<h3 id="C2分析"><a href="#C2分析" class="headerlink" title="C2分析"></a>C2分析</h3><p><img src="/2021/07/29/silverFish/silver_C2.png"></p>
+<p>收集信息如下：</p>
+<ul>
+<li>ID</li>
+<li>UUID</li>
+<li>Instance</li>
+<li>IP</li>
+<li>Country</li>
+<li>Domain\User@Computer</li>
+<li>OS</li>
+<li>Build</li>
+<li>Architecture</li>
+<li>Antivirus</li>
+<li>Is Admin</li>
+<li>Integrity Level</li>
+<li>UAC Setting</li>
+<li>ConsentPromptBehaviorAdmin • PromptOnSecureDesktop</li>
+<li>First visit</li>
+</ul>
+<p>每个受害者页面都可以发送攻击指令，有如下：<br><img src="/2021/07/29/silverFish/silver_command.png"></p>
+<p>看了下是命令执行和UAC绕过比较多，C2服务器的防护措施有如下：</p>
+<ul>
+<li>使用AppArmor隔离环境</li>
+<li>关闭访问日志（web日志、SSH登录日志、命令行日志）</li>
+<li>使用IPTABLES只允许白名单IP访问</li>
+</ul>
+	
+
+	</div>
+  <a type="button" href="/2021/07/29/silverFish.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.prodaft.com/m/reports/SilverFish_TLPWHITE_v2.pdf">SilverFish_TLPWHITE</a></p>
+</blockquote>
+<h1 id="起点"><a href="#起点" class="headerlink" title="起点"></a>起点</h1><p>根据FireEye发布的IOC，有一个域名是databasegalore.com，这个域名下的IP在2304端口起了PowerMTA服务，web目录扫描之后发现example.php。PTI团队根据这两个网页的设备指纹和PowerMTA服务，扫描了全网的IPv4地址，发现一个IP地址: <code>81.4.122.203</code>，然后PTI团队对IP下的C段进行渗透测试，发现<code>81.4.122.101</code>存在一个C2服务器。</p>
+<h3 id="C2分析"><a href="#C2分析" class="headerlink" title="C2分析"></a>C2分析</h3><p><img src="/2021/07/29/silverFish/silver_C2.png"></p>
+<p>收集信息如下：</p>
+<ul>
+<li>ID</li>
+<li>UUID</li>
+<li>Instance</li>
+<li>IP</li>
+<li>Country</li>
+<li>Domain\User@Computer</li>
+<li>OS</li>
+<li>Build</li>
+<li>Architecture</li>
+<li>Antivirus</li>
+<li>Is Admin</li>
+<li>Integrity Level</li>
+<li>UAC Setting</li>
+<li>ConsentPromptBehaviorAdmin • PromptOnSecureDesktop</li>
+<li>First visit</li>
+</ul>
+<p>每个受害者页面都可以发送攻击指令，有如下：<br><img src="/2021/07/29/silverFish/silver_command.png"></p>
+<p>看了下是命令执行和UAC绕过比较多，C2服务器的防护措施有如下：</p>
+<ul>
+<li>使用AppArmor隔离环境</li>
+<li>关闭访问日志（web日志、SSH登录日志、命令行日志）</li>
+<li>使用IPTABLES只允许白名单IP访问</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2021/07/29/silverFish.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2021/05/27/spring-boot-actuator.html" >Spring Boot Actuator漏洞复现</a>
 		</h3>
 		</div>
@@ -515,88 +613,6 @@ cp <span class="token operator">=</span> subprocess<span class="token punctuatio
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2020/09/10/redis-windows-hijack.html" >Redis On Windows -- Dll Hijack</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2020-09-10  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>本文测试了Redis在Windows平台下的dll劫持，主要参考文章是先知的秋水师傅: <a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/8153">Redis on Windows 出网利用探索</a></p>
-<h3 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h3><pre class="line-numbers language-none"><code class="language-none">Redis-x64-3.2.100
-Win10<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<h3 id="可劫持的DLL"><a href="#可劫持的DLL" class="headerlink" title="可劫持的DLL"></a>可劫持的DLL</h3><p>按照文章中使用<code>Process Monitor</code>，在使用<code>redis-cli</code>操作的时候，观察缺失的DLL。在<code>Process Monitor Filter</code>里面设置<code>Image Path</code>的值为<code>redis-server.exe</code>的路径，比如我的是<code>C:\Program Files\Redis\redis-server.exe</code>，<code>Path</code>设置为<code>ends with dll</code>。设置好之后，使用<code>redis-cli</code>连接，执行<code>bgsave</code>命令，然后观察缺失的dll，有如下:</p>
-<pre class="line-numbers language-none"><code class="language-none">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
-C:\Program Files\Redis\dbghelp.dll
-C:\Windows\System32\edgegdi.dll
-C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<p>当<code>redis-server.exe</code>启动的时候，有如下:</p>
-<pre class="line-numbers language-none"><code class="language-none">C:\Windows\System32\edgegdi.dll
-C:\Windows\System32\symsrv.dll
-C:\Program Files\Redis\CRYPTBASE.DLL<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
-
-<p>执行<code>BGREWRITEAOF</code>的时候，有如下:</p>
-<pre class="line-numbers language-none"><code class="language-none">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
-C:\Program Files\Redis\dbghelp.dll
-C:\Windows\System32\edgegdi.dll
-C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2020/09/10/redis-windows-hijack.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>本文测试了Redis在Windows平台下的dll劫持，主要参考文章是先知的秋水师傅: <a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/8153">Redis on Windows 出网利用探索</a></p>
-<h3 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h3><pre class="line-numbers language-none"><code class="language-none">Redis-x64-3.2.100
-Win10<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<h3 id="可劫持的DLL"><a href="#可劫持的DLL" class="headerlink" title="可劫持的DLL"></a>可劫持的DLL</h3><p>按照文章中使用<code>Process Monitor</code>，在使用<code>redis-cli</code>操作的时候，观察缺失的DLL。在<code>Process Monitor Filter</code>里面设置<code>Image Path</code>的值为<code>redis-server.exe</code>的路径，比如我的是<code>C:\Program Files\Redis\redis-server.exe</code>，<code>Path</code>设置为<code>ends with dll</code>。设置好之后，使用<code>redis-cli</code>连接，执行<code>bgsave</code>命令，然后观察缺失的dll，有如下:</p>
-<pre class="line-numbers language-none"><code class="language-none">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
-C:\Program Files\Redis\dbghelp.dll
-C:\Windows\System32\edgegdi.dll
-C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<p>当<code>redis-server.exe</code>启动的时候，有如下:</p>
-<pre class="line-numbers language-none"><code class="language-none">C:\Windows\System32\edgegdi.dll
-C:\Windows\System32\symsrv.dll
-C:\Program Files\Redis\CRYPTBASE.DLL<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
-
-<p>执行<code>BGREWRITEAOF</code>的时候，有如下:</p>
-<pre class="line-numbers language-none"><code class="language-none">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
-C:\Program Files\Redis\dbghelp.dll
-C:\Windows\System32\edgegdi.dll
-C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2020/09/10/redis-windows-hijack.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -654,7 +670,7 @@ C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>50</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>51</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -675,6 +691,10 @@ C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html" ><i class="fa fa-file-o"></i>BrokenSesame-阿里云数据库远程命令执行</a>
+      </li>
+    
+      <li>
         <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
       </li>
     
@@ -688,10 +708,6 @@ C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"
     
       <li>
         <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
-      </li>
-    
-      <li>
-        <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
       </li>
     
   </ul>

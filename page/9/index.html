@@ -117,6 +117,64 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2019/06/24/tmux.html" >tmux使用</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-06-24  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>组合键:</p>
+<p>:new&lt;回车&gt;  启动新会话<br>s           列出所有会话<br>w           相当于s的时候展开列表，展开windows<br>$           重命名当前会话</p>
+<p>tmux kill-session -t demo # 关闭demo会话</p>
+<p>他有一个session,windows,panes的概念</p>
+<p>一个session可以有N个windows，N个panes</p>
+<p>如果是最大化利用，那么需要找到一种可以跳来跳去的方法，不管是跳windows还是session。</p>
+<p>一般来说是跳windows，因为windows下有几个不同的panes</p>
+<p>所以，怎么跳最快?</p>
+<p>name不管是pane还是windows，是不是只要有name就可以跳过去，不对，应该是windows之间的跳，因为一组windows就是一组任务。</p>
+<p>一个session里面可以最下面的状态栏可以看到有几个windows，windows的名字如何</p>
+	
+
+	</div>
+  <a type="button" href="/2019/06/24/tmux.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>组合键:</p>
+<p>:new&lt;回车&gt;  启动新会话<br>s           列出所有会话<br>w           相当于s的时候展开列表，展开windows<br>$           重命名当前会话</p>
+<p>tmux kill-session -t demo # 关闭demo会话</p>
+<p>他有一个session,windows,panes的概念</p>
+<p>一个session可以有N个windows，N个panes</p>
+<p>如果是最大化利用，那么需要找到一种可以跳来跳去的方法，不管是跳windows还是session。</p>
+<p>一般来说是跳windows，因为windows下有几个不同的panes</p>
+<p>所以，怎么跳最快?</p>
+<p>name不管是pane还是windows，是不是只要有name就可以跳过去，不对，应该是windows之间的跳，因为一组windows就是一组任务。</p>
+<p>一个session里面可以最下面的状态栏可以看到有几个windows，windows的名字如何</p>
+	
+	</div>
+  <a type="button" href="/2019/06/24/tmux.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2019/06/18/tornado-pentest.html" >记一次测试Tornado</a>
 		</h3>
 		</div>
@@ -409,120 +467,6 @@ uth-user-pass auth.txt
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2019/03/01/hashcat.html" >Hashcat笔记</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2019-03-01  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>在windows里面任意读取的文件，找到了sam.old文件和system.old文件，读取之后用burp保存到文件，可以使用如下的命令来提取密码:</p>
-<pre class="line-numbers language-none"><code class="language-none">root@kali:~# cachedump
-usage: &#x2F;usr&#x2F;bin&#x2F;cachedump &lt;system hive&gt; &lt;security hive&gt;
-
-root@kali:~# lsadump
-usage: &#x2F;usr&#x2F;bin&#x2F;lsadump &lt;system hive&gt; &lt;security hive&gt;
-
-root@kali:~# pwdump
-usage: &#x2F;usr&#x2F;bin&#x2F;pwdump &lt;system hive&gt; &lt;SAM hive&gt;
-
-或者mimikatz: lsadump::sam &#x2F;system:&lt;SYSTEM&gt; &#x2F;SAM:&lt;SAM&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>提取的格式大概是这样:</p>
-<pre class="line-numbers language-none"><code class="language-none">root@kali:~# pwdump system sam
-Administrator:500:41aa818b512a8c0e72381e4c174e281b:1896d0a309184775f67c14d14b5c365a:::
-Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
-HelpAssistant:1000:667d6c58d451dbf236ae37ab1de3b9f7:af733642ab69e156ba0c219d3bbc3c83:::
-SUPPORT_388945a0:1002:aad3b435b51404eeaad3b435b51404ee:8dffa305e2bee837f279c2c0b082affb:::<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<p>用户名称是:Administrator<br>RID是: 500<br>LM-HASH值: 41aa818b512a8c0e72381e4c174e281b<br>NT-HASH(NTLM)值: 1896d0a309184775f67c14d14b5c365a</p>
-<p>可以使用hashcat来跑密码:</p>
-<pre class="line-numbers language-none"><code class="language-none">hashcat -m 1000 -a 0 --force hash.txt &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;rockyou.txt<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>其中的hash.txt 可以指的是上面的NT-HASH。</p>
-<pre class="line-numbers language-none"><code class="language-none">-m 1000 hash的类型，这里是NTLM
--a 0  0表示词典碰撞，这里是kali自带的辞典，还有3表示使用GPU来爆破，不用指定词典。
---force 忽略无显卡，直接跑
-hash.txt 就是上面的NT-HASH
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<ul>
-<li><p><a target="_blank" rel="noopener" href="https://www.objectif-securite.ch/en/ophcrack.php">https://www.objectif-securite.ch/en/ophcrack.php</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://cyberloginit.com/2017/12/26/hashcat-ntlm-brute-force.html">https://cyberloginit.com/2017/12/26/hashcat-ntlm-brute-force.html</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://medium.com/@petergombos/lm-ntlm-net-ntlmv2-oh-my-a9b235c58ed4">https://medium.com/@petergombos/lm-ntlm-net-ntlmv2-oh-my-a9b235c58ed4</a></p>
-</li>
-</ul>
-	
-
-	</div>
-  <a type="button" href="/2019/03/01/hashcat.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>在windows里面任意读取的文件，找到了sam.old文件和system.old文件，读取之后用burp保存到文件，可以使用如下的命令来提取密码:</p>
-<pre class="line-numbers language-none"><code class="language-none">root@kali:~# cachedump
-usage: &#x2F;usr&#x2F;bin&#x2F;cachedump &lt;system hive&gt; &lt;security hive&gt;
-
-root@kali:~# lsadump
-usage: &#x2F;usr&#x2F;bin&#x2F;lsadump &lt;system hive&gt; &lt;security hive&gt;
-
-root@kali:~# pwdump
-usage: &#x2F;usr&#x2F;bin&#x2F;pwdump &lt;system hive&gt; &lt;SAM hive&gt;
-
-或者mimikatz: lsadump::sam &#x2F;system:&lt;SYSTEM&gt; &#x2F;SAM:&lt;SAM&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>提取的格式大概是这样:</p>
-<pre class="line-numbers language-none"><code class="language-none">root@kali:~# pwdump system sam
-Administrator:500:41aa818b512a8c0e72381e4c174e281b:1896d0a309184775f67c14d14b5c365a:::
-Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
-HelpAssistant:1000:667d6c58d451dbf236ae37ab1de3b9f7:af733642ab69e156ba0c219d3bbc3c83:::
-SUPPORT_388945a0:1002:aad3b435b51404eeaad3b435b51404ee:8dffa305e2bee837f279c2c0b082affb:::<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<p>用户名称是:Administrator<br>RID是: 500<br>LM-HASH值: 41aa818b512a8c0e72381e4c174e281b<br>NT-HASH(NTLM)值: 1896d0a309184775f67c14d14b5c365a</p>
-<p>可以使用hashcat来跑密码:</p>
-<pre class="line-numbers language-none"><code class="language-none">hashcat -m 1000 -a 0 --force hash.txt &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;rockyou.txt<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>其中的hash.txt 可以指的是上面的NT-HASH。</p>
-<pre class="line-numbers language-none"><code class="language-none">-m 1000 hash的类型，这里是NTLM
--a 0  0表示词典碰撞，这里是kali自带的辞典，还有3表示使用GPU来爆破，不用指定词典。
---force 忽略无显卡，直接跑
-hash.txt 就是上面的NT-HASH
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<ul>
-<li><p><a target="_blank" rel="noopener" href="https://www.objectif-securite.ch/en/ophcrack.php">https://www.objectif-securite.ch/en/ophcrack.php</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://cyberloginit.com/2017/12/26/hashcat-ntlm-brute-force.html">https://cyberloginit.com/2017/12/26/hashcat-ntlm-brute-force.html</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://medium.com/@petergombos/lm-ntlm-net-ntlmv2-oh-my-a9b235c58ed4">https://medium.com/@petergombos/lm-ntlm-net-ntlmv2-oh-my-a9b235c58ed4</a></p>
-</li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2019/03/01/hashcat.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -580,7 +524,7 @@ hash.txt 就是上面的NT-HASH
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>50</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>51</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -601,6 +545,10 @@ hash.txt 就是上面的NT-HASH
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html" ><i class="fa fa-file-o"></i>BrokenSesame-阿里云数据库远程命令执行</a>
+      </li>
+    
+      <li>
         <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
       </li>
     
@@ -614,10 +562,6 @@ hash.txt 就是上面的NT-HASH
     
       <li>
         <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
-      </li>
-    
-      <li>
-        <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
       </li>
     
   </ul>

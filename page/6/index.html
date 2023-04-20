@@ -117,6 +117,88 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2020/09/10/redis-windows-hijack.html" >Redis On Windows -- Dll Hijack</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-09-10  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>本文测试了Redis在Windows平台下的dll劫持，主要参考文章是先知的秋水师傅: <a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/8153">Redis on Windows 出网利用探索</a></p>
+<h3 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h3><pre class="line-numbers language-none"><code class="language-none">Redis-x64-3.2.100
+Win10<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="可劫持的DLL"><a href="#可劫持的DLL" class="headerlink" title="可劫持的DLL"></a>可劫持的DLL</h3><p>按照文章中使用<code>Process Monitor</code>，在使用<code>redis-cli</code>操作的时候，观察缺失的DLL。在<code>Process Monitor Filter</code>里面设置<code>Image Path</code>的值为<code>redis-server.exe</code>的路径，比如我的是<code>C:\Program Files\Redis\redis-server.exe</code>，<code>Path</code>设置为<code>ends with dll</code>。设置好之后，使用<code>redis-cli</code>连接，执行<code>bgsave</code>命令，然后观察缺失的dll，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
+C:\Program Files\Redis\dbghelp.dll
+C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>当<code>redis-server.exe</code>启动的时候，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll
+C:\Program Files\Redis\CRYPTBASE.DLL<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+<p>执行<code>BGREWRITEAOF</code>的时候，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
+C:\Program Files\Redis\dbghelp.dll
+C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2020/09/10/redis-windows-hijack.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>本文测试了Redis在Windows平台下的dll劫持，主要参考文章是先知的秋水师傅: <a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/8153">Redis on Windows 出网利用探索</a></p>
+<h3 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h3><pre class="line-numbers language-none"><code class="language-none">Redis-x64-3.2.100
+Win10<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="可劫持的DLL"><a href="#可劫持的DLL" class="headerlink" title="可劫持的DLL"></a>可劫持的DLL</h3><p>按照文章中使用<code>Process Monitor</code>，在使用<code>redis-cli</code>操作的时候，观察缺失的DLL。在<code>Process Monitor Filter</code>里面设置<code>Image Path</code>的值为<code>redis-server.exe</code>的路径，比如我的是<code>C:\Program Files\Redis\redis-server.exe</code>，<code>Path</code>设置为<code>ends with dll</code>。设置好之后，使用<code>redis-cli</code>连接，执行<code>bgsave</code>命令，然后观察缺失的dll，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
+C:\Program Files\Redis\dbghelp.dll
+C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>当<code>redis-server.exe</code>启动的时候，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll
+C:\Program Files\Redis\CRYPTBASE.DLL<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+<p>执行<code>BGREWRITEAOF</code>的时候，有如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">HKLM\System\CurrentControlSet\Control\Srp\GP\DLL
+C:\Program Files\Redis\dbghelp.dll
+C:\Windows\System32\edgegdi.dll
+C:\Windows\System32\symsrv.dll<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2020/09/10/redis-windows-hijack.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2020/08/28/CloudFront-Https.html" >Domain Fronting隐藏HTTPS</a>
 		</h3>
 		</div>
@@ -507,86 +589,6 @@ function Convert-Date &#123;
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2020/05/14/workgroup-pentest2.html" >内网渗透流水账</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2020-05-14  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="0x01-环境"><a href="#0x01-环境" class="headerlink" title="0x01 环境"></a>0x01 环境</h2><ol>
-<li>Linux主机www权限</li>
-<li>主机无法出外网</li>
-<li>正向代理无法使用</li>
-<li>B段内网</li>
-</ol>
-<h2 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h2><p>#####F-Scrack.py</p>
-<pre class="line-numbers language-none"><code class="language-none">获取Redis, ES等
-PS: Scrack.py的mssql模块爆破不准确，可以自己写一个简单的
-
-python Scrack.py -h 10.111.1.1-10.111.2.254 -p 3306,5432 -m 200 -t 6<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-
-<h3 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h3><p>key较多的时候不要使用<code>keys *</code></p>
-<pre class="line-numbers language-none"><code class="language-none">查看基本信息: master，数量，版本号
-使用scan查看keys: scan 0 match * count 100 
-查看类型: type &lt;key&gt;
-hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h3 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h3><p>windows下可以先测试是否可写入插件目录:</p>
-	
-
-	</div>
-  <a type="button" href="/2020/05/14/workgroup-pentest2.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="0x01-环境"><a href="#0x01-环境" class="headerlink" title="0x01 环境"></a>0x01 环境</h2><ol>
-<li>Linux主机www权限</li>
-<li>主机无法出外网</li>
-<li>正向代理无法使用</li>
-<li>B段内网</li>
-</ol>
-<h2 id="收集信息"><a href="#收集信息" class="headerlink" title="收集信息"></a>收集信息</h2><p>#####F-Scrack.py</p>
-<pre class="line-numbers language-none"><code class="language-none">获取Redis, ES等
-PS: Scrack.py的mssql模块爆破不准确，可以自己写一个简单的
-
-python Scrack.py -h 10.111.1.1-10.111.2.254 -p 3306,5432 -m 200 -t 6<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-
-<h3 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h3><p>key较多的时候不要使用<code>keys *</code></p>
-<pre class="line-numbers language-none"><code class="language-none">查看基本信息: master，数量，版本号
-使用scan查看keys: scan 0 match * count 100 
-查看类型: type &lt;key&gt;
-hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h3 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h3><p>windows下可以先测试是否可写入插件目录:</p>
-	
-	</div>
-  <a type="button" href="/2020/05/14/workgroup-pentest2.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -644,7 +646,7 @@ hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>50</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>51</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -665,6 +667,10 @@ hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html" ><i class="fa fa-file-o"></i>BrokenSesame-阿里云数据库远程命令执行</a>
+      </li>
+    
+      <li>
         <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
       </li>
     
@@ -678,10 +684,6 @@ hash类型: hgetall &lt;key&gt;<span aria-hidden="true" class="line-numbers-rows
     
       <li>
         <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
-      </li>
-    
-      <li>
-        <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
       </li>
     
   </ul>

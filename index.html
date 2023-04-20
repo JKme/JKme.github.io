@@ -117,6 +117,92 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html" >BrokenSesame-阿里云数据库远程命令执行</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2023-04-20  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<ul>
+<li>原文：<a target="_blank" rel="noopener" href="https://www.wiz.io/blog/brokensesame-accidental-write-permissions-to-private-registry-allowed-potential-r">brokensesame-accidental-write-permissions-to-private-registry-allowed-potential-r</a></li>
+</ul>
+<h2 id="AnalyticDB-for-PostgreSQL"><a href="#AnalyticDB-for-PostgreSQL" class="headerlink" title="AnalyticDB for PostgreSQL"></a>AnalyticDB for PostgreSQL</h2><h3 id="容器提权"><a href="#容器提权" class="headerlink" title="容器提权"></a>容器提权</h3><p>首先发现了一个ROOT定时任务，该定时任务每分钟执行一次二进制文件<code>/usr/bin/tsar</code>:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$: <span class="token function">ls</span> -lah /etc/cron.d/tsar 
+-rw-r--r-- <span class="token number">1</span> root root <span class="token number">99</span> Apr <span class="token number">19</span>  <span class="token number">2021</span> /etc/cron.d/tsar 
+
+$: <span class="token function">cat</span> /etc/cron.d/tsar 
+
+<span class="token comment"># cron tsar collect once per minute </span>
+<span class="token assign-left variable">MAILTO</span><span class="token operator">=</span><span class="token string">""</span> 
+* * * * * root /usr/bin/tsar --cron <span class="token operator">></span> /dev/null <span class="token operator"><span class="token file-descriptor important">2</span>></span><span class="token file-descriptor important">&amp;1</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>使用<code>ldd</code>发现从自定义路径加载共享库，其中的一个路径<code>/u01</code>对于当前用户<code>adbpgadmin</code>是可写的。<br><img src="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE/1.png"></p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$: <span class="token function">ls</span> -alh /u01/adbpg/lib/libgcc_s.so.1 
+-rwxr-xr-x <span class="token number">1</span> adbpgadmin adbpgadmin 102K Oct <span class="token number">27</span> <span class="token number">12</span>:22 /u01/adbpg/lib/libgcc_s.so.1 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>如果用自己的共享库覆盖这个文件，那么下次就会以root权限执行自定义的代码，攻击流程：</p>
+<ul>
+<li>编译一个共享库，功能是将<code>/bin/bash</code>复制到<code>/bin/dash</code>，并添加SUID权限。</li>
+<li>把编译好的共享库使用<a target="_blank" rel="noopener" href="https://github.com/NixOS/patchelf">PatchELF</a>，添加到<code>libgcc_s.so.1</code>，这样当<code>libgcc_s.so.1</code>被加载的时候，恶意代码会被执行。</li>
+<li>覆盖<code>libgcc_s.so.1</code>库</li>
+<li>等待定时任务执行</li>
+</ul>
+<p>最终获取Root权限:<br><img src="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE/2.png"></p>
+	
+
+	</div>
+  <a type="button" href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<ul>
+<li>原文：<a target="_blank" rel="noopener" href="https://www.wiz.io/blog/brokensesame-accidental-write-permissions-to-private-registry-allowed-potential-r">brokensesame-accidental-write-permissions-to-private-registry-allowed-potential-r</a></li>
+</ul>
+<h2 id="AnalyticDB-for-PostgreSQL"><a href="#AnalyticDB-for-PostgreSQL" class="headerlink" title="AnalyticDB for PostgreSQL"></a>AnalyticDB for PostgreSQL</h2><h3 id="容器提权"><a href="#容器提权" class="headerlink" title="容器提权"></a>容器提权</h3><p>首先发现了一个ROOT定时任务，该定时任务每分钟执行一次二进制文件<code>/usr/bin/tsar</code>:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$: <span class="token function">ls</span> -lah /etc/cron.d/tsar 
+-rw-r--r-- <span class="token number">1</span> root root <span class="token number">99</span> Apr <span class="token number">19</span>  <span class="token number">2021</span> /etc/cron.d/tsar 
+
+$: <span class="token function">cat</span> /etc/cron.d/tsar 
+
+<span class="token comment"># cron tsar collect once per minute </span>
+<span class="token assign-left variable">MAILTO</span><span class="token operator">=</span><span class="token string">""</span> 
+* * * * * root /usr/bin/tsar --cron <span class="token operator">></span> /dev/null <span class="token operator"><span class="token file-descriptor important">2</span>></span><span class="token file-descriptor important">&amp;1</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>使用<code>ldd</code>发现从自定义路径加载共享库，其中的一个路径<code>/u01</code>对于当前用户<code>adbpgadmin</code>是可写的。<br><img src="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE/1.png"></p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$: <span class="token function">ls</span> -alh /u01/adbpg/lib/libgcc_s.so.1 
+-rwxr-xr-x <span class="token number">1</span> adbpgadmin adbpgadmin 102K Oct <span class="token number">27</span> <span class="token number">12</span>:22 /u01/adbpg/lib/libgcc_s.so.1 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>如果用自己的共享库覆盖这个文件，那么下次就会以root权限执行自定义的代码，攻击流程：</p>
+<ul>
+<li>编译一个共享库，功能是将<code>/bin/bash</code>复制到<code>/bin/dash</code>，并添加SUID权限。</li>
+<li>把编译好的共享库使用<a target="_blank" rel="noopener" href="https://github.com/NixOS/patchelf">PatchELF</a>，添加到<code>libgcc_s.so.1</code>，这样当<code>libgcc_s.so.1</code>被加载的时候，恶意代码会被执行。</li>
+<li>覆盖<code>libgcc_s.so.1</code>库</li>
+<li>等待定时任务执行</li>
+</ul>
+<p>最终获取Root权限:<br><img src="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE/2.png"></p>
+	
+	</div>
+  <a type="button" href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2023/03/27/pinfish-and-osx-pentest.html" >记一次钓鱼演练和OS X下的渗透技巧</a>
 		</h3>
 		</div>
@@ -513,58 +599,6 @@ bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-fac
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2023/01/16/pay_vuln.html" >支付接口安全测试记录</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2023-01-16  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="0x1-低价值替换高价值SKU"><a href="#0x1-低价值替换高价值SKU" class="headerlink" title="0x1. 低价值替换高价值SKU"></a>0x1. 低价值替换高价值SKU</h3><p>在IOS平台上面支付完成之后，立刻杀掉进程，然后重新开启APP抓包，此时触发补单操作，拦截包之后，修改sku字段为高价值商品，尝试是否可以成功。</p>
-<p>或者在Burp抓支付包的时候，因为apple服务接口验证了证书，可以在burp的<code>TLS Pass Through</code>配置绕过apple的域名，不对其进行抓包。</p>
-<h3 id="0x2-替换订单号"><a href="#0x2-替换订单号" class="headerlink" title="0x2. 替换订单号"></a>0x2. 替换订单号</h3><p>首先产生一个未支付的高价值的订单号，其次正常购买低价值商品，打断后端返回的response，替换response里面的订单号为高价值订单号，然后尝试支付成功之后商品的数量。一般适用于Google支付。</p>
-<h3 id="0x3-利用Google机制自动退款"><a href="#0x3-利用Google机制自动退款" class="headerlink" title="0x3. 利用Google机制自动退款"></a>0x3. 利用Google机制自动退款</h3><p>Google的SDK支付成功之后，客户端会发起一个接口请求: <a target="_blank" rel="noopener" href="https://play-fe.googleapis.com/fdfe/consumePurchase">https://play-fe.googleapis.com/fdfe/consumePurchase</a> </p>
-<p>Google Play结算服务官方文档中关于处理购买交易的描述：在三天内未确认购买交易，则用户会自动收到退款，并且Google Play会撤消该购买交易，可以利用此规则进行退款。这种攻击一般针对一次性消耗品，当然重复的也可以。在支付完成之后，拦截上面的请求之后丢弃，如果服务端未做正确处理，则三天之后Google会自动退款。</p>
-<p>修复方式：后端手动调用确认接口进行二次确认<a target="_blank" rel="noopener" href="https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.products/acknowledge">acknowledge</a>，一般400可以视为已确认，409的时候需要查询一次状态，已确认状态可以放行，否则掉单处理。</p>
-<h3 id="测试注意点"><a href="#测试注意点" class="headerlink" title="测试注意点"></a>测试注意点</h3>
-	
-
-	</div>
-  <a type="button" href="/2023/01/16/pay_vuln.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="0x1-低价值替换高价值SKU"><a href="#0x1-低价值替换高价值SKU" class="headerlink" title="0x1. 低价值替换高价值SKU"></a>0x1. 低价值替换高价值SKU</h3><p>在IOS平台上面支付完成之后，立刻杀掉进程，然后重新开启APP抓包，此时触发补单操作，拦截包之后，修改sku字段为高价值商品，尝试是否可以成功。</p>
-<p>或者在Burp抓支付包的时候，因为apple服务接口验证了证书，可以在burp的<code>TLS Pass Through</code>配置绕过apple的域名，不对其进行抓包。</p>
-<h3 id="0x2-替换订单号"><a href="#0x2-替换订单号" class="headerlink" title="0x2. 替换订单号"></a>0x2. 替换订单号</h3><p>首先产生一个未支付的高价值的订单号，其次正常购买低价值商品，打断后端返回的response，替换response里面的订单号为高价值订单号，然后尝试支付成功之后商品的数量。一般适用于Google支付。</p>
-<h3 id="0x3-利用Google机制自动退款"><a href="#0x3-利用Google机制自动退款" class="headerlink" title="0x3. 利用Google机制自动退款"></a>0x3. 利用Google机制自动退款</h3><p>Google的SDK支付成功之后，客户端会发起一个接口请求: <a target="_blank" rel="noopener" href="https://play-fe.googleapis.com/fdfe/consumePurchase">https://play-fe.googleapis.com/fdfe/consumePurchase</a> </p>
-<p>Google Play结算服务官方文档中关于处理购买交易的描述：在三天内未确认购买交易，则用户会自动收到退款，并且Google Play会撤消该购买交易，可以利用此规则进行退款。这种攻击一般针对一次性消耗品，当然重复的也可以。在支付完成之后，拦截上面的请求之后丢弃，如果服务端未做正确处理，则三天之后Google会自动退款。</p>
-<p>修复方式：后端手动调用确认接口进行二次确认<a target="_blank" rel="noopener" href="https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.products/acknowledge">acknowledge</a>，一般400可以视为已确认，409的时候需要查询一次状态，已确认状态可以放行，否则掉单处理。</p>
-<h3 id="测试注意点"><a href="#测试注意点" class="headerlink" title="测试注意点"></a>测试注意点</h3>
-	
-	</div>
-  <a type="button" href="/2023/01/16/pay_vuln.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -622,7 +656,7 @@ bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-fac
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>50</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>51</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -643,6 +677,10 @@ bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-fac
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html" ><i class="fa fa-file-o"></i>BrokenSesame-阿里云数据库远程命令执行</a>
+      </li>
+    
+      <li>
         <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
       </li>
     
@@ -656,10 +694,6 @@ bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-fac
     
       <li>
         <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
-      </li>
-    
-      <li>
-        <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
       </li>
     
   </ul>

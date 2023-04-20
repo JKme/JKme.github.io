@@ -117,6 +117,58 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2023/01/16/pay_vuln.html" >支付接口安全测试记录</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2023-01-16  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="0x1-低价值替换高价值SKU"><a href="#0x1-低价值替换高价值SKU" class="headerlink" title="0x1. 低价值替换高价值SKU"></a>0x1. 低价值替换高价值SKU</h3><p>在IOS平台上面支付完成之后，立刻杀掉进程，然后重新开启APP抓包，此时触发补单操作，拦截包之后，修改sku字段为高价值商品，尝试是否可以成功。</p>
+<p>或者在Burp抓支付包的时候，因为apple服务接口验证了证书，可以在burp的<code>TLS Pass Through</code>配置绕过apple的域名，不对其进行抓包。</p>
+<h3 id="0x2-替换订单号"><a href="#0x2-替换订单号" class="headerlink" title="0x2. 替换订单号"></a>0x2. 替换订单号</h3><p>首先产生一个未支付的高价值的订单号，其次正常购买低价值商品，打断后端返回的response，替换response里面的订单号为高价值订单号，然后尝试支付成功之后商品的数量。一般适用于Google支付。</p>
+<h3 id="0x3-利用Google机制自动退款"><a href="#0x3-利用Google机制自动退款" class="headerlink" title="0x3. 利用Google机制自动退款"></a>0x3. 利用Google机制自动退款</h3><p>Google的SDK支付成功之后，客户端会发起一个接口请求: <a target="_blank" rel="noopener" href="https://play-fe.googleapis.com/fdfe/consumePurchase">https://play-fe.googleapis.com/fdfe/consumePurchase</a> </p>
+<p>Google Play结算服务官方文档中关于处理购买交易的描述：在三天内未确认购买交易，则用户会自动收到退款，并且Google Play会撤消该购买交易，可以利用此规则进行退款。这种攻击一般针对一次性消耗品，当然重复的也可以。在支付完成之后，拦截上面的请求之后丢弃，如果服务端未做正确处理，则三天之后Google会自动退款。</p>
+<p>修复方式：后端手动调用确认接口进行二次确认<a target="_blank" rel="noopener" href="https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.products/acknowledge">acknowledge</a>，一般400可以视为已确认，409的时候需要查询一次状态，已确认状态可以放行，否则掉单处理。</p>
+<h3 id="测试注意点"><a href="#测试注意点" class="headerlink" title="测试注意点"></a>测试注意点</h3>
+	
+
+	</div>
+  <a type="button" href="/2023/01/16/pay_vuln.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="0x1-低价值替换高价值SKU"><a href="#0x1-低价值替换高价值SKU" class="headerlink" title="0x1. 低价值替换高价值SKU"></a>0x1. 低价值替换高价值SKU</h3><p>在IOS平台上面支付完成之后，立刻杀掉进程，然后重新开启APP抓包，此时触发补单操作，拦截包之后，修改sku字段为高价值商品，尝试是否可以成功。</p>
+<p>或者在Burp抓支付包的时候，因为apple服务接口验证了证书，可以在burp的<code>TLS Pass Through</code>配置绕过apple的域名，不对其进行抓包。</p>
+<h3 id="0x2-替换订单号"><a href="#0x2-替换订单号" class="headerlink" title="0x2. 替换订单号"></a>0x2. 替换订单号</h3><p>首先产生一个未支付的高价值的订单号，其次正常购买低价值商品，打断后端返回的response，替换response里面的订单号为高价值订单号，然后尝试支付成功之后商品的数量。一般适用于Google支付。</p>
+<h3 id="0x3-利用Google机制自动退款"><a href="#0x3-利用Google机制自动退款" class="headerlink" title="0x3. 利用Google机制自动退款"></a>0x3. 利用Google机制自动退款</h3><p>Google的SDK支付成功之后，客户端会发起一个接口请求: <a target="_blank" rel="noopener" href="https://play-fe.googleapis.com/fdfe/consumePurchase">https://play-fe.googleapis.com/fdfe/consumePurchase</a> </p>
+<p>Google Play结算服务官方文档中关于处理购买交易的描述：在三天内未确认购买交易，则用户会自动收到退款，并且Google Play会撤消该购买交易，可以利用此规则进行退款。这种攻击一般针对一次性消耗品，当然重复的也可以。在支付完成之后，拦截上面的请求之后丢弃，如果服务端未做正确处理，则三天之后Google会自动退款。</p>
+<p>修复方式：后端手动调用确认接口进行二次确认<a target="_blank" rel="noopener" href="https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.products/acknowledge">acknowledge</a>，一般400可以视为已确认，409的时候需要查询一次状态，已确认状态可以放行，否则掉单处理。</p>
+<h3 id="测试注意点"><a href="#测试注意点" class="headerlink" title="测试注意点"></a>测试注意点</h3>
+	
+	</div>
+  <a type="button" href="/2023/01/16/pay_vuln.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2022/11/08/pve_homelab.html" >PVE使用注意事项</a>
 		</h3>
 		</div>
@@ -615,56 +667,6 @@
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2022/04/14/memory-shell-1.html" >Java安全笔记(3)-内存马之Filter型</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2022-04-14  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h2><p><img src="/2022/04/14/memory-shell-1/Servlet.png"></p>
-<p>当处理请求的时候：请求 → Listener → Filter → Servlet</p>
-<h4 id="Listener"><a href="#Listener" class="headerlink" title="Listener"></a>Listener</h4><p>Listener也称之为监听器，可以监听Application、Session和Request对象的创建、销毁事件，以及监听对其中添加、修改、删除属性事件，并自动执行自定义的功能。</p>
-<h4 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h4><p>Filter也称之为过滤器，可以动态地修改HttpServletRequest，HttpServletResponse中的头和数据。</p>
-<h4 id="Servlet-1"><a href="#Servlet-1" class="headerlink" title="Servlet"></a>Servlet</h4><p>Servlet是运行在 Web 服务器或应用服务器上的程序，它是作为来自 HTTP 客户端的请求和 HTTP 服务器上的数据库或应用程序之间的中间层。它负责处理用户的请求，并根据请求生成相应的返回信息提供给用户。Servlet 可以理解为某一个路径后续的业务处理逻辑。</p>
-<p>Tomcat是http服务器+servlet容器，当Tomcat作为Servlet容器的时候，讲http请求文本解析之后封装成<code>HttpServletRequest</code>类型的request对象，传递给Servlet，同时讲相应的信息封装为<code>HttpServletResponse</code>类型的response对象，将response对象交给tomcat，tomcat格式化之后返回给浏览器</p>
-	
-
-	</div>
-  <a type="button" href="/2022/04/14/memory-shell-1.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h2><p><img src="/2022/04/14/memory-shell-1/Servlet.png"></p>
-<p>当处理请求的时候：请求 → Listener → Filter → Servlet</p>
-<h4 id="Listener"><a href="#Listener" class="headerlink" title="Listener"></a>Listener</h4><p>Listener也称之为监听器，可以监听Application、Session和Request对象的创建、销毁事件，以及监听对其中添加、修改、删除属性事件，并自动执行自定义的功能。</p>
-<h4 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h4><p>Filter也称之为过滤器，可以动态地修改HttpServletRequest，HttpServletResponse中的头和数据。</p>
-<h4 id="Servlet-1"><a href="#Servlet-1" class="headerlink" title="Servlet"></a>Servlet</h4><p>Servlet是运行在 Web 服务器或应用服务器上的程序，它是作为来自 HTTP 客户端的请求和 HTTP 服务器上的数据库或应用程序之间的中间层。它负责处理用户的请求，并根据请求生成相应的返回信息提供给用户。Servlet 可以理解为某一个路径后续的业务处理逻辑。</p>
-<p>Tomcat是http服务器+servlet容器，当Tomcat作为Servlet容器的时候，讲http请求文本解析之后封装成<code>HttpServletRequest</code>类型的request对象，传递给Servlet，同时讲相应的信息封装为<code>HttpServletResponse</code>类型的response对象，将response对象交给tomcat，tomcat格式化之后返回给浏览器</p>
-	
-	</div>
-  <a type="button" href="/2022/04/14/memory-shell-1.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -722,7 +724,7 @@
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>50</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>51</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -743,6 +745,10 @@
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html" ><i class="fa fa-file-o"></i>BrokenSesame-阿里云数据库远程命令执行</a>
+      </li>
+    
+      <li>
         <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
       </li>
     
@@ -756,10 +762,6 @@
     
       <li>
         <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
-      </li>
-    
-      <li>
-        <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
       </li>
     
   </ul>

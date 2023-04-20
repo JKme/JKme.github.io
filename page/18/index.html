@@ -117,6 +117,76 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2016/10/25/cve-2016-6802.html" >CVE-2016-6802</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-10-25  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>Apache Shiro before 1.3.2 allows attackers to bypass intended servlet filters and gain access by leveraging use of a non-root servlet context path. </p>
+</blockquote>
+<p>描述比较简单，官方修改的时候对于最新版本做了简单的修改：</p>
+<pre class="line-numbers language-none"><code class="language-none">
+WebUtils.java
++ contextPath &#x3D; normalize(decodedRequestString(request, contextPath));
+if (&quot;&#x2F;&quot;.equeal(contextPath)) &#123;
+    contextPath &#x3D; &quot;&quot;;
+ &#125;
+ return contextPath;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>主要添加了上面一行，在请求处理之前先decoded，然后恢复正常。所以最后的exp很简单：</p>
+<p>比如作为一个普通账户的时候，知道admin路径，在访问的时候访问admin路径，然后burp截断，在请求路径后面添加<code>%2f</code>，即可绕过shiro路径控制。</p>
+
+	
+
+	</div>
+  <a type="button" href="/2016/10/25/cve-2016-6802.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>Apache Shiro before 1.3.2 allows attackers to bypass intended servlet filters and gain access by leveraging use of a non-root servlet context path. </p>
+</blockquote>
+<p>描述比较简单，官方修改的时候对于最新版本做了简单的修改：</p>
+<pre class="line-numbers language-none"><code class="language-none">
+WebUtils.java
++ contextPath &#x3D; normalize(decodedRequestString(request, contextPath));
+if (&quot;&#x2F;&quot;.equeal(contextPath)) &#123;
+    contextPath &#x3D; &quot;&quot;;
+ &#125;
+ return contextPath;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>主要添加了上面一行，在请求处理之前先decoded，然后恢复正常。所以最后的exp很简单：</p>
+<p>比如作为一个普通账户的时候，知道admin路径，在访问的时候访问admin路径，然后burp截断，在请求路径后面添加<code>%2f</code>，即可绕过shiro路径控制。</p>
+
+	
+	</div>
+  <a type="button" href="/2016/10/25/cve-2016-6802.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2016/10/08/docker.html" >Docker笔记</a>
 		</h3>
 		</div>
@@ -543,88 +613,6 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/07/25/hash-length-attack.html" >MD5哈希长度扩展攻击</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-07-25  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html">https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html</a></p>
-</blockquote>
-<p>这篇文章里有提到的哈希长度扩展攻击看了下做个笔记。理解哈希长度扩展攻击以md5为例，需要理解下面几点：</p>
-<h3 id="MD5的部分工作原理"><a href="#MD5的部分工作原理" class="headerlink" title="MD5的部分工作原理"></a>MD5的<strong>部分工作原理</strong></h3><h4 id="一-先看下MD5的计算过程，只需要理解一半："><a href="#一-先看下MD5的计算过程，只需要理解一半：" class="headerlink" title="一. 先看下MD5的计算过程，只需要理解一半："></a>一. 先看下MD5的计算过程，只需要理解一半：</h4><p> 对于一个message进行md5计算的过程是这样的：<br> 经过三个步骤，这部分可以看<a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc1321">RFC</a>:</p>
-<p> The message is “padded” (extended) so that its length (in bits) is congruent to 448, modulo 512.<br>   先进行补位，使得整体长度对512取模之后的值为448，len(message)%512 == 418，计算单位是bit（位）。</p>
-<ol>
-<li><p>Append Padding Bits</p>
-<p> 补位是这样的，先在message后面加0x80标识，然后加无限个0，一直满足对512bit取模之后等于448bit。</p>
-</li>
-<li><p>Append Length</p>
-<p> 512bit和448相差64bit，即8Byte，这个8字节用来表示补位之前message的长度。</p>
-</li>
-<li><p>计算消息摘</p>
-<p>有一个初始链变量，用来参与第一轮的运算，MD5的初始变量为：<br>A = 0x67452301<br>B = 0xefcdab89<br>C = 0x98badcfe<br>D = 0x10325476</p>
-</li>
-</ol>
-<p> 整体来说就是先补位，然后补长度，这个长度占8Byte，用来表示补位之前message的长度，然后计算md5。现在记住下面这句话：</p>
-<blockquote>
-<p>每经过一次消息摘要计算，上面的<strong>链变量会被新的值覆盖</strong>，最后一轮经过高低位互换（aabbccdd -&gt; ddccbbaa）就是最终的MD5值。</p>
-</blockquote>
-<p>现在来进行md5扩展长度攻击：<br>我觉得直接把这个看完就差不多了：<a target="_blank" rel="noopener" href="https://github.com/iagox86/hash_extender">https://github.com/iagox86/hash_extender</a></p>
-	
-
-	</div>
-  <a type="button" href="/2016/07/25/hash-length-attack.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<blockquote>
-<p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html">https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html</a></p>
-</blockquote>
-<p>这篇文章里有提到的哈希长度扩展攻击看了下做个笔记。理解哈希长度扩展攻击以md5为例，需要理解下面几点：</p>
-<h3 id="MD5的部分工作原理"><a href="#MD5的部分工作原理" class="headerlink" title="MD5的部分工作原理"></a>MD5的<strong>部分工作原理</strong></h3><h4 id="一-先看下MD5的计算过程，只需要理解一半："><a href="#一-先看下MD5的计算过程，只需要理解一半：" class="headerlink" title="一. 先看下MD5的计算过程，只需要理解一半："></a>一. 先看下MD5的计算过程，只需要理解一半：</h4><p> 对于一个message进行md5计算的过程是这样的：<br> 经过三个步骤，这部分可以看<a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc1321">RFC</a>:</p>
-<p> The message is “padded” (extended) so that its length (in bits) is congruent to 448, modulo 512.<br>   先进行补位，使得整体长度对512取模之后的值为448，len(message)%512 == 418，计算单位是bit（位）。</p>
-<ol>
-<li><p>Append Padding Bits</p>
-<p> 补位是这样的，先在message后面加0x80标识，然后加无限个0，一直满足对512bit取模之后等于448bit。</p>
-</li>
-<li><p>Append Length</p>
-<p> 512bit和448相差64bit，即8Byte，这个8字节用来表示补位之前message的长度。</p>
-</li>
-<li><p>计算消息摘</p>
-<p>有一个初始链变量，用来参与第一轮的运算，MD5的初始变量为：<br>A = 0x67452301<br>B = 0xefcdab89<br>C = 0x98badcfe<br>D = 0x10325476</p>
-</li>
-</ol>
-<p> 整体来说就是先补位，然后补长度，这个长度占8Byte，用来表示补位之前message的长度，然后计算md5。现在记住下面这句话：</p>
-<blockquote>
-<p>每经过一次消息摘要计算，上面的<strong>链变量会被新的值覆盖</strong>，最后一轮经过高低位互换（aabbccdd -&gt; ddccbbaa）就是最终的MD5值。</p>
-</blockquote>
-<p>现在来进行md5扩展长度攻击：<br>我觉得直接把这个看完就差不多了：<a target="_blank" rel="noopener" href="https://github.com/iagox86/hash_extender">https://github.com/iagox86/hash_extender</a></p>
-	
-	</div>
-  <a type="button" href="/2016/07/25/hash-length-attack.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -682,7 +670,7 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>50</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>51</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -703,6 +691,10 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html" ><i class="fa fa-file-o"></i>BrokenSesame-阿里云数据库远程命令执行</a>
+      </li>
+    
+      <li>
         <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
       </li>
     
@@ -716,10 +708,6 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
     
       <li>
         <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
-      </li>
-    
-      <li>
-        <a href="/2023/01/16/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
       </li>
     
   </ul>

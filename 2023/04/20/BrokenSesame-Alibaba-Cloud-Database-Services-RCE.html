@@ -1,0 +1,335 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>BrokenSesame-阿里云数据库远程命令执行 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="原文：brokensesame-accidental-write-permissions-to-private-registry-allowed-potential-r
+
+AnalyticDB for PostgreSQL容器提权首先发现了一个ROOT定时任务，该定时任务每分钟执行一次二进制文件/usr/bin/tsar:
+$: ls -lah /etc/cron.d/tsar 
+-rw-r--r-- 1 root root 99 Apr 19  2021 /etc/cron.d/tsar 
+
+$: cat /etc/cron.d/tsar 
+
+# cron tsar collect once per minute 
+MAILTO=&#34;&#34; 
+* * * * * root /usr/bin/tsar --cron &gt; /dev/null 2&gt;&amp;amp;1
+
+使用ldd发现从自定义路径加载共享库，其中的一个路径/u01对于当前用户adbpgadmin是可写的。
+$: ls -alh /u01/adbpg/lib/libgcc_s.so.1 
+-rwxr-xr-x 1 adbpgadmin adbpgadmin 102K Oct 27 12:22 /u01/adbpg/lib/libgcc_s.so.1 
+如果用自己的共享库覆盖这个文件，那么下次就会以root权限执行自定义的代码，攻击流程：
+
+编译一个共享库，功能是将/bin/bash复制到/bin/dash，并添加SUID权限。
+把编译好的共享库使用PatchELF，添加到libgcc_s.so.1，这样当libgcc_s.so.1被加载的时候，恶意代码会被执行。
+覆盖libgcc_s.so.1库
+等待定时任务执行
+
+最终获取Root权限:"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="BrokenSesame-阿里云数据库远程命令执行"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> BrokenSesame-阿里云数据库远程命令执行</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <ul>
+<li>原文：<a target="_blank" rel="noopener" href="https://www.wiz.io/blog/brokensesame-accidental-write-permissions-to-private-registry-allowed-potential-r">brokensesame-accidental-write-permissions-to-private-registry-allowed-potential-r</a></li>
+</ul>
+<h2 id="AnalyticDB-for-PostgreSQL"><a href="#AnalyticDB-for-PostgreSQL" class="headerlink" title="AnalyticDB for PostgreSQL"></a>AnalyticDB for PostgreSQL</h2><h3 id="容器提权"><a href="#容器提权" class="headerlink" title="容器提权"></a>容器提权</h3><p>首先发现了一个ROOT定时任务，该定时任务每分钟执行一次二进制文件<code>/usr/bin/tsar</code>:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$: <span class="token function">ls</span> -lah /etc/cron.d/tsar 
+-rw-r--r-- <span class="token number">1</span> root root <span class="token number">99</span> Apr <span class="token number">19</span>  <span class="token number">2021</span> /etc/cron.d/tsar 
+
+$: <span class="token function">cat</span> /etc/cron.d/tsar 
+
+<span class="token comment"># cron tsar collect once per minute </span>
+<span class="token assign-left variable">MAILTO</span><span class="token operator">=</span><span class="token string">""</span> 
+* * * * * root /usr/bin/tsar --cron <span class="token operator">></span> /dev/null <span class="token operator"><span class="token file-descriptor important">2</span>></span><span class="token file-descriptor important">&amp;1</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>使用<code>ldd</code>发现从自定义路径加载共享库，其中的一个路径<code>/u01</code>对于当前用户<code>adbpgadmin</code>是可写的。<br><img src="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE/1.png"></p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$: <span class="token function">ls</span> -alh /u01/adbpg/lib/libgcc_s.so.1 
+-rwxr-xr-x <span class="token number">1</span> adbpgadmin adbpgadmin 102K Oct <span class="token number">27</span> <span class="token number">12</span>:22 /u01/adbpg/lib/libgcc_s.so.1 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>如果用自己的共享库覆盖这个文件，那么下次就会以root权限执行自定义的代码，攻击流程：</p>
+<ul>
+<li>编译一个共享库，功能是将<code>/bin/bash</code>复制到<code>/bin/dash</code>，并添加SUID权限。</li>
+<li>把编译好的共享库使用<a target="_blank" rel="noopener" href="https://github.com/NixOS/patchelf">PatchELF</a>，添加到<code>libgcc_s.so.1</code>，这样当<code>libgcc_s.so.1</code>被加载的时候，恶意代码会被执行。</li>
+<li>覆盖<code>libgcc_s.so.1</code>库</li>
+<li>等待定时任务执行</li>
+</ul>
+<p>最终获取Root权限:<br><img src="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE/2.png"></p>
+<h3 id="逃逸到K8s-Node"><a href="#逃逸到K8s-Node" class="headerlink" title="逃逸到K8s Node"></a>逃逸到K8s Node</h3><p>根据作者对云服务的测试经验，一般UI界面的操作会导致托管环境创建容器或者进程，从而扩大攻击面。比如在阿里云门户中某些操作（启用SSL加密），可以观察到多个SCP和SSH进程的创建。<br><img src="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE/3.png"></p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># Command lines of the spawned processes</span>
+<span class="token function">su</span> - adbpgadmin -c <span class="token function">scp</span> /home/adbpgadmin/xxx_ssl_files/* 
+*REDACTED*:/home/adbpgadmin/data/master/seg-1/ 
+
+/usr/bin/ssh -x -oForwardAgent<span class="token operator">=</span>no -oPermitLocalCommand<span class="token operator">=</span>no -oClearAllForwardings<span class="token operator">=</span>yes 
+-- *REDACTED* <span class="token function">scp</span> -d -t /home/adbpgadmin/data/master/seg-1/ <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>作者发现这些生成的进程包含容器中不存在的路径，推测是在容器共享PID中不同容器中生成的，为了验证者推测，作者写了一个POC，当生成SCP进程的时候，使用<code>/proc/&#123;pid&#125;/root/</code>访问该进程下的文件系统：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment"># The Python script we used to access the second container filesystem</span>
+<span class="token keyword">import</span> psutil 
+<span class="token keyword">import</span> os 
+listed <span class="token operator">=</span> <span class="token builtin">set</span><span class="token punctuation">(</span><span class="token punctuation">)</span> 
+<span class="token keyword">while</span> <span class="token boolean">True</span><span class="token punctuation">:</span> 
+    <span class="token keyword">for</span> proc <span class="token keyword">in</span> psutil<span class="token punctuation">.</span>process_iter<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span> 
+        <span class="token keyword">try</span><span class="token punctuation">:</span> 
+            processName <span class="token operator">=</span> proc<span class="token punctuation">.</span>name<span class="token punctuation">(</span><span class="token punctuation">)</span> 
+            processID <span class="token operator">=</span> proc<span class="token punctuation">.</span>pid 
+            cmdLine <span class="token operator">=</span> proc<span class="token punctuation">.</span>cmdline<span class="token punctuation">(</span><span class="token punctuation">)</span> 
+            <span class="token keyword">if</span> processID <span class="token keyword">not</span> <span class="token keyword">in</span> listed <span class="token keyword">and</span> processName <span class="token operator">==</span> <span class="token string">'scp'</span><span class="token punctuation">:</span> 
+                os<span class="token punctuation">.</span>system<span class="token punctuation">(</span><span class="token string">'ls -alh /proc/&#123;&#125;/root/'</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>processID<span class="token punctuation">)</span><span class="token punctuation">)</span> 
+
+                listed<span class="token punctuation">.</span>add<span class="token punctuation">(</span>processID<span class="token punctuation">)</span> 
+        <span class="token keyword">except</span> <span class="token punctuation">(</span>psutil<span class="token punctuation">.</span>NoSuchProcess<span class="token punctuation">,</span> psutil<span class="token punctuation">.</span>AccessDenied<span class="token punctuation">,</span> psutil<span class="token punctuation">.</span>ZombieProcess<span class="token punctuation">)</span><span class="token punctuation">:</span>
+          <span class="token keyword">pass</span> <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>在阿里云平台门户启用SSL操作之后，观察脚本的输出，可以确认尽管两个容器不同，但它们的主目录(/home/adbpgadmin)是相同的挂载。</p>
+<p>在验证了上面想法之后，作者挑选使用SSH来获取第二个容器的权限，修改本地ssh配置文件: <code>/home/adbpgadmin/.ssh/config</code></p>
+<p><img src="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE/4.png"></p>
+<p>这样当ssh命令执行的时候，就会触发执行<code>LocalCommand</code>指定的脚本，此时是以root权限在第二个容器执行的，并在第二个容器发现了<code>docker.sock</code></p>
+<p>由于第二个容器是临时生成的，作者利用创建了一个持久化的容器，但是具体技术细节没有说明。</p>
+
+	</div>
+
+	
+	<span id="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html" class="leancloud-visitors view" data-flag-title="BrokenSesame-阿里云数据库远程命令执行">
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a type="button" class="btn btn-default disabled"><i class="fa fa-arrow-circle-o-left"></i>Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2023/03/27/pinfish-and-osx-pentest.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2023-04-20 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>51</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#AnalyticDB-for-PostgreSQL"><span class="toc-article-text">AnalyticDB for PostgreSQL</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E5%AE%B9%E5%99%A8%E6%8F%90%E6%9D%83"><span class="toc-article-text">容器提权</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E9%80%83%E9%80%B8%E5%88%B0K8s-Node"><span class="toc-article-text">逃逸到K8s Node</span></a></li></ol></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2023 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>
