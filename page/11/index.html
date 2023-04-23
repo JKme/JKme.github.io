@@ -117,6 +117,102 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2018/07/05/stack.html" >栈溢出学习笔记</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2018-07-05  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>根据不同的操作系统，一个进程可能被分配到不同内存区域中执行，但是不管什么样的系统，什么样的计算机结构，进程使用的内存可以按照功能分为4个部分：</p>
+<ol>
+<li>代码区：可执行指令</li>
+<li>数据区：用于存储全局变量</li>
+<li>堆区：进程可以在堆区动态的请求一定大小内存，并在用完之后归还给堆区。动态分布和回收是堆区的特点</li>
+<li>栈区：用于动态的存储函数之间的调用关系，以保证被调用函数返回时恢复到母函数中继续执行</li>
+</ol>
+<p>程序中使用的缓冲区可以在堆区、栈区、数据区，不同地方的缓冲区利用方式不同。</p>
+<p>内存中的栈区指的就是系统栈，由系统自动维护。</p>
+<p>栈时FILO结构，所以栈顶指的是最下方，底部是最上方。</p>
+<ul>
+<li>%esp 指向栈的顶部（栈指针寄存器，存放一个指针，永远指向系统栈最上面栈帧的栈顶)</li>
+<li>%ebp 指向栈的底部</li>
+<li>%eip 用来存储即将执行的程序指令的地址</li>
+<li>Frame Pointer(FP) Or Base Pointer(BP), Stack Pointer(SP)</li>
+<li>函数栈帧：ESP和EBP之间内存空间为当前栈帧</li>
+</ul>
+<p>32位x86架构下的通用寄存器包括一般寄存器（eax、ebx、ecx、edx），索引寄存器（esi、edi)，以及堆栈指针寄存器(esp,ebp)</p>
+<ul>
+<li>eax: 累加寄存器(Accumulator),用以进行算数运算和返回函数结果等。</li>
+<li>ebx: 被称为基址寄存器（Base），在内存寻址的时候用来存放基地址。</li>
+<li>exc: 被称为计数寄存器(Counter)，用以在循环中计数。</li>
+<li>edx: 被称为数据寄存器(Data)，常配合eax一起存放运算结果等数据。</li>
+</ul>
+<p>栈操作（在32位下)：</p>
+<ul>
+<li>push（压栈） push sth -&gt; [esp]=sth, esp=esp-4</li>
+<li>pop （出栈） pop sth -&gt; sth=[esp], esp=esp+4</li>
+</ul>
+	
+
+	</div>
+  <a type="button" href="/2018/07/05/stack.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>根据不同的操作系统，一个进程可能被分配到不同内存区域中执行，但是不管什么样的系统，什么样的计算机结构，进程使用的内存可以按照功能分为4个部分：</p>
+<ol>
+<li>代码区：可执行指令</li>
+<li>数据区：用于存储全局变量</li>
+<li>堆区：进程可以在堆区动态的请求一定大小内存，并在用完之后归还给堆区。动态分布和回收是堆区的特点</li>
+<li>栈区：用于动态的存储函数之间的调用关系，以保证被调用函数返回时恢复到母函数中继续执行</li>
+</ol>
+<p>程序中使用的缓冲区可以在堆区、栈区、数据区，不同地方的缓冲区利用方式不同。</p>
+<p>内存中的栈区指的就是系统栈，由系统自动维护。</p>
+<p>栈时FILO结构，所以栈顶指的是最下方，底部是最上方。</p>
+<ul>
+<li>%esp 指向栈的顶部（栈指针寄存器，存放一个指针，永远指向系统栈最上面栈帧的栈顶)</li>
+<li>%ebp 指向栈的底部</li>
+<li>%eip 用来存储即将执行的程序指令的地址</li>
+<li>Frame Pointer(FP) Or Base Pointer(BP), Stack Pointer(SP)</li>
+<li>函数栈帧：ESP和EBP之间内存空间为当前栈帧</li>
+</ul>
+<p>32位x86架构下的通用寄存器包括一般寄存器（eax、ebx、ecx、edx），索引寄存器（esi、edi)，以及堆栈指针寄存器(esp,ebp)</p>
+<ul>
+<li>eax: 累加寄存器(Accumulator),用以进行算数运算和返回函数结果等。</li>
+<li>ebx: 被称为基址寄存器（Base），在内存寻址的时候用来存放基地址。</li>
+<li>exc: 被称为计数寄存器(Counter)，用以在循环中计数。</li>
+<li>edx: 被称为数据寄存器(Data)，常配合eax一起存放运算结果等数据。</li>
+</ul>
+<p>栈操作（在32位下)：</p>
+<ul>
+<li>push（压栈） push sth -&gt; [esp]=sth, esp=esp-4</li>
+<li>pop （出栈） pop sth -&gt; sth=[esp], esp=esp+4</li>
+</ul>
+	
+	</div>
+  <a type="button" href="/2018/07/05/stack.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2018/06/13/powershell-pen.html" >Powershell</a>
 		</h3>
 		</div>
@@ -441,138 +537,6 @@ socks 1080
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2018/02/02/xxe.html" >XXE学习笔记</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2018-02-02  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>XML基础：</p>
-<p>XML文档结构：</p>
-<pre class="line-numbers language-none"><code class="language-none">XML声明
-&lt;?xml version&#x3D;&quot;1.0&quot;?&gt;
-
-DTD文档类型定义
-&lt;!DOCTYPE note [  &lt;!--定义此文档是 note 类型的文档--&gt;
-&lt;!ELEMENT note (to,from,heading,body)&gt;  &lt;!--定义note元素有四个元素--&gt;
-&lt;!ELEMENT to (#PCDATA)&gt;     &lt;!--定义to元素为”#PCDATA”类型--&gt;
-&lt;!ELEMENT from (#PCDATA)&gt;   &lt;!--定义from元素为”#PCDATA”类型--&gt;
-&lt;!ELEMENT head (#PCDATA)&gt;   &lt;!--定义head元素为”#PCDATA”类型--&gt;
-&lt;!ELEMENT body (#PCDATA)&gt;   &lt;!--定义body元素为”#PCDATA”类型--&gt;
-]]]
-
-
-文档元素
-&lt;note&gt;
-&lt;to&gt;Dave&lt;&#x2F;to&gt;
-&lt;from&gt;Tom&lt;&#x2F;from&gt;
-&lt;head&gt;Reminder&lt;&#x2F;head&gt;
-&lt;body&gt;You are a good man&lt;&#x2F;body&gt;
-&lt;&#x2F;note&gt;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>DTD(document type definitions)可以定义一个合法的XML文档构建模块，可以被成行声明于XML文档中，也可以作为一个外部引用。</p>
-<pre class="line-numbers language-none"><code class="language-none">内部声明DTD：
-
-&lt;!DOCTYPE 跟元素 [元素声明］&gt;
-
-引用外部DTD:
-
-&lt;!DOCTYPE 根元素  SYSTEM &quot;文件名&quot;&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>DTD文档中很多关键字如下: </p>
-<ul>
-<li>DOCTYPE(DTD的声明）</li>
-<li>ENTITY （实体的声明）</li>
-<li>SYSTEM、PUBLIC （外部资源申请） </li>
-</ul>
-<p>###实体</p>
-<p>实体可以理解为变量，必须在DTD定义声明，可以在文档中的其它位置引用该变量的值。<br>实体按类型主要分以下四种:</p>
-<ul>
-<li>内置实体（Built-in entities)</li>
-<li>字符实体（Character entities)</li>
-<li>通用实体（General entities）</li>
-<li>参数实体 (Parameter entities）</li>
-</ul>
-	
-
-	</div>
-  <a type="button" href="/2018/02/02/xxe.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>XML基础：</p>
-<p>XML文档结构：</p>
-<pre class="line-numbers language-none"><code class="language-none">XML声明
-&lt;?xml version&#x3D;&quot;1.0&quot;?&gt;
-
-DTD文档类型定义
-&lt;!DOCTYPE note [  &lt;!--定义此文档是 note 类型的文档--&gt;
-&lt;!ELEMENT note (to,from,heading,body)&gt;  &lt;!--定义note元素有四个元素--&gt;
-&lt;!ELEMENT to (#PCDATA)&gt;     &lt;!--定义to元素为”#PCDATA”类型--&gt;
-&lt;!ELEMENT from (#PCDATA)&gt;   &lt;!--定义from元素为”#PCDATA”类型--&gt;
-&lt;!ELEMENT head (#PCDATA)&gt;   &lt;!--定义head元素为”#PCDATA”类型--&gt;
-&lt;!ELEMENT body (#PCDATA)&gt;   &lt;!--定义body元素为”#PCDATA”类型--&gt;
-]]]
-
-
-文档元素
-&lt;note&gt;
-&lt;to&gt;Dave&lt;&#x2F;to&gt;
-&lt;from&gt;Tom&lt;&#x2F;from&gt;
-&lt;head&gt;Reminder&lt;&#x2F;head&gt;
-&lt;body&gt;You are a good man&lt;&#x2F;body&gt;
-&lt;&#x2F;note&gt;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>DTD(document type definitions)可以定义一个合法的XML文档构建模块，可以被成行声明于XML文档中，也可以作为一个外部引用。</p>
-<pre class="line-numbers language-none"><code class="language-none">内部声明DTD：
-
-&lt;!DOCTYPE 跟元素 [元素声明］&gt;
-
-引用外部DTD:
-
-&lt;!DOCTYPE 根元素  SYSTEM &quot;文件名&quot;&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>DTD文档中很多关键字如下: </p>
-<ul>
-<li>DOCTYPE(DTD的声明）</li>
-<li>ENTITY （实体的声明）</li>
-<li>SYSTEM、PUBLIC （外部资源申请） </li>
-</ul>
-<p>###实体</p>
-<p>实体可以理解为变量，必须在DTD定义声明，可以在文档中的其它位置引用该变量的值。<br>实体按类型主要分以下四种:</p>
-<ul>
-<li>内置实体（Built-in entities)</li>
-<li>字符实体（Character entities)</li>
-<li>通用实体（General entities）</li>
-<li>参数实体 (Parameter entities）</li>
-</ul>
-	
-	</div>
-  <a type="button" href="/2018/02/02/xxe.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -630,7 +594,7 @@ DTD文档类型定义
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>51</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>52</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -651,6 +615,10 @@ DTD文档类型定义
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/04/23/sandbox-info-collect.html" ><i class="fa fa-file-o"></i>沙盒环境信息收集</a>
+      </li>
+    
+      <li>
         <a href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html" ><i class="fa fa-file-o"></i>BrokenSesame-阿里云数据库远程命令执行</a>
       </li>
     
@@ -664,10 +632,6 @@ DTD文档类型定义
     
       <li>
         <a href="/2023/02/14/kafka-rce.html" ><i class="fa fa-file-o"></i>Apache Kafka Connect JNDI注入...</a>
-      </li>
-    
-      <li>
-        <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
       </li>
     
   </ul>

@@ -387,6 +387,54 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2022/03/22/java-reflection.html" >Java安全笔记(1)-反射机制</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2022-03-22  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x1-类加载器-ClassLoader"><a href="#0x1-类加载器-ClassLoader" class="headerlink" title="0x1. 类加载器: ClassLoader"></a>0x1. 类加载器: ClassLoader</h2><p>Java是一个依赖于<code>JVM（Java虚拟机)</code>实现的跨平台的开发语言，<code>Java</code>会先通过编译器将源代码转换为Java二进制字节码，一般是保存在<code>.class</code>文件中，之后通过<code>JVM</code>解释器执行这段代码。字节码文件会包含很多Class信息，在JVM解释器运行的过程中，<code>ClassLoader</code>就是用来加载类的，它会将Java字节码中的Class加载到内存中，而每个<code>Class</code>对象内部都有一个<code>ClassLoader</code>属性标识由哪个<code>ClassLoader</code>加载。</p>
+<h3 id="常见的ClassLoader"><a href="#常见的ClassLoader" class="headerlink" title="常见的ClassLoader"></a>常见的ClassLoader</h3><p>一切的<code>Java</code>类都必须经过JVM加载之后才可以运行，最常见的<code>ClassLoader</code>： <code>BootstrapClassLoader</code>、<code>ExtensionClassLoader</code>、<code>AppClassLoader</code>、<code>URLClassLoader</code>、<code>ContextClassLoader</code></p>
+<h4 id="BootstrapClassLoader"><a href="#BootstrapClassLoader" class="headerlink" title="BootstrapClassLoader"></a>BootstrapClassLoader</h4><p>JVM内置的默认<code>classLoader</code>,负责加载JVM运行时的核心类，位于<code>JAVA_HOME/lib/rt.jar/</code>文件夹中，由C代码实现，<code>Bootstrap ClassLoader</code>类加载器所加载的类的ClassLoader时候都会返回null</p>
+<h4 id="ExtClassLoader"><a href="#ExtClassLoader" class="headerlink" title="ExtClassLoader"></a>ExtClassLoader</h4><p>扩展类加载器，负责加载 JVM 扩展类，扩展 jar 包位于 <code>JAVA_HOME/lib/ext/*.jar</code> 中，库名通常以 javax 开头</p>
+<h4 id="AppClassLoader"><a href="#AppClassLoader" class="headerlink" title="AppClassLoader"></a>AppClassLoader</h4><p>应用类加载器/系统类加载器，直接提供给用户使用的ClassLoader，它会加载<code>ClASSPATH</code>环境变量或者<code>java.class.path</code>属性里定义的路径中的jar包和目录，我们自己编写和使用的第三方Jar包通常都是由它来加载</p>
+	
+
+	</div>
+  <a type="button" href="/2022/03/22/java-reflection.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x1-类加载器-ClassLoader"><a href="#0x1-类加载器-ClassLoader" class="headerlink" title="0x1. 类加载器: ClassLoader"></a>0x1. 类加载器: ClassLoader</h2><p>Java是一个依赖于<code>JVM（Java虚拟机)</code>实现的跨平台的开发语言，<code>Java</code>会先通过编译器将源代码转换为Java二进制字节码，一般是保存在<code>.class</code>文件中，之后通过<code>JVM</code>解释器执行这段代码。字节码文件会包含很多Class信息，在JVM解释器运行的过程中，<code>ClassLoader</code>就是用来加载类的，它会将Java字节码中的Class加载到内存中，而每个<code>Class</code>对象内部都有一个<code>ClassLoader</code>属性标识由哪个<code>ClassLoader</code>加载。</p>
+<h3 id="常见的ClassLoader"><a href="#常见的ClassLoader" class="headerlink" title="常见的ClassLoader"></a>常见的ClassLoader</h3><p>一切的<code>Java</code>类都必须经过JVM加载之后才可以运行，最常见的<code>ClassLoader</code>： <code>BootstrapClassLoader</code>、<code>ExtensionClassLoader</code>、<code>AppClassLoader</code>、<code>URLClassLoader</code>、<code>ContextClassLoader</code></p>
+<h4 id="BootstrapClassLoader"><a href="#BootstrapClassLoader" class="headerlink" title="BootstrapClassLoader"></a>BootstrapClassLoader</h4><p>JVM内置的默认<code>classLoader</code>,负责加载JVM运行时的核心类，位于<code>JAVA_HOME/lib/rt.jar/</code>文件夹中，由C代码实现，<code>Bootstrap ClassLoader</code>类加载器所加载的类的ClassLoader时候都会返回null</p>
+<h4 id="ExtClassLoader"><a href="#ExtClassLoader" class="headerlink" title="ExtClassLoader"></a>ExtClassLoader</h4><p>扩展类加载器，负责加载 JVM 扩展类，扩展 jar 包位于 <code>JAVA_HOME/lib/ext/*.jar</code> 中，库名通常以 javax 开头</p>
+<h4 id="AppClassLoader"><a href="#AppClassLoader" class="headerlink" title="AppClassLoader"></a>AppClassLoader</h4><p>应用类加载器/系统类加载器，直接提供给用户使用的ClassLoader，它会加载<code>ClASSPATH</code>环境变量或者<code>java.class.path</code>属性里定义的路径中的jar包和目录，我们自己编写和使用的第三方Jar包通常都是由它来加载</p>
+	
+	</div>
+  <a type="button" href="/2022/03/22/java-reflection.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2022/03/21/jndi-exec-by-mvel.html" >JNDI Bypass - MVEL</a>
 		</h3>
 		</div>
@@ -639,90 +687,6 @@ Security Blob: 可变长度，取决于Security Blob Length<span aria-hidden="tr
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2021/08/02/siem-on-elk.html" >SIEM On ELK</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2021-08-02  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>参考链接里有详细的安装步骤，测试客户端是Windows，安装了如下软件：</p>
-<ul>
-<li>sysmon.exe(<a target="_blank" rel="noopener" href="https://github.com/SwiftOnSecurity/sysmon-config">配置文件</a>)<ul>
-<li><code>.\sysmon64.exe -accepteula -i c:\windows\config.xml</code></li>
-</ul>
-</li>
-<li>winlogbeat.exe<ul>
-<li><code>.\install-service-winlogbeat.ps1</code></li>
-<li><code>.\winlogbeat.exe setup -e</code></li>
-</ul>
-</li>
-<li>ElasticAgent.exe<ul>
-<li><code>.\elastic-agent.exe install  --insecure -f --fleet-server-es=&lt;ES&gt; --fleet-server-service-token=&lt;token&gt;</code></li>
-</ul>
-</li>
-</ul>
-<h3 id="规则监测和绕过"><a href="#规则监测和绕过" class="headerlink" title="规则监测和绕过"></a>规则监测和绕过</h3><p>规则有5种查询，一般使用EQL(Event Query Language)查询类型:<br><img src="/2021/08/02/siem-on-elk/siem-1.png"><br>SIEM有内置很多规则，默认是关闭状态，这些规则都是ATT&amp;CK框架攻击行为转化而来的，例如windows下的<code>whoami</code>查询规则(<del>正经人谁查whoami啊</del>):</p>
-<pre class="line-numbers language-none"><code class="language-none">process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and process.name : &quot;whoami.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>我们拿这条规则做分析，这条规则匹配了当进程开始的时候，进程名为<code>whoami.exe</code>的时候触发，所以我们把<code>whoami.exe</code>复制一下，就可以绕过去了:</p>
-<pre class="line-numbers language-none"><code class="language-none">copy C:\Windows\System32\whoami.exe C:\Windows\temp\x.exe
-C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>是不是把siem想的简单了，这跟通过复制<code>net.exe</code>绕过添加用户一模一样，仔细观察下elk里面的字段，可以发现<code>process.pe.original_file_name</code>仍然保留了<code>whoami.exe</code>，这是PE文件里面固定的，所以我们手动把预警规则修改一下:</p>
-<pre class="line-numbers language-none"><code class="language-none">process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and process.pe.original_file_name: &quot;whoami.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2021/08/02/siem-on-elk.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>参考链接里有详细的安装步骤，测试客户端是Windows，安装了如下软件：</p>
-<ul>
-<li>sysmon.exe(<a target="_blank" rel="noopener" href="https://github.com/SwiftOnSecurity/sysmon-config">配置文件</a>)<ul>
-<li><code>.\sysmon64.exe -accepteula -i c:\windows\config.xml</code></li>
-</ul>
-</li>
-<li>winlogbeat.exe<ul>
-<li><code>.\install-service-winlogbeat.ps1</code></li>
-<li><code>.\winlogbeat.exe setup -e</code></li>
-</ul>
-</li>
-<li>ElasticAgent.exe<ul>
-<li><code>.\elastic-agent.exe install  --insecure -f --fleet-server-es=&lt;ES&gt; --fleet-server-service-token=&lt;token&gt;</code></li>
-</ul>
-</li>
-</ul>
-<h3 id="规则监测和绕过"><a href="#规则监测和绕过" class="headerlink" title="规则监测和绕过"></a>规则监测和绕过</h3><p>规则有5种查询，一般使用EQL(Event Query Language)查询类型:<br><img src="/2021/08/02/siem-on-elk/siem-1.png"><br>SIEM有内置很多规则，默认是关闭状态，这些规则都是ATT&amp;CK框架攻击行为转化而来的，例如windows下的<code>whoami</code>查询规则(<del>正经人谁查whoami啊</del>):</p>
-<pre class="line-numbers language-none"><code class="language-none">process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and process.name : &quot;whoami.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>我们拿这条规则做分析，这条规则匹配了当进程开始的时候，进程名为<code>whoami.exe</code>的时候触发，所以我们把<code>whoami.exe</code>复制一下，就可以绕过去了:</p>
-<pre class="line-numbers language-none"><code class="language-none">copy C:\Windows\System32\whoami.exe C:\Windows\temp\x.exe
-C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>是不是把siem想的简单了，这跟通过复制<code>net.exe</code>绕过添加用户一模一样，仔细观察下elk里面的字段，可以发现<code>process.pe.original_file_name</code>仍然保留了<code>whoami.exe</code>，这是PE文件里面固定的，所以我们手动把预警规则修改一下:</p>
-<pre class="line-numbers language-none"><code class="language-none">process where event.type in (&quot;start&quot;, &quot;process_started&quot;) and process.pe.original_file_name: &quot;whoami.exe&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2021/08/02/siem-on-elk.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -780,7 +744,7 @@ C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>51</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>52</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -801,6 +765,10 @@ C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/04/23/sandbox-info-collect.html" ><i class="fa fa-file-o"></i>沙盒环境信息收集</a>
+      </li>
+    
+      <li>
         <a href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html" ><i class="fa fa-file-o"></i>BrokenSesame-阿里云数据库远程命令执行</a>
       </li>
     
@@ -814,10 +782,6 @@ C:\Windows\temp\x.exe<span aria-hidden="true" class="line-numbers-rows"><span></
     
       <li>
         <a href="/2023/02/14/kafka-rce.html" ><i class="fa fa-file-o"></i>Apache Kafka Connect JNDI注入...</a>
-      </li>
-    
-      <li>
-        <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
       </li>
     
   </ul>

