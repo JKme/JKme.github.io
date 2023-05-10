@@ -15,7 +15,7 @@
 0x3. 利用Google机制自动退款Google的SDK支付成功之后，客户端会发起一个接口请求: https://play-fe.googleapis.com/fdfe/consumePurchase 
 Google Play结算服务官方文档中关于处理购买交易的描述：在三天内未确认购买交易，则用户会自动收到退款，并且Google Play会撤消该购买交易，可以利用此规则进行退款。这种攻击一般针对一次性消耗品，当然重复的也可以。在支付完成之后，拦截上面的请求之后丢弃，如果服务端未做正确处理，则三天之后Google会自动退款。
 修复方式：后端手动调用确认接口进行二次确认acknowledge，一般400可以视为已确认，409的时候需要查询一次状态，已确认状态可以放行，否则掉单处理。
-测试注意点"> 
+0x4. IOS跨应用票据伪造"> 
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -123,6 +123,9 @@ Google Play结算服务官方文档中关于处理购买交易的描述：在三
 <h3 id="0x3-利用Google机制自动退款"><a href="#0x3-利用Google机制自动退款" class="headerlink" title="0x3. 利用Google机制自动退款"></a>0x3. 利用Google机制自动退款</h3><p>Google的SDK支付成功之后，客户端会发起一个接口请求: <a target="_blank" rel="noopener" href="https://play-fe.googleapis.com/fdfe/consumePurchase">https://play-fe.googleapis.com/fdfe/consumePurchase</a> </p>
 <p>Google Play结算服务官方文档中关于处理购买交易的描述：在三天内未确认购买交易，则用户会自动收到退款，并且Google Play会撤消该购买交易，可以利用此规则进行退款。这种攻击一般针对一次性消耗品，当然重复的也可以。在支付完成之后，拦截上面的请求之后丢弃，如果服务端未做正确处理，则三天之后Google会自动退款。</p>
 <p>修复方式：后端手动调用确认接口进行二次确认<a target="_blank" rel="noopener" href="https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.products/acknowledge">acknowledge</a>，一般400可以视为已确认，409的时候需要查询一次状态，已确认状态可以放行，否则掉单处理。</p>
+<h3 id="0x4-IOS跨应用票据伪造"><a href="#0x4-IOS跨应用票据伪造" class="headerlink" title="0x4. IOS跨应用票据伪造"></a>0x4. IOS跨应用票据伪造</h3><p>在IOS支付的时候，Apple有一个<a target="_blank" rel="noopener" href="https://developer.apple.com/documentation/appstorereceipts/responsebody/receipt">responsebody</a>，服务端需要对其中的bundle_id做一次验证，不然出现跨应用攻击，场景如下：</p>
+<p>攻击者A自己注册了IOS开发者账号，在Apple后台配置了B应用在支付的时候的ProductID，比如<code>awpod.tthgb.asx17</code>。此时A在自己开发的应用中发起支付，抓取Apple返回的支付之后票据，正常的下一步是把票据发给Apple服务端。但是攻击者会把这票据截下来发给B应用的验证接口，请求里面带上B的最高金额产品ProductID，如果B应用服务端没有验证<code>bundle_id</code>字段，此时跨应用攻击就会生效，B应用一分钱没拿到。</p>
+<p><del>上面四种场景是几千万RMB血淋淋教训</del></p>
 <h3 id="测试注意点"><a href="#测试注意点" class="headerlink" title="测试注意点"></a>测试注意点</h3><ul>
 <li>某些版本的Burp抓不到Google的消费请求，或者是Burp显示DF-DFERH-01错误，这时候多更换burp版本试试，比如社区版</li>
 <li>熟练利用Burp的<code>TLS Pass Through</code>和<code>Intercept Client Requests</code>功能抓包。</li>
@@ -131,7 +134,7 @@ Google Play结算服务官方文档中关于处理购买交易的描述：在三
 	</div>
 
 	
-	<span id="/2023/01/16/pay_vuln.html" class="leancloud-visitors view" data-flag-title="支付接口安全测试记录">
+	<span id="/2023/05/10/pay_vuln.html" class="leancloud-visitors view" data-flag-title="支付接口安全测试记录">
 	</span>
 	
 	<div>
@@ -141,13 +144,12 @@ Google Play结算服务官方文档中关于处理购买交易的描述：在三
 
     
     
-    <a href="/2023/02/13/cname-hijack-openresty.html" type="button" class="btn btn-default"><i
-                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    <a type="button" class="btn btn-default disabled"><i class="fa fa-arrow-circle-o-left"></i>Prev</a>
     
 
     <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
     
-    <a href="/2022/11/08/pve_homelab.html" type="button" class="btn btn-default ">Next<i
+    <a href="/2023/04/23/sandbox-info-collect.html" type="button" class="btn btn-default ">Next<i
                 class="fa fa-arrow-circle-o-right"></i></a>
     
 
@@ -179,7 +181,7 @@ Google Play结算服务官方文档中关于处理购买交易的描述：在三
 	
 	<div class="meta-widget">
 	<i class="fa fa-clock-o"></i>
-	2023-01-16 
+	2023-05-10 
 	</div>
 	
 
@@ -206,7 +208,7 @@ Google Play结算服务官方文档中关于处理购买交易的描述：在三
 	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
 	   <div id="toc" class="toc collapse in">
 		   <span class="toc-title">Contents</span>
-			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#0x1-%E4%BD%8E%E4%BB%B7%E5%80%BC%E6%9B%BF%E6%8D%A2%E9%AB%98%E4%BB%B7%E5%80%BCSKU"><span class="toc-article-text">0x1. 低价值替换高价值SKU</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#0x2-%E6%9B%BF%E6%8D%A2%E8%AE%A2%E5%8D%95%E5%8F%B7"><span class="toc-article-text">0x2. 替换订单号</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#0x3-%E5%88%A9%E7%94%A8Google%E6%9C%BA%E5%88%B6%E8%87%AA%E5%8A%A8%E9%80%80%E6%AC%BE"><span class="toc-article-text">0x3. 利用Google机制自动退款</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%B5%8B%E8%AF%95%E6%B3%A8%E6%84%8F%E7%82%B9"><span class="toc-article-text">测试注意点</span></a></li></ol>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#0x1-%E4%BD%8E%E4%BB%B7%E5%80%BC%E6%9B%BF%E6%8D%A2%E9%AB%98%E4%BB%B7%E5%80%BCSKU"><span class="toc-article-text">0x1. 低价值替换高价值SKU</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#0x2-%E6%9B%BF%E6%8D%A2%E8%AE%A2%E5%8D%95%E5%8F%B7"><span class="toc-article-text">0x2. 替换订单号</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#0x3-%E5%88%A9%E7%94%A8Google%E6%9C%BA%E5%88%B6%E8%87%AA%E5%8A%A8%E9%80%80%E6%AC%BE"><span class="toc-article-text">0x3. 利用Google机制自动退款</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#0x4-IOS%E8%B7%A8%E5%BA%94%E7%94%A8%E7%A5%A8%E6%8D%AE%E4%BC%AA%E9%80%A0"><span class="toc-article-text">0x4. IOS跨应用票据伪造</span></a></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E6%B5%8B%E8%AF%95%E6%B3%A8%E6%84%8F%E7%82%B9"><span class="toc-article-text">测试注意点</span></a></li></ol>
 		</div>
 	
 	</div>
