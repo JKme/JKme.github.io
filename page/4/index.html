@@ -117,6 +117,54 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2022/03/22/java-reflection.html" >Java安全笔记(1)-反射机制</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2022-03-22  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x1-类加载器-ClassLoader"><a href="#0x1-类加载器-ClassLoader" class="headerlink" title="0x1. 类加载器: ClassLoader"></a>0x1. 类加载器: ClassLoader</h2><p>Java是一个依赖于<code>JVM（Java虚拟机)</code>实现的跨平台的开发语言，<code>Java</code>会先通过编译器将源代码转换为Java二进制字节码，一般是保存在<code>.class</code>文件中，之后通过<code>JVM</code>解释器执行这段代码。字节码文件会包含很多Class信息，在JVM解释器运行的过程中，<code>ClassLoader</code>就是用来加载类的，它会将Java字节码中的Class加载到内存中，而每个<code>Class</code>对象内部都有一个<code>ClassLoader</code>属性标识由哪个<code>ClassLoader</code>加载。</p>
+<h3 id="常见的ClassLoader"><a href="#常见的ClassLoader" class="headerlink" title="常见的ClassLoader"></a>常见的ClassLoader</h3><p>一切的<code>Java</code>类都必须经过JVM加载之后才可以运行，最常见的<code>ClassLoader</code>： <code>BootstrapClassLoader</code>、<code>ExtensionClassLoader</code>、<code>AppClassLoader</code>、<code>URLClassLoader</code>、<code>ContextClassLoader</code></p>
+<h4 id="BootstrapClassLoader"><a href="#BootstrapClassLoader" class="headerlink" title="BootstrapClassLoader"></a>BootstrapClassLoader</h4><p>JVM内置的默认<code>classLoader</code>,负责加载JVM运行时的核心类，位于<code>JAVA_HOME/lib/rt.jar/</code>文件夹中，由C代码实现，<code>Bootstrap ClassLoader</code>类加载器所加载的类的ClassLoader时候都会返回null</p>
+<h4 id="ExtClassLoader"><a href="#ExtClassLoader" class="headerlink" title="ExtClassLoader"></a>ExtClassLoader</h4><p>扩展类加载器，负责加载 JVM 扩展类，扩展 jar 包位于 <code>JAVA_HOME/lib/ext/*.jar</code> 中，库名通常以 javax 开头</p>
+<h4 id="AppClassLoader"><a href="#AppClassLoader" class="headerlink" title="AppClassLoader"></a>AppClassLoader</h4><p>应用类加载器/系统类加载器，直接提供给用户使用的ClassLoader，它会加载<code>ClASSPATH</code>环境变量或者<code>java.class.path</code>属性里定义的路径中的jar包和目录，我们自己编写和使用的第三方Jar包通常都是由它来加载</p>
+	
+
+	</div>
+  <a type="button" href="/2022/03/22/java-reflection.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x1-类加载器-ClassLoader"><a href="#0x1-类加载器-ClassLoader" class="headerlink" title="0x1. 类加载器: ClassLoader"></a>0x1. 类加载器: ClassLoader</h2><p>Java是一个依赖于<code>JVM（Java虚拟机)</code>实现的跨平台的开发语言，<code>Java</code>会先通过编译器将源代码转换为Java二进制字节码，一般是保存在<code>.class</code>文件中，之后通过<code>JVM</code>解释器执行这段代码。字节码文件会包含很多Class信息，在JVM解释器运行的过程中，<code>ClassLoader</code>就是用来加载类的，它会将Java字节码中的Class加载到内存中，而每个<code>Class</code>对象内部都有一个<code>ClassLoader</code>属性标识由哪个<code>ClassLoader</code>加载。</p>
+<h3 id="常见的ClassLoader"><a href="#常见的ClassLoader" class="headerlink" title="常见的ClassLoader"></a>常见的ClassLoader</h3><p>一切的<code>Java</code>类都必须经过JVM加载之后才可以运行，最常见的<code>ClassLoader</code>： <code>BootstrapClassLoader</code>、<code>ExtensionClassLoader</code>、<code>AppClassLoader</code>、<code>URLClassLoader</code>、<code>ContextClassLoader</code></p>
+<h4 id="BootstrapClassLoader"><a href="#BootstrapClassLoader" class="headerlink" title="BootstrapClassLoader"></a>BootstrapClassLoader</h4><p>JVM内置的默认<code>classLoader</code>,负责加载JVM运行时的核心类，位于<code>JAVA_HOME/lib/rt.jar/</code>文件夹中，由C代码实现，<code>Bootstrap ClassLoader</code>类加载器所加载的类的ClassLoader时候都会返回null</p>
+<h4 id="ExtClassLoader"><a href="#ExtClassLoader" class="headerlink" title="ExtClassLoader"></a>ExtClassLoader</h4><p>扩展类加载器，负责加载 JVM 扩展类，扩展 jar 包位于 <code>JAVA_HOME/lib/ext/*.jar</code> 中，库名通常以 javax 开头</p>
+<h4 id="AppClassLoader"><a href="#AppClassLoader" class="headerlink" title="AppClassLoader"></a>AppClassLoader</h4><p>应用类加载器/系统类加载器，直接提供给用户使用的ClassLoader，它会加载<code>ClASSPATH</code>环境变量或者<code>java.class.path</code>属性里定义的路径中的jar包和目录，我们自己编写和使用的第三方Jar包通常都是由它来加载</p>
+	
+	</div>
+  <a type="button" href="/2022/03/22/java-reflection.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2022/03/22/java-reflection-shell.html" >Java安全笔记(2)-反射执行系统命令</a>
 		</h3>
 		</div>
@@ -378,54 +426,6 @@
 	
 	</div>
   <a type="button" href="/2022/03/22/java-reflection-shell.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2022/03/22/java-reflection.html" >Java安全笔记(1)-反射机制</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2022-03-22  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="0x1-类加载器-ClassLoader"><a href="#0x1-类加载器-ClassLoader" class="headerlink" title="0x1. 类加载器: ClassLoader"></a>0x1. 类加载器: ClassLoader</h2><p>Java是一个依赖于<code>JVM（Java虚拟机)</code>实现的跨平台的开发语言，<code>Java</code>会先通过编译器将源代码转换为Java二进制字节码，一般是保存在<code>.class</code>文件中，之后通过<code>JVM</code>解释器执行这段代码。字节码文件会包含很多Class信息，在JVM解释器运行的过程中，<code>ClassLoader</code>就是用来加载类的，它会将Java字节码中的Class加载到内存中，而每个<code>Class</code>对象内部都有一个<code>ClassLoader</code>属性标识由哪个<code>ClassLoader</code>加载。</p>
-<h3 id="常见的ClassLoader"><a href="#常见的ClassLoader" class="headerlink" title="常见的ClassLoader"></a>常见的ClassLoader</h3><p>一切的<code>Java</code>类都必须经过JVM加载之后才可以运行，最常见的<code>ClassLoader</code>： <code>BootstrapClassLoader</code>、<code>ExtensionClassLoader</code>、<code>AppClassLoader</code>、<code>URLClassLoader</code>、<code>ContextClassLoader</code></p>
-<h4 id="BootstrapClassLoader"><a href="#BootstrapClassLoader" class="headerlink" title="BootstrapClassLoader"></a>BootstrapClassLoader</h4><p>JVM内置的默认<code>classLoader</code>,负责加载JVM运行时的核心类，位于<code>JAVA_HOME/lib/rt.jar/</code>文件夹中，由C代码实现，<code>Bootstrap ClassLoader</code>类加载器所加载的类的ClassLoader时候都会返回null</p>
-<h4 id="ExtClassLoader"><a href="#ExtClassLoader" class="headerlink" title="ExtClassLoader"></a>ExtClassLoader</h4><p>扩展类加载器，负责加载 JVM 扩展类，扩展 jar 包位于 <code>JAVA_HOME/lib/ext/*.jar</code> 中，库名通常以 javax 开头</p>
-<h4 id="AppClassLoader"><a href="#AppClassLoader" class="headerlink" title="AppClassLoader"></a>AppClassLoader</h4><p>应用类加载器/系统类加载器，直接提供给用户使用的ClassLoader，它会加载<code>ClASSPATH</code>环境变量或者<code>java.class.path</code>属性里定义的路径中的jar包和目录，我们自己编写和使用的第三方Jar包通常都是由它来加载</p>
-	
-
-	</div>
-  <a type="button" href="/2022/03/22/java-reflection.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="0x1-类加载器-ClassLoader"><a href="#0x1-类加载器-ClassLoader" class="headerlink" title="0x1. 类加载器: ClassLoader"></a>0x1. 类加载器: ClassLoader</h2><p>Java是一个依赖于<code>JVM（Java虚拟机)</code>实现的跨平台的开发语言，<code>Java</code>会先通过编译器将源代码转换为Java二进制字节码，一般是保存在<code>.class</code>文件中，之后通过<code>JVM</code>解释器执行这段代码。字节码文件会包含很多Class信息，在JVM解释器运行的过程中，<code>ClassLoader</code>就是用来加载类的，它会将Java字节码中的Class加载到内存中，而每个<code>Class</code>对象内部都有一个<code>ClassLoader</code>属性标识由哪个<code>ClassLoader</code>加载。</p>
-<h3 id="常见的ClassLoader"><a href="#常见的ClassLoader" class="headerlink" title="常见的ClassLoader"></a>常见的ClassLoader</h3><p>一切的<code>Java</code>类都必须经过JVM加载之后才可以运行，最常见的<code>ClassLoader</code>： <code>BootstrapClassLoader</code>、<code>ExtensionClassLoader</code>、<code>AppClassLoader</code>、<code>URLClassLoader</code>、<code>ContextClassLoader</code></p>
-<h4 id="BootstrapClassLoader"><a href="#BootstrapClassLoader" class="headerlink" title="BootstrapClassLoader"></a>BootstrapClassLoader</h4><p>JVM内置的默认<code>classLoader</code>,负责加载JVM运行时的核心类，位于<code>JAVA_HOME/lib/rt.jar/</code>文件夹中，由C代码实现，<code>Bootstrap ClassLoader</code>类加载器所加载的类的ClassLoader时候都会返回null</p>
-<h4 id="ExtClassLoader"><a href="#ExtClassLoader" class="headerlink" title="ExtClassLoader"></a>ExtClassLoader</h4><p>扩展类加载器，负责加载 JVM 扩展类，扩展 jar 包位于 <code>JAVA_HOME/lib/ext/*.jar</code> 中，库名通常以 javax 开头</p>
-<h4 id="AppClassLoader"><a href="#AppClassLoader" class="headerlink" title="AppClassLoader"></a>AppClassLoader</h4><p>应用类加载器/系统类加载器，直接提供给用户使用的ClassLoader，它会加载<code>ClASSPATH</code>环境变量或者<code>java.class.path</code>属性里定义的路径中的jar包和目录，我们自己编写和使用的第三方Jar包通常都是由它来加载</p>
-	
-	</div>
-  <a type="button" href="/2022/03/22/java-reflection.html#more" class="btn btn-default more">Read More</a>
 </div>
 
 		
