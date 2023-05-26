@@ -1,0 +1,433 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>CobaltStrike通信学习笔记 | 😊#</title>
+  <meta name="author" content="JKme">
+  
+  <meta name="description" content="背景起源于一个问题：CS怎么用ReBeacon打包成的EXE/DLL？
+
+stageless 表示把所有功能全部打包到一个文件里面
+staged 小片段的shellcode拉一个beacon.dll(小马拉大马)，其中ReBeacon就是beacon.dll的实现
+
+Staged Shellcode工作流程第一阶段很常规的生成一个shellcode，写一个简单的程序加载然后调试:
+方式1#include&amp;lt;stdio.h&amp;gt;
+#include&amp;lt;Windows.h&amp;gt;
+#pragma comment(linker, &amp;quot;&amp;#x2F;section:.data,RWE&amp;quot;)
+unsigned char buf[] &amp;#x3D; &amp;quot;&amp;quot;;
+int main() &amp;#123;
+    __asm &amp;#123;
+        mov ecx, offset buf
+        jmp ecx
+    &amp;#125;
+&amp;#125;
+
+方式2#include&amp;lt;stdio.h&amp;gt;  
+#include&amp;lt;Windows.h&amp;gt;  
+int main() &amp;#123;  
+	unsigned char buf[] &amp;#x3D; &amp;quot;shellcode&amp;quot;;  
+	LPVOID address &amp;#x3D; VirtualAlloc(NULL, sizeof(buf), MEM_COMMIT, PAGE_EXECUTE_READWRITE);  
+	memcpy(address, buf, sizeof(buf));  
+	((void(*)())address)();  
+	return 0;  
+&amp;#125;"> 
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="CobaltStrike通信学习笔记"/>
+  <meta property="og:site_name" content="😊#"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="/css/prism-atom-dark.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/css/prism-line-numbers.css" media="screen" type="text/css">
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<!--   <script src="/js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <link rel="stylesheet" href="/css/highlight/styles/atom-one-dark.min.css" media="screen" type="text/css"> -->
+
+  <!-- analytics -->
+  
+
+
+
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="😊#" type="application/atom+xml">
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">😊#</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+		  
+		  <li>
+			<a href="/archives" title="All the articles.">
+			  <i class=""></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/project" title="All the categories.">
+			  <i class=""></i>Projects
+			</a>
+		  </li>
+		  
+		  <li>
+			<a href="/atom.xml" title="Subscribe me.">
+			  <i class="fa fa-rss"></i>RSS
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> CobaltStrike通信学习笔记</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage">		
+	  		
+
+	  <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>起源于一个问题：CS怎么用ReBeacon打包成的EXE/DLL？</p>
+<ul>
+<li>stageless 表示把所有功能全部打包到一个文件里面</li>
+<li>staged 小片段的shellcode拉一个beacon.dll(<del>小马拉大马</del>)，其中ReBeacon就是beacon.dll的实现</li>
+</ul>
+<h2 id="Staged-Shellcode工作流程"><a href="#Staged-Shellcode工作流程" class="headerlink" title="Staged Shellcode工作流程"></a>Staged Shellcode工作流程</h2><h3 id="第一阶段"><a href="#第一阶段" class="headerlink" title="第一阶段"></a>第一阶段</h3><p>很常规的生成一个shellcode，写一个简单的程序加载然后调试:</p>
+<h4 id="方式1"><a href="#方式1" class="headerlink" title="方式1"></a>方式1</h4><pre class="line-numbers language-C++" data-language="C++"><code class="language-C++">#include&lt;stdio.h&gt;
+#include&lt;Windows.h&gt;
+#pragma comment(linker, &quot;&#x2F;section:.data,RWE&quot;)
+unsigned char buf[] &#x3D; &quot;&quot;;
+int main() &#123;
+    __asm &#123;
+        mov ecx, offset buf
+        jmp ecx
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="方式2"><a href="#方式2" class="headerlink" title="方式2"></a>方式2</h4><pre class="line-numbers language-C++" data-language="C++"><code class="language-C++">#include&lt;stdio.h&gt;  
+#include&lt;Windows.h&gt;  
+int main() &#123;  
+	unsigned char buf[] &#x3D; &quot;shellcode&quot;;  
+	LPVOID address &#x3D; VirtualAlloc(NULL, sizeof(buf), MEM_COMMIT, PAGE_EXECUTE_READWRITE);  
+	memcpy(address, buf, sizeof(buf));  
+	((void(*)())address)();  
+	return 0;  
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="方式3"><a href="#方式3" class="headerlink" title="方式3"></a>方式3</h4><pre class="line-numbers language-C++" data-language="C++"><code class="language-C++">void start2nd()
+&#123;
+    HANDLE hfile &#x3D; CreateFileA(&quot;1.mem&quot;, FILE_ALL_ACCESS, 0, NULL, 
+        OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    LPVOID buffer &#x3D; VirtualAlloc(NULL, 0x4000000, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+    DWORD realRead &#x3D; 0;
+    ReadFile(hfile, buffer, 0x4000000,&amp;realRead, NULL);
+    ((void(*)())buffer)();
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>使用x64dbg调试文件，首先到入口点：<br><img src="/2023/05/26/cobaltstrike-learn/1.png"><br>跟进call:<br><img src="/2023/05/26/cobaltstrike-learn/2.png"><br>其中74656E696E6977是以小端存储的wininet的ascii：<br><img src="/2023/05/26/cobaltstrike-learn/3.png"><br>这种API Hash算法叫ROR13，因为算法用到了0xd(13)这个值，这种算法在MSF和CS都有着广泛的使用。接着走到call rbp的操作，通过x64dbg右键点击在内存窗口中转到，然后以汇编的形式显示内存，可以看到是GetProcAddress原理实现那部分的功能，通过定位TEB和PEB来定位需要函数的地址。<br><img src="/2023/05/26/cobaltstrike-learn/4.png"></p>
+<h3 id="第二阶段"><a href="#第二阶段" class="headerlink" title="第二阶段"></a>第二阶段</h3><p>整个shellcode走完之后，会从CS下载一个文件，这个文件首先会进行自解密，解密出来之后还原未一个修补过的PE文件：<br><img src="/2023/05/26/cobaltstrike-learn/5.png"><br>解密刚开始文件大小是40E00=265728，在跳出循环的下一个指令F4，解密完成，然后开始执行rax处的shellcode，这里是把一个PE文件当作了shellcode来执行：<br><img src="/2023/05/26/cobaltstrike-learn/6.png"><br>使用Scylla导出PE文件，然后PE查看器可以看到一个修补过的反射DLL：<br><img src="/2023/05/26/cobaltstrike-learn/7.png"></p>
+<h2 id="细节"><a href="#细节" class="headerlink" title="细节"></a>细节</h2><p>第一次调试完上面的流程其实还是懵逼的状态，再次回到开头的问题：</p>
+<ul>
+<li>CS怎么用ReBeacon打包成的EXE/DLL？</li>
+<li>beacon.dll怎么转换成第二阶段的payload</li>
+</ul>
+<h3 id="第二阶段的算法"><a href="#第二阶段的算法" class="headerlink" title="第二阶段的算法"></a>第二阶段的算法</h3><p>第二阶段下载的payload采用了一种<code>CheckSum8</code>的算法，实现如下：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#conding: utf-8</span>
+
+<span class="token keyword">def</span> <span class="token function">generate_checksum</span><span class="token punctuation">(</span><span class="token builtin">input</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    trial <span class="token operator">=</span> <span class="token string">""</span>
+    total <span class="token operator">=</span> <span class="token number">0</span>
+    <span class="token keyword">while</span> total <span class="token operator">!=</span> <span class="token builtin">input</span><span class="token punctuation">:</span>
+        total <span class="token operator">=</span> <span class="token number">0</span>
+        trial <span class="token operator">=</span> <span class="token string">''</span><span class="token punctuation">.</span>join<span class="token punctuation">(</span>random<span class="token punctuation">.</span>choice<span class="token punctuation">(</span><span class="token string">"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789"</span><span class="token punctuation">)</span>
+                        <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">4</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">4</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+            total <span class="token operator">=</span> <span class="token punctuation">(</span>total <span class="token operator">+</span> <span class="token builtin">ord</span><span class="token punctuation">(</span>trial<span class="token punctuation">[</span>i<span class="token punctuation">:</span>i<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">%</span> <span class="token number">256</span>
+    <span class="token keyword">return</span> trial
+
+
+<span class="token keyword">def</span> <span class="token function">calculate_input_from_checksum</span><span class="token punctuation">(</span>strings<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    total <span class="token operator">=</span> <span class="token number">0</span>
+    <span class="token keyword">for</span> char <span class="token keyword">in</span> strings<span class="token punctuation">:</span>
+        total <span class="token operator">=</span> <span class="token punctuation">(</span>total <span class="token operator">+</span> <span class="token builtin">ord</span><span class="token punctuation">(</span>char<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">%</span> <span class="token number">256</span>
+    <span class="token keyword">return</span> total
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">"__main__"</span><span class="token punctuation">:</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span>generate_checksum<span class="token punctuation">(</span><span class="token number">92</span><span class="token punctuation">)</span><span class="token punctuation">)</span>  <span class="token comment"># x86</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span>generate_checksum<span class="token punctuation">(</span><span class="token number">93</span><span class="token punctuation">)</span><span class="token punctuation">)</span>  <span class="token comment"># x64</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span>calculate_input_from_checksum<span class="token punctuation">(</span><span class="token string">"5rSd"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>很多网络测绘平台都会针对这种算法获取cs的服务端配置，比如你在VPS设置了https的监听，在前面用CDN域前置或者CD的worker转发，如果不对监听端口做防护，那么就可以根据这个算法dump出服务端的配置。<br>网上流行的服务有这么两种：</p>
+<ul>
+<li>固定URI，访问某个URI的时候才返回</li>
+<li>修改CheckSum8算法</li>
+</ul>
+<p>实际下载一个payload，结构如下：<br><img src="/2023/05/26/cobaltstrike-learn/8.png"></p>
+<p>以上面的数据为例子，PE头加密之后的hex是<code>23 10</code>,XOR的key是<code>6E 4A C7 E3</code>，解密如下：</p>
+<p><img src="/2023/05/26/cobaltstrike-learn/10.png"></p>
+<p>整体的解密脚本:</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> struct
+<span class="token keyword">import</span> sys
+
+beacon <span class="token operator">=</span> <span class="token string">"beacon_x64.bin"</span>
+<span class="token keyword">def</span> <span class="token function">xor</span><span class="token punctuation">(</span>a<span class="token punctuation">,</span> b<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">return</span> <span class="token builtin">bytearray</span><span class="token punctuation">(</span><span class="token punctuation">[</span>a<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token operator">^</span>b<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> a<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token operator">^</span>b<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> a<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token operator">^</span>b<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">,</span> a<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token operator">^</span>b<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+<span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span>beacon<span class="token punctuation">,</span> <span class="token string">"rb"</span><span class="token punctuation">)</span> <span class="token keyword">as</span> f<span class="token punctuation">:</span>
+    data <span class="token operator">=</span> f<span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+ba <span class="token operator">=</span> <span class="token number">0x3f</span>
+key <span class="token operator">=</span> data<span class="token punctuation">[</span>ba<span class="token punctuation">:</span>ba<span class="token operator">+</span><span class="token number">4</span><span class="token punctuation">]</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Key : &#123;&#125;"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>key<span class="token punctuation">.</span><span class="token builtin">hex</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+size <span class="token operator">=</span> struct<span class="token punctuation">.</span>unpack<span class="token punctuation">(</span><span class="token string">"I"</span><span class="token punctuation">,</span> xor<span class="token punctuation">(</span>key<span class="token punctuation">,</span> data<span class="token punctuation">[</span>ba<span class="token operator">+</span><span class="token number">4</span><span class="token punctuation">:</span>ba<span class="token operator">+</span><span class="token number">8</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token builtin">type</span><span class="token punctuation">(</span>data<span class="token punctuation">[</span>ba<span class="token operator">+</span><span class="token number">4</span><span class="token punctuation">:</span>ba<span class="token operator">+</span><span class="token number">8</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token builtin">hex</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Size : &#123;&#125;"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>size<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+res <span class="token operator">=</span> <span class="token builtin">bytearray</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+i <span class="token operator">=</span> ba<span class="token operator">+</span><span class="token number">8</span>
+<span class="token keyword">while</span> i <span class="token operator">&lt;</span> <span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>data<span class="token punctuation">)</span> <span class="token operator">-</span> ba <span class="token operator">-</span> <span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    d <span class="token operator">=</span> data<span class="token punctuation">[</span>i<span class="token punctuation">:</span>i<span class="token operator">+</span><span class="token number">4</span><span class="token punctuation">]</span>
+    res <span class="token operator">+=</span> xor<span class="token punctuation">(</span>d<span class="token punctuation">,</span> key<span class="token punctuation">)</span>
+    key <span class="token operator">=</span> d
+    i <span class="token operator">+=</span> <span class="token number">4</span>
+
+<span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span><span class="token string">"a.out"</span><span class="token punctuation">,</span> <span class="token string">"wb+"</span><span class="token punctuation">)</span> <span class="token keyword">as</span> f<span class="token punctuation">:</span>
+    f<span class="token punctuation">.</span>write<span class="token punctuation">(</span>res<span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>ba的值就是解密功能shellcode的长度加1，解密出来的a.out就是服务端的<strong>修补beacon.dll</strong>，也就是<a target="_blank" rel="noopener" href="https://wbglil.gitbook.io/cobalt-strike/cobalt-strike-yuan-li-jie-shao/payload-sheng-cheng">wbglil师傅的Payload生成分析 - Cobalt Strike</a>里面提到的：</p>
+<blockquote>
+<p>整体来说Beacon修补了三个地方PE头，Malleable C2通信规则，Malleable C2后渗透规则</p>
+</blockquote>
+<h4 id="题外话"><a href="#题外话" class="headerlink" title="题外话"></a>题外话</h4><p>在分析到这一步的时候，我不知道这个payload的结构和解密的算法，修改了解密算法，从0x00~0xff尝试256次：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> struct
+<span class="token keyword">import</span> sys
+
+beacon <span class="token operator">=</span> sys<span class="token punctuation">.</span>argv<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span>
+
+<span class="token keyword">def</span> <span class="token function">xor</span><span class="token punctuation">(</span>a<span class="token punctuation">,</span> b<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">return</span> <span class="token builtin">bytearray</span><span class="token punctuation">(</span><span class="token punctuation">[</span>a<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token operator">^</span>b<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> a<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token operator">^</span>b<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> a<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token operator">^</span>b<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">,</span> a<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token operator">^</span>b<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+<span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span>beacon<span class="token punctuation">,</span> <span class="token string">"rb"</span><span class="token punctuation">)</span> <span class="token keyword">as</span> f<span class="token punctuation">:</span>
+    data <span class="token operator">=</span> f<span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token keyword">for</span> ba <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">257</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    key <span class="token operator">=</span> data<span class="token punctuation">[</span>ba<span class="token punctuation">:</span>ba<span class="token operator">+</span><span class="token number">4</span><span class="token punctuation">]</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Key : &#123;&#125;"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    size <span class="token operator">=</span> struct<span class="token punctuation">.</span>unpack<span class="token punctuation">(</span><span class="token string">"I"</span><span class="token punctuation">,</span> xor<span class="token punctuation">(</span>key<span class="token punctuation">,</span> data<span class="token punctuation">[</span>ba<span class="token operator">+</span><span class="token number">4</span><span class="token punctuation">:</span>ba<span class="token operator">+</span><span class="token number">8</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Size : &#123;&#125;"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>size<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+    res <span class="token operator">=</span> <span class="token builtin">bytearray</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    i <span class="token operator">=</span> ba<span class="token operator">+</span><span class="token number">8</span>
+    <span class="token keyword">while</span> i <span class="token operator">&lt;</span> <span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>data<span class="token punctuation">)</span> <span class="token operator">-</span> ba <span class="token operator">-</span> <span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        d <span class="token operator">=</span> data<span class="token punctuation">[</span>i<span class="token punctuation">:</span>i<span class="token operator">+</span><span class="token number">4</span><span class="token punctuation">]</span>
+        res <span class="token operator">+=</span> xor<span class="token punctuation">(</span>d<span class="token punctuation">,</span> key<span class="token punctuation">)</span>
+        key <span class="token operator">=</span> d
+        i <span class="token operator">+=</span> <span class="token number">4</span>
+
+    <span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">(</span>ba<span class="token punctuation">)</span><span class="token operator">+</span><span class="token string">".out"</span><span class="token punctuation">,</span> <span class="token string">"wb+"</span><span class="token punctuation">)</span> <span class="token keyword">as</span> f<span class="token punctuation">:</span>
+        f<span class="token punctuation">.</span>write<span class="token punctuation">(</span>res<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>解密256个文件，查看是否存在PE文件，63转成hex就是3f：<br><img src="/2023/05/26/cobaltstrike-learn/9.png"></p>
+<h2 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h2><p>对于本文开始的问题就有一个答案了，CS在二阶段返回的内容是以shellcode来执行的，最简单的方式是把ReBeacon转成Shellcode再用sgn混淆一下，当客户端请求二阶段的时候直接返回：）<br>CS后续上线怎么处理呢，一个MITM的事情。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://wbglil.gitbook.io/cobalt-strike/cobalt-strike-yuan-li-jie-shao/payload-sheng-cheng">wbglil师傅的Payload生成分析 - Cobalt Strike</a></li>
+<li><a target="_blank" rel="noopener" href="https://randhome.io/blog/2020/12/20/analyzing-cobalt-strike-for-fun-and-profit/">Analyzing Cobalt Strike for Fun and Profit</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/HsrIW9P_tFwcWOlQgXCeIg#at">大海捞“帧”：Cobalt Strike服务器识别与staging beacon扫描</a></li>
+<li><a target="_blank" rel="noopener" href="https://decoded.avast.io/threatintel/decoding-cobalt-strike-understanding-payloads/">Decoding Cobalt Strike: Understanding Payloads</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.securehat.co.uk/cobaltstrike/extracting-config-from-cobaltstrike-stager-shellcode">Cobalt Strike Staging and Extracting Configuration Information</a></li>
+</ul>
+
+	</div>
+
+	
+	<span id="/2023/05/26/cobaltstrike-learn.html" class="leancloud-visitors view" data-flag-title="CobaltStrike通信学习笔记">
+	</span>
+	
+	<div>
+  	<center>
+
+	<div class="pagination">
+
+    
+    
+    <a type="button" class="btn btn-default disabled"><i class="fa fa-arrow-circle-o-left"></i>Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2023/05/10/pay_vuln.html" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	<!--
+<section id="comment">
+    <h2 class="title">Comments</h2>
+
+    
+</section>
+
+-->
+	
+	</div> <!-- col-md-9/col-md-12 -->
+
+
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2023-05-26 
+	</div>
+	
+
+	<!-- categories -->
+    
+	<div class="meta-widget">
+	<a data-toggle="collapse" data-target="#categorys"><i class="fa fa-folder"></i></a>	
+    <ul id="categorys" class="tag_box list-unstyled collapse in">
+          
+  <li>
+    <li><a href="/categories/Pentest/">Pentest<span>53</span></a></li>
+  </li>
+
+    </ul>
+	</div>
+	
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	   <a data-toggle="collapse" data-target="#toc"><i class="fa fa-bars"></i></a>
+	   <div id="toc" class="toc collapse in">
+		   <span class="toc-title">Contents</span>
+			<ol class="toc-article"><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-article-text">背景</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#Staged-Shellcode%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-article-text">Staged Shellcode工作流程</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5"><span class="toc-article-text">第一阶段</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E6%96%B9%E5%BC%8F1"><span class="toc-article-text">方式1</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E6%96%B9%E5%BC%8F2"><span class="toc-article-text">方式2</span></a></li><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E6%96%B9%E5%BC%8F3"><span class="toc-article-text">方式3</span></a></li></ol></li><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5"><span class="toc-article-text">第二阶段</span></a></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E7%BB%86%E8%8A%82"><span class="toc-article-text">细节</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-3"><a class="toc-article-link" href="#%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%E7%9A%84%E7%AE%97%E6%B3%95"><span class="toc-article-text">第二阶段的算法</span></a><ol class="toc-article-child"><li class="toc-article-item toc-article-level-4"><a class="toc-article-link" href="#%E9%A2%98%E5%A4%96%E8%AF%9D"><span class="toc-article-text">题外话</span></a></li></ol></li></ol></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E7%BB%93%E6%9E%9C"><span class="toc-article-text">结果</span></a></li><li class="toc-article-item toc-article-level-2"><a class="toc-article-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-article-text">参考资料</span></a></li></ol>
+		</div>
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+		
+
+	</div>
+	
+		
+
+</div><!-- row -->
+
+<!--
+ -->
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  
+  &copy; 2023 JKme's Blog
+  
+      powered by <a href="http://hexo.io/" target="_blank">Hexo</a>.Theme <a href="https://github.com/Ares-X/hexo-theme-freemind.bithack" target="_blank">freemind.bithack</a>  
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>

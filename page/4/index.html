@@ -117,11 +117,11 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
-			<a href="/2022/03/22/java-reflection.html" >Java安全笔记(1)-反射机制</a>
+			<a href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html" >低版本Java运行高版的Class</a>
 		</h3>
 		</div>
 	<div class="col-md-4">
-		<div class="date">post @ 2022-03-22  </div>
+		<div class="date">post @ 2022-03-30  </div>
 		</div>
 	</div>
 	
@@ -132,15 +132,37 @@
   <div class="row">
 	
 	
-		<h2 id="0x1-类加载器-ClassLoader"><a href="#0x1-类加载器-ClassLoader" class="headerlink" title="0x1. 类加载器: ClassLoader"></a>0x1. 类加载器: ClassLoader</h2><p>Java是一个依赖于<code>JVM（Java虚拟机)</code>实现的跨平台的开发语言，<code>Java</code>会先通过编译器将源代码转换为Java二进制字节码，一般是保存在<code>.class</code>文件中，之后通过<code>JVM</code>解释器执行这段代码。字节码文件会包含很多Class信息，在JVM解释器运行的过程中，<code>ClassLoader</code>就是用来加载类的，它会将Java字节码中的Class加载到内存中，而每个<code>Class</code>对象内部都有一个<code>ClassLoader</code>属性标识由哪个<code>ClassLoader</code>加载。</p>
-<h3 id="常见的ClassLoader"><a href="#常见的ClassLoader" class="headerlink" title="常见的ClassLoader"></a>常见的ClassLoader</h3><p>一切的<code>Java</code>类都必须经过JVM加载之后才可以运行，最常见的<code>ClassLoader</code>： <code>BootstrapClassLoader</code>、<code>ExtensionClassLoader</code>、<code>AppClassLoader</code>、<code>URLClassLoader</code>、<code>ContextClassLoader</code></p>
-<h4 id="BootstrapClassLoader"><a href="#BootstrapClassLoader" class="headerlink" title="BootstrapClassLoader"></a>BootstrapClassLoader</h4><p>JVM内置的默认<code>classLoader</code>,负责加载JVM运行时的核心类，位于<code>JAVA_HOME/lib/rt.jar/</code>文件夹中，由C代码实现，<code>Bootstrap ClassLoader</code>类加载器所加载的类的ClassLoader时候都会返回null</p>
-<h4 id="ExtClassLoader"><a href="#ExtClassLoader" class="headerlink" title="ExtClassLoader"></a>ExtClassLoader</h4><p>扩展类加载器，负责加载 JVM 扩展类，扩展 jar 包位于 <code>JAVA_HOME/lib/ext/*.jar</code> 中，库名通常以 javax 开头</p>
-<h4 id="AppClassLoader"><a href="#AppClassLoader" class="headerlink" title="AppClassLoader"></a>AppClassLoader</h4><p>应用类加载器/系统类加载器，直接提供给用户使用的ClassLoader，它会加载<code>ClASSPATH</code>环境变量或者<code>java.class.path</code>属性里定义的路径中的jar包和目录，我们自己编写和使用的第三方Jar包通常都是由它来加载</p>
+		<h2 id="0x1-背景介绍"><a href="#0x1-背景介绍" class="headerlink" title="0x1. 背景介绍"></a>0x1. 背景介绍</h2><p>比如<code>fastjson</code>、<code>log4j</code>中需要远程加载恶意class文件的时候，如果恶意Class文件的版本高于目标版本，比如托管在服务器的Class是1.8编译的，但是目标版本是1.7，会导致利用失败。出现类似这样的错误：<code>java.lang.UnsupportedClassVersionError: Unsupported major.minor version</code></p>
+<h2 id="0x2-解决方法"><a href="#0x2-解决方法" class="headerlink" title="0x2. 解决方法"></a>0x2. 解决方法</h2><p>用低版本的Java，比如1.6去编译Class文件，就可以全版本通用。</p>
+<p>还有另外一种方法，手动修改Class文件。当Java版本不同的时候，编译出来的Class文件也会不一样，其中Class文件里面会带上编译的Java版本号：<br><img src="/2022/03/30/Load_Class_In_Multi_JavaVersion/1.png"></p>
+<ul>
+<li>45 = Java 1.1</li>
+<li>46 = Java 1.2</li>
+<li>47 = Java 1.3</li>
+<li>48 = Java 1.4</li>
+<li>49 = Java 5</li>
+<li>50 = Java 6</li>
+<li>51 = Java 7</li>
+<li>52 = Java 8</li>
+<li>53 = Java 9</li>
+<li>54 = Java 10</li>
+<li>55 = Java 11</li>
+<li>56 = Java 12</li>
+<li>57 = Java 13</li>
+<li>58 = Java 14</li>
+<li>59 = Java 15</li>
+</ul>
+<p>所以，尝试手动修改一下这个版本号试试？</p>
+<ol>
+<li>切换到<code>java</code>的15版本，编译运行正常</li>
+<li>使用<code>vim -b Calc.class</code>，然后<code>:%!xxd</code>修改版本号为<code>32</code>(50的16进制，也就是Java6)，然后保存:<code>:%!xxd -r</code></li>
+<li>切换java版本到1.7，运行Class正常<br><img src="/2022/03/30/Load_Class_In_Multi_JavaVersion/2.png"><br><img src="/2022/03/30/Load_Class_In_Multi_JavaVersion/3.png"></li>
+</ol>
+
 	
 
 	</div>
-  <a type="button" href="/2022/03/22/java-reflection.html#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html#more" class="btn btn-default more">Read More</a>
 </div>
 
 -->
@@ -148,14 +170,36 @@
   <div class="row">
 	
 	
-		<h2 id="0x1-类加载器-ClassLoader"><a href="#0x1-类加载器-ClassLoader" class="headerlink" title="0x1. 类加载器: ClassLoader"></a>0x1. 类加载器: ClassLoader</h2><p>Java是一个依赖于<code>JVM（Java虚拟机)</code>实现的跨平台的开发语言，<code>Java</code>会先通过编译器将源代码转换为Java二进制字节码，一般是保存在<code>.class</code>文件中，之后通过<code>JVM</code>解释器执行这段代码。字节码文件会包含很多Class信息，在JVM解释器运行的过程中，<code>ClassLoader</code>就是用来加载类的，它会将Java字节码中的Class加载到内存中，而每个<code>Class</code>对象内部都有一个<code>ClassLoader</code>属性标识由哪个<code>ClassLoader</code>加载。</p>
-<h3 id="常见的ClassLoader"><a href="#常见的ClassLoader" class="headerlink" title="常见的ClassLoader"></a>常见的ClassLoader</h3><p>一切的<code>Java</code>类都必须经过JVM加载之后才可以运行，最常见的<code>ClassLoader</code>： <code>BootstrapClassLoader</code>、<code>ExtensionClassLoader</code>、<code>AppClassLoader</code>、<code>URLClassLoader</code>、<code>ContextClassLoader</code></p>
-<h4 id="BootstrapClassLoader"><a href="#BootstrapClassLoader" class="headerlink" title="BootstrapClassLoader"></a>BootstrapClassLoader</h4><p>JVM内置的默认<code>classLoader</code>,负责加载JVM运行时的核心类，位于<code>JAVA_HOME/lib/rt.jar/</code>文件夹中，由C代码实现，<code>Bootstrap ClassLoader</code>类加载器所加载的类的ClassLoader时候都会返回null</p>
-<h4 id="ExtClassLoader"><a href="#ExtClassLoader" class="headerlink" title="ExtClassLoader"></a>ExtClassLoader</h4><p>扩展类加载器，负责加载 JVM 扩展类，扩展 jar 包位于 <code>JAVA_HOME/lib/ext/*.jar</code> 中，库名通常以 javax 开头</p>
-<h4 id="AppClassLoader"><a href="#AppClassLoader" class="headerlink" title="AppClassLoader"></a>AppClassLoader</h4><p>应用类加载器/系统类加载器，直接提供给用户使用的ClassLoader，它会加载<code>ClASSPATH</code>环境变量或者<code>java.class.path</code>属性里定义的路径中的jar包和目录，我们自己编写和使用的第三方Jar包通常都是由它来加载</p>
+		<h2 id="0x1-背景介绍"><a href="#0x1-背景介绍" class="headerlink" title="0x1. 背景介绍"></a>0x1. 背景介绍</h2><p>比如<code>fastjson</code>、<code>log4j</code>中需要远程加载恶意class文件的时候，如果恶意Class文件的版本高于目标版本，比如托管在服务器的Class是1.8编译的，但是目标版本是1.7，会导致利用失败。出现类似这样的错误：<code>java.lang.UnsupportedClassVersionError: Unsupported major.minor version</code></p>
+<h2 id="0x2-解决方法"><a href="#0x2-解决方法" class="headerlink" title="0x2. 解决方法"></a>0x2. 解决方法</h2><p>用低版本的Java，比如1.6去编译Class文件，就可以全版本通用。</p>
+<p>还有另外一种方法，手动修改Class文件。当Java版本不同的时候，编译出来的Class文件也会不一样，其中Class文件里面会带上编译的Java版本号：<br><img src="/2022/03/30/Load_Class_In_Multi_JavaVersion/1.png"></p>
+<ul>
+<li>45 = Java 1.1</li>
+<li>46 = Java 1.2</li>
+<li>47 = Java 1.3</li>
+<li>48 = Java 1.4</li>
+<li>49 = Java 5</li>
+<li>50 = Java 6</li>
+<li>51 = Java 7</li>
+<li>52 = Java 8</li>
+<li>53 = Java 9</li>
+<li>54 = Java 10</li>
+<li>55 = Java 11</li>
+<li>56 = Java 12</li>
+<li>57 = Java 13</li>
+<li>58 = Java 14</li>
+<li>59 = Java 15</li>
+</ul>
+<p>所以，尝试手动修改一下这个版本号试试？</p>
+<ol>
+<li>切换到<code>java</code>的15版本，编译运行正常</li>
+<li>使用<code>vim -b Calc.class</code>，然后<code>:%!xxd</code>修改版本号为<code>32</code>(50的16进制，也就是Java6)，然后保存:<code>:%!xxd -r</code></li>
+<li>切换java版本到1.7，运行Class正常<br><img src="/2022/03/30/Load_Class_In_Multi_JavaVersion/2.png"><br><img src="/2022/03/30/Load_Class_In_Multi_JavaVersion/3.png"></li>
+</ol>
+
 	
 	</div>
-  <a type="button" href="/2022/03/22/java-reflection.html#more" class="btn btn-default more">Read More</a>
+  <a type="button" href="/2022/03/30/Load_Class_In_Multi_JavaVersion.html#more" class="btn btn-default more">Read More</a>
 </div>
 
 		
@@ -435,6 +479,54 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2022/03/22/java-reflection.html" >Java安全笔记(1)-反射机制</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2022-03-22  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x1-类加载器-ClassLoader"><a href="#0x1-类加载器-ClassLoader" class="headerlink" title="0x1. 类加载器: ClassLoader"></a>0x1. 类加载器: ClassLoader</h2><p>Java是一个依赖于<code>JVM（Java虚拟机)</code>实现的跨平台的开发语言，<code>Java</code>会先通过编译器将源代码转换为Java二进制字节码，一般是保存在<code>.class</code>文件中，之后通过<code>JVM</code>解释器执行这段代码。字节码文件会包含很多Class信息，在JVM解释器运行的过程中，<code>ClassLoader</code>就是用来加载类的，它会将Java字节码中的Class加载到内存中，而每个<code>Class</code>对象内部都有一个<code>ClassLoader</code>属性标识由哪个<code>ClassLoader</code>加载。</p>
+<h3 id="常见的ClassLoader"><a href="#常见的ClassLoader" class="headerlink" title="常见的ClassLoader"></a>常见的ClassLoader</h3><p>一切的<code>Java</code>类都必须经过JVM加载之后才可以运行，最常见的<code>ClassLoader</code>： <code>BootstrapClassLoader</code>、<code>ExtensionClassLoader</code>、<code>AppClassLoader</code>、<code>URLClassLoader</code>、<code>ContextClassLoader</code></p>
+<h4 id="BootstrapClassLoader"><a href="#BootstrapClassLoader" class="headerlink" title="BootstrapClassLoader"></a>BootstrapClassLoader</h4><p>JVM内置的默认<code>classLoader</code>,负责加载JVM运行时的核心类，位于<code>JAVA_HOME/lib/rt.jar/</code>文件夹中，由C代码实现，<code>Bootstrap ClassLoader</code>类加载器所加载的类的ClassLoader时候都会返回null</p>
+<h4 id="ExtClassLoader"><a href="#ExtClassLoader" class="headerlink" title="ExtClassLoader"></a>ExtClassLoader</h4><p>扩展类加载器，负责加载 JVM 扩展类，扩展 jar 包位于 <code>JAVA_HOME/lib/ext/*.jar</code> 中，库名通常以 javax 开头</p>
+<h4 id="AppClassLoader"><a href="#AppClassLoader" class="headerlink" title="AppClassLoader"></a>AppClassLoader</h4><p>应用类加载器/系统类加载器，直接提供给用户使用的ClassLoader，它会加载<code>ClASSPATH</code>环境变量或者<code>java.class.path</code>属性里定义的路径中的jar包和目录，我们自己编写和使用的第三方Jar包通常都是由它来加载</p>
+	
+
+	</div>
+  <a type="button" href="/2022/03/22/java-reflection.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="0x1-类加载器-ClassLoader"><a href="#0x1-类加载器-ClassLoader" class="headerlink" title="0x1. 类加载器: ClassLoader"></a>0x1. 类加载器: ClassLoader</h2><p>Java是一个依赖于<code>JVM（Java虚拟机)</code>实现的跨平台的开发语言，<code>Java</code>会先通过编译器将源代码转换为Java二进制字节码，一般是保存在<code>.class</code>文件中，之后通过<code>JVM</code>解释器执行这段代码。字节码文件会包含很多Class信息，在JVM解释器运行的过程中，<code>ClassLoader</code>就是用来加载类的，它会将Java字节码中的Class加载到内存中，而每个<code>Class</code>对象内部都有一个<code>ClassLoader</code>属性标识由哪个<code>ClassLoader</code>加载。</p>
+<h3 id="常见的ClassLoader"><a href="#常见的ClassLoader" class="headerlink" title="常见的ClassLoader"></a>常见的ClassLoader</h3><p>一切的<code>Java</code>类都必须经过JVM加载之后才可以运行，最常见的<code>ClassLoader</code>： <code>BootstrapClassLoader</code>、<code>ExtensionClassLoader</code>、<code>AppClassLoader</code>、<code>URLClassLoader</code>、<code>ContextClassLoader</code></p>
+<h4 id="BootstrapClassLoader"><a href="#BootstrapClassLoader" class="headerlink" title="BootstrapClassLoader"></a>BootstrapClassLoader</h4><p>JVM内置的默认<code>classLoader</code>,负责加载JVM运行时的核心类，位于<code>JAVA_HOME/lib/rt.jar/</code>文件夹中，由C代码实现，<code>Bootstrap ClassLoader</code>类加载器所加载的类的ClassLoader时候都会返回null</p>
+<h4 id="ExtClassLoader"><a href="#ExtClassLoader" class="headerlink" title="ExtClassLoader"></a>ExtClassLoader</h4><p>扩展类加载器，负责加载 JVM 扩展类，扩展 jar 包位于 <code>JAVA_HOME/lib/ext/*.jar</code> 中，库名通常以 javax 开头</p>
+<h4 id="AppClassLoader"><a href="#AppClassLoader" class="headerlink" title="AppClassLoader"></a>AppClassLoader</h4><p>应用类加载器/系统类加载器，直接提供给用户使用的ClassLoader，它会加载<code>ClASSPATH</code>环境变量或者<code>java.class.path</code>属性里定义的路径中的jar包和目录，我们自己编写和使用的第三方Jar包通常都是由它来加载</p>
+	
+	</div>
+  <a type="button" href="/2022/03/22/java-reflection.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2022/03/21/jndi-exec-by-mvel.html" >JNDI Bypass - MVEL</a>
 		</h3>
 		</div>
@@ -619,74 +711,6 @@
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2021/08/06/windows-ntlm-smb-scan.html" >NTLM端口信息探测</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2021-08-06  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>SMB（Server Message Block）协议，可用于在计算机间共享文件、打印机、串口等，电脑上的网上邻居就是靠它实现的。SMB使用了NetBIOS的应用程序接口 （Application Program Interface，简称API）。另外，它是一个开放性的协议，允许了协议扩展——使得它变得更大而且复杂；大约有65个最上层的作业，而每个作业都超过120个函数，甚至Windows NT也没有全部支持到，最近微软又把 SMB 改名为 CIFS（Common Internet File System），并且加入了许多新的特色。SMB协议一般端口使用为139，445，CIFS协议有三个版本：SMB、SMB2、SMB3。</p>
-<h3 id="NTLM"><a href="#NTLM" class="headerlink" title="NTLM"></a>NTLM</h3><p>在type2返回Challenge的过程中，同时返回了操作系统类型，主机名，netbios名等等。这也就意味着如果我们在能跟服务器进行NTLM交流中，给服务器发送一个type1的请求，服务器返回type2的响应，这一步，我们就可以得到很多信息。SMBv1和SMBv2的数据包结构是不同的</p>
-<h3 id="SMBv1"><a href="#SMBv1" class="headerlink" title="SMBv1"></a>SMBv1</h3><p>使用<a target="_blank" rel="noopener" href="https://github.com/FeigongSec/NTLMINFO">非攻NTLMINFO</a>探测SMB接口，抓包通过wireshark分析，包含操作系统类型的数据包由SMB Header和Response组成：<br><img src="/2021/08/06/windows-ntlm-smb-scan/ntlm-1.png"><br>我们的目的是获取smb数据包的NTLM数据，然后对NTLM数据包解析，NTLM数据包上一层是GSS-API，首先找到GSS-API在整个数据包的偏移量，SMB的数据包结构长度如下：</p>
-<pre class="line-numbers language-none"><code class="language-none">SMB Header:  32 byte
-Word Count:  1 byte
-AndXCommand: 1 byte
-Reserved:    1 byte
-AndXOffset:  2 byte
-Action: 	   2 byte
-Security Blob Length: 2 byte (表示Security Blob的长度，这里的hex是 0f 10，小端转换为010f,再转换成10进制就是271，对应Security Blob的长度)
-Byte Count: 2 byte (表示Security Blob加上NativeOS和Native Lan的长度)
-Security Blob: 可变长度，取决于Security Blob Length<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>上面的数据包结构的关键数据是<code>Security Blob Length</code>和<code>Byte Content</code>，前者表示GSS-API的整个数据包长度，后者表示GSS-API和Native OS加上Native LM的数据长度：</p>
-<h6 id="GSS-API的长度是271-Byte"><a href="#GSS-API的长度是271-Byte" class="headerlink" title="GSS-API的长度是271 Byte"></a>GSS-API的长度是271 Byte</h6><p><img src="/2021/08/06/windows-ntlm-smb-scan/ntlm-3.png"></p>
-<h6 id="Native-OS的长度是42-Byte"><a href="#Native-OS的长度是42-Byte" class="headerlink" title="Native OS的长度是42 Byte"></a>Native OS的长度是42 Byte</h6>
-	
-
-	</div>
-  <a type="button" href="/2021/08/06/windows-ntlm-smb-scan.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>SMB（Server Message Block）协议，可用于在计算机间共享文件、打印机、串口等，电脑上的网上邻居就是靠它实现的。SMB使用了NetBIOS的应用程序接口 （Application Program Interface，简称API）。另外，它是一个开放性的协议，允许了协议扩展——使得它变得更大而且复杂；大约有65个最上层的作业，而每个作业都超过120个函数，甚至Windows NT也没有全部支持到，最近微软又把 SMB 改名为 CIFS（Common Internet File System），并且加入了许多新的特色。SMB协议一般端口使用为139，445，CIFS协议有三个版本：SMB、SMB2、SMB3。</p>
-<h3 id="NTLM"><a href="#NTLM" class="headerlink" title="NTLM"></a>NTLM</h3><p>在type2返回Challenge的过程中，同时返回了操作系统类型，主机名，netbios名等等。这也就意味着如果我们在能跟服务器进行NTLM交流中，给服务器发送一个type1的请求，服务器返回type2的响应，这一步，我们就可以得到很多信息。SMBv1和SMBv2的数据包结构是不同的</p>
-<h3 id="SMBv1"><a href="#SMBv1" class="headerlink" title="SMBv1"></a>SMBv1</h3><p>使用<a target="_blank" rel="noopener" href="https://github.com/FeigongSec/NTLMINFO">非攻NTLMINFO</a>探测SMB接口，抓包通过wireshark分析，包含操作系统类型的数据包由SMB Header和Response组成：<br><img src="/2021/08/06/windows-ntlm-smb-scan/ntlm-1.png"><br>我们的目的是获取smb数据包的NTLM数据，然后对NTLM数据包解析，NTLM数据包上一层是GSS-API，首先找到GSS-API在整个数据包的偏移量，SMB的数据包结构长度如下：</p>
-<pre class="line-numbers language-none"><code class="language-none">SMB Header:  32 byte
-Word Count:  1 byte
-AndXCommand: 1 byte
-Reserved:    1 byte
-AndXOffset:  2 byte
-Action: 	   2 byte
-Security Blob Length: 2 byte (表示Security Blob的长度，这里的hex是 0f 10，小端转换为010f,再转换成10进制就是271，对应Security Blob的长度)
-Byte Count: 2 byte (表示Security Blob加上NativeOS和Native Lan的长度)
-Security Blob: 可变长度，取决于Security Blob Length<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>上面的数据包结构的关键数据是<code>Security Blob Length</code>和<code>Byte Content</code>，前者表示GSS-API的整个数据包长度，后者表示GSS-API和Native OS加上Native LM的数据长度：</p>
-<h6 id="GSS-API的长度是271-Byte"><a href="#GSS-API的长度是271-Byte" class="headerlink" title="GSS-API的长度是271 Byte"></a>GSS-API的长度是271 Byte</h6><p><img src="/2021/08/06/windows-ntlm-smb-scan/ntlm-3.png"></p>
-<h6 id="Native-OS的长度是42-Byte"><a href="#Native-OS的长度是42-Byte" class="headerlink" title="Native OS的长度是42 Byte"></a>Native OS的长度是42 Byte</h6>
-	
-	</div>
-  <a type="button" href="/2021/08/06/windows-ntlm-smb-scan.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -744,7 +768,7 @@ Security Blob: 可变长度，取决于Security Blob Length<span aria-hidden="tr
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>52</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>53</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -765,6 +789,10 @@ Security Blob: 可变长度，取决于Security Blob Length<span aria-hidden="tr
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/05/26/cobaltstrike-learn.html" ><i class="fa fa-file-o"></i>CobaltStrike通信学习笔记</a>
+      </li>
+    
+      <li>
         <a href="/2023/05/10/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
       </li>
     
@@ -778,10 +806,6 @@ Security Blob: 可变长度，取决于Security Blob Length<span aria-hidden="tr
     
       <li>
         <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
-      </li>
-    
-      <li>
-        <a href="/2023/03/03/github-trick.html" ><i class="fa fa-file-o"></i>Github搜索小技巧</a>
       </li>
     
   </ul>

@@ -117,6 +117,128 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2023/03/03/github-trick.html" >Github搜索小技巧</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2023-03-03  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>获取了一个多人运动的git仓库，需要提取仓库里面所有的Email，然后根据Email搜一下Github是否存在对应的提交记录。这是一个很常见的问题，比如公司员工在提交gihtub的时候，没有注意修改提交的邮箱，很可能使用公司的邮箱进行提交。</p>
+<h2 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h2><p>有两种方法可以提取一个仓库的所有邮箱：</p>
+<h3 id="第一种"><a href="#第一种" class="headerlink" title="第一种"></a>第一种</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">git</span> log <span class="token string">"--format=format:%ae"</span> <span class="token operator">|</span> <span class="token function">sort</span> <span class="token operator">|</span> <span class="token function">uniq</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="第二种"><a href="#第二种" class="headerlink" title="第二种"></a>第二种</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">git</span> shortlog -sea <span class="token operator">|</span> <span class="token function">grep</span> -E -o <span class="token string">"<span class="token entity" title="\b">\b</span>[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]&#123;2,6&#125;<span class="token entity" title="\b">\b</span>"</span> <span class="token operator">|</span> <span class="token function">awk</span> <span class="token string">'&#123;print tolower($0)&#125;'</span> <span class="token operator">|</span> <span class="token function">sort</span> <span class="token operator">|</span> <span class="token function">uniq</span> <span class="token operator">|</span> <span class="token function">grep</span> -wv <span class="token string">'users.noreply.github.com'</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>然后根据<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/zoYE102P_2BvB-sForjkHQ">github小技巧</a>写一个批量获取邮箱的脚本：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment"># coding: utf-8</span>
+<span class="token keyword">import</span> requests
+<span class="token keyword">import</span> json
+<span class="token keyword">from</span> random <span class="token keyword">import</span> choice
+<span class="token keyword">import</span> sys
+<span class="token keyword">import</span> time
+
+TOKEN_LISTS <span class="token operator">=</span> <span class="token punctuation">[</span>
+      <span class="token string">""</span>
+<span class="token punctuation">]</span>
+
+<span class="token keyword">def</span> <span class="token function">search_commits</span><span class="token punctuation">(</span>token<span class="token punctuation">,</span> email<span class="token punctuation">)</span><span class="token punctuation">:</span>
+       headers <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"Accept"</span><span class="token punctuation">:</span> <span class="token string">"application/vnd.github+json"</span><span class="token punctuation">,</span>
+                   <span class="token string">"Authorization"</span><span class="token punctuation">:</span> <span class="token string-interpolation"><span class="token string">f"Bearer </span><span class="token interpolation"><span class="token punctuation">&#123;</span>token<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span>
+                  <span class="token punctuation">&#125;</span>
+       req <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">'http://api.github.com/search/commits'</span><span class="token punctuation">,</span>
+           <span class="token punctuation">&#123;</span><span class="token string">'q'</span><span class="token punctuation">:</span> <span class="token string-interpolation"><span class="token string">f"committer-email:</span><span class="token interpolation"><span class="token punctuation">&#123;</span>email<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+           headers<span class="token operator">=</span>headers<span class="token punctuation">)</span>
+       <span class="token keyword">return</span> json<span class="token punctuation">.</span>loads<span class="token punctuation">(</span>req<span class="token punctuation">.</span>text<span class="token punctuation">)</span>
+
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">"__main__"</span><span class="token punctuation">:</span>
+    <span class="token comment"># file = sys.argv[1]</span>
+    <span class="token builtin">file</span> <span class="token operator">=</span> <span class="token string">"/tmp/email.txt"</span>
+    <span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span><span class="token builtin">file</span><span class="token punctuation">,</span> <span class="token string">"r"</span><span class="token punctuation">)</span> <span class="token keyword">as</span> f<span class="token punctuation">:</span>
+          <span class="token keyword">for</span> line <span class="token keyword">in</span> f<span class="token punctuation">.</span>readlines<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+                email <span class="token operator">=</span> line<span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token punctuation">)</span>
+                token <span class="token operator">=</span> choice<span class="token punctuation">(</span>TOKEN_LISTS<span class="token punctuation">)</span>
+                
+                <span class="token keyword">try</span><span class="token punctuation">:</span>
+                    time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+                    <span class="token keyword">if</span> search_commits<span class="token punctuation">(</span>token<span class="token punctuation">,</span> email<span class="token punctuation">)</span><span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"total_count"</span><span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span><span class="token punctuation">:</span>
+                        <span class="token keyword">print</span><span class="token punctuation">(</span>email<span class="token punctuation">)</span>
+                <span class="token keyword">except</span> Exception <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+                     <span class="token keyword">raise</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2023/03/03/github-trick.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>获取了一个多人运动的git仓库，需要提取仓库里面所有的Email，然后根据Email搜一下Github是否存在对应的提交记录。这是一个很常见的问题，比如公司员工在提交gihtub的时候，没有注意修改提交的邮箱，很可能使用公司的邮箱进行提交。</p>
+<h2 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h2><p>有两种方法可以提取一个仓库的所有邮箱：</p>
+<h3 id="第一种"><a href="#第一种" class="headerlink" title="第一种"></a>第一种</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">git</span> log <span class="token string">"--format=format:%ae"</span> <span class="token operator">|</span> <span class="token function">sort</span> <span class="token operator">|</span> <span class="token function">uniq</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="第二种"><a href="#第二种" class="headerlink" title="第二种"></a>第二种</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">git</span> shortlog -sea <span class="token operator">|</span> <span class="token function">grep</span> -E -o <span class="token string">"<span class="token entity" title="\b">\b</span>[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]&#123;2,6&#125;<span class="token entity" title="\b">\b</span>"</span> <span class="token operator">|</span> <span class="token function">awk</span> <span class="token string">'&#123;print tolower($0)&#125;'</span> <span class="token operator">|</span> <span class="token function">sort</span> <span class="token operator">|</span> <span class="token function">uniq</span> <span class="token operator">|</span> <span class="token function">grep</span> -wv <span class="token string">'users.noreply.github.com'</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>然后根据<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/zoYE102P_2BvB-sForjkHQ">github小技巧</a>写一个批量获取邮箱的脚本：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment"># coding: utf-8</span>
+<span class="token keyword">import</span> requests
+<span class="token keyword">import</span> json
+<span class="token keyword">from</span> random <span class="token keyword">import</span> choice
+<span class="token keyword">import</span> sys
+<span class="token keyword">import</span> time
+
+TOKEN_LISTS <span class="token operator">=</span> <span class="token punctuation">[</span>
+      <span class="token string">""</span>
+<span class="token punctuation">]</span>
+
+<span class="token keyword">def</span> <span class="token function">search_commits</span><span class="token punctuation">(</span>token<span class="token punctuation">,</span> email<span class="token punctuation">)</span><span class="token punctuation">:</span>
+       headers <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"Accept"</span><span class="token punctuation">:</span> <span class="token string">"application/vnd.github+json"</span><span class="token punctuation">,</span>
+                   <span class="token string">"Authorization"</span><span class="token punctuation">:</span> <span class="token string-interpolation"><span class="token string">f"Bearer </span><span class="token interpolation"><span class="token punctuation">&#123;</span>token<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span>
+                  <span class="token punctuation">&#125;</span>
+       req <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">'http://api.github.com/search/commits'</span><span class="token punctuation">,</span>
+           <span class="token punctuation">&#123;</span><span class="token string">'q'</span><span class="token punctuation">:</span> <span class="token string-interpolation"><span class="token string">f"committer-email:</span><span class="token interpolation"><span class="token punctuation">&#123;</span>email<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+           headers<span class="token operator">=</span>headers<span class="token punctuation">)</span>
+       <span class="token keyword">return</span> json<span class="token punctuation">.</span>loads<span class="token punctuation">(</span>req<span class="token punctuation">.</span>text<span class="token punctuation">)</span>
+
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">"__main__"</span><span class="token punctuation">:</span>
+    <span class="token comment"># file = sys.argv[1]</span>
+    <span class="token builtin">file</span> <span class="token operator">=</span> <span class="token string">"/tmp/email.txt"</span>
+    <span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span><span class="token builtin">file</span><span class="token punctuation">,</span> <span class="token string">"r"</span><span class="token punctuation">)</span> <span class="token keyword">as</span> f<span class="token punctuation">:</span>
+          <span class="token keyword">for</span> line <span class="token keyword">in</span> f<span class="token punctuation">.</span>readlines<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+                email <span class="token operator">=</span> line<span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token punctuation">)</span>
+                token <span class="token operator">=</span> choice<span class="token punctuation">(</span>TOKEN_LISTS<span class="token punctuation">)</span>
+                
+                <span class="token keyword">try</span><span class="token punctuation">:</span>
+                    time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+                    <span class="token keyword">if</span> search_commits<span class="token punctuation">(</span>token<span class="token punctuation">,</span> email<span class="token punctuation">)</span><span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"total_count"</span><span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span><span class="token punctuation">:</span>
+                        <span class="token keyword">print</span><span class="token punctuation">(</span>email<span class="token punctuation">)</span>
+                <span class="token keyword">except</span> Exception <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+                     <span class="token keyword">raise</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2023/03/03/github-trick.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2023/02/14/kafka-rce.html" >Apache Kafka Connect JNDI注入漏洞复现(CVE-2023-25194)</a>
 		</h3>
 		</div>
@@ -475,76 +597,6 @@ bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-fac
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2022/06/23/java-agent-shell.html" >Java安全笔记(4)-Java Agent</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2022-06-23  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="学习背景"><a href="#学习背景" class="headerlink" title="学习背景"></a>学习背景</h2><p><img src="/2022/06/23/java-agent-shell/1.png"></p>
-<ol>
-<li>Agent本来就在学习的清单上</li>
-<li>更深入理解下草师傅说的代理模式</li>
-<li>study the world</li>
-</ol>
-<h2 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h2><p>AOP为Aspect Oriented Programming的缩写，意为: 面向切面编程，在运行时，动态地将代码切入到类的指定方法、指定位置上的编程思想就是面向切面的编程。<br>以下引用来自su18和天下大木头师傅的博客：</p>
-<blockquote>
-<p>JDK 1.5 开始，Java新增了Instrumentation(Java Agent API)和JVMTI(JVM Tool Interface)功能，允许JVM在加载某个class文件之前对其字节码进行修改，同时也支持对已加载的class(类字节码)进行重新加载(Retransform)。</p>
-</blockquote>
-<blockquote>
-<p>开发者可以在一个普通Java程序（带有main函数的Java类）运行时，通过<code>–javaagent</code>参数指定一个特定的jar文件(包含Instrumentation代理)来启动Instrumentation的代理程序。在类的字节码载入jvm前会调用ClassFileTransformer的transform方法，从而实现修改原类方法的功能，实现AOP。</p>
-</blockquote>
-<p>通过java.lang.instrument实现的工具我们称之为Java Agent，Java Agent能够在不影响正常编译的情况下来修改字节码，即动态修改已加载或者未加载的类，包括类的属性、方法，Agent内存马的实现就是利用了这一特性使其动态修改特定类的特定方法，将我们的恶意方法添加进去。</p>
-<p>说白了Java Agent只是一个Java类而已，只不过普通的Java类是以main函数作为入口点的，Java Agent的入口点则是premain和agentmain</p>
-<p>Java Agent 支持两种方式进行加载：</p>
-	
-
-	</div>
-  <a type="button" href="/2022/06/23/java-agent-shell.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="学习背景"><a href="#学习背景" class="headerlink" title="学习背景"></a>学习背景</h2><p><img src="/2022/06/23/java-agent-shell/1.png"></p>
-<ol>
-<li>Agent本来就在学习的清单上</li>
-<li>更深入理解下草师傅说的代理模式</li>
-<li>study the world</li>
-</ol>
-<h2 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h2><p>AOP为Aspect Oriented Programming的缩写，意为: 面向切面编程，在运行时，动态地将代码切入到类的指定方法、指定位置上的编程思想就是面向切面的编程。<br>以下引用来自su18和天下大木头师傅的博客：</p>
-<blockquote>
-<p>JDK 1.5 开始，Java新增了Instrumentation(Java Agent API)和JVMTI(JVM Tool Interface)功能，允许JVM在加载某个class文件之前对其字节码进行修改，同时也支持对已加载的class(类字节码)进行重新加载(Retransform)。</p>
-</blockquote>
-<blockquote>
-<p>开发者可以在一个普通Java程序（带有main函数的Java类）运行时，通过<code>–javaagent</code>参数指定一个特定的jar文件(包含Instrumentation代理)来启动Instrumentation的代理程序。在类的字节码载入jvm前会调用ClassFileTransformer的transform方法，从而实现修改原类方法的功能，实现AOP。</p>
-</blockquote>
-<p>通过java.lang.instrument实现的工具我们称之为Java Agent，Java Agent能够在不影响正常编译的情况下来修改字节码，即动态修改已加载或者未加载的类，包括类的属性、方法，Agent内存马的实现就是利用了这一特性使其动态修改特定类的特定方法，将我们的恶意方法添加进去。</p>
-<p>说白了Java Agent只是一个Java类而已，只不过普通的Java类是以main函数作为入口点的，Java Agent的入口点则是premain和agentmain</p>
-<p>Java Agent 支持两种方式进行加载：</p>
-	
-	</div>
-  <a type="button" href="/2022/06/23/java-agent-shell.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -602,7 +654,7 @@ bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-fac
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>52</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>53</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -623,6 +675,10 @@ bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-fac
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/05/26/cobaltstrike-learn.html" ><i class="fa fa-file-o"></i>CobaltStrike通信学习笔记</a>
+      </li>
+    
+      <li>
         <a href="/2023/05/10/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
       </li>
     
@@ -636,10 +692,6 @@ bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-fac
     
       <li>
         <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
-      </li>
-    
-      <li>
-        <a href="/2023/03/03/github-trick.html" ><i class="fa fa-file-o"></i>Github搜索小技巧</a>
       </li>
     
   </ul>

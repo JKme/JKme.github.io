@@ -117,6 +117,114 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2020/07/29/mysql-UDF.html" >MySql UDF提权注意事项</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2020-07-29  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>[mysql-udf-exploitation]<a target="_blank" rel="noopener" href="https://osandamalith.com/2018/02/11/mysql-udf-exploitation">https://osandamalith.com/2018/02/11/mysql-udf-exploitation</a><br>MSF的dll: <a target="_blank" rel="noopener" href="https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql">https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql</a></p>
+</blockquote>
+<h3 id="0x01-准备工作"><a href="#0x01-准备工作" class="headerlink" title="0x01 准备工作"></a>0x01 准备工作</h3><p>先检查运行的mysql结构:</p>
+<pre class="line-numbers language-none"><code class="language-none">select @@version_compile_os, @@version_compile_machine;
+show variables like &#39;%compile%&#39;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>结果如下:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> <span class="token keyword">select</span> @@version_compile_os, @@version_compile_machine<span class="token punctuation">;</span>
++----------------------+---------------------------+
+<span class="token operator">|</span> @@version_compile_os <span class="token operator">|</span> @@version_compile_machine <span class="token operator">|</span>
++----------------------+---------------------------+
+<span class="token operator">|</span> Win64                <span class="token operator">|</span> x86_64                    <span class="token operator">|</span>
++----------------------+---------------------------+
+MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> show variables like <span class="token string">'%compile%'</span><span class="token punctuation">;</span>
++-------------------------+--------+
+<span class="token operator">|</span> Variable_name           <span class="token operator">|</span> Value  <span class="token operator">|</span>
++-------------------------+--------+
+<span class="token operator">|</span> version_compile_machine <span class="token operator">|</span> x86_64 <span class="token operator">|</span>
+<span class="token operator">|</span> version_compile_os      <span class="token operator">|</span> Win64  <span class="token operator">|</span>
++-------------------------+--------+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在<code>Mysql 5.0.67</code>版本开始，UDF的文件必须放在mysql的插件目录: <code>select @@plugin_dir;</code></p>
+<p>可以在开启mysql的时候设置plugin的目录:</p>
+<pre class="line-numbers language-none"><code class="language-none">指定目录:
+mysqld.exe –plugin-dir&#x3D;C:\\temp\\plugins\\
+
+指定配置文件:
+mysqld.exe --defaults-file&#x3D;C:\\temp\\my.ini
+
+配置文件包括如下内容:
+[mysqld]
+plugin_dir &#x3D; C:\\temp\\plugins\\<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>老版本的Mysql搜索UDF路径是按照如下的顺序来的:</p>
+	
+
+	</div>
+  <a type="button" href="/2020/07/29/mysql-UDF.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<blockquote>
+<p>[mysql-udf-exploitation]<a target="_blank" rel="noopener" href="https://osandamalith.com/2018/02/11/mysql-udf-exploitation">https://osandamalith.com/2018/02/11/mysql-udf-exploitation</a><br>MSF的dll: <a target="_blank" rel="noopener" href="https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql">https://github.com/rapid7/metasploit-framework/tree/master/data/exploits/mysql</a></p>
+</blockquote>
+<h3 id="0x01-准备工作"><a href="#0x01-准备工作" class="headerlink" title="0x01 准备工作"></a>0x01 准备工作</h3><p>先检查运行的mysql结构:</p>
+<pre class="line-numbers language-none"><code class="language-none">select @@version_compile_os, @@version_compile_machine;
+show variables like &#39;%compile%&#39;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>结果如下:</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> <span class="token keyword">select</span> @@version_compile_os, @@version_compile_machine<span class="token punctuation">;</span>
++----------------------+---------------------------+
+<span class="token operator">|</span> @@version_compile_os <span class="token operator">|</span> @@version_compile_machine <span class="token operator">|</span>
++----------------------+---------------------------+
+<span class="token operator">|</span> Win64                <span class="token operator">|</span> x86_64                    <span class="token operator">|</span>
++----------------------+---------------------------+
+MySQL <span class="token punctuation">[</span><span class="token punctuation">(</span>none<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token operator">></span> show variables like <span class="token string">'%compile%'</span><span class="token punctuation">;</span>
++-------------------------+--------+
+<span class="token operator">|</span> Variable_name           <span class="token operator">|</span> Value  <span class="token operator">|</span>
++-------------------------+--------+
+<span class="token operator">|</span> version_compile_machine <span class="token operator">|</span> x86_64 <span class="token operator">|</span>
+<span class="token operator">|</span> version_compile_os      <span class="token operator">|</span> Win64  <span class="token operator">|</span>
++-------------------------+--------+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在<code>Mysql 5.0.67</code>版本开始，UDF的文件必须放在mysql的插件目录: <code>select @@plugin_dir;</code></p>
+<p>可以在开启mysql的时候设置plugin的目录:</p>
+<pre class="line-numbers language-none"><code class="language-none">指定目录:
+mysqld.exe –plugin-dir&#x3D;C:\\temp\\plugins\\
+
+指定配置文件:
+mysqld.exe --defaults-file&#x3D;C:\\temp\\my.ini
+
+配置文件包括如下内容:
+[mysqld]
+plugin_dir &#x3D; C:\\temp\\plugins\\<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>老版本的Mysql搜索UDF路径是按照如下的顺序来的:</p>
+	
+	</div>
+  <a type="button" href="/2020/07/29/mysql-UDF.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2020/07/16/Com-Object-Pentest-Note2.html" >Com Object</a>
 		</h3>
 		</div>
@@ -495,130 +603,6 @@ my way.<span aria-hidden="true" class="line-numbers-rows"><span></span><span></s
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2020/04/13/dpapi-pass-dump.html" >通过DPAPI获取windows身份凭证</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2020-04-13  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h3><p>DPAPI(Date Protection Application Programming Interface)，从windows2000之后，微软提供的一个特殊数据保护接口，使用了对称的加解密函数对密码加密。包括:</p>
-<ul>
-<li>IE、Chrome密码登陆表单的自动完成</li>
-<li>邮箱客户端用户密码</li>
-<li>FTP管理账户密码</li>
-<li>远程桌面身份密码</li>
-<li>……</li>
-</ul>
-<p>查找本地的Credentials:<br>通常的保存位置:</p>
-<ul>
-<li><code>%appdata%\Microsoft\Credentials</code></li>
-<li><code>%localappdata%\Microsoft\Credentials</code></li>
-<li><code>%userprofile%\AppData\Local\Microsoft\Credentials\*</code></li>
-</ul>
-<p>因为文件被隐藏，命令行下需要查看需要加上<code>/a</code>可以看到:</p>
-<pre class="line-numbers language-none"><code class="language-none">dir &#x2F;a %userprofile%\AppData\Local\Microsoft\Credentials\*<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h3 id="获取GUID"><a href="#获取GUID" class="headerlink" title="获取GUID"></a>获取GUID</h3><pre class="line-numbers language-none"><code class="language-none"># 打印结构体信息
-mimikatz dpapi::cred &#x2F;in:&quot;%localappdata%\Microsoft\Credentials\DFBE70A7E5CC19A398EBF1B96859CE5D&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<pre class="line-numbers language-none"><code class="language-none">**BLOB**
-  dwVersion          : 00000001 - 1
-  guidProvider       : &#123;xf9d8cd0-1501-11d1-8c7a-00c04fc297eb&#125;
-  dwMasterKeyVersion : 00000001 - 1
-  guidMasterKey      : &#123;x0ad1823-abf0-4be4-b696-eb4bbddca052&#125;
-  dwFlags            : 20000000 - 536870912 (system ; )
-  dwDescriptionLen   : 00000012 - 18
-  szDescription      : 本地凭据数据
-
-  algCrypt           : 00006610 - 26128 (CALG_AES_256)
-  dwAlgCryptLen      : 00000100 - 256
-  dwSaltLen          : 00000020 - 32
-  pbSalt             : 00bcc91d576813f05e286f96b9ae3f97aef0922bb7c97b9c93b978d75027a8dc
-  dwHmacKeyLen       : 00000000 - 0
-  pbHmackKey         : 
-  algHash            : 0000800e - 32782 (CALG_SHA_512)
-  dwAlgHashLen       : 00000200 - 512
-  dwHmac2KeyLen      : 00000020 - 32
-  pbHmack2Key        : 109ef886e7807e15e7918ec1773e768b50900664d88739e42a80592a1af52d51
-  dwDataLen          : 00002a70 - 10864
-  pbData             : xxxxxxz
-  dwSignLen          : 00000040 - 64
-  pbSign             : xxxxx
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2020/04/13/dpapi-pass-dump.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h3 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h3><p>DPAPI(Date Protection Application Programming Interface)，从windows2000之后，微软提供的一个特殊数据保护接口，使用了对称的加解密函数对密码加密。包括:</p>
-<ul>
-<li>IE、Chrome密码登陆表单的自动完成</li>
-<li>邮箱客户端用户密码</li>
-<li>FTP管理账户密码</li>
-<li>远程桌面身份密码</li>
-<li>……</li>
-</ul>
-<p>查找本地的Credentials:<br>通常的保存位置:</p>
-<ul>
-<li><code>%appdata%\Microsoft\Credentials</code></li>
-<li><code>%localappdata%\Microsoft\Credentials</code></li>
-<li><code>%userprofile%\AppData\Local\Microsoft\Credentials\*</code></li>
-</ul>
-<p>因为文件被隐藏，命令行下需要查看需要加上<code>/a</code>可以看到:</p>
-<pre class="line-numbers language-none"><code class="language-none">dir &#x2F;a %userprofile%\AppData\Local\Microsoft\Credentials\*<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h3 id="获取GUID"><a href="#获取GUID" class="headerlink" title="获取GUID"></a>获取GUID</h3><pre class="line-numbers language-none"><code class="language-none"># 打印结构体信息
-mimikatz dpapi::cred &#x2F;in:&quot;%localappdata%\Microsoft\Credentials\DFBE70A7E5CC19A398EBF1B96859CE5D&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<pre class="line-numbers language-none"><code class="language-none">**BLOB**
-  dwVersion          : 00000001 - 1
-  guidProvider       : &#123;xf9d8cd0-1501-11d1-8c7a-00c04fc297eb&#125;
-  dwMasterKeyVersion : 00000001 - 1
-  guidMasterKey      : &#123;x0ad1823-abf0-4be4-b696-eb4bbddca052&#125;
-  dwFlags            : 20000000 - 536870912 (system ; )
-  dwDescriptionLen   : 00000012 - 18
-  szDescription      : 本地凭据数据
-
-  algCrypt           : 00006610 - 26128 (CALG_AES_256)
-  dwAlgCryptLen      : 00000100 - 256
-  dwSaltLen          : 00000020 - 32
-  pbSalt             : 00bcc91d576813f05e286f96b9ae3f97aef0922bb7c97b9c93b978d75027a8dc
-  dwHmacKeyLen       : 00000000 - 0
-  pbHmackKey         : 
-  algHash            : 0000800e - 32782 (CALG_SHA_512)
-  dwAlgHashLen       : 00000200 - 512
-  dwHmac2KeyLen      : 00000020 - 32
-  pbHmack2Key        : 109ef886e7807e15e7918ec1773e768b50900664d88739e42a80592a1af52d51
-  dwDataLen          : 00002a70 - 10864
-  pbData             : xxxxxxz
-  dwSignLen          : 00000040 - 64
-  pbSign             : xxxxx
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2020/04/13/dpapi-pass-dump.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -676,7 +660,7 @@ mimikatz dpapi::cred &#x2F;in:&quot;%localappdata%\Microsoft\Credentials\DFBE70A
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>52</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>53</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -697,6 +681,10 @@ mimikatz dpapi::cred &#x2F;in:&quot;%localappdata%\Microsoft\Credentials\DFBE70A
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/05/26/cobaltstrike-learn.html" ><i class="fa fa-file-o"></i>CobaltStrike通信学习笔记</a>
+      </li>
+    
+      <li>
         <a href="/2023/05/10/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
       </li>
     
@@ -710,10 +698,6 @@ mimikatz dpapi::cred &#x2F;in:&quot;%localappdata%\Microsoft\Credentials\DFBE70A
     
       <li>
         <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
-      </li>
-    
-      <li>
-        <a href="/2023/03/03/github-trick.html" ><i class="fa fa-file-o"></i>Github搜索小技巧</a>
       </li>
     
   </ul>

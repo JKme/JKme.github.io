@@ -117,6 +117,96 @@
 <div class="row">
 	<div class="col-md-8">
 		<h3 class="title">
+			<a href="/2023/05/26/cobaltstrike-learn.html" >CobaltStrike通信学习笔记</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2023-05-26  </div>
+		</div>
+	</div>
+	
+
+
+			<!--
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>起源于一个问题：CS怎么用ReBeacon打包成的EXE/DLL？</p>
+<ul>
+<li>stageless 表示把所有功能全部打包到一个文件里面</li>
+<li>staged 小片段的shellcode拉一个beacon.dll(<del>小马拉大马</del>)，其中ReBeacon就是beacon.dll的实现</li>
+</ul>
+<h2 id="Staged-Shellcode工作流程"><a href="#Staged-Shellcode工作流程" class="headerlink" title="Staged Shellcode工作流程"></a>Staged Shellcode工作流程</h2><h3 id="第一阶段"><a href="#第一阶段" class="headerlink" title="第一阶段"></a>第一阶段</h3><p>很常规的生成一个shellcode，写一个简单的程序加载然后调试:</p>
+<h4 id="方式1"><a href="#方式1" class="headerlink" title="方式1"></a>方式1</h4><pre class="line-numbers language-C++" data-language="C++"><code class="language-C++">#include&lt;stdio.h&gt;
+#include&lt;Windows.h&gt;
+#pragma comment(linker, &quot;&#x2F;section:.data,RWE&quot;)
+unsigned char buf[] &#x3D; &quot;&quot;;
+int main() &#123;
+    __asm &#123;
+        mov ecx, offset buf
+        jmp ecx
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="方式2"><a href="#方式2" class="headerlink" title="方式2"></a>方式2</h4><pre class="line-numbers language-C++" data-language="C++"><code class="language-C++">#include&lt;stdio.h&gt;  
+#include&lt;Windows.h&gt;  
+int main() &#123;  
+	unsigned char buf[] &#x3D; &quot;shellcode&quot;;  
+	LPVOID address &#x3D; VirtualAlloc(NULL, sizeof(buf), MEM_COMMIT, PAGE_EXECUTE_READWRITE);  
+	memcpy(address, buf, sizeof(buf));  
+	((void(*)())address)();  
+	return 0;  
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+
+	</div>
+  <a type="button" href="/2023/05/26/cobaltstrike-learn.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+-->
+<div class="entry">
+  <div class="row">
+	
+	
+		<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>起源于一个问题：CS怎么用ReBeacon打包成的EXE/DLL？</p>
+<ul>
+<li>stageless 表示把所有功能全部打包到一个文件里面</li>
+<li>staged 小片段的shellcode拉一个beacon.dll(<del>小马拉大马</del>)，其中ReBeacon就是beacon.dll的实现</li>
+</ul>
+<h2 id="Staged-Shellcode工作流程"><a href="#Staged-Shellcode工作流程" class="headerlink" title="Staged Shellcode工作流程"></a>Staged Shellcode工作流程</h2><h3 id="第一阶段"><a href="#第一阶段" class="headerlink" title="第一阶段"></a>第一阶段</h3><p>很常规的生成一个shellcode，写一个简单的程序加载然后调试:</p>
+<h4 id="方式1"><a href="#方式1" class="headerlink" title="方式1"></a>方式1</h4><pre class="line-numbers language-C++" data-language="C++"><code class="language-C++">#include&lt;stdio.h&gt;
+#include&lt;Windows.h&gt;
+#pragma comment(linker, &quot;&#x2F;section:.data,RWE&quot;)
+unsigned char buf[] &#x3D; &quot;&quot;;
+int main() &#123;
+    __asm &#123;
+        mov ecx, offset buf
+        jmp ecx
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="方式2"><a href="#方式2" class="headerlink" title="方式2"></a>方式2</h4><pre class="line-numbers language-C++" data-language="C++"><code class="language-C++">#include&lt;stdio.h&gt;  
+#include&lt;Windows.h&gt;  
+int main() &#123;  
+	unsigned char buf[] &#x3D; &quot;shellcode&quot;;  
+	LPVOID address &#x3D; VirtualAlloc(NULL, sizeof(buf), MEM_COMMIT, PAGE_EXECUTE_READWRITE);  
+	memcpy(address, buf, sizeof(buf));  
+	((void(*)())address)();  
+	return 0;  
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+	
+	</div>
+  <a type="button" href="/2023/05/26/cobaltstrike-learn.html#more" class="btn btn-default more">Read More</a>
+</div>
+
+		
+			
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
 			<a href="/2023/05/10/pay_vuln.html" >支付接口安全测试记录</a>
 		</h3>
 		</div>
@@ -393,128 +483,6 @@ $: <span class="token function">cat</span> /etc/cron.d/tsar
 </div>
 
 		
-			
-	
-	<!-- display as entry -->
-<div class="row">
-	<div class="col-md-8">
-		<h3 class="title">
-			<a href="/2023/03/03/github-trick.html" >Github搜索小技巧</a>
-		</h3>
-		</div>
-	<div class="col-md-4">
-		<div class="date">post @ 2023-03-03  </div>
-		</div>
-	</div>
-	
-
-
-			<!--
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>获取了一个多人运动的git仓库，需要提取仓库里面所有的Email，然后根据Email搜一下Github是否存在对应的提交记录。这是一个很常见的问题，比如公司员工在提交gihtub的时候，没有注意修改提交的邮箱，很可能使用公司的邮箱进行提交。</p>
-<h2 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h2><p>有两种方法可以提取一个仓库的所有邮箱：</p>
-<h3 id="第一种"><a href="#第一种" class="headerlink" title="第一种"></a>第一种</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">git</span> log <span class="token string">"--format=format:%ae"</span> <span class="token operator">|</span> <span class="token function">sort</span> <span class="token operator">|</span> <span class="token function">uniq</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h3 id="第二种"><a href="#第二种" class="headerlink" title="第二种"></a>第二种</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">git</span> shortlog -sea <span class="token operator">|</span> <span class="token function">grep</span> -E -o <span class="token string">"<span class="token entity" title="\b">\b</span>[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]&#123;2,6&#125;<span class="token entity" title="\b">\b</span>"</span> <span class="token operator">|</span> <span class="token function">awk</span> <span class="token string">'&#123;print tolower($0)&#125;'</span> <span class="token operator">|</span> <span class="token function">sort</span> <span class="token operator">|</span> <span class="token function">uniq</span> <span class="token operator">|</span> <span class="token function">grep</span> -wv <span class="token string">'users.noreply.github.com'</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>然后根据<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/zoYE102P_2BvB-sForjkHQ">github小技巧</a>写一个批量获取邮箱的脚本：</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment"># coding: utf-8</span>
-<span class="token keyword">import</span> requests
-<span class="token keyword">import</span> json
-<span class="token keyword">from</span> random <span class="token keyword">import</span> choice
-<span class="token keyword">import</span> sys
-<span class="token keyword">import</span> time
-
-TOKEN_LISTS <span class="token operator">=</span> <span class="token punctuation">[</span>
-      <span class="token string">""</span>
-<span class="token punctuation">]</span>
-
-<span class="token keyword">def</span> <span class="token function">search_commits</span><span class="token punctuation">(</span>token<span class="token punctuation">,</span> email<span class="token punctuation">)</span><span class="token punctuation">:</span>
-       headers <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"Accept"</span><span class="token punctuation">:</span> <span class="token string">"application/vnd.github+json"</span><span class="token punctuation">,</span>
-                   <span class="token string">"Authorization"</span><span class="token punctuation">:</span> <span class="token string-interpolation"><span class="token string">f"Bearer </span><span class="token interpolation"><span class="token punctuation">&#123;</span>token<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span>
-                  <span class="token punctuation">&#125;</span>
-       req <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">'http://api.github.com/search/commits'</span><span class="token punctuation">,</span>
-           <span class="token punctuation">&#123;</span><span class="token string">'q'</span><span class="token punctuation">:</span> <span class="token string-interpolation"><span class="token string">f"committer-email:</span><span class="token interpolation"><span class="token punctuation">&#123;</span>email<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
-           headers<span class="token operator">=</span>headers<span class="token punctuation">)</span>
-       <span class="token keyword">return</span> json<span class="token punctuation">.</span>loads<span class="token punctuation">(</span>req<span class="token punctuation">.</span>text<span class="token punctuation">)</span>
-
-<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">"__main__"</span><span class="token punctuation">:</span>
-    <span class="token comment"># file = sys.argv[1]</span>
-    <span class="token builtin">file</span> <span class="token operator">=</span> <span class="token string">"/tmp/email.txt"</span>
-    <span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span><span class="token builtin">file</span><span class="token punctuation">,</span> <span class="token string">"r"</span><span class="token punctuation">)</span> <span class="token keyword">as</span> f<span class="token punctuation">:</span>
-          <span class="token keyword">for</span> line <span class="token keyword">in</span> f<span class="token punctuation">.</span>readlines<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-                email <span class="token operator">=</span> line<span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token punctuation">)</span>
-                token <span class="token operator">=</span> choice<span class="token punctuation">(</span>TOKEN_LISTS<span class="token punctuation">)</span>
-                
-                <span class="token keyword">try</span><span class="token punctuation">:</span>
-                    time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
-                    <span class="token keyword">if</span> search_commits<span class="token punctuation">(</span>token<span class="token punctuation">,</span> email<span class="token punctuation">)</span><span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"total_count"</span><span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span><span class="token punctuation">:</span>
-                        <span class="token keyword">print</span><span class="token punctuation">(</span>email<span class="token punctuation">)</span>
-                <span class="token keyword">except</span> Exception <span class="token keyword">as</span> e<span class="token punctuation">:</span>
-                     <span class="token keyword">raise</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-
-	</div>
-  <a type="button" href="/2023/03/03/github-trick.html#more" class="btn btn-default more">Read More</a>
-</div>
-
--->
-<div class="entry">
-  <div class="row">
-	
-	
-		<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>获取了一个多人运动的git仓库，需要提取仓库里面所有的Email，然后根据Email搜一下Github是否存在对应的提交记录。这是一个很常见的问题，比如公司员工在提交gihtub的时候，没有注意修改提交的邮箱，很可能使用公司的邮箱进行提交。</p>
-<h2 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h2><p>有两种方法可以提取一个仓库的所有邮箱：</p>
-<h3 id="第一种"><a href="#第一种" class="headerlink" title="第一种"></a>第一种</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">git</span> log <span class="token string">"--format=format:%ae"</span> <span class="token operator">|</span> <span class="token function">sort</span> <span class="token operator">|</span> <span class="token function">uniq</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h3 id="第二种"><a href="#第二种" class="headerlink" title="第二种"></a>第二种</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">git</span> shortlog -sea <span class="token operator">|</span> <span class="token function">grep</span> -E -o <span class="token string">"<span class="token entity" title="\b">\b</span>[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]&#123;2,6&#125;<span class="token entity" title="\b">\b</span>"</span> <span class="token operator">|</span> <span class="token function">awk</span> <span class="token string">'&#123;print tolower($0)&#125;'</span> <span class="token operator">|</span> <span class="token function">sort</span> <span class="token operator">|</span> <span class="token function">uniq</span> <span class="token operator">|</span> <span class="token function">grep</span> -wv <span class="token string">'users.noreply.github.com'</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<p>然后根据<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/zoYE102P_2BvB-sForjkHQ">github小技巧</a>写一个批量获取邮箱的脚本：</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment"># coding: utf-8</span>
-<span class="token keyword">import</span> requests
-<span class="token keyword">import</span> json
-<span class="token keyword">from</span> random <span class="token keyword">import</span> choice
-<span class="token keyword">import</span> sys
-<span class="token keyword">import</span> time
-
-TOKEN_LISTS <span class="token operator">=</span> <span class="token punctuation">[</span>
-      <span class="token string">""</span>
-<span class="token punctuation">]</span>
-
-<span class="token keyword">def</span> <span class="token function">search_commits</span><span class="token punctuation">(</span>token<span class="token punctuation">,</span> email<span class="token punctuation">)</span><span class="token punctuation">:</span>
-       headers <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"Accept"</span><span class="token punctuation">:</span> <span class="token string">"application/vnd.github+json"</span><span class="token punctuation">,</span>
-                   <span class="token string">"Authorization"</span><span class="token punctuation">:</span> <span class="token string-interpolation"><span class="token string">f"Bearer </span><span class="token interpolation"><span class="token punctuation">&#123;</span>token<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span>
-                  <span class="token punctuation">&#125;</span>
-       req <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">'http://api.github.com/search/commits'</span><span class="token punctuation">,</span>
-           <span class="token punctuation">&#123;</span><span class="token string">'q'</span><span class="token punctuation">:</span> <span class="token string-interpolation"><span class="token string">f"committer-email:</span><span class="token interpolation"><span class="token punctuation">&#123;</span>email<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
-           headers<span class="token operator">=</span>headers<span class="token punctuation">)</span>
-       <span class="token keyword">return</span> json<span class="token punctuation">.</span>loads<span class="token punctuation">(</span>req<span class="token punctuation">.</span>text<span class="token punctuation">)</span>
-
-<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">"__main__"</span><span class="token punctuation">:</span>
-    <span class="token comment"># file = sys.argv[1]</span>
-    <span class="token builtin">file</span> <span class="token operator">=</span> <span class="token string">"/tmp/email.txt"</span>
-    <span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span><span class="token builtin">file</span><span class="token punctuation">,</span> <span class="token string">"r"</span><span class="token punctuation">)</span> <span class="token keyword">as</span> f<span class="token punctuation">:</span>
-          <span class="token keyword">for</span> line <span class="token keyword">in</span> f<span class="token punctuation">.</span>readlines<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-                email <span class="token operator">=</span> line<span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token punctuation">)</span>
-                token <span class="token operator">=</span> choice<span class="token punctuation">(</span>TOKEN_LISTS<span class="token punctuation">)</span>
-                
-                <span class="token keyword">try</span><span class="token punctuation">:</span>
-                    time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
-                    <span class="token keyword">if</span> search_commits<span class="token punctuation">(</span>token<span class="token punctuation">,</span> email<span class="token punctuation">)</span><span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"total_count"</span><span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span><span class="token punctuation">:</span>
-                        <span class="token keyword">print</span><span class="token punctuation">(</span>email<span class="token punctuation">)</span>
-                <span class="token keyword">except</span> Exception <span class="token keyword">as</span> e<span class="token punctuation">:</span>
-                     <span class="token keyword">raise</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-	
-	</div>
-  <a type="button" href="/2023/03/03/github-trick.html#more" class="btn btn-default more">Read More</a>
-</div>
-
-		
 
 		</div>
 
@@ -572,7 +540,7 @@ TOKEN_LISTS <span class="token operator">=</span> <span class="token punctuation
 		
 			<li><a href="/categories/PWN/">PWN<span>2</span></a></li>
 		
-			<li><a href="/categories/Pentest/">Pentest<span>52</span></a></li>
+			<li><a href="/categories/Pentest/">Pentest<span>53</span></a></li>
 		
 			<li><a href="/categories/Python/">Python<span>5</span></a></li>
 		
@@ -593,6 +561,10 @@ TOKEN_LISTS <span class="token operator">=</span> <span class="token punctuation
   <ul class="entry list-unstyled">
     
       <li>
+        <a href="/2023/05/26/cobaltstrike-learn.html" ><i class="fa fa-file-o"></i>CobaltStrike通信学习笔记</a>
+      </li>
+    
+      <li>
         <a href="/2023/05/10/pay_vuln.html" ><i class="fa fa-file-o"></i>支付接口安全测试记录</a>
       </li>
     
@@ -606,10 +578,6 @@ TOKEN_LISTS <span class="token operator">=</span> <span class="token punctuation
     
       <li>
         <a href="/2023/03/27/pinfish-and-osx-pentest.html" ><i class="fa fa-file-o"></i>记一次钓鱼演练和OS X下的渗透技巧</a>
-      </li>
-    
-      <li>
-        <a href="/2023/03/03/github-trick.html" ><i class="fa fa-file-o"></i>Github搜索小技巧</a>
       </li>
     
   </ul>
